@@ -18,6 +18,12 @@
   "paths": {
     "/api/v1/orgs": {
       "get": {
+        "operationId": "listOrganizations",
+        "summary": "List your organizations",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "Every organization the caller belongs to, with their role. Self-heals an interrupted signup by (re)creating the caller’s personal org.",
         "responses": {
           "200": {
             "description": "Default Response",
@@ -78,6 +84,12 @@
         }
       },
       "post": {
+        "operationId": "createOrganization",
+        "summary": "Create an organization",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "Create an organization; the caller becomes its first owner. A slug collision returns 409.",
         "requestBody": {
           "required": true,
           "content": {
@@ -187,6 +199,12 @@
     },
     "/api/v1/me": {
       "get": {
+        "operationId": "getMyProfile",
+        "summary": "Get your profile",
+        "tags": [
+          "Profile"
+        ],
+        "description": "The signed-in user's own profile: identity, display name, and avatar.",
         "responses": {
           "200": {
             "description": "Default Response",
@@ -270,6 +288,12 @@
         }
       },
       "patch": {
+        "operationId": "updateMyProfile",
+        "summary": "Update your profile",
+        "tags": [
+          "Profile"
+        ],
+        "description": "Edit your display name; email and avatar are immutable here (the OIDC provider owns them), so any other field is a 400.",
         "requestBody": {
           "required": true,
           "content": {
@@ -403,6 +427,12 @@
     },
     "/api/v1/orgs/{orgId}/": {
       "get": {
+        "operationId": "getOrganization",
+        "summary": "Get the organization",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "The organization from the caller’s perspective (id, name, slug, their role, member count).",
         "parameters": [
           {
             "schema": {
@@ -497,6 +527,12 @@
         }
       },
       "patch": {
+        "operationId": "updateOrganization",
+        "summary": "Update the organization",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "Rename or re-slug the organization (owner only). A slug collision returns 409.",
         "requestBody": {
           "required": true,
           "content": {
@@ -665,6 +701,12 @@
         }
       },
       "delete": {
+        "operationId": "deleteOrganization",
+        "summary": "Delete the organization",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "Delete the organization (owner only). Refused with 409 while it still has daemons — detach those first; everything else cascades.",
         "parameters": [
           {
             "schema": {
@@ -738,6 +780,12 @@
     },
     "/api/v1/orgs/{orgId}/daemons": {
       "get": {
+        "operationId": "listDaemons",
+        "summary": "List daemons",
+        "tags": [
+          "Daemons"
+        ],
+        "description": "The org’s daemon fleet from the registry, each overlaid with its live connection status (a daemon that has exited reads as offline).",
         "parameters": [
           {
             "schema": {
@@ -982,6 +1030,12 @@
     },
     "/api/v1/orgs/{orgId}/daemons/{id}": {
       "patch": {
+        "operationId": "updateDaemon",
+        "summary": "Rename a daemon",
+        "tags": [
+          "Daemons"
+        ],
+        "description": "Assign a human-friendly console display name to a daemon.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1303,6 +1357,12 @@
         }
       },
       "delete": {
+        "operationId": "deleteDaemon",
+        "summary": "Detach a daemon",
+        "tags": [
+          "Daemons"
+        ],
+        "description": "Remove a daemon from the fleet, cascading its keys, leases, and launches; refused while it is online and reachable.",
         "parameters": [
           {
             "name": "orgId",
@@ -1411,6 +1471,12 @@
     },
     "/api/v1/orgs/{orgId}/daemons/token": {
       "post": {
+        "operationId": "createDaemonToken",
+        "summary": "Issue a daemon enrollment token",
+        "tags": [
+          "Daemons"
+        ],
+        "description": "Provision a new daemon (a provisioned row plus its first API key) and return a ready-to-run connect command for onboarding.",
         "parameters": [
           {
             "schema": {
@@ -1485,6 +1551,12 @@
     },
     "/api/v1/orgs/{orgId}/daemons/{id}/keys": {
       "get": {
+        "operationId": "listDaemonKeys",
+        "summary": "List a daemon’s keys",
+        "tags": [
+          "Daemon keys"
+        ],
+        "description": "Lists a daemon’s API keys, never exposing the secret or its hash.",
         "parameters": [
           {
             "name": "orgId",
@@ -1608,6 +1680,12 @@
         }
       },
       "post": {
+        "operationId": "issueDaemonKey",
+        "summary": "Issue a daemon key",
+        "tags": [
+          "Daemon keys"
+        ],
+        "description": "Mints an additional API key for an existing daemon (overlap rotation or \"Regenerate\"), returning the one-time plaintext and a ready-to-run start command.",
         "parameters": [
           {
             "name": "orgId",
@@ -1717,6 +1795,12 @@
     },
     "/api/v1/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
       "delete": {
+        "operationId": "revokeDaemonKey",
+        "summary": "Revoke a daemon key",
+        "tags": [
+          "Daemon keys"
+        ],
+        "description": "Revokes one of a daemon’s API keys as a kill switch; a key from another daemon or org reads as absent (404).",
         "parameters": [
           {
             "name": "orgId",
@@ -1874,6 +1958,12 @@
     },
     "/api/v1/orgs/{orgId}/agents": {
       "post": {
+        "operationId": "createAgent",
+        "summary": "Create an agent",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Mint a new agent definition scoped to the caller’s org; the CP assigns its UUID. With ?connect=true, also provisions a daemon connect token and start command for onboarding.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2277,6 +2367,12 @@
         }
       },
       "get": {
+        "operationId": "listAgents",
+        "summary": "List agents",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Every agent definition in the caller’s active org.",
         "parameters": [
           {
             "schema": {
@@ -2485,6 +2581,12 @@
     },
     "/api/v1/orgs/{orgId}/agents/{id}": {
       "get": {
+        "operationId": "getAgent",
+        "summary": "Get an agent",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Fetch one agent by id; a cross-org id reads as absent (404).",
         "parameters": [
           {
             "name": "orgId",
@@ -2723,6 +2825,12 @@
         }
       },
       "patch": {
+        "operationId": "updateAgent",
+        "summary": "Update an agent",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Edit the agent spec (name / system-prompt / model / runtime / capabilities); the change hot-syncs the owning daemon’s replica and rides the next register/launch.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3095,6 +3203,12 @@
         }
       },
       "delete": {
+        "operationId": "deleteAgent",
+        "summary": "Delete an agent",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Remove the agent definition, then tell the owning daemon to drop it from its local replica (best-effort).",
         "parameters": [
           {
             "name": "orgId",
@@ -3149,6 +3263,12 @@
     },
     "/api/v1/orgs/{orgId}/agents/{id}/workspace/files": {
       "get": {
+        "operationId": "listAgentWorkspaceFiles",
+        "summary": "List workspace files",
+        "tags": [
+          "Agent workspace"
+        ],
+        "description": "Proxy one directory page live from the owning daemon; a missing directory is data (exists:false), not an error. 503 when unplaced or the daemon is offline.",
         "parameters": [
           {
             "name": "orgId",
@@ -3335,6 +3455,12 @@
     },
     "/api/v1/orgs/{orgId}/agents/{id}/workspace/file": {
       "get": {
+        "operationId": "readAgentWorkspaceFile",
+        "summary": "Read a workspace file",
+        "tags": [
+          "Agent workspace"
+        ],
+        "description": "Proxy one byte slice of a file live from the owning daemon (64 KiB default; page with offset while truncated). A missing file is data (exists:false); binary files come back encoding:none.",
         "parameters": [
           {
             "name": "orgId",
@@ -3546,6 +3672,12 @@
     },
     "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
       "get": {
+        "operationId": "getAgentWorkspaceGitStatus",
+        "summary": "Get workspace git status",
+        "tags": [
+          "Agent workspace"
+        ],
+        "description": "Report whether the owning daemon’s checkout is clean; a dirty tree or a from-scratch (non-repo) workspace is data (clean/isRepo), not an error.",
         "parameters": [
           {
             "name": "orgId",
@@ -3784,6 +3916,12 @@
     },
     "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitpull": {
       "post": {
+        "operationId": "pullAgentWorkspace",
+        "summary": "Pull the workspace",
+        "tags": [
+          "Agent workspace"
+        ],
+        "description": "Force an on-demand ff-only pull on the owning daemon; a pull that can’t fast-forward (diverged, local edits) is data (ok:false + detail), only an offline daemon yields 503.",
         "parameters": [
           {
             "name": "orgId",
@@ -3929,6 +4067,12 @@
     },
     "/api/v1/orgs/{orgId}/integrations": {
       "post": {
+        "operationId": "createIntegration",
+        "summary": "Add an integration",
+        "tags": [
+          "Integrations"
+        ],
+        "description": "Install a platform integration on a placed agent, reusing a free bot or registering a new one from pasted tokens, then push it live to the owning daemon.",
         "requestBody": {
           "required": true,
           "content": {
@@ -4130,6 +4274,12 @@
         }
       },
       "get": {
+        "operationId": "listIntegrations",
+        "summary": "List integrations",
+        "tags": [
+          "Integrations"
+        ],
+        "description": "Every platform integration in the active organization, each with its per-channel bindings.",
         "parameters": [
           {
             "schema": {
@@ -4231,6 +4381,12 @@
     },
     "/api/v1/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
       "patch": {
+        "operationId": "updateIntegrationChannel",
+        "summary": "Update a channel",
+        "tags": [
+          "Integrations"
+        ],
+        "description": "Set a channel's trigger (@-mention vs any message), then push the integration's recomputed bindRules to the owning daemon.",
         "requestBody": {
           "required": true,
           "content": {
@@ -4355,6 +4511,12 @@
     },
     "/api/v1/orgs/{orgId}/integrations/{id}": {
       "delete": {
+        "operationId": "deleteIntegration",
+        "summary": "Remove an integration",
+        "tags": [
+          "Integrations"
+        ],
+        "description": "Delete the integration metadata (the bot and its tokens survive, freed for the next install), then tell the owning daemon to drop it.",
         "parameters": [
           {
             "name": "orgId",
@@ -4409,6 +4571,12 @@
     },
     "/api/v1/orgs/{orgId}/bots": {
       "get": {
+        "operationId": "listBots",
+        "summary": "List bots",
+        "tags": [
+          "Bots"
+        ],
+        "description": "The org's durable platform bot identities, including freed and prebuilt bots offered for reuse.",
         "parameters": [
           {
             "schema": {
@@ -4518,6 +4686,12 @@
     },
     "/api/v1/orgs/{orgId}/bots/{id}": {
       "get": {
+        "operationId": "getBot",
+        "summary": "Get a bot",
+        "tags": [
+          "Bots"
+        ],
+        "description": "Fetch a single bot identity by id (scoped to the caller's org; a cross-org id reads as 404).",
         "parameters": [
           {
             "name": "orgId",
@@ -4657,6 +4831,12 @@
         }
       },
       "delete": {
+        "operationId": "deleteBot",
+        "summary": "Delete a bot",
+        "tags": [
+          "Bots"
+        ],
+        "description": "Forget a bot and, via cascade, its stored tokens; refused while the bot is installed on an agent (uninstall the integration first).",
         "parameters": [
           {
             "name": "orgId",
@@ -4765,6 +4945,12 @@
     },
     "/api/v1/orgs/{orgId}/members": {
       "get": {
+        "operationId": "listMembers",
+        "summary": "List members",
+        "tags": [
+          "Members"
+        ],
+        "description": "The active org’s members — membership joined with each user’s profile.",
         "parameters": [
           {
             "schema": {
@@ -4847,6 +5033,12 @@
         }
       },
       "post": {
+        "operationId": "addMember",
+        "summary": "Add a member",
+        "tags": [
+          "Members"
+        ],
+        "description": "Owner-only. Adds a member by email with the given role; no email is sent — an unknown address becomes an invited row, claimed on first SSO sign-in.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5009,6 +5201,12 @@
     },
     "/api/v1/orgs/{orgId}/members/{id}": {
       "patch": {
+        "operationId": "updateMember",
+        "summary": "Change a member’s role",
+        "tags": [
+          "Members"
+        ],
+        "description": "Owner-only. Changes a member’s role; the last owner can’t be demoted, which would orphan the org.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5200,6 +5398,12 @@
         }
       },
       "delete": {
+        "operationId": "removeMember",
+        "summary": "Remove a member",
+        "tags": [
+          "Members"
+        ],
+        "description": "Owner-only. Removes a member from the org; the last owner can’t be removed, which would orphan the org.",
         "parameters": [
           {
             "name": "orgId",
@@ -5308,6 +5512,12 @@
     },
     "/api/v1/orgs/{orgId}/crons/{id}": {
       "put": {
+        "operationId": "upsertCron",
+        "summary": "Create or update a cron",
+        "tags": [
+          "Crons"
+        ],
+        "description": "Idempotent upsert of a cron definition keyed on its client-minted UUID; every write is best-effort pushed live to the owning agent’s daemon.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5580,6 +5790,12 @@
         }
       },
       "get": {
+        "operationId": "getCron",
+        "summary": "Get a cron",
+        "tags": [
+          "Crons"
+        ],
+        "description": "A single cron definition by id, scoped to the caller’s active organization.",
         "parameters": [
           {
             "name": "orgId",
@@ -5742,6 +5958,12 @@
         }
       },
       "delete": {
+        "operationId": "deleteCron",
+        "summary": "Delete a cron",
+        "tags": [
+          "Crons"
+        ],
+        "description": "Remove a cron definition and best-effort push the removal to the owning agent’s daemon.",
         "parameters": [
           {
             "name": "orgId",
@@ -5823,6 +6045,12 @@
     },
     "/api/v1/orgs/{orgId}/crons": {
       "get": {
+        "operationId": "listCrons",
+        "summary": "List crons",
+        "tags": [
+          "Crons"
+        ],
+        "description": "Every cron definition in the caller’s active organization.",
         "parameters": [
           {
             "schema": {
@@ -5955,6 +6183,12 @@
     },
     "/api/v1/orgs/{orgId}/crons/{id}/runs": {
       "get": {
+        "operationId": "listCronRuns",
+        "summary": "List cron runs",
+        "tags": [
+          "Crons"
+        ],
+        "description": "Daemon-reported run history for a cron, newest first.",
         "parameters": [
           {
             "name": "orgId",
@@ -6076,6 +6310,12 @@
     },
     "/api/v1/orgs/{orgId}/crons/{id}/run": {
       "post": {
+        "operationId": "triggerCronRun",
+        "summary": "Trigger a cron run",
+        "tags": [
+          "Crons"
+        ],
+        "description": "Fire the cron on its daemon immediately; the 202 only means the daemon accepted the fire — the run itself is async and lands in the run history.",
         "parameters": [
           {
             "name": "orgId",
@@ -6211,6 +6451,12 @@
     },
     "/api/v1/orgs/{orgId}/sessions": {
       "get": {
+        "operationId": "listSessions",
+        "summary": "List sessions",
+        "tags": [
+          "Sessions"
+        ],
+        "description": "Fans session/list out to the org's online daemons and merges the results into all sessions across the workspace; offline daemons are skipped.",
         "parameters": [
           {
             "schema": {
@@ -6422,6 +6668,12 @@
     },
     "/api/v1/orgs/{orgId}/sessions/{id}/messages": {
       "get": {
+        "operationId": "getSessionMessages",
+        "summary": "Get session messages",
+        "tags": [
+          "Sessions"
+        ],
+        "description": "Proxies a page of the session's chat history live from the owning daemon (resolved via the row's agentId); 503 if the agent is unplaced or its daemon is offline.",
         "parameters": [
           {
             "name": "orgId",
@@ -6609,6 +6861,12 @@
     },
     "/api/v1/orgs/{orgId}/sessions/{id}/tool-body": {
       "get": {
+        "operationId": "getSessionToolBody",
+        "summary": "Get a tool-call body",
+        "tags": [
+          "Sessions"
+        ],
+        "description": "Proxies one byte slice of a tool call's untruncated ToolBody JSON live from the owning daemon; the console pages by offset until nextOffset is null. 503 if the agent is unplaced or its daemon is offline.",
         "parameters": [
           {
             "name": "orgId",
@@ -6755,6 +7013,12 @@
     },
     "/api/v1/orgs/{orgId}/usage": {
       "get": {
+        "operationId": "getUsage",
+        "summary": "Get token usage",
+        "tags": [
+          "Usage"
+        ],
+        "description": "Sums the persisted per-session token usage over the selected time window, grouped by agent, plus workspace totals.",
         "parameters": [
           {
             "schema": {
@@ -6891,6 +7155,12 @@
     },
     "/api/v1/orgs/{orgId}/stream": {
       "get": {
+        "operationId": "streamSessionEvents",
+        "summary": "Live session event stream",
+        "tags": [
+          "Stream"
+        ],
+        "description": "Server-sent event feed relaying each converged session milestone (metadata only) for the org’s daemons.",
         "parameters": [
           {
             "schema": {
@@ -6917,6 +7187,60 @@
   "security": [
     {
       "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Organizations",
+      "description": "The caller’s organizations — list, create, rename, delete."
+    },
+    {
+      "name": "Profile",
+      "description": "The signed-in user’s own profile."
+    },
+    {
+      "name": "Members",
+      "description": "Organization membership and roles."
+    },
+    {
+      "name": "Daemons",
+      "description": "Edge daemons — the message + agent-execution units. Enrollment tokens and lifecycle."
+    },
+    {
+      "name": "Daemon keys",
+      "description": "A daemon’s API keys (issue, list, revoke)."
+    },
+    {
+      "name": "Agents",
+      "description": "Agent definitions — CRUD and connect/launch."
+    },
+    {
+      "name": "Agent workspace",
+      "description": "Read an agent’s daemon-local workspace (files, git status/pull)."
+    },
+    {
+      "name": "Sessions",
+      "description": "Conversation sessions and their message history."
+    },
+    {
+      "name": "Integrations",
+      "description": "IM-platform integrations (Slack / Telegram / Discord) and their channels."
+    },
+    {
+      "name": "Bots",
+      "description": "Durable platform bot identities."
+    },
+    {
+      "name": "Crons",
+      "description": "Scheduled agent runs."
+    },
+    {
+      "name": "Usage",
+      "description": "Token-usage reporting."
+    },
+    {
+      "name": "Stream",
+      "description": "Server-sent event stream for live console updates."
     }
   ]
 }

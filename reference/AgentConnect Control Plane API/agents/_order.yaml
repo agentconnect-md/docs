@@ -1,0 +1,5 @@
+- createagent
+- listagents
+- getagent
+- updateagent
+- deleteagent

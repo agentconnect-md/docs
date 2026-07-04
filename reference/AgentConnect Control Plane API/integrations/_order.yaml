@@ -1,0 +1,4 @@
+- createintegration
+- listintegrations
+- updateintegrationchannel
+- deleteintegration
