@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "AgentConnect Control Plane API",
+    "title": "AgentConnect API",
     "description": "The C2 BFF REST surface (Web UI ⇄ Control Plane). Every resource is org-scoped under `/api/v1/orgs/:orgId` behind bearer auth; a cross-org id reads as 404. The Control Plane stores only control-plane metadata — message bodies and workspace bytes stay daemon-local.",
     "version": "1"
   },
@@ -16,7 +16,7 @@
     "schemas": {}
   },
   "paths": {
-    "/api/v1/orgs": {
+    "/v1/orgs": {
       "get": {
         "operationId": "listOrganizations",
         "summary": "List your organizations",
@@ -197,7 +197,7 @@
         }
       }
     },
-    "/api/v1/me": {
+    "/v1/me": {
       "get": {
         "operationId": "getMyProfile",
         "summary": "Get your profile",
@@ -425,7 +425,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/": {
+    "/v1/orgs/{orgId}/": {
       "get": {
         "operationId": "getOrganization",
         "summary": "Get the organization",
@@ -778,7 +778,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons": {
+    "/v1/orgs/{orgId}/daemons": {
       "get": {
         "operationId": "listDaemons",
         "summary": "List daemons",
@@ -1028,7 +1028,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}": {
+    "/v1/orgs/{orgId}/daemons/{id}": {
       "patch": {
         "operationId": "updateDaemon",
         "summary": "Rename a daemon",
@@ -1469,7 +1469,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/token": {
+    "/v1/orgs/{orgId}/daemons/token": {
       "post": {
         "operationId": "createDaemonToken",
         "summary": "Issue a daemon enrollment token",
@@ -1549,7 +1549,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/keys": {
+    "/v1/orgs/{orgId}/daemons/{id}/keys": {
       "get": {
         "operationId": "listDaemonKeys",
         "summary": "List a daemon’s keys",
@@ -1793,7 +1793,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
+    "/v1/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
       "delete": {
         "operationId": "revokeDaemonKey",
         "summary": "Revoke a daemon key",
@@ -1956,7 +1956,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents": {
+    "/v1/orgs/{orgId}/agents": {
       "post": {
         "operationId": "createAgent",
         "summary": "Create an agent",
@@ -2579,7 +2579,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}": {
+    "/v1/orgs/{orgId}/agents/{id}": {
       "get": {
         "operationId": "getAgent",
         "summary": "Get an agent",
@@ -3261,7 +3261,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/files": {
+    "/v1/orgs/{orgId}/agents/{id}/workspace/files": {
       "get": {
         "operationId": "listAgentWorkspaceFiles",
         "summary": "List workspace files",
@@ -3453,7 +3453,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/file": {
+    "/v1/orgs/{orgId}/agents/{id}/workspace/file": {
       "get": {
         "operationId": "readAgentWorkspaceFile",
         "summary": "Read a workspace file",
@@ -3670,7 +3670,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
+    "/v1/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
       "get": {
         "operationId": "getAgentWorkspaceGitStatus",
         "summary": "Get workspace git status",
@@ -3914,7 +3914,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitpull": {
+    "/v1/orgs/{orgId}/agents/{id}/workspace/gitpull": {
       "post": {
         "operationId": "pullAgentWorkspace",
         "summary": "Pull the workspace",
@@ -4065,7 +4065,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations": {
+    "/v1/orgs/{orgId}/integrations": {
       "post": {
         "operationId": "createIntegration",
         "summary": "Add an integration",
@@ -4379,7 +4379,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
+    "/v1/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
       "patch": {
         "operationId": "updateIntegrationChannel",
         "summary": "Update a channel",
@@ -4509,7 +4509,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations/{id}": {
+    "/v1/orgs/{orgId}/integrations/{id}": {
       "delete": {
         "operationId": "deleteIntegration",
         "summary": "Remove an integration",
@@ -4569,7 +4569,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/bots": {
+    "/v1/orgs/{orgId}/bots": {
       "get": {
         "operationId": "listBots",
         "summary": "List bots",
@@ -4684,7 +4684,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/bots/{id}": {
+    "/v1/orgs/{orgId}/bots/{id}": {
       "get": {
         "operationId": "getBot",
         "summary": "Get a bot",
@@ -4943,7 +4943,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/members": {
+    "/v1/orgs/{orgId}/members": {
       "get": {
         "operationId": "listMembers",
         "summary": "List members",
@@ -5199,7 +5199,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/members/{id}": {
+    "/v1/orgs/{orgId}/members/{id}": {
       "patch": {
         "operationId": "updateMember",
         "summary": "Change a member’s role",
@@ -5510,7 +5510,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons/{id}": {
+    "/v1/orgs/{orgId}/crons/{id}": {
       "put": {
         "operationId": "upsertCron",
         "summary": "Create or update a cron",
@@ -6043,7 +6043,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons": {
+    "/v1/orgs/{orgId}/crons": {
       "get": {
         "operationId": "listCrons",
         "summary": "List crons",
@@ -6181,7 +6181,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons/{id}/runs": {
+    "/v1/orgs/{orgId}/crons/{id}/runs": {
       "get": {
         "operationId": "listCronRuns",
         "summary": "List cron runs",
@@ -6308,7 +6308,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons/{id}/run": {
+    "/v1/orgs/{orgId}/crons/{id}/run": {
       "post": {
         "operationId": "triggerCronRun",
         "summary": "Trigger a cron run",
@@ -6449,7 +6449,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions": {
+    "/v1/orgs/{orgId}/sessions": {
       "get": {
         "operationId": "listSessions",
         "summary": "List sessions",
@@ -6666,7 +6666,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions/{id}/messages": {
+    "/v1/orgs/{orgId}/sessions/{id}/messages": {
       "get": {
         "operationId": "getSessionMessages",
         "summary": "Get session messages",
@@ -6859,7 +6859,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions/{id}/tool-body": {
+    "/v1/orgs/{orgId}/sessions/{id}/tool-body": {
       "get": {
         "operationId": "getSessionToolBody",
         "summary": "Get a tool-call body",
@@ -7011,7 +7011,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/usage": {
+    "/v1/orgs/{orgId}/usage": {
       "get": {
         "operationId": "getUsage",
         "summary": "Get token usage",
@@ -7153,7 +7153,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/stream": {
+    "/v1/orgs/{orgId}/stream": {
       "get": {
         "operationId": "streamSessionEvents",
         "summary": "Live session event stream",
@@ -7181,7 +7181,7 @@
   },
   "servers": [
     {
-      "url": "https://test-api.agentconnect.md"
+      "url": "https://api.agentconnect.md"
     }
   ],
   "security": [
