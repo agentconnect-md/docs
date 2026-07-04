@@ -1,0 +1,3 @@
+- get_api-v1-orgs-orgid-agents-id
+- patch_api-v1-orgs-orgid-agents-id
+- delete_api-v1-orgs-orgid-agents-id
