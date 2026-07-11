@@ -1,48 +1,44 @@
 ---
-title: Welcome to agentconnect
+title: Welcome to AgentConnect
+excerpt: Run AI coding agents on your own machines and talk to them from Slack, Telegram, Discord, GitHub and the web.
 hidden: false
 ---
-<Callout icon="📘" theme="info">
-  **Template:**  Delete this callout and edit this page with your content and links.
-</Callout>
+
+AgentConnect connects the chat tools your team already lives in — **Slack, Telegram, Discord, GitHub** — to AI coding agents like **Claude Code** and **Codex** running on **your own machines**.
+
+You install a small daemon on any machine you control. It runs your agents locally and connects them to your channels. The AgentConnect console at [app.agentconnect.md](https://app.agentconnect.md) is where you configure agents, wire up integrations, and watch every session.
+
+![The AgentConnect console — agents across your daemons](../../images/agents-list.png)
 
 <Cards>
-  {/* Edit the props below to customize these components */}
-  <Card title="Quick Start" href="#" icon="fa-duotone fa-rocket-launch">Learn how to get started with our product</Card>
+  <Card title="Quickstart" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">From sign-in to a working agent in about ten minutes</Card>
 
-  <Card title="API Reference" href="#" icon="fa-duotone fa-code-simple">Explore endpoints and build your integration</Card>
+  <Card title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">The daemon-centric architecture, and why your data stays yours</Card>
 
-  <Card title="Build with AI" href="#" icon="fa-duotone fa-sparkles">Use LLM features to automate your workflow</Card>
+  <Card title="API Reference" href="/reference" icon="fa-duotone fa-code-simple">Automate everything the console does over REST</Card>
 </Cards>
 
 <br />
 
-## Recent Releases
+## What you can build
+
+- **A reviewer in Slack** — mention the bot in a channel and it reviews the PR, using a clone of your repo on your own hardware.
+- **A GitHub triager** — an agent that wakes up whenever an issue is opened and posts a first analysis as a comment.
+- **A nightly report** — a schedule that runs an agent every morning and posts the result to a channel.
+- **A deploy bot in Telegram or Discord** — chat-ops with a real coding agent behind it, not canned commands.
+
+## The basics
 
 <Cards>
-  <Card isNew kind="tile" title="v2.0 Migration" href="#" icon="fa-duotone fa-magnifying-glass">Everything you need to upgrade</Card>
+  <Card kind="tile" title="Install the daemon" href="/docs/install-the-daemon" icon="fa-duotone fa-server">One command on any machine with Node 24+</Card>
 
-  <Card kind="tile" title="Webhooks" href="#" icon="fa-duotone fa-bullhorn">Real-time events are now available</Card>
+  <Card kind="tile" title="Create an agent" href="/docs/create-an-agent" icon="fa-duotone fa-robot">Pick a runtime, a model and a workspace</Card>
 
-  <Card kind="tile" title="Android SDK" href="#" icon="fa-duotone fa-robot">Our native Android library is out of beta</Card>
+  <Card kind="tile" title="Connect Slack" href="/docs/slack" icon="fa-duotone fa-hashtag">Two-step install, no public URL needed</Card>
+
+  <Card kind="tile" title="Watch sessions" href="/docs/sessions" icon="fa-duotone fa-messages">Replay every run, tool call by tool call</Card>
+
+  <Card kind="tile" title="Schedules" href="/docs/schedules" icon="fa-duotone fa-calendar-clock">Run agents on a timer</Card>
+
+  <Card kind="tile" title="API keys" href="/docs/api-keys" icon="fa-duotone fa-key">Script the platform with personal keys</Card>
 </Cards>
-
-<br />
-
-## The Basics
-
-<Cards>
-  <Card kind="tile" title="Customize" href="#" icon="fa-duotone fa-brush">Style the widget to match your brand</Card>
-
-  <Card kind="tile" title="Integrations" href="#" icon="fa-duotone fa-arrow-down-left-and-arrow-up-right-to-center">Connect with third-party services</Card>
-
-  <Card kind="tile" title="CLI" href="#" icon="fa-duotone fa-terminal">Manage resources from your terminal</Card>
-
-  <Card kind="tile" title="Security" href="" icon="fa-duotone fa-shield-dog">Learn how we secure your data</Card>
-
-  <Card kind="tile" title="Common Issues" href="" icon="fa-duotone fa-file-circle-info">Troubleshoot common issues</Card>
-
-  <Card kind="tile" title="Sync" href="#" icon="fa-duotone fa-code-compare">Connect to a storage provider</Card>
-</Cards>
-
-<br />
