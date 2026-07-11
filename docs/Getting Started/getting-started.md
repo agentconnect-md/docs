@@ -40,5 +40,7 @@ You install a small daemon on any machine you control. It runs your agents local
 
   <Card kind="tile" title="Schedules" href="/docs/schedules" icon="fa-duotone fa-calendar-clock">Run agents on a timer</Card>
 
+  <Card kind="tile" title="MCP connector" href="/docs/mcp-connector" icon="fa-duotone fa-plug">Ask Claude about your org — agents, sessions, spend</Card>
+
   <Card kind="tile" title="API keys" href="/docs/api-keys" icon="fa-duotone fa-key">Script the platform with personal keys</Card>
 </Cards>

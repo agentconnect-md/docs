@@ -27,6 +27,8 @@ Every resource is org-scoped under `/v1/orgs/{orgId}/…` — list agents, read 
 
 Since the key carries your role, a [Viewer](/docs/members-and-roles)'s key can read but not mutate — handy for dashboards.
 
+The same key also authenticates the [MCP connector](/docs/mcp-connector) in headless clients — pass it as the `Authorization: Bearer` header instead of doing the browser OAuth flow.
+
 ## Revoke
 
 **Revoke** kills a key immediately — anything still using it starts getting `401`s. Rotate by minting a new key first, moving your scripts, then revoking the old one.

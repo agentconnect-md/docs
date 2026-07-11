@@ -74,3 +74,4 @@ The Playground is for trying things out — the point of AgentConnect is meeting
 - [How it works](/docs/how-it-works) — where your code and conversations actually live (spoiler: on your machine).
 - [Sessions](/docs/sessions) — replay everything your agents did.
 - [Schedules](/docs/schedules) — run agents on a timer.
+- [MCP connector](/docs/mcp-connector) — add AgentConnect to Claude and ask about your agents, sessions and spend.
