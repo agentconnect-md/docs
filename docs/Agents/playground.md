@@ -6,7 +6,7 @@ hidden: false
 
 The **Playground** button on an agent page opens a live conversation with that agent, straight from the browser. It's the fastest way to check that a new agent works, iterate on prompts, or debug behavior — before (or without) wiring the agent into a channel.
 
-![A Playground session](../../images/playground.png)
+![A Playground session](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png)
 
 ## What you get
 
