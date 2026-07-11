@@ -17,7 +17,7 @@ You need:
 
 Go to [app.agentconnect.md](https://app.agentconnect.md) and continue with **GitHub** or **Google**. There is no password — signing in for the first time creates your account and a personal organization.
 
-![The AgentConnect sign-in page](../../images/login.png)
+![The AgentConnect sign-in page](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/login.png)
 
 ## 2. Connect a daemon
 
@@ -34,7 +34,7 @@ npx -y @agentconnect.md/daemon run --cp-url wss://api.agentconnect.md/daemon/ws 
 
 3. Leave the modal open. Within a few seconds it flips to **Daemon connected** and the daemon appears in the list, along with the agent runtimes it detected on your machine.
 
-![Add daemon — the console shows the exact command to run and waits for the daemon to connect](../../images/add-daemon.png)
+![Add daemon — the console shows the exact command to run and waits for the daemon to connect](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png)
 
 The command above runs the daemon in the foreground, which is perfect for a first try. To keep it running permanently, install it as a system service — see [Install the daemon](/docs/install-the-daemon).
 
@@ -47,7 +47,7 @@ The command above runs the daemon in the foreground, which is perfect for a firs
    - **From GitHub** — clone a repository and run the agent from a branch. (Needs the GitHub app; you can start from scratch and set up GitHub later.)
 4. Click **Create**.
 
-![Add agent — name, daemon, runtime, model and workspace](../../images/add-agent.png)
+![Add agent — name, daemon, runtime, model and workspace](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png)
 
 ## 4. Talk to it
 
@@ -57,7 +57,7 @@ Open your new agent and click **Playground**. This starts a live sandbox session
 
 You'll see its replies, thinking and tool calls stream in, and you can switch model, reasoning effort or permission mode mid-conversation from the bar above the composer.
 
-![A live Playground session](../../images/playground.png)
+![A live Playground session](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png)
 
 ## 5. Put it in a channel
 

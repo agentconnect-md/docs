@@ -16,7 +16,7 @@ An **integration** binds one agent to one way of reaching it. Five kinds are sup
 
 Add one from the agent page (**Integrations → Add integration**) or from the Agents list.
 
-![Add integration — pick a platform](../../images/add-integration.png)
+![Add integration — pick a platform](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-integration.png)
 
 ## Bots are identities, integrations are bindings
 

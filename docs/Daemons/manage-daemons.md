@@ -6,7 +6,7 @@ hidden: false
 
 **Daemons** in the console lists every machine connected to your organization. Each card shows the daemon's name, version, status, live CPU and memory utilization, how many agents it hosts, and when it was last seen.
 
-![The Daemons list](../../images/daemons.png)
+![The Daemons list](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png)
 
 ## Status
 

@@ -6,7 +6,7 @@ hidden: false
 
 **Schedules** run an agent on a cron cadence: a daily deploy report, a nightly dependency audit, a Monday-morning triage sweep. Each firing starts a fresh session for the agent, so every run is fully replayable in [Sessions](/docs/sessions).
 
-![Creating a schedule](../../images/new-schedule.png)
+![Creating a schedule](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/new-schedule.png)
 
 ## Create one
 

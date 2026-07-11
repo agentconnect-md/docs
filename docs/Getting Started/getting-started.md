@@ -8,7 +8,7 @@ AgentConnect connects the chat tools your team already lives in — **Slack, Tel
 
 You install a small daemon on any machine you control. It runs your agents locally and connects them to your channels. The AgentConnect console at [app.agentconnect.md](https://app.agentconnect.md) is where you configure agents, wire up integrations, and watch every session.
 
-![The AgentConnect console — agents across your daemons](../../images/agents-list.png)
+![The AgentConnect console — agents across your daemons](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agents-list.png)
 
 <Cards>
   <Card title="Quickstart" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">From sign-in to a working agent in about ten minutes</Card>

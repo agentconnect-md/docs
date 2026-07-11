@@ -6,7 +6,7 @@ hidden: false
 
 Open any agent from **Agents** to reach its page: status, meta chips (model, daemon, integrations, session count), a **Playground** button, and tabs — **Configuration**, **Workspace**, **Memory**, **API**, **Knowledge & Tools**.
 
-![An agent's Configuration tab](../../images/agent-detail.png)
+![An agent's Configuration tab](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-detail.png)
 
 ## General
 

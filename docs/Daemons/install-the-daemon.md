@@ -23,7 +23,7 @@ npx -y @agentconnect.md/daemon run --cp-url wss://api.agentconnect.md/daemon/ws 
 
 Copy it from the console (the key is **shown only once**), run it, and watch the modal flip to **Daemon connected**. That's it — the daemon saves its credentials on first connect, registers, and starts heartbeating.
 
-![Add daemon — copy the one-command install, the console waits for the daemon to appear](../../images/add-daemon.png)
+![Add daemon — copy the one-command install, the console waits for the daemon to appear](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png)
 
 If you close the modal without ever connecting, use **Cancel** — it discards the unclaimed daemon and its key.
 

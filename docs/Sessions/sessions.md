@@ -6,7 +6,7 @@ hidden: false
 
 **Sessions** is the flight recorder: every run of every agent — from Slack threads, GitHub events, webhooks, schedules or the Playground — with the full conversation, tool calls and token costs.
 
-![A session transcript](../../images/session-detail.png)
+![A session transcript](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-detail.png)
 
 ## The list
 

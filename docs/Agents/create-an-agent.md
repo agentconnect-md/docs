@@ -8,7 +8,7 @@ An **agent** is a named, configured instance of an AI coding runtime — *"Claud
 
 Open **Agents → Add agent**:
 
-![The Add agent dialog](../../images/add-agent.png)
+![The Add agent dialog](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png)
 
 ## Identity
 
