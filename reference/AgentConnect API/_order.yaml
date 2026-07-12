@@ -3,11 +3,13 @@
 - members
 - daemons
 - daemon-keys
+- api-keys
 - agents
 - agent-workspace
 - sessions
 - integrations
 - bots
 - crons
+- hooks
 - usage
 - stream

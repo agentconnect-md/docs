@@ -3,3 +3,15 @@
 - getagent
 - updateagent
 - deleteagent
+- moveagentdaemon
+- setagentsharing
+- setagentcallpolicy
+- readagentmemory
+- listagentmemoryfiles
+- readagentmemoryfile
+- putagentmemoryfile
+- listagentrepoauthorizations
+- createagentrepoauthorization
+- updateagentrepoauthorization
+- deleteagentrepoauthorization
+- mintwebchattoken
