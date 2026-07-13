@@ -50,6 +50,110 @@
                       "slug": {
                         "type": "string"
                       },
+                      "icon": {
+                        "anyOf": [
+                          {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "runtime"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "kind"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "glyph"
+                                    ]
+                                  },
+                                  "glyph": {
+                                    "type": "string",
+                                    "enum": [
+                                      "bot",
+                                      "cpu",
+                                      "terminal",
+                                      "code",
+                                      "rocket",
+                                      "zap",
+                                      "bug",
+                                      "git-branch",
+                                      "message-square",
+                                      "sparkles",
+                                      "brain",
+                                      "wrench",
+                                      "ship",
+                                      "box",
+                                      "hexagon",
+                                      "compass",
+                                      "atom",
+                                      "flame",
+                                      "star",
+                                      "heart",
+                                      "globe",
+                                      "database",
+                                      "shield",
+                                      "feather"
+                                    ]
+                                  },
+                                  "color": {
+                                    "type": "string",
+                                    "pattern": "^#[0-9a-fA-F]{6}$"
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "glyph",
+                                  "color"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "image"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "kind"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "iconUrl": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "iconUploadEnabled": {
+                        "type": "boolean"
+                      },
                       "role": {
                         "type": "string",
                         "enum": [
@@ -71,6 +175,9 @@
                       "id",
                       "name",
                       "slug",
+                      "icon",
+                      "iconUrl",
+                      "iconUploadEnabled",
                       "role",
                       "memberCount",
                       "createdAt"
@@ -137,6 +244,110 @@
                     "slug": {
                       "type": "string"
                     },
+                    "icon": {
+                      "anyOf": [
+                        {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "runtime"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "glyph"
+                                  ]
+                                },
+                                "glyph": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bot",
+                                    "cpu",
+                                    "terminal",
+                                    "code",
+                                    "rocket",
+                                    "zap",
+                                    "bug",
+                                    "git-branch",
+                                    "message-square",
+                                    "sparkles",
+                                    "brain",
+                                    "wrench",
+                                    "ship",
+                                    "box",
+                                    "hexagon",
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
+                                  ]
+                                },
+                                "color": {
+                                  "type": "string",
+                                  "pattern": "^#[0-9a-fA-F]{6}$"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "glyph",
+                                "color"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "image"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUploadEnabled": {
+                      "type": "boolean"
+                    },
                     "role": {
                       "type": "string",
                       "enum": [
@@ -158,6 +369,9 @@
                     "id",
                     "name",
                     "slug",
+                    "icon",
+                    "iconUrl",
+                    "iconUploadEnabled",
                     "role",
                     "memberCount",
                     "createdAt"
@@ -860,6 +1074,110 @@
                     "slug": {
                       "type": "string"
                     },
+                    "icon": {
+                      "anyOf": [
+                        {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "runtime"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "glyph"
+                                  ]
+                                },
+                                "glyph": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bot",
+                                    "cpu",
+                                    "terminal",
+                                    "code",
+                                    "rocket",
+                                    "zap",
+                                    "bug",
+                                    "git-branch",
+                                    "message-square",
+                                    "sparkles",
+                                    "brain",
+                                    "wrench",
+                                    "ship",
+                                    "box",
+                                    "hexagon",
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
+                                  ]
+                                },
+                                "color": {
+                                  "type": "string",
+                                  "pattern": "^#[0-9a-fA-F]{6}$"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "glyph",
+                                "color"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "image"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUploadEnabled": {
+                      "type": "boolean"
+                    },
                     "role": {
                       "type": "string",
                       "enum": [
@@ -881,6 +1199,9 @@
                     "id",
                     "name",
                     "slug",
+                    "icon",
+                    "iconUrl",
+                    "iconUploadEnabled",
                     "role",
                     "memberCount",
                     "createdAt"
@@ -943,6 +1264,80 @@
                   "slug": {
                     "type": "string",
                     "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$"
+                  },
+                  "icon": {
+                    "anyOf": [
+                      {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "runtime"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "glyph"
+                                ]
+                              },
+                              "glyph": {
+                                "type": "string",
+                                "enum": [
+                                  "bot",
+                                  "cpu",
+                                  "terminal",
+                                  "code",
+                                  "rocket",
+                                  "zap",
+                                  "bug",
+                                  "git-branch",
+                                  "message-square",
+                                  "sparkles",
+                                  "brain",
+                                  "wrench",
+                                  "ship",
+                                  "box",
+                                  "hexagon",
+                                  "compass",
+                                  "atom",
+                                  "flame",
+                                  "star",
+                                  "heart",
+                                  "globe",
+                                  "database",
+                                  "shield",
+                                  "feather"
+                                ]
+                              },
+                              "color": {
+                                "type": "string",
+                                "pattern": "^#[0-9a-fA-F]{6}$"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "glyph",
+                              "color"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 }
               }
@@ -983,6 +1378,110 @@
                     "slug": {
                       "type": "string"
                     },
+                    "icon": {
+                      "anyOf": [
+                        {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "runtime"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "glyph"
+                                  ]
+                                },
+                                "glyph": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bot",
+                                    "cpu",
+                                    "terminal",
+                                    "code",
+                                    "rocket",
+                                    "zap",
+                                    "bug",
+                                    "git-branch",
+                                    "message-square",
+                                    "sparkles",
+                                    "brain",
+                                    "wrench",
+                                    "ship",
+                                    "box",
+                                    "hexagon",
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
+                                  ]
+                                },
+                                "color": {
+                                  "type": "string",
+                                  "pattern": "^#[0-9a-fA-F]{6}$"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "glyph",
+                                "color"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "image"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUploadEnabled": {
+                      "type": "boolean"
+                    },
                     "role": {
                       "type": "string",
                       "enum": [
@@ -1004,6 +1503,9 @@
                     "id",
                     "name",
                     "slug",
+                    "icon",
+                    "iconUrl",
+                    "iconUploadEnabled",
                     "role",
                     "memberCount",
                     "createdAt"
@@ -3206,7 +3708,15 @@
                               "ship",
                               "box",
                               "hexagon",
-                              "compass"
+                              "compass",
+                              "atom",
+                              "flame",
+                              "star",
+                              "heart",
+                              "globe",
+                              "database",
+                              "shield",
+                              "feather"
                             ]
                           },
                           "color": {
@@ -3218,27 +3728,6 @@
                           "kind",
                           "glyph",
                           "color"
-                        ]
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "kind": {
-                            "type": "string",
-                            "enum": [
-                              "image"
-                            ]
-                          },
-                          "url": {
-                            "type": "string",
-                            "maxLength": 2048,
-                            "format": "uri",
-                            "pattern": "^https:\\/\\/.*"
-                          }
-                        },
-                        "required": [
-                          "kind",
-                          "url"
                         ]
                       }
                     ]
@@ -3260,6 +3749,7 @@
                   "outputMode": {
                     "type": "string",
                     "enum": [
+                      "minimal",
                       "low",
                       "medium",
                       "high"
@@ -3273,6 +3763,9 @@
                     "minLength": 1
                   },
                   "pause": {
+                    "type": "boolean"
+                  },
+                  "introduceOnJoin": {
                     "type": "boolean"
                   },
                   "env": {
@@ -3486,7 +3979,15 @@
                                     "ship",
                                     "box",
                                     "hexagon",
-                                    "compass"
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
                                   ]
                                 },
                                 "color": {
@@ -3509,21 +4010,24 @@
                                   "enum": [
                                     "image"
                                   ]
-                                },
-                                "url": {
-                                  "type": "string",
-                                  "maxLength": 2048,
-                                  "format": "uri",
-                                  "pattern": "^https:\\/\\/.*"
                                 }
                               },
                               "required": [
-                                "kind",
-                                "url"
+                                "kind"
                               ],
                               "additionalProperties": false
                             }
                           ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
                         },
                         {
                           "type": "null"
@@ -3782,6 +4286,9 @@
                         "type": "string"
                       }
                     },
+                    "introduceOnJoin": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -3823,6 +4330,7 @@
                     "name",
                     "displayName",
                     "icon",
+                    "iconUrl",
                     "description",
                     "runtime",
                     "model",
@@ -3848,6 +4356,7 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "introduceOnJoin",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -4099,7 +4608,15 @@
                                       "ship",
                                       "box",
                                       "hexagon",
-                                      "compass"
+                                      "compass",
+                                      "atom",
+                                      "flame",
+                                      "star",
+                                      "heart",
+                                      "globe",
+                                      "database",
+                                      "shield",
+                                      "feather"
                                     ]
                                   },
                                   "color": {
@@ -4122,21 +4639,24 @@
                                     "enum": [
                                       "image"
                                     ]
-                                  },
-                                  "url": {
-                                    "type": "string",
-                                    "maxLength": 2048,
-                                    "format": "uri",
-                                    "pattern": "^https:\\/\\/.*"
                                   }
                                 },
                                 "required": [
-                                  "kind",
-                                  "url"
+                                  "kind"
                                 ],
                                 "additionalProperties": false
                               }
                             ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "iconUrl": {
+                        "anyOf": [
+                          {
+                            "type": "string"
                           },
                           {
                             "type": "null"
@@ -4395,6 +4915,9 @@
                           "type": "string"
                         }
                       },
+                      "introduceOnJoin": {
+                        "type": "boolean"
+                      },
                       "hookKinds": {
                         "type": "array",
                         "items": {
@@ -4412,6 +4935,7 @@
                       "name",
                       "displayName",
                       "icon",
+                      "iconUrl",
                       "description",
                       "runtime",
                       "model",
@@ -4437,6 +4961,7 @@
                       "canManageSharing",
                       "callPolicy",
                       "allowedCallerAgentIds",
+                      "introduceOnJoin",
                       "hookKinds"
                     ],
                     "additionalProperties": false
@@ -4547,7 +5072,15 @@
                                     "ship",
                                     "box",
                                     "hexagon",
-                                    "compass"
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
                                   ]
                                 },
                                 "color": {
@@ -4570,21 +5103,24 @@
                                   "enum": [
                                     "image"
                                   ]
-                                },
-                                "url": {
-                                  "type": "string",
-                                  "maxLength": 2048,
-                                  "format": "uri",
-                                  "pattern": "^https:\\/\\/.*"
                                 }
                               },
                               "required": [
-                                "kind",
-                                "url"
+                                "kind"
                               ],
                               "additionalProperties": false
                             }
                           ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
                         },
                         {
                           "type": "null"
@@ -4843,6 +5379,9 @@
                         "type": "string"
                       }
                     },
+                    "introduceOnJoin": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -4860,6 +5399,7 @@
                     "name",
                     "displayName",
                     "icon",
+                    "iconUrl",
                     "description",
                     "runtime",
                     "model",
@@ -4885,6 +5425,7 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "introduceOnJoin",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -4994,7 +5535,15 @@
                                   "ship",
                                   "box",
                                   "hexagon",
-                                  "compass"
+                                  "compass",
+                                  "atom",
+                                  "flame",
+                                  "star",
+                                  "heart",
+                                  "globe",
+                                  "database",
+                                  "shield",
+                                  "feather"
                                 ]
                               },
                               "color": {
@@ -5006,27 +5555,6 @@
                               "kind",
                               "glyph",
                               "color"
-                            ]
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "kind": {
-                                "type": "string",
-                                "enum": [
-                                  "image"
-                                ]
-                              },
-                              "url": {
-                                "type": "string",
-                                "maxLength": 2048,
-                                "format": "uri",
-                                "pattern": "^https:\\/\\/.*"
-                              }
-                            },
-                            "required": [
-                              "kind",
-                              "url"
                             ]
                           }
                         ]
@@ -5082,6 +5610,7 @@
                       {
                         "type": "string",
                         "enum": [
+                          "minimal",
                           "low",
                           "medium",
                           "high"
@@ -5122,6 +5651,9 @@
                         "type": "null"
                       }
                     ]
+                  },
+                  "introduceOnJoin": {
+                    "type": "boolean"
                   },
                   "env": {
                     "anyOf": [
@@ -5274,7 +5806,15 @@
                                     "ship",
                                     "box",
                                     "hexagon",
-                                    "compass"
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
                                   ]
                                 },
                                 "color": {
@@ -5297,21 +5837,24 @@
                                   "enum": [
                                     "image"
                                   ]
-                                },
-                                "url": {
-                                  "type": "string",
-                                  "maxLength": 2048,
-                                  "format": "uri",
-                                  "pattern": "^https:\\/\\/.*"
                                 }
                               },
                               "required": [
-                                "kind",
-                                "url"
+                                "kind"
                               ],
                               "additionalProperties": false
                             }
                           ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
                         },
                         {
                           "type": "null"
@@ -5570,6 +6113,9 @@
                         "type": "string"
                       }
                     },
+                    "introduceOnJoin": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -5587,6 +6133,7 @@
                     "name",
                     "displayName",
                     "icon",
+                    "iconUrl",
                     "description",
                     "runtime",
                     "model",
@@ -5612,6 +6159,7 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "introduceOnJoin",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -5833,14 +6381,14 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/daemon": {
+    "/v1/orgs/{orgId}/agents/{id}/workspace": {
       "put": {
-        "operationId": "moveAgentDaemon",
-        "summary": "Move an agent to another daemon",
+        "operationId": "convertAgentWorkspace",
+        "summary": "Convert a scratch workspace to GitHub",
         "tags": [
-          "Agents"
+          "Agent workspace"
         ],
-        "description": "Cold-reprovision an agent on another READY daemon. The active turn is drained; daemon-local workspace, memory, and transcript data are not migrated.",
+        "description": "Promote an empty scratch workspace to an explicitly authorized GitHub repository. The owning daemon drains active work, clones the repository, and acknowledges activation; agent configuration, integrations, sessions, and memory are preserved.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5848,14 +6396,25 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "daemonId": {
+                  "repoFullName": {
                     "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    "pattern": "^[^/\\s]+\\/[^/\\s]+$"
+                  },
+                  "gitBranch": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "gitAccess": {
+                    "default": "read",
+                    "type": "string",
+                    "enum": [
+                      "read",
+                      "write"
+                    ]
                   }
                 },
                 "required": [
-                  "daemonId"
+                  "repoFullName"
                 ],
                 "additionalProperties": false
               }
@@ -5953,7 +6512,15 @@
                                     "ship",
                                     "box",
                                     "hexagon",
-                                    "compass"
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
                                   ]
                                 },
                                 "color": {
@@ -5976,21 +6543,24 @@
                                   "enum": [
                                     "image"
                                   ]
-                                },
-                                "url": {
-                                  "type": "string",
-                                  "maxLength": 2048,
-                                  "format": "uri",
-                                  "pattern": "^https:\\/\\/.*"
                                 }
                               },
                               "required": [
-                                "kind",
-                                "url"
+                                "kind"
                               ],
                               "additionalProperties": false
                             }
                           ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
                         },
                         {
                           "type": "null"
@@ -6249,6 +6819,9 @@
                         "type": "string"
                       }
                     },
+                    "introduceOnJoin": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -6266,6 +6839,7 @@
                     "name",
                     "displayName",
                     "icon",
+                    "iconUrl",
                     "description",
                     "runtime",
                     "model",
@@ -6291,6 +6865,671 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "introduceOnJoin",
+                    "hookKinds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/agents/{id}/daemon": {
+      "put": {
+        "operationId": "moveAgentDaemon",
+        "summary": "Move an agent to another daemon",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Cold-reprovision an agent on another READY daemon. The active turn is drained; daemon-local workspace, memory, and transcript data are not migrated.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "daemonId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "daemonId"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "orgId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "icon": {
+                      "anyOf": [
+                        {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "runtime"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "glyph"
+                                  ]
+                                },
+                                "glyph": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bot",
+                                    "cpu",
+                                    "terminal",
+                                    "code",
+                                    "rocket",
+                                    "zap",
+                                    "bug",
+                                    "git-branch",
+                                    "message-square",
+                                    "sparkles",
+                                    "brain",
+                                    "wrench",
+                                    "ship",
+                                    "box",
+                                    "hexagon",
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
+                                  ]
+                                },
+                                "color": {
+                                  "type": "string",
+                                  "pattern": "^#[0-9a-fA-F]{6}$"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "glyph",
+                                "color"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "image"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "description": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "reasoningEffort": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "outputMode": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "fastMode": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "permissionMode": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "pause": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "env": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "mcpServers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "memory": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "provider": {
+                              "type": "string",
+                              "enum": [
+                                "native",
+                                "managed",
+                                "external"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "provider"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "daemonId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "workspace": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "scratch"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "github"
+                              ]
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "installationId": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "workspaceRepoId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "createdBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "lastModifiedAt": {
+                      "type": "string"
+                    },
+                    "lastModifiedBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "visibility": {
+                      "type": "string",
+                      "enum": [
+                        "org",
+                        "restricted"
+                      ]
+                    },
+                    "sharedWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "canManageSharing": {
+                      "type": "boolean"
+                    },
+                    "callPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedCallerAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "introduceOnJoin": {
+                      "type": "boolean"
+                    },
+                    "hookKinds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "webhook",
+                          "github"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "orgId",
+                    "name",
+                    "displayName",
+                    "icon",
+                    "iconUrl",
+                    "description",
+                    "runtime",
+                    "model",
+                    "reasoningEffort",
+                    "outputMode",
+                    "fastMode",
+                    "permissionMode",
+                    "pause",
+                    "env",
+                    "mcpServers",
+                    "memory",
+                    "status",
+                    "daemonId",
+                    "workspace",
+                    "workspaceRepoId",
+                    "capabilities",
+                    "createdAt",
+                    "createdBy",
+                    "lastModifiedAt",
+                    "lastModifiedBy",
+                    "visibility",
+                    "sharedWith",
+                    "canManageSharing",
+                    "callPolicy",
+                    "allowedCallerAgentIds",
+                    "introduceOnJoin",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -6550,7 +7789,15 @@
                                     "ship",
                                     "box",
                                     "hexagon",
-                                    "compass"
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
                                   ]
                                 },
                                 "color": {
@@ -6573,21 +7820,24 @@
                                   "enum": [
                                     "image"
                                   ]
-                                },
-                                "url": {
-                                  "type": "string",
-                                  "maxLength": 2048,
-                                  "format": "uri",
-                                  "pattern": "^https:\\/\\/.*"
                                 }
                               },
                               "required": [
-                                "kind",
-                                "url"
+                                "kind"
                               ],
                               "additionalProperties": false
                             }
                           ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
                         },
                         {
                           "type": "null"
@@ -6846,6 +8096,9 @@
                         "type": "string"
                       }
                     },
+                    "introduceOnJoin": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -6863,6 +8116,7 @@
                     "name",
                     "displayName",
                     "icon",
+                    "iconUrl",
                     "description",
                     "runtime",
                     "model",
@@ -6888,6 +8142,7 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "introduceOnJoin",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -7119,7 +8374,15 @@
                                     "ship",
                                     "box",
                                     "hexagon",
-                                    "compass"
+                                    "compass",
+                                    "atom",
+                                    "flame",
+                                    "star",
+                                    "heart",
+                                    "globe",
+                                    "database",
+                                    "shield",
+                                    "feather"
                                   ]
                                 },
                                 "color": {
@@ -7142,21 +8405,24 @@
                                   "enum": [
                                     "image"
                                   ]
-                                },
-                                "url": {
-                                  "type": "string",
-                                  "maxLength": 2048,
-                                  "format": "uri",
-                                  "pattern": "^https:\\/\\/.*"
                                 }
                               },
                               "required": [
-                                "kind",
-                                "url"
+                                "kind"
                               ],
                               "additionalProperties": false
                             }
                           ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "iconUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
                         },
                         {
                           "type": "null"
@@ -7415,6 +8681,9 @@
                         "type": "string"
                       }
                     },
+                    "introduceOnJoin": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -7432,6 +8701,7 @@
                     "name",
                     "displayName",
                     "icon",
+                    "iconUrl",
                     "description",
                     "runtime",
                     "model",
@@ -7457,6 +8727,7 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "introduceOnJoin",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -9177,7 +10448,7 @@
         "tags": [
           "Agents"
         ],
-        "description": "Explicit GitHub repository grants for this agent. An App-backed workspace repo is implicit and not listed; a manual GitHub workspace may explicitly grant its own repo for review/check effects. Gated by the agent’s visibility.",
+        "description": "Explicit GitHub repository grants for this agent. An App-backed workspace repo is implicit and not listed; scratch workspaces may grant any covered repository, while a manual GitHub workspace may explicitly grant only its own repo for review/check effects. Gated by the agent’s visibility.",
         "parameters": [
           {
             "name": "orgId",
@@ -9289,7 +10560,7 @@
         "tags": [
           "Agents"
         ],
-        "description": "Grant the agent access to a GitHub repository. App-backed workspaces may add repositories beyond their implicit workspace grant; a manual GitHub workspace may explicitly authorize only its own repository for control-plane review/check effects. The repository must be covered by one of the organization’s GitHub App installations; with the per-user gate configured, the caller must hold the matching GitHub permission (`read`/`comment` tiers need read, `write` needs write).",
+        "description": "Grant the agent access to a GitHub repository. App-backed workspaces may add repositories beyond their implicit workspace grant, scratch workspaces may add any covered repository, and a manual GitHub workspace may explicitly authorize only its own repository for control-plane review/check effects. The repository must be covered by one of the organization’s GitHub App installations; with the per-user gate configured, the caller must hold the matching GitHub permission (`read`/`comment` tiers need read, `write` needs write).",
         "requestBody": {
           "required": true,
           "content": {
@@ -10154,7 +11425,8 @@
                     "enum": [
                       "slack",
                       "telegram",
-                      "discord"
+                      "discord",
+                      "feishu"
                     ]
                   },
                   "agentId": {
@@ -10168,6 +11440,13 @@
                   "shareable": {
                     "type": "boolean"
                   },
+                  "transport": {
+                    "type": "string",
+                    "enum": [
+                      "socket",
+                      "http"
+                    ]
+                  },
                   "slack": {
                     "type": "object",
                     "properties": {
@@ -10178,11 +11457,14 @@
                       "appToken": {
                         "type": "string",
                         "minLength": 1
+                      },
+                      "signingSecret": {
+                        "type": "string",
+                        "minLength": 1
                       }
                     },
                     "required": [
-                      "botToken",
-                      "appToken"
+                      "botToken"
                     ]
                   },
                   "telegram": {
@@ -10211,6 +11493,23 @@
                     },
                     "required": [
                       "botToken"
+                    ]
+                  },
+                  "feishu": {
+                    "type": "object",
+                    "properties": {
+                      "appId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "appSecret": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "appId",
+                      "appSecret"
                     ]
                   }
                 },
@@ -10973,6 +12272,13 @@
                       "shareable": {
                         "type": "boolean"
                       },
+                      "transport": {
+                        "type": "string",
+                        "enum": [
+                          "socket",
+                          "http"
+                        ]
+                      },
                       "inUseByAgentId": {
                         "anyOf": [
                           {
@@ -11022,6 +12328,7 @@
                       "discordAppId",
                       "createdBy",
                       "shareable",
+                      "transport",
                       "inUseByAgentId",
                       "agentIds",
                       "lastUsedAt",
@@ -11116,6 +12423,13 @@
                     "shareable": {
                       "type": "boolean"
                     },
+                    "transport": {
+                      "type": "string",
+                      "enum": [
+                        "socket",
+                        "http"
+                      ]
+                    },
                     "inUseByAgentId": {
                       "anyOf": [
                         {
@@ -11165,6 +12479,7 @@
                     "discordAppId",
                     "createdBy",
                     "shareable",
+                    "transport",
                     "inUseByAgentId",
                     "agentIds",
                     "lastUsedAt",
@@ -11425,6 +12740,13 @@
                     "shareable": {
                       "type": "boolean"
                     },
+                    "transport": {
+                      "type": "string",
+                      "enum": [
+                        "socket",
+                        "http"
+                      ]
+                    },
                     "inUseByAgentId": {
                       "anyOf": [
                         {
@@ -11474,6 +12796,7 @@
                     "discordAppId",
                     "createdBy",
                     "shareable",
+                    "transport",
                     "inUseByAgentId",
                     "agentIds",
                     "lastUsedAt",
@@ -12382,7 +13705,8 @@
                     "enum": [
                       "slack",
                       "telegram",
-                      "discord"
+                      "discord",
+                      "feishu"
                     ]
                   },
                   "targetChannel": {
@@ -12485,7 +13809,8 @@
                       "enum": [
                         "slack",
                         "telegram",
-                        "discord"
+                        "discord",
+                        "feishu"
                       ]
                     },
                     "targetChannel": {
@@ -12781,7 +14106,8 @@
                       "enum": [
                         "slack",
                         "telegram",
-                        "discord"
+                        "discord",
+                        "feishu"
                       ]
                     },
                     "targetChannel": {
@@ -13104,7 +14430,8 @@
                         "enum": [
                           "slack",
                           "telegram",
-                          "discord"
+                          "discord",
+                          "feishu"
                         ]
                       },
                       "targetChannel": {
@@ -13626,7 +14953,8 @@
                       "enum": [
                         "slack",
                         "telegram",
-                        "discord"
+                        "discord",
+                        "feishu"
                       ]
                     },
                     "targetChannel": {
@@ -13863,7 +15191,8 @@
                         "enum": [
                           "slack",
                           "telegram",
-                          "discord"
+                          "discord",
+                          "feishu"
                         ]
                       },
                       "targetChannel": {
@@ -13923,7 +15252,8 @@
                         "enum": [
                           "slack",
                           "telegram",
-                          "discord"
+                          "discord",
+                          "feishu"
                         ]
                       },
                       "targetChannel": {
@@ -14167,7 +15497,8 @@
                       "enum": [
                         "slack",
                         "telegram",
-                        "discord"
+                        "discord",
+                        "feishu"
                       ]
                     },
                     "targetChannel": {
@@ -14589,7 +15920,8 @@
                         "enum": [
                           "slack",
                           "telegram",
-                          "discord"
+                          "discord",
+                          "feishu"
                         ]
                       },
                       "targetChannel": {
@@ -14879,7 +16211,8 @@
                       "enum": [
                         "slack",
                         "telegram",
-                        "discord"
+                        "discord",
+                        "feishu"
                       ]
                     },
                     "targetChannel": {
@@ -15040,7 +16373,8 @@
                         "enum": [
                           "slack",
                           "telegram",
-                          "discord"
+                          "discord",
+                          "feishu"
                         ]
                       },
                       "targetChannel": {
@@ -15150,7 +16484,8 @@
                         "enum": [
                           "slack",
                           "telegram",
-                          "discord"
+                          "discord",
+                          "feishu"
                         ]
                       },
                       "targetChannel": {
@@ -15342,7 +16677,8 @@
                       "enum": [
                         "slack",
                         "telegram",
-                        "discord"
+                        "discord",
+                        "feishu"
                       ]
                     },
                     "targetChannel": {

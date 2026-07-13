@@ -2,3 +2,4 @@
 - readagentworkspacefile
 - getagentworkspacegitstatus
 - pullagentworkspace
+- convertagentworkspace
