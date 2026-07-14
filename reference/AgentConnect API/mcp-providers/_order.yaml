@@ -1,0 +1,5 @@
+- listmcpproviders
+- createmcpprovider
+- getmcpprovider
+- updatemcpprovider
+- deletemcpprovider

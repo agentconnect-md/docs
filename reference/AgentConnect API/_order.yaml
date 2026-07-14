@@ -9,6 +9,7 @@
 - sessions
 - integrations
 - bots
+- mcp-providers
 - crons
 - hooks
 - usage
