@@ -2093,44 +2093,11 @@
                                 "http",
                                 "sse"
                               ]
-                            },
-                            "ok": {
-                              "type": "boolean"
-                            },
-                            "tools": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            },
-                            "version": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "error": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
                             }
                           },
                           "required": [
                             "name",
-                            "transport",
-                            "ok",
-                            "tools",
-                            "version",
-                            "error"
+                            "transport"
                           ],
                           "additionalProperties": false
                         }
@@ -2500,44 +2467,11 @@
                               "http",
                               "sse"
                             ]
-                          },
-                          "ok": {
-                            "type": "boolean"
-                          },
-                          "tools": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          "version": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "error": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
                           }
                         },
                         "required": [
                           "name",
-                          "transport",
-                          "ok",
-                          "tools",
-                          "version",
-                          "error"
+                          "transport"
                         ],
                         "additionalProperties": false
                       }
@@ -3180,44 +3114,11 @@
                               "http",
                               "sse"
                             ]
-                          },
-                          "ok": {
-                            "type": "boolean"
-                          },
-                          "tools": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          "version": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "error": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
                           }
                         },
                         "required": [
                           "name",
-                          "transport",
-                          "ok",
-                          "tools",
-                          "version",
-                          "error"
+                          "transport"
                         ],
                         "additionalProperties": false
                       }
@@ -5861,6 +5762,16 @@
                     "type": "string",
                     "enum": [
                       "write"
+                    ]
+                  },
+                  "agentDir": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
                     ]
                   },
                   "env": {
@@ -13740,7 +13651,7 @@
         "tags": [
           "MCP providers"
         ],
-        "description": "Edit an MCP provider’s name, url, and/or upstream headers. `headers` replaces the stored set wholesale; a changed url passes the SSRF gate. Transport and visibility are immutable through this surface.",
+        "description": "Edit an MCP provider’s url and/or upstream headers. `headers` replaces the stored set wholesale; a changed url passes the SSRF gate. Name, transport, and visibility are immutable through this surface (agents bind by name; recreate to rename).",
         "requestBody": {
           "required": true,
           "content": {
@@ -13748,11 +13659,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                  },
                   "url": {
                     "type": "string",
                     "minLength": 1
@@ -13970,6 +13876,146 @@
         "responses": {
           "204": {
             "description": "Default Response"
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/mcp-providers/{id}/grant/rotate": {
+      "post": {
+        "operationId": "rotateMcpProviderGrant",
+        "summary": "Rotate an MCP provider grant key",
+        "tags": [
+          "MCP providers"
+        ],
+        "description": "Mint a fresh bearer grant key for the provider and retire the previous one. The new key + binding are pushed to relays and daemons before the old grant is revoked (grace-safe). Like create, the new grant key is returned exactly once and is never retrievable afterward.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "transport": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "visibility": {
+                      "type": "string"
+                    },
+                    "headerNames": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "grantKey": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "transport",
+                    "url",
+                    "visibility",
+                    "headerNames",
+                    "createdAt",
+                    "grantKey"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
             "description": "Default Response",
@@ -15184,6 +15230,10 @@
                     "type": "string",
                     "minLength": 1
                   },
+                  "timezone": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "targetPlatform": {
                     "default": "slack",
                     "type": "string",
@@ -15289,6 +15339,9 @@
                     "schedule": {
                       "type": "string"
                     },
+                    "timezone": {
+                      "type": "string"
+                    },
                     "targetPlatform": {
                       "type": "string",
                       "enum": [
@@ -15383,6 +15436,7 @@
                     "agentId",
                     "name",
                     "schedule",
+                    "timezone",
                     "targetPlatform",
                     "targetChannel",
                     "targetIntegrationId",
@@ -15586,6 +15640,9 @@
                     "schedule": {
                       "type": "string"
                     },
+                    "timezone": {
+                      "type": "string"
+                    },
                     "targetPlatform": {
                       "type": "string",
                       "enum": [
@@ -15680,6 +15737,7 @@
                     "agentId",
                     "name",
                     "schedule",
+                    "timezone",
                     "targetPlatform",
                     "targetChannel",
                     "targetIntegrationId",
@@ -15910,6 +15968,9 @@
                       "schedule": {
                         "type": "string"
                       },
+                      "timezone": {
+                        "type": "string"
+                      },
                       "targetPlatform": {
                         "type": "string",
                         "enum": [
@@ -16004,6 +16065,7 @@
                       "agentId",
                       "name",
                       "schedule",
+                      "timezone",
                       "targetPlatform",
                       "targetChannel",
                       "targetIntegrationId",
@@ -16433,6 +16495,9 @@
                     "schedule": {
                       "type": "string"
                     },
+                    "timezone": {
+                      "type": "string"
+                    },
                     "targetPlatform": {
                       "type": "string",
                       "enum": [
@@ -16527,6 +16592,7 @@
                     "agentId",
                     "name",
                     "schedule",
+                    "timezone",
                     "targetPlatform",
                     "targetChannel",
                     "targetIntegrationId",
