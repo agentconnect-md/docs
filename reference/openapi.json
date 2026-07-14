@@ -3869,6 +3869,16 @@
                       "type": "string"
                     }
                   },
+                  "secrets": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                    },
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
                   "mcpServers": {
                     "type": "array",
                     "items": {
@@ -3882,6 +3892,7 @@
                       "provider": {
                         "type": "string",
                         "enum": [
+                          "none",
                           "native",
                           "managed",
                           "external"
@@ -4210,6 +4221,12 @@
                         "type": "string"
                       }
                     },
+                    "secretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -4224,6 +4241,7 @@
                             "provider": {
                               "type": "string",
                               "enum": [
+                                "none",
                                 "native",
                                 "managed",
                                 "external"
@@ -4437,6 +4455,7 @@
                     "permissionMode",
                     "pause",
                     "env",
+                    "secretKeys",
                     "mcpServers",
                     "memory",
                     "status",
@@ -4842,6 +4861,12 @@
                           "type": "string"
                         }
                       },
+                      "secretKeys": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
                       "mcpServers": {
                         "type": "array",
                         "items": {
@@ -4856,6 +4881,7 @@
                               "provider": {
                                 "type": "string",
                                 "enum": [
+                                  "none",
                                   "native",
                                   "managed",
                                   "external"
@@ -5045,6 +5071,7 @@
                       "permissionMode",
                       "pause",
                       "env",
+                      "secretKeys",
                       "mcpServers",
                       "memory",
                       "status",
@@ -5309,6 +5336,12 @@
                         "type": "string"
                       }
                     },
+                    "secretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -5323,6 +5356,7 @@
                             "provider": {
                               "type": "string",
                               "enum": [
+                                "none",
                                 "native",
                                 "managed",
                                 "external"
@@ -5512,6 +5546,7 @@
                     "permissionMode",
                     "pause",
                     "env",
+                    "secretKeys",
                     "mcpServers",
                     "memory",
                     "status",
@@ -5791,6 +5826,23 @@
                       }
                     ]
                   },
+                  "secrets": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                    },
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
                   "mcpServers": {
                     "anyOf": [
                       {
@@ -5813,6 +5865,7 @@
                           "provider": {
                             "type": "string",
                             "enum": [
+                              "none",
                               "native",
                               "managed",
                               "external"
@@ -6065,6 +6118,12 @@
                         "type": "string"
                       }
                     },
+                    "secretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -6079,6 +6138,7 @@
                             "provider": {
                               "type": "string",
                               "enum": [
+                                "none",
                                 "native",
                                 "managed",
                                 "external"
@@ -6268,6 +6328,7 @@
                     "permissionMode",
                     "pause",
                     "env",
+                    "secretKeys",
                     "mcpServers",
                     "memory",
                     "status",
@@ -6834,6 +6895,12 @@
                         "type": "string"
                       }
                     },
+                    "secretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -6848,6 +6915,7 @@
                             "provider": {
                               "type": "string",
                               "enum": [
+                                "none",
                                 "native",
                                 "managed",
                                 "external"
@@ -7037,6 +7105,7 @@
                     "permissionMode",
                     "pause",
                     "env",
+                    "secretKeys",
                     "mcpServers",
                     "memory",
                     "status",
@@ -7501,6 +7570,12 @@
                         "type": "string"
                       }
                     },
+                    "secretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -7515,6 +7590,7 @@
                             "provider": {
                               "type": "string",
                               "enum": [
+                                "none",
                                 "native",
                                 "managed",
                                 "external"
@@ -7704,6 +7780,7 @@
                     "permissionMode",
                     "pause",
                     "env",
+                    "secretKeys",
                     "mcpServers",
                     "memory",
                     "status",
@@ -8117,6 +8194,12 @@
                         "type": "string"
                       }
                     },
+                    "secretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -8131,6 +8214,7 @@
                             "provider": {
                               "type": "string",
                               "enum": [
+                                "none",
                                 "native",
                                 "managed",
                                 "external"
@@ -8320,6 +8404,7 @@
                     "permissionMode",
                     "pause",
                     "env",
+                    "secretKeys",
                     "mcpServers",
                     "memory",
                     "status",
@@ -8705,6 +8790,12 @@
                         "type": "string"
                       }
                     },
+                    "secretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -8719,6 +8810,7 @@
                             "provider": {
                               "type": "string",
                               "enum": [
+                                "none",
                                 "native",
                                 "managed",
                                 "external"
@@ -8908,6 +9000,7 @@
                     "permissionMode",
                     "pause",
                     "env",
+                    "secretKeys",
                     "mcpServers",
                     "memory",
                     "status",
