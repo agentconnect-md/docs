@@ -2,3 +2,7 @@
 - addmember
 - updatemember
 - removemember
+- acceptorganizationinvitelink
+- getorganizationinvitelink
+- createorganizationinvitelink
+- revokeorganizationinvitelink
