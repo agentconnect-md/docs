@@ -13412,6 +13412,25 @@
                       "visibility": {
                         "type": "string"
                       },
+                      "sharedWith": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "createdBy": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "canManageSharing": {
+                        "type": "boolean"
+                      },
                       "headerNames": {
                         "type": "array",
                         "items": {
@@ -13428,6 +13447,9 @@
                       "transport",
                       "url",
                       "visibility",
+                      "sharedWith",
+                      "createdBy",
+                      "canManageSharing",
                       "headerNames",
                       "createdAt"
                     ],
@@ -13475,6 +13497,12 @@
                       "org",
                       "restricted"
                     ]
+                  },
+                  "sharedWith": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "headers": {
                     "default": [],
@@ -13542,6 +13570,25 @@
                     "visibility": {
                       "type": "string"
                     },
+                    "sharedWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canManageSharing": {
+                      "type": "boolean"
+                    },
                     "headerNames": {
                       "type": "array",
                       "items": {
@@ -13561,6 +13608,9 @@
                     "transport",
                     "url",
                     "visibility",
+                    "sharedWith",
+                    "createdBy",
+                    "canManageSharing",
                     "headerNames",
                     "createdAt",
                     "grantKey"
@@ -13682,6 +13732,25 @@
                     "visibility": {
                       "type": "string"
                     },
+                    "sharedWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canManageSharing": {
+                      "type": "boolean"
+                    },
                     "headerNames": {
                       "type": "array",
                       "items": {
@@ -13698,6 +13767,9 @@
                     "transport",
                     "url",
                     "visibility",
+                    "sharedWith",
+                    "createdBy",
+                    "canManageSharing",
                     "headerNames",
                     "createdAt"
                   ],
@@ -13825,6 +13897,25 @@
                     "visibility": {
                       "type": "string"
                     },
+                    "sharedWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canManageSharing": {
+                      "type": "boolean"
+                    },
                     "headerNames": {
                       "type": "array",
                       "items": {
@@ -13841,6 +13932,9 @@
                     "transport",
                     "url",
                     "visibility",
+                    "sharedWith",
+                    "createdBy",
+                    "canManageSharing",
                     "headerNames",
                     "createdAt"
                   ],
@@ -14082,6 +14176,25 @@
                     "visibility": {
                       "type": "string"
                     },
+                    "sharedWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canManageSharing": {
+                      "type": "boolean"
+                    },
                     "headerNames": {
                       "type": "array",
                       "items": {
@@ -14101,9 +14214,200 @@
                     "transport",
                     "url",
                     "visibility",
+                    "sharedWith",
+                    "createdBy",
+                    "canManageSharing",
                     "headerNames",
                     "createdAt",
                     "grantKey"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/mcp-providers/{id}/sharing": {
+      "put": {
+        "operationId": "setMcpProviderSharing",
+        "summary": "Set MCP provider sharing",
+        "tags": [
+          "MCP providers"
+        ],
+        "description": "Set the provider’s visibility (org-wide vs restricted) and share set. Requires edit rights; sharedWith is intersected with current org members.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "visibility": {
+                    "type": "string",
+                    "enum": [
+                      "org",
+                      "restricted"
+                    ]
+                  },
+                  "sharedWith": {
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "visibility"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "transport": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "visibility": {
+                      "type": "string"
+                    },
+                    "sharedWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canManageSharing": {
+                      "type": "boolean"
+                    },
+                    "headerNames": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "transport",
+                    "url",
+                    "visibility",
+                    "sharedWith",
+                    "createdBy",
+                    "canManageSharing",
+                    "headerNames",
+                    "createdAt"
                   ],
                   "additionalProperties": false
                 }
