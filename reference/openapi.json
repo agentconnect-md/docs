@@ -4413,6 +4413,9 @@
                     "sandboxSupported": {
                       "type": "boolean"
                     },
+                    "sandboxRequired": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -4484,6 +4487,7 @@
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
+                    "sandboxRequired",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -5061,6 +5065,9 @@
                       "sandboxSupported": {
                         "type": "boolean"
                       },
+                      "sandboxRequired": {
+                        "type": "boolean"
+                      },
                       "hookKinds": {
                         "type": "array",
                         "items": {
@@ -5108,6 +5115,7 @@
                       "introduceOnJoin",
                       "restrictFileAccess",
                       "sandboxSupported",
+                      "sandboxRequired",
                       "hookKinds"
                     ],
                     "additionalProperties": false
@@ -5544,6 +5552,9 @@
                     "sandboxSupported": {
                       "type": "boolean"
                     },
+                    "sandboxRequired": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -5591,6 +5602,7 @@
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
+                    "sandboxRequired",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -6337,6 +6349,9 @@
                     "sandboxSupported": {
                       "type": "boolean"
                     },
+                    "sandboxRequired": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -6384,6 +6399,7 @@
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
+                    "sandboxRequired",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -7122,6 +7138,9 @@
                     "sandboxSupported": {
                       "type": "boolean"
                     },
+                    "sandboxRequired": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -7169,6 +7188,7 @@
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
+                    "sandboxRequired",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -7805,6 +7825,9 @@
                     "sandboxSupported": {
                       "type": "boolean"
                     },
+                    "sandboxRequired": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -7852,6 +7875,7 @@
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
+                    "sandboxRequired",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -8437,6 +8461,9 @@
                     "sandboxSupported": {
                       "type": "boolean"
                     },
+                    "sandboxRequired": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -8484,6 +8511,7 @@
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
+                    "sandboxRequired",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -9041,6 +9069,9 @@
                     "sandboxSupported": {
                       "type": "boolean"
                     },
+                    "sandboxRequired": {
+                      "type": "boolean"
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -9088,6 +9119,7 @@
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
+                    "sandboxRequired",
                     "hookKinds"
                   ],
                   "additionalProperties": false
