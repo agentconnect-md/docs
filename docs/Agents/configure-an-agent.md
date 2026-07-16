@@ -33,7 +33,9 @@ This is about agent-to-agent calls; who can *see* the agent is [Visibility & sha
 
 ## Memory
 
-The **Memory** tab shows the agent's persistent memory and lets you edit it — useful for standing instructions ("our deploy window is Friday 10:00") without touching the workspace. The backend (Managed / Native) was chosen at creation.
+The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **None**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded.
+
+For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [External memory with Mem0 OSS](/docs/external-memory).
 
 ## API
 
