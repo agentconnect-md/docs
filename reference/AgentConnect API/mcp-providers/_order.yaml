@@ -5,3 +5,6 @@
 - deletemcpprovider
 - rotatemcpprovidergrant
 - setmcpprovidersharing
+- getconnectorsconfig
+- listconnectorproviders
+- createconnectorconnection

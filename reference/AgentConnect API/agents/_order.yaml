@@ -15,3 +15,11 @@
 - updateagentrepoauthorization
 - deleteagentrepoauthorization
 - mintwebchattoken
+- getagentmemorysurface
+- searchagentmemoryrecords
+- listagentmemoryrecords
+- createagentmemoryrecord
+- getagentmemoryrecord
+- updateagentmemoryrecord
+- deleteagentmemoryrecord
+- listagentmemoryrecordhistory
