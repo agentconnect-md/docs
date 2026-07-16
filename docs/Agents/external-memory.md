@@ -121,7 +121,7 @@ Enter:
 
 Then click **Create connection**. The credential is write-only: AgentConnect will show the logical name later, never its value.
 
-<!-- Screenshot: the populated Add external-memory connection modal from the test console. -->
+![A populated local Mem0 external-memory connection](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-connection.png)
 
 The new connection initially shows **probing**. Its exact revision is checked on the daemon after an agent selects it.
 
@@ -138,7 +138,7 @@ Choose the two policies independently:
 
 The defaults — 5 results, 8 KiB, and a 1-second timeout — are a good starting point. Click **Use external memory** or **Save external-memory policy**.
 
-<!-- Screenshot: an agent's External memory policy and record panel from the test console. -->
+![An agent using a ready external Mem0 connection](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-policy.png)
 
 The connection must pass the manifest, credential-contract, configuration, and capability checks for this exact revision before the agent can start with it. **Ready** is the normal active state. A revision that was already verified may later show **degraded** during a transient failure; the daemon keeps it admission-open and retries while recall itself fails open.
 
