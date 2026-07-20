@@ -2063,6 +2063,126 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "modelCatalog": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "models": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "id": {
+                                            "type": "string"
+                                          },
+                                          "name": {
+                                            "type": "string"
+                                          },
+                                          "efforts": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "value": {
+                                                  "type": "string"
+                                                },
+                                                "name": {
+                                                  "type": "string"
+                                                },
+                                                "description": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "value"
+                                              ],
+                                              "additionalProperties": false
+                                            }
+                                          },
+                                          "defaultEffort": {
+                                            "type": "string"
+                                          },
+                                          "fastMode": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "required": [
+                                          "id"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "defaultModel": {
+                                      "type": "string"
+                                    },
+                                    "permissionModes": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "value": {
+                                            "type": "string"
+                                          },
+                                          "name": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "value"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "defaultPermissionMode": {
+                                      "type": "string"
+                                    },
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "native",
+                                        "acp"
+                                      ]
+                                    },
+                                    "observedAt": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "models",
+                                    "source",
+                                    "observedAt"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "modelsSource": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "authRequired": {
+                              "type": "boolean"
+                            },
+                            "observedAt": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             }
                           },
                           "required": [
@@ -2073,7 +2193,11 @@
                             "acpSupport",
                             "acpProtocolVersion",
                             "toolCalling",
-                            "mcpCapabilities"
+                            "mcpCapabilities",
+                            "modelCatalog",
+                            "modelsSource",
+                            "authRequired",
+                            "observedAt"
                           ],
                           "additionalProperties": false
                         }
@@ -2437,6 +2561,126 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "modelCatalog": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "models": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        },
+                                        "efforts": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "value": {
+                                                "type": "string"
+                                              },
+                                              "name": {
+                                                "type": "string"
+                                              },
+                                              "description": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "value"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "defaultEffort": {
+                                          "type": "string"
+                                        },
+                                        "fastMode": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "id"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "defaultModel": {
+                                    "type": "string"
+                                  },
+                                  "permissionModes": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "value": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "value"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "defaultPermissionMode": {
+                                    "type": "string"
+                                  },
+                                  "source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "native",
+                                      "acp"
+                                    ]
+                                  },
+                                  "observedAt": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "models",
+                                  "source",
+                                  "observedAt"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "modelsSource": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          },
+                          "observedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
                           }
                         },
                         "required": [
@@ -2447,7 +2691,11 @@
                           "acpSupport",
                           "acpProtocolVersion",
                           "toolCalling",
-                          "mcpCapabilities"
+                          "mcpCapabilities",
+                          "modelCatalog",
+                          "modelsSource",
+                          "authRequired",
+                          "observedAt"
                         ],
                         "additionalProperties": false
                       }
@@ -3084,6 +3332,126 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "modelCatalog": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "models": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        },
+                                        "efforts": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "value": {
+                                                "type": "string"
+                                              },
+                                              "name": {
+                                                "type": "string"
+                                              },
+                                              "description": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "value"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "defaultEffort": {
+                                          "type": "string"
+                                        },
+                                        "fastMode": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "id"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "defaultModel": {
+                                    "type": "string"
+                                  },
+                                  "permissionModes": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "value": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "value"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "defaultPermissionMode": {
+                                    "type": "string"
+                                  },
+                                  "source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "native",
+                                      "acp"
+                                    ]
+                                  },
+                                  "observedAt": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "models",
+                                  "source",
+                                  "observedAt"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "modelsSource": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          },
+                          "observedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
                           }
                         },
                         "required": [
@@ -3094,7 +3462,11 @@
                           "acpSupport",
                           "acpProtocolVersion",
                           "toolCalling",
-                          "mcpCapabilities"
+                          "mcpCapabilities",
+                          "modelCatalog",
+                          "modelsSource",
+                          "authRequired",
+                          "observedAt"
                         ],
                         "additionalProperties": false
                       }
@@ -3930,7 +4302,7 @@
                               "mode": "auto",
                               "topK": 5,
                               "maxBytes": 8192,
-                              "timeoutMs": 1000
+                              "timeoutMs": 3000
                             },
                             "type": "object",
                             "properties": {
@@ -3955,10 +4327,10 @@
                                 "maximum": 32768
                               },
                               "timeoutMs": {
-                                "default": 1000,
+                                "default": 3000,
                                 "type": "integer",
                                 "exclusiveMinimum": 0,
-                                "maximum": 3000
+                                "maximum": 10000
                               }
                             },
                             "additionalProperties": false
@@ -4359,7 +4731,7 @@
                                     "mode": "auto",
                                     "topK": 5,
                                     "maxBytes": 8192,
-                                    "timeoutMs": 1000
+                                    "timeoutMs": 3000
                                   },
                                   "type": "object",
                                   "properties": {
@@ -4384,10 +4756,10 @@
                                       "maximum": 32768
                                     },
                                     "timeoutMs": {
-                                      "default": 1000,
+                                      "default": 3000,
                                       "type": "integer",
                                       "exclusiveMinimum": 0,
-                                      "maximum": 3000
+                                      "maximum": 10000
                                     }
                                   },
                                   "required": [
@@ -5131,7 +5503,7 @@
                                       "mode": "auto",
                                       "topK": 5,
                                       "maxBytes": 8192,
-                                      "timeoutMs": 1000
+                                      "timeoutMs": 3000
                                     },
                                     "type": "object",
                                     "properties": {
@@ -5156,10 +5528,10 @@
                                         "maximum": 32768
                                       },
                                       "timeoutMs": {
-                                        "default": 1000,
+                                        "default": 3000,
                                         "type": "integer",
                                         "exclusiveMinimum": 0,
-                                        "maximum": 3000
+                                        "maximum": 10000
                                       }
                                     },
                                     "required": [
@@ -5708,7 +6080,7 @@
                                     "mode": "auto",
                                     "topK": 5,
                                     "maxBytes": 8192,
-                                    "timeoutMs": 1000
+                                    "timeoutMs": 3000
                                   },
                                   "type": "object",
                                   "properties": {
@@ -5733,10 +6105,10 @@
                                       "maximum": 32768
                                     },
                                     "timeoutMs": {
-                                      "default": 1000,
+                                      "default": 3000,
                                       "type": "integer",
                                       "exclusiveMinimum": 0,
-                                      "maximum": 3000
+                                      "maximum": 10000
                                     }
                                   },
                                   "required": [
@@ -6322,7 +6694,7 @@
                                   "mode": "auto",
                                   "topK": 5,
                                   "maxBytes": 8192,
-                                  "timeoutMs": 1000
+                                  "timeoutMs": 3000
                                 },
                                 "type": "object",
                                 "properties": {
@@ -6347,10 +6719,10 @@
                                     "maximum": 32768
                                   },
                                   "timeoutMs": {
-                                    "default": 1000,
+                                    "default": 3000,
                                     "type": "integer",
                                     "exclusiveMinimum": 0,
-                                    "maximum": 3000
+                                    "maximum": 10000
                                   }
                                 },
                                 "additionalProperties": false
@@ -6675,7 +7047,7 @@
                                     "mode": "auto",
                                     "topK": 5,
                                     "maxBytes": 8192,
-                                    "timeoutMs": 1000
+                                    "timeoutMs": 3000
                                   },
                                   "type": "object",
                                   "properties": {
@@ -6700,10 +7072,10 @@
                                       "maximum": 32768
                                     },
                                     "timeoutMs": {
-                                      "default": 1000,
+                                      "default": 3000,
                                       "type": "integer",
                                       "exclusiveMinimum": 0,
-                                      "maximum": 3000
+                                      "maximum": 10000
                                     }
                                   },
                                   "required": [
@@ -7268,7 +7640,7 @@
         "tags": [
           "Agent workspace"
         ],
-        "description": "Promote an empty scratch workspace to an explicitly authorized GitHub repository. The owning daemon drains active work, clones the repository, and acknowledges activation; agent configuration, integrations, sessions, and memory are preserved.",
+        "description": "Promote an empty scratch workspace to any GitHub repository covered by one of the organization’s GitHub App installations — the same trust path as creating an agent with a GitHub workspace (with the per-user gate configured, the caller must hold the matching GitHub permission). The owning daemon drains active work, clones the repository, and acknowledges activation; agent configuration, integrations, sessions, and memory are preserved.",
         "requestBody": {
           "required": true,
           "content": {
@@ -7584,7 +7956,7 @@
                                     "mode": "auto",
                                     "topK": 5,
                                     "maxBytes": 8192,
-                                    "timeoutMs": 1000
+                                    "timeoutMs": 3000
                                   },
                                   "type": "object",
                                   "properties": {
@@ -7609,10 +7981,10 @@
                                       "maximum": 32768
                                     },
                                     "timeoutMs": {
-                                      "default": 1000,
+                                      "default": 3000,
                                       "type": "integer",
                                       "exclusiveMinimum": 0,
-                                      "maximum": 3000
+                                      "maximum": 10000
                                     }
                                   },
                                   "required": [
@@ -8361,7 +8733,7 @@
                                     "mode": "auto",
                                     "topK": 5,
                                     "maxBytes": 8192,
-                                    "timeoutMs": 1000
+                                    "timeoutMs": 3000
                                   },
                                   "type": "object",
                                   "properties": {
@@ -8386,10 +8758,10 @@
                                       "maximum": 32768
                                     },
                                     "timeoutMs": {
-                                      "default": 1000,
+                                      "default": 3000,
                                       "type": "integer",
                                       "exclusiveMinimum": 0,
-                                      "maximum": 3000
+                                      "maximum": 10000
                                     }
                                   },
                                   "required": [
@@ -9087,7 +9459,7 @@
                                     "mode": "auto",
                                     "topK": 5,
                                     "maxBytes": 8192,
-                                    "timeoutMs": 1000
+                                    "timeoutMs": 3000
                                   },
                                   "type": "object",
                                   "properties": {
@@ -9112,10 +9484,10 @@
                                       "maximum": 32768
                                     },
                                     "timeoutMs": {
-                                      "default": 1000,
+                                      "default": 3000,
                                       "type": "integer",
                                       "exclusiveMinimum": 0,
-                                      "maximum": 3000
+                                      "maximum": 10000
                                     }
                                   },
                                   "required": [
@@ -9785,7 +10157,7 @@
                                     "mode": "auto",
                                     "topK": 5,
                                     "maxBytes": 8192,
-                                    "timeoutMs": 1000
+                                    "timeoutMs": 3000
                                   },
                                   "type": "object",
                                   "properties": {
@@ -9810,10 +10182,10 @@
                                       "maximum": 32768
                                     },
                                     "timeoutMs": {
-                                      "default": 1000,
+                                      "default": 3000,
                                       "type": "integer",
                                       "exclusiveMinimum": 0,
-                                      "maximum": 3000
+                                      "maximum": 10000
                                     }
                                   },
                                   "required": [
@@ -18327,6 +18699,206 @@
             }
           },
           "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/connectors/connections/{id}/reconnect": {
+      "post": {
+        "operationId": "reconnectConnectorConnection",
+        "summary": "Reconnect a connector connection",
+        "tags": [
+          "MCP providers"
+        ],
+        "description": "Re-run authorization (oauth2) or re-save credentials (api-key/custom) for an existing open_connector connection — for when its upstream token expired/was revoked or the api key rotated. The provider row, grant key, and relay binding are untouched; the service + connection profile are re-derived from the stored binding markers. For oauth2 an authorizationUrl is returned to open in a popup.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authType": {
+                    "type": "string",
+                    "enum": [
+                      "oauth2",
+                      "api_key",
+                      "custom_credential",
+                      "no_auth"
+                    ]
+                  },
+                  "values": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "authType"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "authorizationUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
             "description": "Default Response",
             "content": {
               "application/json": {
