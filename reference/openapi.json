@@ -7635,40 +7635,69 @@
     },
     "/v1/orgs/{orgId}/agents/{id}/workspace": {
       "put": {
-        "operationId": "convertAgentWorkspace",
-        "summary": "Convert a scratch workspace to GitHub",
+        "operationId": "setAgentWorkspace",
+        "summary": "Edit an agent workspace",
         "tags": [
           "Agent workspace"
         ],
-        "description": "Promote an empty scratch workspace to any GitHub repository covered by one of the organization’s GitHub App installations — the same trust path as creating an agent with a GitHub workspace (with the per-user gate configured, the caller must hold the matching GitHub permission). The owning daemon drains active work, clones the repository, and acknowledges activation; agent configuration, integrations, sessions, and memory are preserved.",
+        "description": "Replace a workspace with scratch or a covered GitHub repository, or edit its repository, branch, working directory, and read/write access. Changing workspace type, repository, or branch discards daemon-local workspace files. The caller must hold the requested GitHub permission. Active work is drained and repository credentials are invalidated before success. Enabled GitHub review or Check actions reject edits that remove their required write authority.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "repoFullName": {
-                    "type": "string",
-                    "pattern": "^[^/\\s]+\\/[^/\\s]+$"
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "scratch"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "mode"
+                    ],
+                    "additionalProperties": false
                   },
-                  "gitBranch": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "gitAccess": {
-                    "default": "read",
-                    "type": "string",
-                    "enum": [
-                      "read",
-                      "write"
-                    ]
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "github"
+                        ]
+                      },
+                      "repoFullName": {
+                        "type": "string",
+                        "pattern": "^[^/\\s]+\\/[^/\\s]+$"
+                      },
+                      "gitBranch": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "agentDir": {
+                        "type": "string"
+                      },
+                      "gitAccess": {
+                        "default": "read",
+                        "type": "string",
+                        "enum": [
+                          "read",
+                          "write"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "mode",
+                      "repoFullName"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "repoFullName"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           }

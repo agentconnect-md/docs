@@ -1,6 +1,6 @@
 ---
 api:
   file: openapi.json
-  operationId: convertAgentWorkspace
+  operationId: setAgentWorkspace
 hidden: false
 ---
