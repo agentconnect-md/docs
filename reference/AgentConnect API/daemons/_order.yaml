@@ -3,3 +3,6 @@
 - deletedaemon
 - createdaemontoken
 - setdaemonsharing
+- upgradedaemon
+- restartdaemon
+- getdaemonlifecycleop
