@@ -20,14 +20,15 @@ docker compose --env-file compose.env up -d
 
 `compose.env` is gitignored. Keep it out of source control and backups that are not approved for secrets.
 
-## Image version and platform
+## Image versions
 
 | Variable                          | Default                   | Purpose                                              |
 | --------------------------------- | ------------------------- | ---------------------------------------------------- |
 | `AGENTCONNECT_VERSION`            | `latest`                  | Shared release tag for Web, Control Plane, and Relay |
-| `AGENTCONNECT_PLATFORM`           | `linux/amd64`             | Platform of the published images                     |
 | `AGENTCONNECT_IMAGE_REGISTRY`     | `ghcr.io/agentconnect-md` | Image registry and namespace                         |
 | `AGENTCONNECT_PRISMA_CLI_VERSION` | `7.8.0-node24-r1`         | Version-matched migration runner toolchain           |
+
+Published AgentConnect application and migration images currently target `linux/amd64`. The Compose file pins this platform; it is not a configurable stack option. Docker Desktop and OrbStack can run these images with emulation on Apple Silicon.
 
 For a reproducible setup, use an exact AgentConnect release tag:
 

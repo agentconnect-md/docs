@@ -14,7 +14,7 @@ You need:
 - Docker Compose v2 (`docker compose version`); and
 - Git.
 
-Published AgentConnect images currently target `linux/amd64`. Docker Desktop and OrbStack can run them with emulation on Apple Silicon. See [Build natively on ARM](#build-natively-on-arm) if you prefer a local ARM build.
+Published AgentConnect application and migration images currently target `linux/amd64`, and the Compose file pins that platform. Docker Desktop and OrbStack can run the stack with emulation on Apple Silicon.
 
 ## 1. Start the stack
 
@@ -90,7 +90,7 @@ docker compose pull
 docker compose up -d
 ```
 
-The migration job is idempotent and runs before the updated Control Plane starts. If you created `compose.env`, add `--env-file compose.env` to both commands. To keep a reproducible deployment, pin `AGENTCONNECT_VERSION` to a release tag in that file; see [Image version and platform](/docs/self-hosting-configuration#image-version-and-platform).
+The migration job is idempotent and runs before the updated Control Plane starts. If you created `compose.env`, add `--env-file compose.env` to both commands. To keep a reproducible deployment, pin `AGENTCONNECT_VERSION` to a release tag in that file; see [Image versions](/docs/self-hosting-configuration#image-versions).
 
 ## Stop or reset
 
@@ -109,17 +109,6 @@ docker compose down --volumes
 ```
 
 > This deletes all Control Plane metadata in the Compose database. It cannot be undone. Daemon-local workspaces and transcripts are outside this volume and are not deleted by this command.
-
-## Build natively on ARM
-
-To build the four required images from the checked-out source for `linux/arm64`:
-
-```bash
-AGENTCONNECT_PLATFORM=linux/arm64 docker compose build
-AGENTCONNECT_PLATFORM=linux/arm64 docker compose up -d --pull never
-```
-
-Use the same `AGENTCONNECT_PLATFORM` value for subsequent Compose commands so every service selects the locally built ARM image.
 
 ## Next
 
