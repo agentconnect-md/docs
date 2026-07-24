@@ -124,6 +124,19 @@ docker compose down --volumes
 
 The Compose stack also runs a short-lived migration job. It applies the selected Control Plane image's database migrations. When sign-in is disabled, Control Plane startup initializes only the fixed local organization required by no-auth mode; it does not add sample data.
 
+## Relay and direct connections
+
+The Relay is optional in the AgentConnect architecture, but it is included in the bundled Compose topology so every integration works without changing the stack.
+
+| Connection path   | Used for                                                                                        | Public ingress required?                                          |
+| ----------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Daemon direct     | Daemon-owned platform connections such as Slack Socket Mode, Telegram, Discord, and Feishu/Lark | No. The daemon opens outbound connections from the agent host     |
+| Through the Relay | GitHub App events, generic webhooks, webchat and Agent API traffic, and shared Slack HTTP bots  | Yes. The Relay accepts the callback and forwards it to the daemon |
+
+Relay-delivered messages go directly from the Relay to the owning daemon. The Control Plane distributes routing metadata, but it does not carry or persist the message body.
+
+If you operate only daemon-direct integrations, the Relay is not on their message path. However, the provided Compose file always starts one Relay, and the Web service declares it as a dependency. There is currently no bundled no-Relay Compose profile. Stopping the Relay disables the Relay-backed features in the table even though established daemon-local sessions and direct platform connections can continue.
+
 ## Choose the right deployment
 
 The included Docker Compose setup is designed for **local evaluation and single-host development**:

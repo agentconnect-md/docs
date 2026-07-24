@@ -4,7 +4,7 @@ excerpt: Trigger agents from issues, pull requests and comments — and let them
 hidden: false
 ---
 
-A GitHub integration makes an agent **watch a repository**: new issues, pull requests and comments become sessions, and the agent can write back as PR/issue comments. It rides the [AgentConnect GitHub app](/docs/workspaces-and-repos) — no webhooks for you to host.
+A GitHub integration makes an agent **watch a repository**: new issues, pull requests and comments become sessions, and the agent can write back as PR/issue comments. It rides the deployment's [AgentConnect GitHub app](/docs/workspaces-and-repos). Managed AgentConnect does not require a webhook per repository; an AgentConnect OSS operator configures one deployment-level GitHub App webhook on the Relay.
 
 ## Watch a repository
 
@@ -37,3 +37,4 @@ The agent page groups its GitHub integration as one card — one row per watched
 
 - The **GitHub app** must be installed for your org (**Settings → GitHub → Install on GitHub**); the integration dialog offers the install button if it's missing, with an **I've installed it — sync** refresh.
 - Write-back requires the agent to hold **comment** (or **write**) authorization on the repo.
+- On AgentConnect OSS, the operator must first [configure the deployment GitHub App and its Relay webhook](/docs/deployment-and-configuration#optional-github-app).

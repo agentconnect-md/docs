@@ -22,7 +22,7 @@ To pick repositories from a list, install the **AgentConnect GitHub app**:
    - **Read only** — the agent can pull but not push.
    - **Read & write** — the agent can push to the repo.
 
-Public repositories can also be cloned read-only without the app.
+On AgentConnect OSS, the deployment operator must [configure the GitHub App first](/docs/deployment-and-configuration#optional-github-app). Public repositories can still be cloned read-only without the App.
 
 ### Credential-free git
 
