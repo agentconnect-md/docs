@@ -1,10 +1,10 @@
 ---
-title: Docker Compose quickstart
-excerpt: Start the Web console, Control Plane, Relay, and PostgreSQL locally, then connect a daemon from your machine.
+title: Get started with OSS
+excerpt: Start AgentConnect OSS locally with Docker Compose, then connect a daemon from your machine.
 hidden: false
 ---
 
-This guide starts a complete local AgentConnect coordination stack. Your agent daemon remains on the host, where it can use local workspaces and your already-authenticated Claude, Codex, or other ACP runtime.
+This guide starts a complete local AgentConnect OSS coordination stack. Your agent daemon remains on the host, where it can use local workspaces and your already-authenticated Claude, Codex, or other ACP runtime.
 
 ## Before you start
 
@@ -65,7 +65,7 @@ In the Web console:
 
 The generated command points at the local Control Plane. After the daemon connects, it also receives the local Relay address and opens an outbound Relay connection automatically.
 
-If the daemon runs on another machine, `localhost` points at that machine instead of the Docker host. Configure host-reachable public URLs first; see [Network and public URLs](/docs/self-hosting-configuration#network-and-public-urls).
+If the daemon runs on another machine, `localhost` points at that machine instead of the Docker host. Configure host-reachable public URLs first; see [Network and public URLs](/docs/deployment-and-configuration#network-and-public-urls).
 
 ## Logs and status
 
@@ -90,7 +90,7 @@ docker compose pull
 docker compose up -d
 ```
 
-The migration job is idempotent and runs before the updated Control Plane starts. If you created `compose.env`, add `--env-file compose.env` to both commands. To keep a reproducible deployment, pin `AGENTCONNECT_VERSION` to a release tag in that file; see [Image versions](/docs/self-hosting-configuration#image-versions).
+The migration job is idempotent and runs before the updated Control Plane starts. If you created `compose.env`, add `--env-file compose.env` to both commands. To keep a reproducible deployment, pin `AGENTCONNECT_VERSION` to a release tag in that file; see [Image versions](/docs/deployment-and-configuration#image-versions).
 
 ## Stop or reset
 
@@ -112,6 +112,6 @@ docker compose down --volumes
 
 ## Next
 
-- [Configure the stack](/docs/self-hosting-configuration)
+- [Deployment and configuration](/docs/deployment-and-configuration)
 - [Install the daemon as a service](/docs/install-the-daemon)
 - [Learn how AgentConnect keeps execution daemon-local](/docs/how-it-works)

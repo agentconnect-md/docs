@@ -1,20 +1,20 @@
 ---
-title: Self-host AgentConnect
-excerpt: Run the AgentConnect coordination stack on infrastructure you control, while agents and workspaces stay on your own machines.
+title: AgentConnect OSS
+excerpt: Run the open-source AgentConnect coordination stack on infrastructure you control, while agents and workspaces stay on your own machines.
 hidden: false
 ---
 
-AgentConnect is open source and can run as a self-hosted stack. The stack provides the Web console, configuration and orchestration APIs, and shared public ingress. Agent execution still happens in daemons on the machines that own the workspaces.
+AgentConnect OSS is the open-source, self-hosted AgentConnect stack. It gives you control over the Web console, Control Plane, Relay, and PostgreSQL, while agent execution remains in daemons on the machines that own the workspaces. The source is available in the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect).
 
 <Cards>
-  <Card title="Docker Compose quickstart" href="/docs/docker-compose" icon="fa-duotone fa-box">Start a complete local stack with one command</Card>
+  <Card title="Get started with OSS" href="/docs/get-started-with-oss" icon="fa-duotone fa-box">Start a complete local stack with Docker Compose</Card>
 
-<Card title="Configuration and sign-in" href="/docs/self-hosting-configuration" icon="fa-duotone fa-sliders">Pin versions, change ports, and connect an external Logto tenant</Card>
+<Card title="Deployment and configuration" href="/docs/deployment-and-configuration" icon="fa-duotone fa-sliders">Pin versions, change ports, and connect an external Logto tenant</Card>
 </Cards>
 
 <br />
 
-## What the stack includes
+## What AgentConnect OSS includes
 
 | Component     | Where it runs                | Purpose                                                                                              |
 | ------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -39,6 +39,6 @@ It is not an HA production topology. Before exposing AgentConnect to a network, 
 
 ## Data boundaries stay the same
 
-Self-hosting does not move agent execution into the central stack. Message bodies, attachment bytes, workspaces, and live agent-session streams remain daemon-local. The Control Plane stores coordination metadata. Relay-delivered content goes from the Relay to the owning daemon rather than through the Control Plane.
+AgentConnect OSS does not move agent execution into the central stack. Message bodies, attachment bytes, workspaces, and live agent-session streams remain daemon-local. The Control Plane stores coordination metadata. Relay-delivered content goes from the Relay to the owning daemon rather than through the Control Plane.
 
-Start with the [Docker Compose quickstart](/docs/docker-compose), then review [self-hosting configuration](/docs/self-hosting-configuration) before changing network exposure or enabling sign-in.
+Start with [Get started with OSS](/docs/get-started-with-oss), then review [Deployment and configuration](/docs/deployment-and-configuration) before changing network exposure or enabling sign-in.

@@ -1,10 +1,10 @@
 ---
-title: Self-hosting configuration
-excerpt: Configure Compose versions, ports, secrets, public URLs, and optional Logto-backed sign-in.
+title: Deployment and configuration
+excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, and optional Logto-backed sign-in.
 hidden: false
 ---
 
-The default Compose stack requires no configuration. It uses current stable images, local-only credentials, fixed localhost ports, and no-auth mode.
+The default AgentConnect OSS Compose stack requires no configuration. It uses current stable images, local-only credentials, fixed localhost ports, and no-auth mode.
 
 For overrides, copy the provided template:
 
