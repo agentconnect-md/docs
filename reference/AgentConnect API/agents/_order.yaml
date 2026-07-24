@@ -23,3 +23,5 @@
 - updateagentmemoryrecord
 - deleteagentmemoryrecord
 - listagentmemoryrecordhistory
+- listagentpermissionrequests
+- decideagentpermissionrequest

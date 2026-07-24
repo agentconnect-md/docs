@@ -16,7 +16,7 @@
     "schemas": {}
   },
   "paths": {
-    "/v1/orgs": {
+    "/v1\\ngh/orgs": {
       "get": {
         "operationId": "listOrganizations",
         "summary": "List your organizations",
@@ -381,6 +381,36 @@
               }
             }
           },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "409": {
             "description": "Default Response",
             "content": {
@@ -414,7 +444,7 @@
         }
       }
     },
-    "/v1/me": {
+    "/v1\\ngh/me": {
       "get": {
         "operationId": "getMyProfile",
         "summary": "Get your profile",
@@ -667,7 +697,7 @@
         }
       }
     },
-    "/v1/me/keys": {
+    "/v1\\ngh/me/keys": {
       "get": {
         "operationId": "listMyApiKeys",
         "summary": "List your API keys",
@@ -906,7 +936,7 @@
         }
       }
     },
-    "/v1/me/keys/{id}": {
+    "/v1\\ngh/me/keys/{id}": {
       "delete": {
         "operationId": "revokeMyApiKey",
         "summary": "Revoke an API key",
@@ -1048,7 +1078,509 @@
         }
       }
     },
-    "/v1/invite-links/accept": {
+    "/v1\\ngh/me/access": {
+      "get": {
+        "operationId": "getMyAccess",
+        "summary": "Get your app-admission state",
+        "tags": [
+          "Profile"
+        ],
+        "description": "Whether the signed-in user may enter the app under closed-beta (waitlist) mode, and their derived status. When waitlist mode is off the status is always \"active\". The email is read from trusted persistence, never from a request header.",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "waitlistMode": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "approved",
+                        "pending",
+                        "none"
+                      ]
+                    },
+                    "activated": {
+                      "type": "boolean"
+                    },
+                    "orgCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "email": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "waitlistMode",
+                    "status",
+                    "activated",
+                    "orgCount",
+                    "email"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/waitlist": {
+      "post": {
+        "operationId": "joinWaitlist",
+        "summary": "Join the waitlist",
+        "tags": [
+          "Profile"
+        ],
+        "description": "Add the signed-in user’s own verified email to the waitlist as a pending entry (idempotent — a pre-existing entry is left unchanged). The email is taken from the verified identity, never from the request body. The applicant intake is REQUIRED — name, company/team, at least one platform, and team size (use-case is optional) — and is stored as context. Requires OIDC sign-in with a verified email.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "company": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "platform": {
+                    "minItems": 1,
+                    "maxItems": 3,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "slack",
+                        "telegram",
+                        "discord"
+                      ]
+                    }
+                  },
+                  "teamSize": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "useCase": {
+                    "type": "string",
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "name",
+                  "company",
+                  "platform",
+                  "teamSize"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/waitlist/redeem": {
+      "post": {
+        "operationId": "redeemWaitlistLink",
+        "summary": "Redeem a waitlist activation link",
+        "tags": [
+          "Profile"
+        ],
+        "description": "Redeem the join link minted for the signed-in user, making them a formal (activated) user with a personal org. The link’s email must match the caller’s verified email. Idempotent on repeat by the same user. Requires OIDC sign-in with a verified email.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "token"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "activated": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "activated"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/invite-links/accept": {
       "post": {
         "operationId": "acceptOrganizationInviteLink",
         "summary": "Accept an organization invite link",
@@ -1222,7 +1754,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/": {
+    "/v1\\ngh/orgs/{orgId}/": {
       "get": {
         "operationId": "getOrganization",
         "summary": "Get the organization",
@@ -1881,7 +2413,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons": {
+    "/v1\\ngh/orgs/{orgId}/daemons": {
       "get": {
         "operationId": "listDaemons",
         "summary": "List daemons",
@@ -2191,6 +2723,9 @@
                                           },
                                           "name": {
                                             "type": "string"
+                                          },
+                                          "description": {
+                                            "type": "string"
                                           }
                                         },
                                         "required": [
@@ -2423,7 +2958,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/{id}": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}": {
       "patch": {
         "operationId": "updateDaemon",
         "summary": "Rename a daemon",
@@ -2758,6 +3293,9 @@
                                           "type": "string"
                                         },
                                         "name": {
+                                          "type": "string"
+                                        },
+                                        "description": {
                                           "type": "string"
                                         }
                                       },
@@ -3171,7 +3709,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/token": {
+    "/v1\\ngh/orgs/{orgId}/daemons/token": {
       "post": {
         "operationId": "createDaemonToken",
         "summary": "Issue a daemon enrollment token",
@@ -3254,7 +3792,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/sharing": {
       "put": {
         "operationId": "setDaemonSharing",
         "summary": "Set daemon sharing",
@@ -3600,6 +4138,9 @@
                                         },
                                         "name": {
                                           "type": "string"
+                                        },
+                                        "description": {
+                                          "type": "string"
                                         }
                                       },
                                       "required": [
@@ -3891,7 +4432,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/{id}/upgrade": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/upgrade": {
       "post": {
         "operationId": "upgradeDaemon",
         "summary": "Upgrade a daemon",
@@ -4149,7 +4690,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/{id}/restart": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/restart": {
       "post": {
         "operationId": "restartDaemon",
         "summary": "Restart a daemon",
@@ -4387,7 +4928,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/{id}/lifecycle/{opId}": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/lifecycle/{opId}": {
       "get": {
         "operationId": "getDaemonLifecycleOp",
         "summary": "Get a daemon lifecycle op",
@@ -4543,7 +5084,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/{id}/keys": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/keys": {
       "get": {
         "operationId": "listDaemonKeys",
         "summary": "List a daemon’s keys",
@@ -4796,7 +5337,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
       "delete": {
         "operationId": "revokeDaemonKey",
         "summary": "Revoke a daemon key",
@@ -4965,7 +5506,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents": {
+    "/v1\\ngh/orgs/{orgId}/agents": {
       "post": {
         "operationId": "createAgent",
         "summary": "Create an agent",
@@ -5081,12 +5622,18 @@
                       "high"
                     ]
                   },
+                  "showFooter": {
+                    "type": "boolean"
+                  },
                   "fastMode": {
                     "type": "boolean"
                   },
                   "permissionMode": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "allowRuntimeChangesInChat": {
+                    "type": "boolean"
                   },
                   "pause": {
                     "type": "boolean"
@@ -5515,6 +6062,9 @@
                         }
                       ]
                     },
+                    "showFooter": {
+                      "type": "boolean"
+                    },
                     "fastMode": {
                       "anyOf": [
                         {
@@ -5534,6 +6084,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "allowRuntimeChangesInChat": {
+                      "type": "boolean"
                     },
                     "pause": {
                       "anyOf": [
@@ -5824,6 +6377,19 @@
                         "type": "string"
                       }
                     },
+                    "outboundPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedTargetAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "introduceOnJoin": {
                       "type": "boolean"
                     },
@@ -5883,8 +6449,10 @@
                     "model",
                     "reasoningEffort",
                     "outputMode",
+                    "showFooter",
                     "fastMode",
                     "permissionMode",
+                    "allowRuntimeChangesInChat",
                     "pause",
                     "env",
                     "secretKeys",
@@ -5904,6 +6472,8 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "outboundPolicy",
+                    "allowedTargetAgentIds",
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
@@ -6287,6 +6857,9 @@
                           }
                         ]
                       },
+                      "showFooter": {
+                        "type": "boolean"
+                      },
                       "fastMode": {
                         "anyOf": [
                           {
@@ -6306,6 +6879,9 @@
                             "type": "null"
                           }
                         ]
+                      },
+                      "allowRuntimeChangesInChat": {
+                        "type": "boolean"
                       },
                       "pause": {
                         "anyOf": [
@@ -6596,6 +7172,19 @@
                           "type": "string"
                         }
                       },
+                      "outboundPolicy": {
+                        "type": "string",
+                        "enum": [
+                          "all",
+                          "selected"
+                        ]
+                      },
+                      "allowedTargetAgentIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
                       "introduceOnJoin": {
                         "type": "boolean"
                       },
@@ -6631,8 +7220,10 @@
                       "model",
                       "reasoningEffort",
                       "outputMode",
+                      "showFooter",
                       "fastMode",
                       "permissionMode",
+                      "allowRuntimeChangesInChat",
                       "pause",
                       "env",
                       "secretKeys",
@@ -6652,6 +7243,8 @@
                       "canManageSharing",
                       "callPolicy",
                       "allowedCallerAgentIds",
+                      "outboundPolicy",
+                      "allowedTargetAgentIds",
                       "introduceOnJoin",
                       "restrictFileAccess",
                       "sandboxSupported",
@@ -6667,7 +7260,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}": {
       "get": {
         "operationId": "getAgent",
         "summary": "Get an agent",
@@ -6864,6 +7457,9 @@
                         }
                       ]
                     },
+                    "showFooter": {
+                      "type": "boolean"
+                    },
                     "fastMode": {
                       "anyOf": [
                         {
@@ -6883,6 +7479,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "allowRuntimeChangesInChat": {
+                      "type": "boolean"
                     },
                     "pause": {
                       "anyOf": [
@@ -7173,6 +7772,19 @@
                         "type": "string"
                       }
                     },
+                    "outboundPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedTargetAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "introduceOnJoin": {
                       "type": "boolean"
                     },
@@ -7208,8 +7820,10 @@
                     "model",
                     "reasoningEffort",
                     "outputMode",
+                    "showFooter",
                     "fastMode",
                     "permissionMode",
+                    "allowRuntimeChangesInChat",
                     "pause",
                     "env",
                     "secretKeys",
@@ -7229,6 +7843,8 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "outboundPolicy",
+                    "allowedTargetAgentIds",
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
@@ -7429,6 +8045,9 @@
                       }
                     ]
                   },
+                  "showFooter": {
+                    "type": "boolean"
+                  },
                   "fastMode": {
                     "anyOf": [
                       {
@@ -7449,6 +8068,9 @@
                         "type": "null"
                       }
                     ]
+                  },
+                  "allowRuntimeChangesInChat": {
+                    "type": "boolean"
                   },
                   "pause": {
                     "anyOf": [
@@ -7832,6 +8454,9 @@
                         }
                       ]
                     },
+                    "showFooter": {
+                      "type": "boolean"
+                    },
                     "fastMode": {
                       "anyOf": [
                         {
@@ -7851,6 +8476,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "allowRuntimeChangesInChat": {
+                      "type": "boolean"
                     },
                     "pause": {
                       "anyOf": [
@@ -8141,6 +8769,19 @@
                         "type": "string"
                       }
                     },
+                    "outboundPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedTargetAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "introduceOnJoin": {
                       "type": "boolean"
                     },
@@ -8176,8 +8817,10 @@
                     "model",
                     "reasoningEffort",
                     "outputMode",
+                    "showFooter",
                     "fastMode",
                     "permissionMode",
+                    "allowRuntimeChangesInChat",
                     "pause",
                     "env",
                     "secretKeys",
@@ -8197,6 +8840,8 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "outboundPolicy",
+                    "allowedTargetAgentIds",
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
@@ -8512,7 +9157,429 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/workspace": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/permission-requests": {
+      "get": {
+        "operationId": "listAgentPermissionRequests",
+        "summary": "List agent approval requests",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Proxy the owning daemon’s bounded, secret-masked approval queue. Only callers who can edit the agent may read it; the Control Plane does not persist these requests.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "requests": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "agentId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                          },
+                          "requesterId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "requesterName": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "command": {
+                            "type": "string",
+                            "maxLength": 240
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "allowed",
+                              "denied",
+                              "expired"
+                            ]
+                          },
+                          "resolvedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "agentId",
+                          "createdAt",
+                          "requesterId",
+                          "requesterName",
+                          "command",
+                          "status",
+                          "resolvedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "requests"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/permission-requests/{requestId}/decision": {
+      "post": {
+        "operationId": "decideAgentPermissionRequest",
+        "summary": "Decide an agent approval request",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Allow or deny one pending runtime request on the owning daemon. Only callers who can edit the agent may decide it.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "allow",
+                      "deny"
+                    ]
+                  }
+                },
+                "required": [
+                  "decision"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "requestId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace": {
       "put": {
         "operationId": "setAgentWorkspace",
         "summary": "Edit an agent workspace",
@@ -8770,6 +9837,9 @@
                         }
                       ]
                     },
+                    "showFooter": {
+                      "type": "boolean"
+                    },
                     "fastMode": {
                       "anyOf": [
                         {
@@ -8789,6 +9859,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "allowRuntimeChangesInChat": {
+                      "type": "boolean"
                     },
                     "pause": {
                       "anyOf": [
@@ -9079,6 +10152,19 @@
                         "type": "string"
                       }
                     },
+                    "outboundPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedTargetAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "introduceOnJoin": {
                       "type": "boolean"
                     },
@@ -9114,8 +10200,10 @@
                     "model",
                     "reasoningEffort",
                     "outputMode",
+                    "showFooter",
                     "fastMode",
                     "permissionMode",
+                    "allowRuntimeChangesInChat",
                     "pause",
                     "env",
                     "secretKeys",
@@ -9135,6 +10223,8 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "outboundPolicy",
+                    "allowedTargetAgentIds",
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
@@ -9329,7 +10419,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/daemon": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/daemon": {
       "put": {
         "operationId": "moveAgentDaemon",
         "summary": "Move an agent to another daemon",
@@ -9547,6 +10637,9 @@
                         }
                       ]
                     },
+                    "showFooter": {
+                      "type": "boolean"
+                    },
                     "fastMode": {
                       "anyOf": [
                         {
@@ -9566,6 +10659,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "allowRuntimeChangesInChat": {
+                      "type": "boolean"
                     },
                     "pause": {
                       "anyOf": [
@@ -9856,6 +10952,19 @@
                         "type": "string"
                       }
                     },
+                    "outboundPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedTargetAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "introduceOnJoin": {
                       "type": "boolean"
                     },
@@ -9891,8 +11000,10 @@
                     "model",
                     "reasoningEffort",
                     "outputMode",
+                    "showFooter",
                     "fastMode",
                     "permissionMode",
+                    "allowRuntimeChangesInChat",
                     "pause",
                     "env",
                     "secretKeys",
@@ -9912,6 +11023,8 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "outboundPolicy",
+                    "allowedTargetAgentIds",
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
@@ -10046,7 +11159,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/sharing": {
       "put": {
         "operationId": "setAgentSharing",
         "summary": "Set agent sharing",
@@ -10273,6 +11386,9 @@
                         }
                       ]
                     },
+                    "showFooter": {
+                      "type": "boolean"
+                    },
                     "fastMode": {
                       "anyOf": [
                         {
@@ -10292,6 +11408,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "allowRuntimeChangesInChat": {
+                      "type": "boolean"
                     },
                     "pause": {
                       "anyOf": [
@@ -10582,6 +11701,19 @@
                         "type": "string"
                       }
                     },
+                    "outboundPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedTargetAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "introduceOnJoin": {
                       "type": "boolean"
                     },
@@ -10617,8 +11749,10 @@
                     "model",
                     "reasoningEffort",
                     "outputMode",
+                    "showFooter",
                     "fastMode",
                     "permissionMode",
+                    "allowRuntimeChangesInChat",
                     "pause",
                     "env",
                     "secretKeys",
@@ -10638,6 +11772,8 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "outboundPolicy",
+                    "allowedTargetAgentIds",
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
@@ -10742,14 +11878,14 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/call-policy": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/call-policy": {
       "put": {
         "operationId": "setAgentCallPolicy",
-        "summary": "Set an agent call policy",
+        "summary": "Set directional agent visibility",
         "tags": [
           "Agents"
         ],
-        "description": "Set which peer agents may call this agent as a sub-agent. Requires edit rights on the target agent; the allow-list is intersected with visible same-org peer agents.",
+        "description": "Set which peer agents may call this agent and which peers this agent may discover or call. Effective access requires both directions to allow it. Requires edit rights; allow-lists are intersected with visible same-org peer agents.",
         "requestBody": {
           "required": true,
           "content": {
@@ -10766,6 +11902,21 @@
                   },
                   "allowedCallerAgentIds": {
                     "default": [],
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "outboundPolicy": {
+                    "type": "string",
+                    "enum": [
+                      "all",
+                      "selected"
+                    ]
+                  },
+                  "allowedTargetAgentIds": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -10971,6 +12122,9 @@
                         }
                       ]
                     },
+                    "showFooter": {
+                      "type": "boolean"
+                    },
                     "fastMode": {
                       "anyOf": [
                         {
@@ -10990,6 +12144,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "allowRuntimeChangesInChat": {
+                      "type": "boolean"
                     },
                     "pause": {
                       "anyOf": [
@@ -11280,6 +12437,19 @@
                         "type": "string"
                       }
                     },
+                    "outboundPolicy": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "allowedTargetAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "introduceOnJoin": {
                       "type": "boolean"
                     },
@@ -11315,8 +12485,10 @@
                     "model",
                     "reasoningEffort",
                     "outputMode",
+                    "showFooter",
                     "fastMode",
                     "permissionMode",
+                    "allowRuntimeChangesInChat",
                     "pause",
                     "env",
                     "secretKeys",
@@ -11336,6 +12508,8 @@
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
+                    "outboundPolicy",
+                    "allowedTargetAgentIds",
                     "introduceOnJoin",
                     "restrictFileAccess",
                     "sandboxSupported",
@@ -11440,7 +12614,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/workspace/files": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/files": {
       "get": {
         "operationId": "listAgentWorkspaceFiles",
         "summary": "List workspace files",
@@ -11638,7 +12812,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/workspace/file": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/file": {
       "get": {
         "operationId": "readAgentWorkspaceFile",
         "summary": "Read a workspace file",
@@ -11861,7 +13035,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory": {
       "get": {
         "operationId": "readAgentMemory",
         "summary": "Read the agent memory index",
@@ -12099,7 +13273,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory/files": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/files": {
       "get": {
         "operationId": "listAgentMemoryFiles",
         "summary": "List agent memory files",
@@ -12262,7 +13436,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory/file": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/file": {
       "get": {
         "operationId": "readAgentMemoryFile",
         "summary": "Read a memory file",
@@ -12736,7 +13910,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory/surface": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/surface": {
       "get": {
         "operationId": "getAgentMemorySurface",
         "summary": "Get the agent memory administration surface",
@@ -12926,7 +14100,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory/records/search": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/search": {
       "post": {
         "operationId": "searchAgentMemoryRecords",
         "summary": "Search external-memory records",
@@ -13223,7 +14397,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory/records": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records": {
       "get": {
         "operationId": "listAgentMemoryRecords",
         "summary": "List external-memory records",
@@ -13819,7 +14993,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory/records/{recordId}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/{recordId}": {
       "get": {
         "operationId": "getAgentMemoryRecord",
         "summary": "Get an external-memory record",
@@ -14647,7 +15821,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/memory/records/{recordId}/history": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/{recordId}/history": {
       "get": {
         "operationId": "listAgentMemoryRecordHistory",
         "summary": "List external-memory record history",
@@ -14975,7 +16149,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
       "get": {
         "operationId": "getAgentWorkspaceGitStatus",
         "summary": "Get workspace git status",
@@ -15225,7 +16399,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{id}/workspace/gitpull": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/gitpull": {
       "post": {
         "operationId": "pullAgentWorkspace",
         "summary": "Pull the workspace",
@@ -15382,7 +16556,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{agentId}/repos": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/repos": {
       "get": {
         "operationId": "listAgentRepoAuthorizations",
         "summary": "List an agent’s repository authorizations",
@@ -15784,7 +16958,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{agentId}/repos/{repoAuthId}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/repos/{repoAuthId}": {
       "patch": {
         "operationId": "updateAgentRepoAuthorization",
         "summary": "Upgrade a repository authorization",
@@ -16206,7 +17380,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{agentId}/webchat/token": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/token": {
       "post": {
         "operationId": "mintWebchatToken",
         "summary": "Mint a webchat token",
@@ -16342,7 +17516,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/integrations": {
+    "/v1\\ngh/orgs/{orgId}/integrations": {
       "post": {
         "operationId": "createIntegration",
         "summary": "Add an integration",
@@ -16805,7 +17979,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
+    "/v1\\ngh/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
       "patch": {
         "operationId": "updateIntegrationChannel",
         "summary": "Update a channel",
@@ -17017,7 +18191,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/integrations/{id}": {
+    "/v1\\ngh/orgs/{orgId}/integrations/{id}": {
       "delete": {
         "operationId": "deleteIntegration",
         "summary": "Remove an integration",
@@ -17140,7 +18314,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/bots": {
+    "/v1\\ngh/orgs/{orgId}/bots": {
       "get": {
         "operationId": "listBots",
         "summary": "List bots",
@@ -17285,7 +18459,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/bots/{id}": {
+    "/v1\\ngh/orgs/{orgId}/bots/{id}": {
       "get": {
         "operationId": "getBot",
         "summary": "Get a bot",
@@ -17842,7 +19016,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/bots/{id}/slack/refresh": {
+    "/v1\\ngh/orgs/{orgId}/bots/{id}/slack/refresh": {
       "post": {
         "operationId": "refreshSlackBot",
         "summary": "Refresh a Slack app",
@@ -18020,7 +19194,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/mcp-providers": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers": {
       "get": {
         "operationId": "listMcpProviders",
         "summary": "List MCP providers",
@@ -18348,7 +19522,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/mcp-providers/{id}": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}": {
       "get": {
         "operationId": "getMcpProvider",
         "summary": "Get an MCP provider",
@@ -18806,7 +19980,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/mcp-providers/{id}/grant/rotate": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}/grant/rotate": {
       "post": {
         "operationId": "rotateMcpProviderGrant",
         "summary": "Rotate an MCP provider grant key",
@@ -18975,7 +20149,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/mcp-providers/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}/sharing": {
       "put": {
         "operationId": "setMcpProviderSharing",
         "summary": "Set MCP provider sharing",
@@ -19170,7 +20344,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/connectors/config": {
+    "/v1\\ngh/orgs/{orgId}/connectors/config": {
       "get": {
         "operationId": "getConnectorsConfig",
         "summary": "Connectors feature status",
@@ -19211,7 +20385,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/connectors/catalog": {
+    "/v1\\ngh/orgs/{orgId}/connectors/catalog": {
       "get": {
         "operationId": "listConnectorProviders",
         "summary": "Browse connector providers",
@@ -19356,7 +20530,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/connectors/connections": {
+    "/v1\\ngh/orgs/{orgId}/connectors/connections": {
       "post": {
         "operationId": "createConnectorConnection",
         "summary": "Create a connector connection",
@@ -19669,7 +20843,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/connectors/connections/{id}/reconnect": {
+    "/v1\\ngh/orgs/{orgId}/connectors/connections/{id}/reconnect": {
       "post": {
         "operationId": "reconnectConnectorConnection",
         "summary": "Reconnect a connector connection",
@@ -19869,7 +21043,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/memory-plugin-installations": {
+    "/v1\\ngh/orgs/{orgId}/memory-plugin-installations": {
       "get": {
         "operationId": "listMemoryPluginInstallations",
         "summary": "List memory plugin installations",
@@ -20334,7 +21508,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/memory-plugin-installations/{id}": {
+    "/v1\\ngh/orgs/{orgId}/memory-plugin-installations/{id}": {
       "delete": {
         "operationId": "deleteMemoryPluginInstallation",
         "summary": "Delete a memory plugin installation",
@@ -20457,7 +21631,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/external-memory-connections": {
+    "/v1\\ngh/orgs/{orgId}/external-memory-connections": {
       "get": {
         "operationId": "listExternalMemoryConnections",
         "summary": "List external-memory connections",
@@ -20985,7 +22159,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/external-memory-connections/{id}": {
+    "/v1\\ngh/orgs/{orgId}/external-memory-connections/{id}": {
       "get": {
         "operationId": "getExternalMemoryConnection",
         "summary": "Get an external-memory connection",
@@ -21667,7 +22841,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/external-memory-connections/{id}/grant/rotate": {
+    "/v1\\ngh/orgs/{orgId}/external-memory-connections/{id}/grant/rotate": {
       "post": {
         "operationId": "rotateExternalMemoryConnectionGrant",
         "summary": "Rotate an external-memory relay grant",
@@ -22007,7 +23181,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/members": {
+    "/v1\\ngh/orgs/{orgId}/members": {
       "get": {
         "operationId": "listMembers",
         "summary": "List members",
@@ -22269,7 +23443,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/members/{id}": {
+    "/v1\\ngh/orgs/{orgId}/members/{id}": {
       "patch": {
         "operationId": "updateMember",
         "summary": "Change a member’s role",
@@ -22598,7 +23772,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/invite-links": {
+    "/v1\\ngh/orgs/{orgId}/invite-links": {
       "get": {
         "operationId": "getOrganizationInviteLink",
         "summary": "Get the organization invite link",
@@ -22975,7 +24149,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/invite-links/{id}": {
+    "/v1\\ngh/orgs/{orgId}/invite-links/{id}": {
       "delete": {
         "operationId": "revokeOrganizationInviteLink",
         "summary": "Revoke the organization invite link",
@@ -23128,7 +24302,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/crons/{id}": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}": {
       "put": {
         "operationId": "upsertCron",
         "summary": "Create or update a cron",
@@ -23838,7 +25012,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/crons": {
+    "/v1\\ngh/orgs/{orgId}/crons": {
       "get": {
         "operationId": "listCrons",
         "summary": "List crons",
@@ -24016,7 +25190,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/crons/{id}/runs": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}/runs": {
       "get": {
         "operationId": "listCronRuns",
         "summary": "List cron runs",
@@ -24146,7 +25320,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/crons/{id}/run": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}/run": {
       "post": {
         "operationId": "triggerCronRun",
         "summary": "Trigger a cron run",
@@ -24329,7 +25503,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/crons/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}/sharing": {
       "put": {
         "operationId": "setCronSharing",
         "summary": "Set cron sharing",
@@ -24632,7 +25806,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/hooks": {
+    "/v1\\ngh/orgs/{orgId}/hooks": {
       "post": {
         "operationId": "createHook",
         "summary": "Create a hook",
@@ -25234,7 +26408,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/agents/{agentId}/hooks": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/hooks": {
       "get": {
         "operationId": "listAgentHooks",
         "summary": "List an agent’s hooks",
@@ -25527,7 +26701,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/hooks/{id}": {
+    "/v1\\ngh/orgs/{orgId}/hooks/{id}": {
       "get": {
         "operationId": "getHook",
         "summary": "Get a hook",
@@ -26524,7 +27698,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/hooks/{id}/runs": {
+    "/v1\\ngh/orgs/{orgId}/hooks/{id}/runs": {
       "get": {
         "operationId": "listHookRuns",
         "summary": "List hook runs",
@@ -26686,7 +27860,227 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/sessions": {
+    "/v1\\ngh/orgs/{orgId}/sessions/facets": {
+      "get": {
+        "operationId": "listSessionFacets",
+        "summary": "List session filter facets",
+        "tags": [
+          "Sessions"
+        ],
+        "description": "Lists each distinct session filter facet after applying every other active filter visible to the caller.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "agentId",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "slack",
+                "telegram",
+                "webchat",
+                "discord",
+                "feishu",
+                "hook"
+              ]
+            },
+            "in": "query",
+            "name": "platform",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "slack",
+                "telegram",
+                "webchat",
+                "discord",
+                "feishu",
+                "hook",
+                "github"
+              ]
+            },
+            "in": "query",
+            "name": "integration",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "channel",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "triggeredBy",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9]\\d*$"
+            },
+            "in": "query",
+            "name": "githubRepoId",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "integrations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string"
+                          },
+                          "platform": {
+                            "type": "string"
+                          },
+                          "integration": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "triggeredByName": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "platform",
+                          "integration",
+                          "name",
+                          "triggeredByName"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "triggers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string"
+                          },
+                          "integration": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "hookKind": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "webhook",
+                                  "github"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "githubRepoId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "integration",
+                          "name",
+                          "hookKind",
+                          "githubRepoId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "agents",
+                    "integrations",
+                    "channels",
+                    "triggers"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/orgs/{orgId}/sessions": {
       "get": {
         "operationId": "listSessions",
         "summary": "List sessions",
@@ -26711,6 +28105,7 @@
                 "telegram",
                 "webchat",
                 "discord",
+                "feishu",
                 "hook"
               ]
             },
@@ -26720,10 +28115,44 @@
           },
           {
             "schema": {
+              "type": "string",
+              "enum": [
+                "slack",
+                "telegram",
+                "webchat",
+                "discord",
+                "feishu",
+                "hook",
+                "github"
+              ]
+            },
+            "in": "query",
+            "name": "integration",
+            "required": false
+          },
+          {
+            "schema": {
               "type": "string"
             },
             "in": "query",
             "name": "channel",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "triggeredBy",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9]\\d*$"
+            },
+            "in": "query",
+            "name": "githubRepoId",
             "required": false
           },
           {
@@ -26875,6 +28304,20 @@
                               }
                             ]
                           },
+                          "hookKind": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "webhook",
+                                  "github"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "channelName": {
                             "anyOf": [
                               {
@@ -26985,6 +28428,7 @@
                           "lastActivityAt",
                           "usage",
                           "triggeredBy",
+                          "hookKind",
                           "channelName",
                           "triggeredByName",
                           "threadUrl",
@@ -26999,6 +28443,18 @@
                         "additionalProperties": false
                       }
                     },
+                    "total": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "nextCursor": {
                       "anyOf": [
                         {
@@ -27012,6 +28468,7 @@
                   },
                   "required": [
                     "sessions",
+                    "total",
                     "nextCursor"
                   ],
                   "additionalProperties": false
@@ -27052,13 +28509,14 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/sessions/{id}": {
+    "/v1\\ngh/orgs/{orgId}/sessions/{id}": {
       "get": {
         "operationId": "getSession",
         "summary": "Get session metadata",
         "tags": [
           "Sessions"
         ],
+        "description": "Returns CP-stored session metadata plus visible parent and child session links; transcript bodies remain daemon-local.",
         "parameters": [
           {
             "name": "orgId",
@@ -27087,6 +28545,70 @@
                   "properties": {
                     "id": {
                       "type": "string"
+                    },
+                    "parentSession": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "agentId": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "agentId",
+                            "title"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "childSessions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "agentId",
+                          "title"
+                        ],
+                        "additionalProperties": false
+                      }
                     },
                     "agentId": {
                       "type": "string"
@@ -27145,6 +28667,69 @@
                       ]
                     },
                     "summary": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "status": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "lastActivityAt": {
+                      "type": "string"
+                    },
+                    "triggeredBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "channelName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "triggeredByName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "threadUrl": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -27243,6 +28828,8 @@
                   },
                   "required": [
                     "id",
+                    "parentSession",
+                    "childSessions",
                     "agentId",
                     "launchId",
                     "platform",
@@ -27251,6 +28838,13 @@
                     "phase",
                     "link",
                     "summary",
+                    "title",
+                    "status",
+                    "lastActivityAt",
+                    "triggeredBy",
+                    "channelName",
+                    "triggeredByName",
+                    "threadUrl",
                     "runtime",
                     "model",
                     "effort",
@@ -27300,7 +28894,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/sessions/{id}/messages": {
+    "/v1\\ngh/orgs/{orgId}/sessions/{id}/messages": {
       "get": {
         "operationId": "getSessionMessages",
         "summary": "Get session messages",
@@ -27499,7 +29093,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/sessions/{id}/tool-body": {
+    "/v1\\ngh/orgs/{orgId}/sessions/{id}/tool-body": {
       "get": {
         "operationId": "getSessionToolBody",
         "summary": "Get a tool-call body",
@@ -27657,7 +29251,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/usage": {
+    "/v1\\ngh/orgs/{orgId}/usage": {
       "get": {
         "operationId": "getUsage",
         "summary": "Get token usage",
@@ -27799,7 +29393,7 @@
         }
       }
     },
-    "/v1/orgs/{orgId}/stream": {
+    "/v1\\ngh/orgs/{orgId}/stream": {
       "get": {
         "operationId": "streamSessionEvents",
         "summary": "Live session event stream",
@@ -27827,7 +29421,7 @@
   },
   "servers": [
     {
-      "url": "https://api.agentconnect.md"
+      "url": "https://api.agentconnect.md\\ngh"
     }
   ],
   "security": [
