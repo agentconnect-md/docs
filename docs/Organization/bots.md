@@ -1,5 +1,5 @@
 ---
-title: Bots
+title: 🤖 Bots
 excerpt: The org-wide roster of Slack, Telegram and Discord bot identities — reuse, sharing, channel routing and cleanup.
 hidden: false
 ---

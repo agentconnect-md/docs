@@ -1,5 +1,5 @@
 ---
-title: Create an agent
+title: 🤖 Create an agent
 excerpt: Every field in the Add agent dialog — runtimes, models, effort, permission modes, memory, MCP servers and workspace.
 hidden: false
 ---

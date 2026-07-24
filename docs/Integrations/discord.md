@@ -1,5 +1,5 @@
 ---
-title: Discord
+title: 👾 Discord
 excerpt: A bot token, one intent checkbox and an invite link — then your agent lives in your Discord server.
 hidden: false
 ---

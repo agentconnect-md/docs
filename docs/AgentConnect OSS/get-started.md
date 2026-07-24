@@ -1,14 +1,12 @@
 ---
-title: AgentConnect OSS
+title: 🏁 Get started
 excerpt: Start the open-source AgentConnect stack locally with Docker Compose, while agents and workspaces stay on your own machines.
 hidden: false
 ---
 
 AgentConnect OSS is the open-source, self-hosted AgentConnect stack. It gives you control over the Web console, Control Plane, Relay, and PostgreSQL, while agent execution remains in daemons on the machines that own the workspaces. The source is available in the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect).
 
-## Get started
-
-### Before you start
+## Before you start
 
 You need:
 
@@ -18,7 +16,7 @@ You need:
 
 Published AgentConnect application and migration images currently target `linux/amd64`, and the Compose file pins that platform. Docker Desktop and OrbStack can run the stack with emulation on Apple Silicon.
 
-### 1. Start the stack
+## 1. Start the stack
 
 Clone the AgentConnect repository and start Compose:
 
@@ -38,7 +36,7 @@ docker compose ps --all
 
 `postgres`, `control-plane`, `relay`, and `web` should be running and healthy. `migration-files` and `migrate` should show `Exited (0)`; they are successful one-shot initialization jobs.
 
-### 2. Open AgentConnect
+## 2. Open AgentConnect
 
 Open:
 
@@ -55,7 +53,7 @@ curl http://localhost:8080/readyz
 curl http://localhost:8090/readyz
 ```
 
-### 3. Connect a daemon
+## 3. Connect a daemon
 
 The Compose stack does not put the daemon in a container. Keeping it on the host lets it access your local repositories, runtime launchers, and existing Claude or Codex authentication.
 
@@ -69,7 +67,7 @@ The generated command points at the local Control Plane. After the daemon connec
 
 If the daemon runs on another machine, `localhost` points at that machine instead of the Docker host. Configure host-reachable public URLs first; see [Network and public URLs](/docs/deployment-and-configuration#network-and-public-urls).
 
-### Logs and status
+## Logs and status
 
 Follow every service:
 
@@ -83,7 +81,7 @@ Or narrow the output:
 docker compose logs -f control-plane relay web
 ```
 
-### Update
+## Update
 
 Pull current images and reconcile the stack:
 
@@ -94,7 +92,7 @@ docker compose up -d
 
 The migration job is idempotent and runs before the updated Control Plane starts. If you created `compose.env`, add `--env-file compose.env` to both commands. To keep a reproducible deployment, pin `AGENTCONNECT_VERSION` to a release tag in that file; see [Image versions](/docs/deployment-and-configuration#image-versions).
 
-### Stop or reset
+## Stop or reset
 
 Stop the services without deleting the database:
 
@@ -155,5 +153,6 @@ AgentConnect OSS does not move agent execution into the central stack. Message b
 ## Next
 
 - [Deployment and configuration](/docs/deployment-and-configuration)
+- [Configure optional Mem0 memory](/docs/deployment-and-configuration#optional-mem0)
 - [Install the daemon as a service](/docs/install-the-daemon)
 - [Learn how AgentConnect keeps execution daemon-local](/docs/how-it-works)

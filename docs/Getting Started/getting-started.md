@@ -1,5 +1,5 @@
 ---
-title: Welcome to AgentConnect
+title: 👋 Welcome to AgentConnect
 excerpt: Run AI coding agents on your own machines and talk to them from Slack, Telegram, Discord, GitHub and the web.
 hidden: false
 ---

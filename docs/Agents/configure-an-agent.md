@@ -1,5 +1,5 @@
 ---
-title: Configure an agent
+title: ⚙️ Configure an agent
 excerpt: The agent page — editing behavior, output verbosity, pausing, env vars, sub-agent policy, memory and the agent API.
 hidden: false
 ---

@@ -1,5 +1,5 @@
 ---
-title: Usage
+title: 📈 Usage
 excerpt: Tokens, spend and session counts across your org — metered by the daemons, broken down per agent.
 hidden: false
 ---

@@ -1,5 +1,5 @@
 ---
-title: Playground
+title: 🧪 Playground
 excerpt: A live browser session with any agent — try prompts, switch models and permission modes, no channel required.
 hidden: false
 ---

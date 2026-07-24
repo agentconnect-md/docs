@@ -1,5 +1,5 @@
 ---
-title: Sessions
+title: 🧵 Sessions
 excerpt: Every agent run, replayable — filters, the transcript anatomy, tool call detail, and live sessions.
 hidden: false
 ---

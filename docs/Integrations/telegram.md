@@ -1,5 +1,5 @@
 ---
-title: Telegram
+title: ✈️ Telegram
 excerpt: One token from @BotFather and your agent answers Telegram DMs and groups.
 hidden: false
 ---

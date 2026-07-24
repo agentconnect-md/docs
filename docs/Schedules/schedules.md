@@ -1,5 +1,5 @@
 ---
-title: Schedules
+title: ⏰ Schedules
 excerpt: Run an agent on a timer — daily reports, nightly audits, periodic sweeps — with output posted to a channel or kept headless.
 hidden: false
 ---

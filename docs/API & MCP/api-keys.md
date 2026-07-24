@@ -1,5 +1,5 @@
 ---
-title: API keys
+title: 🔑 API keys
 excerpt: Mint personal keys that act as you against the REST API — list agents, read sessions, drive schedules from scripts and CI.
 hidden: false
 ---

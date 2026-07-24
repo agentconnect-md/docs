@@ -1,5 +1,5 @@
 ---
-title: Integrations overview
+title: 🔌 Integrations overview
 excerpt: How agents meet channels — bots, integrations, shared bots, and the commands that work in any conversation.
 hidden: false
 ---
