@@ -10,6 +10,7 @@
 - integrations
 - bots
 - mcp-providers
+- skill-sources
 - external-memory
 - crons
 - hooks

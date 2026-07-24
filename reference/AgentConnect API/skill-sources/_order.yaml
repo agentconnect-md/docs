@@ -1,0 +1,8 @@
+- listskillsources
+- createskillsource
+- getskillsource
+- updateskillsource
+- deleteskillsource
+- listskillsourceskills
+- previewskillsource
+- setskillsourcesharing
