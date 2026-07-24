@@ -5686,6 +5686,38 @@
                           },
                           "autoDistill": {
                             "type": "boolean"
+                          },
+                          "dreaming": {
+                            "type": "object",
+                            "properties": {
+                              "enabled": {
+                                "type": "boolean"
+                              },
+                              "sessionWindow": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 100
+                              },
+                              "schedule": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 128
+                              },
+                              "instructions": {
+                                "type": "string",
+                                "maxLength": 4096
+                              },
+                              "mineSkills": {
+                                "type": "boolean"
+                              },
+                              "autoAdopt": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "enabled"
+                            ],
+                            "additionalProperties": false
                           }
                         },
                         "required": [
@@ -6136,6 +6168,38 @@
                                 },
                                 "autoDistill": {
                                   "type": "boolean"
+                                },
+                                "dreaming": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "sessionWindow": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 100
+                                    },
+                                    "schedule": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 128
+                                    },
+                                    "instructions": {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    "mineSkills": {
+                                      "type": "boolean"
+                                    },
+                                    "autoAdopt": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               },
                               "required": [
@@ -6931,6 +6995,38 @@
                                   },
                                   "autoDistill": {
                                     "type": "boolean"
+                                  },
+                                  "dreaming": {
+                                    "type": "object",
+                                    "properties": {
+                                      "enabled": {
+                                        "type": "boolean"
+                                      },
+                                      "sessionWindow": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 100
+                                      },
+                                      "schedule": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "maxLength": 128
+                                      },
+                                      "instructions": {
+                                        "type": "string",
+                                        "maxLength": 4096
+                                      },
+                                      "mineSkills": {
+                                        "type": "boolean"
+                                      },
+                                      "autoAdopt": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "required": [
+                                      "enabled"
+                                    ],
+                                    "additionalProperties": false
                                   }
                                 },
                                 "required": [
@@ -7531,6 +7627,38 @@
                                 },
                                 "autoDistill": {
                                   "type": "boolean"
+                                },
+                                "dreaming": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "sessionWindow": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 100
+                                    },
+                                    "schedule": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 128
+                                    },
+                                    "instructions": {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    "mineSkills": {
+                                      "type": "boolean"
+                                    },
+                                    "autoAdopt": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               },
                               "required": [
@@ -8169,6 +8297,38 @@
                               },
                               "autoDistill": {
                                 "type": "boolean"
+                              },
+                              "dreaming": {
+                                "type": "object",
+                                "properties": {
+                                  "enabled": {
+                                    "type": "boolean"
+                                  },
+                                  "sessionWindow": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 100
+                                  },
+                                  "schedule": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 128
+                                  },
+                                  "instructions": {
+                                    "type": "string",
+                                    "maxLength": 4096
+                                  },
+                                  "mineSkills": {
+                                    "type": "boolean"
+                                  },
+                                  "autoAdopt": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "enabled"
+                                ],
+                                "additionalProperties": false
                               }
                             },
                             "required": [
@@ -8528,6 +8688,38 @@
                                 },
                                 "autoDistill": {
                                   "type": "boolean"
+                                },
+                                "dreaming": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "sessionWindow": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 100
+                                    },
+                                    "schedule": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 128
+                                    },
+                                    "instructions": {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    "mineSkills": {
+                                      "type": "boolean"
+                                    },
+                                    "autoAdopt": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               },
                               "required": [
@@ -9911,6 +10103,38 @@
                                 },
                                 "autoDistill": {
                                   "type": "boolean"
+                                },
+                                "dreaming": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "sessionWindow": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 100
+                                    },
+                                    "schedule": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 128
+                                    },
+                                    "instructions": {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    "mineSkills": {
+                                      "type": "boolean"
+                                    },
+                                    "autoAdopt": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               },
                               "required": [
@@ -10711,6 +10935,38 @@
                                 },
                                 "autoDistill": {
                                   "type": "boolean"
+                                },
+                                "dreaming": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "sessionWindow": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 100
+                                    },
+                                    "schedule": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 128
+                                    },
+                                    "instructions": {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    "mineSkills": {
+                                      "type": "boolean"
+                                    },
+                                    "autoAdopt": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               },
                               "required": [
@@ -11460,6 +11716,38 @@
                                 },
                                 "autoDistill": {
                                   "type": "boolean"
+                                },
+                                "dreaming": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "sessionWindow": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 100
+                                    },
+                                    "schedule": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 128
+                                    },
+                                    "instructions": {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    "mineSkills": {
+                                      "type": "boolean"
+                                    },
+                                    "autoAdopt": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               },
                               "required": [
@@ -12196,6 +12484,38 @@
                                 },
                                 "autoDistill": {
                                   "type": "boolean"
+                                },
+                                "dreaming": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "sessionWindow": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 100
+                                    },
+                                    "schedule": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 128
+                                    },
+                                    "instructions": {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    "mineSkills": {
+                                      "type": "boolean"
+                                    },
+                                    "autoAdopt": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               },
                               "required": [
