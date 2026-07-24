@@ -1,5 +1,5 @@
 ---
-title: Members & roles
+title: 👥 Members & roles
 excerpt: Organizations, inviting teammates, and what Owners, Collaborators and Viewers can do.
 hidden: false
 ---

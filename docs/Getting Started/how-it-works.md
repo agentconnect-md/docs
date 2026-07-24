@@ -1,5 +1,5 @@
 ---
-title: How it works
+title: 🧭 How it works
 excerpt: Daemon-centric architecture — agents, credentials and conversations live on your machines; the control plane only orchestrates.
 hidden: false
 ---

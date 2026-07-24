@@ -1,5 +1,5 @@
 ---
-title: Workspaces & repositories
+title: 📁 Workspaces & repositories
 excerpt: Scratch vs GitHub workspaces, the GitHub app, credential-free git, and granting an agent extra repositories.
 hidden: false
 ---

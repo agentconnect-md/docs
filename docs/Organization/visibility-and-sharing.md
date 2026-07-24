@@ -1,5 +1,5 @@
 ---
-title: Visibility & sharing
+title: 👁️ Visibility & sharing
 excerpt: Keep an agent, daemon or schedule visible to everyone in the org — or only to the people you pick.
 hidden: false
 ---

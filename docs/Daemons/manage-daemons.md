@@ -1,5 +1,5 @@
 ---
-title: Manage daemons
+title: 🛠️ Manage daemons
 excerpt: What the Daemons pages tell you — status, detected runtimes, resources — and the actions you can take.
 hidden: false
 ---

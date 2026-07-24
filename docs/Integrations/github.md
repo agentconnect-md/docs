@@ -1,5 +1,5 @@
 ---
-title: GitHub
+title: 🐙 GitHub
 excerpt: Trigger agents from issues, pull requests and comments — and let them reply as comments.
 hidden: false
 ---

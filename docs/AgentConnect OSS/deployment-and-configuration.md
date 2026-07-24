@@ -1,6 +1,6 @@
 ---
-title: Deployment and configuration
-excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, GitHub App integration, and optional Logto-backed sign-in.
+title: 🏗️ Deployment and configuration
+excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, GitHub App integration, optional Mem0, and Logto-backed sign-in.
 hidden: false
 ---
 
@@ -187,6 +187,97 @@ docker compose --env-file compose.env up -d --force-recreate control-plane relay
 Then open **Settings → GitHub** in AgentConnect, choose **Install on GitHub**, select the account and repositories, and return to the console. If GitHub says a permission update is pending, approve it as the installation owner and choose **Sync** in AgentConnect.
 
 The `LOGTO_MGMT_*` variables below are not required to enable the GitHub App. They add per-user GitHub authorization checks when Logto-backed sign-in is enabled; without them, repository authorization follows the AgentConnect organization and installation boundary.
+
+## Optional Mem0
+
+Mem0 is not part of the default AgentConnect Compose stack. AgentConnect works without external memory; deploy Mem0 only when agents should recall and capture durable records in a backend you operate.
+
+The local setup has two operator-managed pieces:
+
+- **Mem0 OSS**, which stores and searches records; and
+- the **AgentConnect Mem0 wrapper**, which runs on each participating daemon and translates AgentConnect's memory profile to Mem0 OSS calls.
+
+### 1. Start Mem0 OSS
+
+Follow Mem0's [self-hosted setup](https://docs.mem0.ai/open-source/setup). Its reference Docker Compose stack exposes the API on `http://localhost:8888` and the dashboard on `http://localhost:3000`.
+
+For example:
+
+```bash
+git clone https://github.com/mem0ai/mem0.git
+cd mem0/server
+
+# Configure server/.env first, including an LLM/embedder credential and JWT_SECRET.
+make bootstrap
+```
+
+`make bootstrap` starts the stack, creates the first admin, and issues an API key. You can also start with `docker compose up -d` and finish setup in the dashboard. Mem0 shows a newly created API key only once, so put it in your secret manager before continuing.
+
+Confirm the REST API is reachable from every daemon that will use it. The OpenAPI explorer is at `http://localhost:8888/docs`; the OSS routes do not use a `/v1` prefix. See Mem0's [REST API server guide](https://docs.mem0.ai/open-source/features/rest-api) for other deployment and authentication options.
+
+> If a daemon runs in a container, `127.0.0.1` means that container. Use the Mem0 service DNS name or another address reachable from the daemon instead.
+
+### 2. Build the AgentConnect Mem0 wrapper
+
+On each participating daemon machine, build the first-party wrapper from a current AgentConnect checkout. Replace `/opt/agentconnect` if you install it elsewhere:
+
+```bash
+git clone https://github.com/agentconnect-md/agentconnect.git /opt/agentconnect
+cd /opt/agentconnect
+corepack enable
+pnpm install --frozen-lockfile
+pnpm --filter @agentconnect.md/memory-plugin-mem0 build
+```
+
+If the repository already exists, pull the current release and rebuild that package. The stdio entry point is:
+
+```text
+/opt/agentconnect/packages/memory-plugin-mem0/dist/cli.js
+```
+
+### 3. Allowlist the wrapper on the daemon
+
+Add a `memoryPlugins` entry to the daemon's `~/.agentconnect/config.json`. Preserve the rest of the existing file:
+
+```json
+{
+  "version": 1,
+  "memoryPlugins": {
+    "mem0-oss": {
+      "command": "node",
+      "args": ["/opt/agentconnect/packages/memory-plugin-mem0/dist/cli.js"],
+      "env": [
+        { "name": "MEM0_DIALECT", "value": "oss" },
+        { "name": "MCP_TRANSPORT", "value": "stdio" },
+        { "name": "MEM0_OSS_BASE_URL", "value": "http://127.0.0.1:8888" }
+      ],
+      "secretEnv": { "apiKey": "MEM0_API_KEY" }
+    }
+  }
+}
+```
+
+The distinction matters:
+
+- `mem0-oss` is an opaque **command reference** that an organization owner may select in the console.
+- `command`, `args`, and `MEM0_OSS_BASE_URL` are controlled only by the daemon operator.
+- `secretEnv` maps the connection's logical `apiKey` to the wrapper's `MEM0_API_KEY` environment variable. It does not contain the key itself.
+
+Restart the daemon so the new allowlist is active:
+
+```bash
+agentconnect restart
+```
+
+Run `agentconnect status` if you need the service state or log path. If the daemon runs in the foreground, stop and rerun it instead. If it uses a non-default `--root`, edit that root's `config.json`.
+
+### Remote-wrapper alternative
+
+Use **Remote · Streamable HTTP** when the wrapper should run as a service rather than as a daemon child. Run the same package with `MEM0_DIALECT=oss`, `MEM0_OSS_BASE_URL=<your-mem0-api>`, and `MCP_TRANSPORT=http`, expose its `/mcp` endpoint behind HTTPS, then register that URL with the same plugin id and credential contract.
+
+The remote Relay enforces the reviewed wrapper endpoint and injects the write-only credential as `X-Mem0-Api-Key`; the wrapper translates it to Mem0 OSS's `X-API-Key`. The Mem0 upstream URL still comes only from the wrapper deployment, never from organization connection JSON.
+
+After the backend and wrapper are ready, continue with [External memory with Mem0 OSS](/docs/external-memory) to create the organization connection, bind an agent, choose recall and capture policies, and test cross-session recall.
 
 ## Optional Logto sign-in
 

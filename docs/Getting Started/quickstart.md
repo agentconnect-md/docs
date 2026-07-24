@@ -1,5 +1,5 @@
 ---
-title: Quickstart
+title: 🚀 Quickstart
 excerpt: Sign in, connect a machine, create an agent and have your first conversation — in about ten minutes.
 hidden: false
 ---

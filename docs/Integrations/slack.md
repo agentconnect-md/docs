@@ -1,5 +1,5 @@
 ---
-title: Slack
+title: 💬 Slack
 excerpt: Put an agent in your Slack workspace — one-click install with a config token, or the manifest flow. No public URL needed.
 hidden: false
 ---
