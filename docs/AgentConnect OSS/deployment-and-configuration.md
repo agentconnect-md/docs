@@ -1,6 +1,6 @@
 ---
 title: Deployment and configuration
-excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, and optional Logto-backed sign-in.
+excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, GitHub App integration, and optional Logto-backed sign-in.
 hidden: false
 ---
 
@@ -89,6 +89,104 @@ openssl rand -hex 32
 Run the command separately for each secret. Rotating `AGENTCONNECT_API_KEY_PEPPER` invalidates existing daemon and personal API keys.
 
 PostgreSQL 18 data lives in the `agentconnect_postgres-data` Docker volume. `docker compose down` preserves it; `docker compose down --volumes` permanently deletes it. Back up the database before any non-throwaway use.
+
+## Optional GitHub App
+
+Configure an instance-level GitHub App when you want to:
+
+- select private repositories for agent workspaces;
+- give daemons short-lived, repository-scoped Git credentials; or
+- trigger agents from GitHub issues, pull requests, comments, and pushes.
+
+Public repositories can still be cloned read-only without a GitHub App. GitHub event integrations require the Relay because GitHub delivers them as signed webhooks.
+
+### 1. Register the GitHub App
+
+In GitHub, open **Settings → Developer settings → GitHub Apps → New GitHub App**. Configure:
+
+| GitHub App field | Value                                                                     |
+| ---------------- | ------------------------------------------------------------------------- |
+| Homepage URL     | Your `AGENTCONNECT_PUBLIC_WEB_URL`                                        |
+| Setup URL        | `<AGENTCONNECT_PUBLIC_CP_URL>/v1/github/setup/callback`                   |
+| Webhook URL      | `<AGENTCONNECT_PUBLIC_RELAY_URL>/webhooks/github`                         |
+| Webhook secret   | A new random secret that you will also set as `GITHUB_APP_WEBHOOK_SECRET` |
+
+The Setup URL deliberately uses `/v1`, not `/api/v1`. Enable **Redirect on update** so returning from an installation or permission update refreshes the AgentConnect installation state.
+
+The Setup URL must be reachable by the installer's browser. The Webhook URL must be reachable from GitHub over HTTPS and your reverse proxy must preserve the request body and headers used for signature verification.
+
+Do not expose the complete no-auth Control Plane merely to make the Setup URL reachable. Either enable OIDC before publishing the Web and Control Plane, or route only the exact `/v1/github/setup/callback` path to the Control Plane while keeping its other routes private. The Relay webhook can be exposed separately.
+
+GitHub documents these fields in [Registering a GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app).
+
+### 2. Choose permissions and events
+
+The following repository permissions enable all GitHub features currently implemented by AgentConnect:
+
+| Repository permission | Access         | AgentConnect use                                                                         |
+| --------------------- | -------------- | ---------------------------------------------------------------------------------------- |
+| Metadata              | Read-only      | Installation and repository identity; GitHub grants this automatically                   |
+| Contents              | Read and write | Clone, fetch, inspect branches, and push                                                 |
+| Issues                | Read and write | Receive issue events and post issue replies                                              |
+| Pull requests         | Read and write | Receive PR events, post replies, and submit formal reviews                               |
+| Actions               | Read and write | Inspect and run GitHub Actions for repositories with AgentConnect `write` access         |
+| Workflows             | Read and write | Push changes under `.github/workflows` for repositories with AgentConnect `write` access |
+| Checks                | Read and write | Publish informational **AgentConnect PR Review** Checks                                  |
+
+For repository selection and read-only cloning only, keep **Contents** read-only and omit the other optional permissions. Event subscriptions without write-back need read-only **Issues** or **Pull requests**; replies and formal reviews need write access. The AgentConnect `write` tier requires **Contents**, **Actions**, and **Workflows** at read and write. **Checks** is optional when you do not publish PR review Checks. AgentConnect cannot expand an installation beyond the permissions declared by the App.
+
+Under **Subscribe to events**, select:
+
+- `issues`;
+- `pull_request`;
+- `issue_comment`;
+- `pull_request_review_comment`;
+- `push`; and
+- `check_run` when using informational PR review Checks.
+
+GitHub sends `installation` and `installation_repositories` events to GitHub Apps automatically; they are not manual subscription options.
+
+The App declaration is the maximum permission set. Each installation owner chooses the repositories and approves that set. AgentConnect then mints a short-lived token narrowed to one authorized repository and the agent's `read`, `comment`, or `write` tier. Existing installation owners must approve permission increases before AgentConnect can use them.
+
+See GitHub's [permission selection guide](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app) and [webhook event reference](https://docs.github.com/en/webhooks/webhook-events-and-payloads).
+
+### 3. Configure Compose
+
+Generate a private key in the GitHub App settings. Convert the downloaded PEM to the single-line base64 value expected by the Control Plane:
+
+```bash
+base64 < github-app.private-key.pem | tr -d '\n'
+```
+
+Generate an independent webhook secret:
+
+```bash
+openssl rand -hex 32
+```
+
+Add the App identity and webhook secret to `compose.env`:
+
+```dotenv
+GITHUB_APP_ID=<app-id>
+GITHUB_APP_PRIVATE_KEY_B64=<single-line-base64-pem>
+GITHUB_APP_SLUG=<app-slug>
+GITHUB_APP_CLIENT_ID=<client-id>
+GITHUB_APP_WEBHOOK_SECRET=<webhook-secret>
+```
+
+`GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY_B64`, and `GITHUB_APP_SLUG` are a required group: set all three to enable the feature, or omit all three to disable it. `GITHUB_APP_CLIENT_ID` is optional; when omitted, AgentConnect uses the numeric App ID as the App JWT issuer. `GITHUB_APP_WEBHOOK_SECRET` is required for GitHub event ingress.
+
+The private key is read only by the Control Plane. The webhook secret is read only by the Relay and must exactly match the value in GitHub.
+
+Recreate the affected services:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane relay
+```
+
+Then open **Settings → GitHub** in AgentConnect, choose **Install on GitHub**, select the account and repositories, and return to the console. If GitHub says a permission update is pending, approve it as the installation owner and choose **Sync** in AgentConnect.
+
+The `LOGTO_MGMT_*` variables below are not required to enable the GitHub App. They add per-user GitHub authorization checks when Logto-backed sign-in is enabled; without them, repository authorization follows the AgentConnect organization and installation boundary.
 
 ## Optional Logto sign-in
 
