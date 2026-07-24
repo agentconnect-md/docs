@@ -24,7 +24,7 @@ AgentConnect is open source and can run as a self-hosted stack. The stack provid
 | PostgreSQL    | Docker by default            | Persist Control Plane metadata                                                                       |
 | Daemon        | Your host or another machine | Run agents, own workspaces and conversations, and connect directly to supported chat platforms       |
 
-The Compose stack also runs a short-lived migration job. It applies the selected Control Plane image's database migrations and initializes only the fixed local organization required when sign-in is disabled. It does not add sample data.
+The Compose stack also runs a short-lived migration job. It applies the selected Control Plane image's database migrations. When sign-in is disabled, Control Plane startup initializes only the fixed local organization required by no-auth mode; it does not add sample data.
 
 ## Choose the right deployment
 
