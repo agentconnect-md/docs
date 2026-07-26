@@ -25,3 +25,12 @@
 - listagentmemoryrecordhistory
 - listagentpermissionrequests
 - decideagentpermissionrequest
+- listagentmemoryfilehistory
+- startagentmemorydream
+- listagentmemorydreams
+- getagentmemorydream
+- cancelagentmemorydream
+- adoptagentmemorydream
+- discardagentmemorydream
+- listagentmemorydreamfiles
+- readagentmemorydreamfile

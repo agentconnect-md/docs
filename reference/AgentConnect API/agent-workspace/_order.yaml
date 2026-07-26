@@ -3,3 +3,5 @@
 - getagentworkspacegitstatus
 - pullagentworkspace
 - setagentworkspace
+- putagentworkspacefile
+- deleteagentworkspacefile
