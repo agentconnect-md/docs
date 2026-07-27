@@ -1383,7 +1383,7 @@
         "tags": [
           "Profile"
         ],
-        "description": "Redeem the join link minted for the signed-in user, making them a formal (activated) user with a personal org. The link’s email must match the caller’s verified email. Idempotent on repeat by the same user. Requires OIDC sign-in with a verified email.",
+        "description": "Redeem an activation link, making the signed-in user a formal (activated) user with a personal org. A link minted for a specific email must be redeemed by that verified email; an email-less bearer link may be redeemed by any verified identity and binds to the first redeemer (one use), except that an already-activated account is admitted without consuming it. Idempotent on repeat by the same user. Requires OIDC sign-in with a verified email.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9445,6 +9445,125 @@
         }
       }
     },
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/skill-sources": {
+      "get": {
+        "operationId": "listAgentSkillSources",
+        "summary": "List an agent’s enabled skill sources",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Resolve the agent’s skill enable-list (\"<source>/<skill>\" refs) into the registry rows it references. Gated on viewing the AGENT, not the source: a source restricted away from the caller still resolves, because its definition is part of what this agent installs. Refs to a source that no longer exists are omitted.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "subDir": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "skills": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "source",
+                      "ref",
+                      "subDir",
+                      "skills"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1\\ngh/orgs/{orgId}/agents/{id}/permission-requests": {
       "get": {
         "operationId": "listAgentPermissionRequests",
@@ -17444,6 +17563,46 @@
                     "snapshotDigest": {
                       "type": "string"
                     },
+                    "executionSessionId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stopReason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "instructions": {
                       "anyOf": [
                         {
@@ -17494,6 +17653,39 @@
                         {
                           "type": "object",
                           "properties": {
+                            "reportedAt": {
+                              "type": "string"
+                            },
+                            "totalTokens": {
+                              "type": "number"
+                            },
+                            "inputTokens": {
+                              "type": "number"
+                            },
+                            "outputTokens": {
+                              "type": "number"
+                            },
+                            "thoughtTokens": {
+                              "type": "number"
+                            },
+                            "cachedReadTokens": {
+                              "type": "number"
+                            },
+                            "cachedWriteTokens": {
+                              "type": "number"
+                            },
+                            "contextUsed": {
+                              "type": "number"
+                            },
+                            "contextSize": {
+                              "type": "number"
+                            },
+                            "costAmount": {
+                              "type": "number"
+                            },
+                            "costCurrency": {
+                              "type": "string"
+                            },
                             "inputBytes": {
                               "type": "number"
                             },
@@ -17556,6 +17748,10 @@
                     "trigger",
                     "sessionIds",
                     "snapshotDigest",
+                    "executionSessionId",
+                    "runtime",
+                    "model",
+                    "stopReason",
                     "instructions",
                     "skills",
                     "usage",
@@ -17804,6 +18000,46 @@
                           "snapshotDigest": {
                             "type": "string"
                           },
+                          "executionSessionId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "runtime": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "model": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "stopReason": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "instructions": {
                             "anyOf": [
                               {
@@ -17854,6 +18090,39 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "reportedAt": {
+                                    "type": "string"
+                                  },
+                                  "totalTokens": {
+                                    "type": "number"
+                                  },
+                                  "inputTokens": {
+                                    "type": "number"
+                                  },
+                                  "outputTokens": {
+                                    "type": "number"
+                                  },
+                                  "thoughtTokens": {
+                                    "type": "number"
+                                  },
+                                  "cachedReadTokens": {
+                                    "type": "number"
+                                  },
+                                  "cachedWriteTokens": {
+                                    "type": "number"
+                                  },
+                                  "contextUsed": {
+                                    "type": "number"
+                                  },
+                                  "contextSize": {
+                                    "type": "number"
+                                  },
+                                  "costAmount": {
+                                    "type": "number"
+                                  },
+                                  "costCurrency": {
+                                    "type": "string"
+                                  },
                                   "inputBytes": {
                                     "type": "number"
                                   },
@@ -17916,6 +18185,10 @@
                           "trigger",
                           "sessionIds",
                           "snapshotDigest",
+                          "executionSessionId",
+                          "runtime",
+                          "model",
+                          "stopReason",
                           "instructions",
                           "skills",
                           "usage",
@@ -18140,6 +18413,46 @@
                     "snapshotDigest": {
                       "type": "string"
                     },
+                    "executionSessionId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stopReason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "instructions": {
                       "anyOf": [
                         {
@@ -18190,6 +18503,39 @@
                         {
                           "type": "object",
                           "properties": {
+                            "reportedAt": {
+                              "type": "string"
+                            },
+                            "totalTokens": {
+                              "type": "number"
+                            },
+                            "inputTokens": {
+                              "type": "number"
+                            },
+                            "outputTokens": {
+                              "type": "number"
+                            },
+                            "thoughtTokens": {
+                              "type": "number"
+                            },
+                            "cachedReadTokens": {
+                              "type": "number"
+                            },
+                            "cachedWriteTokens": {
+                              "type": "number"
+                            },
+                            "contextUsed": {
+                              "type": "number"
+                            },
+                            "contextSize": {
+                              "type": "number"
+                            },
+                            "costAmount": {
+                              "type": "number"
+                            },
+                            "costCurrency": {
+                              "type": "string"
+                            },
                             "inputBytes": {
                               "type": "number"
                             },
@@ -18252,6 +18598,10 @@
                     "trigger",
                     "sessionIds",
                     "snapshotDigest",
+                    "executionSessionId",
+                    "runtime",
+                    "model",
+                    "stopReason",
                     "instructions",
                     "skills",
                     "usage",
@@ -18469,6 +18819,46 @@
                     "snapshotDigest": {
                       "type": "string"
                     },
+                    "executionSessionId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stopReason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "instructions": {
                       "anyOf": [
                         {
@@ -18519,6 +18909,39 @@
                         {
                           "type": "object",
                           "properties": {
+                            "reportedAt": {
+                              "type": "string"
+                            },
+                            "totalTokens": {
+                              "type": "number"
+                            },
+                            "inputTokens": {
+                              "type": "number"
+                            },
+                            "outputTokens": {
+                              "type": "number"
+                            },
+                            "thoughtTokens": {
+                              "type": "number"
+                            },
+                            "cachedReadTokens": {
+                              "type": "number"
+                            },
+                            "cachedWriteTokens": {
+                              "type": "number"
+                            },
+                            "contextUsed": {
+                              "type": "number"
+                            },
+                            "contextSize": {
+                              "type": "number"
+                            },
+                            "costAmount": {
+                              "type": "number"
+                            },
+                            "costCurrency": {
+                              "type": "string"
+                            },
                             "inputBytes": {
                               "type": "number"
                             },
@@ -18581,6 +19004,10 @@
                     "trigger",
                     "sessionIds",
                     "snapshotDigest",
+                    "executionSessionId",
+                    "runtime",
+                    "model",
+                    "stopReason",
                     "instructions",
                     "skills",
                     "usage",
@@ -18844,6 +19271,46 @@
                     "snapshotDigest": {
                       "type": "string"
                     },
+                    "executionSessionId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stopReason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "instructions": {
                       "anyOf": [
                         {
@@ -18894,6 +19361,39 @@
                         {
                           "type": "object",
                           "properties": {
+                            "reportedAt": {
+                              "type": "string"
+                            },
+                            "totalTokens": {
+                              "type": "number"
+                            },
+                            "inputTokens": {
+                              "type": "number"
+                            },
+                            "outputTokens": {
+                              "type": "number"
+                            },
+                            "thoughtTokens": {
+                              "type": "number"
+                            },
+                            "cachedReadTokens": {
+                              "type": "number"
+                            },
+                            "cachedWriteTokens": {
+                              "type": "number"
+                            },
+                            "contextUsed": {
+                              "type": "number"
+                            },
+                            "contextSize": {
+                              "type": "number"
+                            },
+                            "costAmount": {
+                              "type": "number"
+                            },
+                            "costCurrency": {
+                              "type": "string"
+                            },
                             "inputBytes": {
                               "type": "number"
                             },
@@ -18956,6 +19456,10 @@
                     "trigger",
                     "sessionIds",
                     "snapshotDigest",
+                    "executionSessionId",
+                    "runtime",
+                    "model",
+                    "stopReason",
                     "instructions",
                     "skills",
                     "usage",
@@ -19203,6 +19707,46 @@
                     "snapshotDigest": {
                       "type": "string"
                     },
+                    "executionSessionId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stopReason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "instructions": {
                       "anyOf": [
                         {
@@ -19253,6 +19797,39 @@
                         {
                           "type": "object",
                           "properties": {
+                            "reportedAt": {
+                              "type": "string"
+                            },
+                            "totalTokens": {
+                              "type": "number"
+                            },
+                            "inputTokens": {
+                              "type": "number"
+                            },
+                            "outputTokens": {
+                              "type": "number"
+                            },
+                            "thoughtTokens": {
+                              "type": "number"
+                            },
+                            "cachedReadTokens": {
+                              "type": "number"
+                            },
+                            "cachedWriteTokens": {
+                              "type": "number"
+                            },
+                            "contextUsed": {
+                              "type": "number"
+                            },
+                            "contextSize": {
+                              "type": "number"
+                            },
+                            "costAmount": {
+                              "type": "number"
+                            },
+                            "costCurrency": {
+                              "type": "string"
+                            },
                             "inputBytes": {
                               "type": "number"
                             },
@@ -19315,6 +19892,10 @@
                     "trigger",
                     "sessionIds",
                     "snapshotDigest",
+                    "executionSessionId",
+                    "runtime",
+                    "model",
+                    "stopReason",
                     "instructions",
                     "skills",
                     "usage",
@@ -21527,9 +22108,17 @@
                           "isPrivate": {
                             "type": "boolean"
                           },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "channel",
+                              "im"
+                            ]
+                          },
                           "trigger": {
                             "type": "string",
                             "enum": [
+                              "off",
                               "mention",
                               "any"
                             ]
@@ -21549,6 +22138,7 @@
                           "channelId",
                           "name",
                           "isPrivate",
+                          "kind",
                           "trigger",
                           "agentId"
                         ],
@@ -21769,9 +22359,17 @@
                             "isPrivate": {
                               "type": "boolean"
                             },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "channel",
+                                "im"
+                              ]
+                            },
                             "trigger": {
                               "type": "string",
                               "enum": [
+                                "off",
                                 "mention",
                                 "any"
                               ]
@@ -21791,6 +22389,7 @@
                             "channelId",
                             "name",
                             "isPrivate",
+                            "kind",
                             "trigger",
                             "agentId"
                           ],
@@ -21824,7 +22423,7 @@
         "tags": [
           "Integrations"
         ],
-        "description": "Set a channel's trigger (@-mention vs any message), then push the integration's recomputed bindRules to the owning daemon.",
+        "description": "Set a channel's trigger or default agent, then push the updated routing configuration.",
         "requestBody": {
           "required": true,
           "content": {
@@ -21835,20 +22434,14 @@
                   "trigger": {
                     "type": "string",
                     "enum": [
+                      "off",
                       "mention",
                       "any"
                     ]
                   },
                   "agentId": {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "type": "string",
+                    "minLength": 1
                   }
                 }
               }
@@ -21906,9 +22499,17 @@
                     "isPrivate": {
                       "type": "boolean"
                     },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "channel",
+                        "im"
+                      ]
+                    },
                     "trigger": {
                       "type": "string",
                       "enum": [
+                        "off",
                         "mention",
                         "any"
                       ]
@@ -21928,8 +22529,39 @@
                     "channelId",
                     "name",
                     "isPrivate",
+                    "kind",
                     "trigger",
                     "agentId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
                   ],
                   "additionalProperties": false
                 }
@@ -23137,7 +23769,7 @@
         "tags": [
           "MCP providers"
         ],
-        "description": "Register an org-level upstream MCP server (http transport, org visibility) and mint its bearer grant key. The grant key is returned exactly once and is never retrievable afterward; upstream header values go in and never come back.",
+        "description": "Register an org-level upstream MCP server (http transport, org visibility) and mint its bearer grant key. The grant key is returned exactly once and is never retrievable afterward; upstream header values go in and never come back. Rejected with 409 while any agent already enables an MCP server under the requested name — agents bind by name, so a new provider must not silently capture existing selections.",
         "requestBody": {
           "required": true,
           "content": {
@@ -23328,6 +23960,36 @@
             }
           },
           "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -23732,7 +24394,7 @@
         "tags": [
           "MCP providers"
         ],
-        "description": "Delete an MCP provider and cascade-drop its upstream secret and grants. (The relay/daemon unbind is wired in a later step.)",
+        "description": "Delete an MCP provider, unbind it from relays/daemons, and cascade-drop its upstream secret and grants. Rejected with 409 while any agent still enables it — unselect it from those agents first.",
         "parameters": [
           {
             "name": "orgId",
@@ -23786,6 +24448,36 @@
             }
           },
           "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -25612,7 +26304,7 @@
         "tags": [
           "MCP providers"
         ],
-        "description": "The open-connector provider catalog, filtered to connectable providers (non-OAuth, or OAuth with a configured client secret) and any provider whitelist. 404 when the integration is not configured.",
+        "description": "The open-connector provider catalog, filtered to connectable providers (non-OAuth, or OAuth with a configured client secret), the provider whitelist, and the provider blocklist. 404 when the integration is not configured.",
         "parameters": [
           {
             "schema": {
@@ -33106,7 +33798,8 @@
                 "webchat",
                 "discord",
                 "feishu",
-                "hook"
+                "hook",
+                "dream"
               ]
             },
             "in": "query",
@@ -33123,7 +33816,8 @@
                 "discord",
                 "feishu",
                 "hook",
-                "github"
+                "github",
+                "dream"
               ]
             },
             "in": "query",
@@ -33326,7 +34020,8 @@
                 "webchat",
                 "discord",
                 "feishu",
-                "hook"
+                "hook",
+                "dream"
               ]
             },
             "in": "query",
@@ -33343,7 +34038,8 @@
                 "discord",
                 "feishu",
                 "hook",
-                "github"
+                "github",
+                "dream"
               ]
             },
             "in": "query",
@@ -33476,6 +34172,9 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "reportedAt": {
+                                    "type": "string"
+                                  },
                                   "totalTokens": {
                                     "type": "number"
                                   },
@@ -33919,6 +34618,52 @@
                     "lastActivityAt": {
                       "type": "string"
                     },
+                    "usage": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "reportedAt": {
+                              "type": "string"
+                            },
+                            "totalTokens": {
+                              "type": "number"
+                            },
+                            "inputTokens": {
+                              "type": "number"
+                            },
+                            "outputTokens": {
+                              "type": "number"
+                            },
+                            "thoughtTokens": {
+                              "type": "number"
+                            },
+                            "cachedReadTokens": {
+                              "type": "number"
+                            },
+                            "cachedWriteTokens": {
+                              "type": "number"
+                            },
+                            "contextUsed": {
+                              "type": "number"
+                            },
+                            "contextSize": {
+                              "type": "number"
+                            },
+                            "costAmount": {
+                              "type": "number"
+                            },
+                            "costCurrency": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "triggeredBy": {
                       "anyOf": [
                         {
@@ -34061,6 +34806,7 @@
                     "title",
                     "status",
                     "lastActivityAt",
+                    "usage",
                     "triggeredBy",
                     "channelName",
                     "triggeredByName",
@@ -34137,6 +34883,15 @@
             },
             "in": "query",
             "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "in": "query",
+            "name": "after",
             "required": false
           },
           {
@@ -34264,12 +35019,27 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "liveCursor": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "liveMore": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
                     "sessionId",
                     "messages",
-                    "nextCursor"
+                    "nextCursor",
+                    "liveCursor",
+                    "liveMore"
                   ],
                   "additionalProperties": false
                 }
@@ -34638,7 +35408,7 @@
         "tags": [
           "Stream"
         ],
-        "description": "Server-sent event feed relaying each converged session milestone (metadata only) for the org’s daemons.",
+        "description": "Server-sent event feed relaying session milestones and body-free transcript activity for the org’s daemons.",
         "parameters": [
           {
             "schema": {
