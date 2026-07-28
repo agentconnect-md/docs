@@ -1383,7 +1383,7 @@
         "tags": [
           "Profile"
         ],
-        "description": "Redeem an activation link, making the signed-in user a formal (activated) user with a personal org. A link minted for a specific email must be redeemed by that verified email; an email-less bearer link may be redeemed by any verified identity and binds to the first redeemer (one use), except that an already-activated account is admitted without consuming it. Idempotent on repeat by the same user. Requires OIDC sign-in with a verified email.",
+        "description": "Redeem an activation link, making the signed-in user a formal (activated) user with a personal org. A link minted for a specific email must be redeemed by that verified email; an email-less bearer link may be redeemed by any verified identity and binds to the first redeemer (one use), except that an already-activated account is admitted without consuming it. Optionally send `expectSubject` to assert which signed-in identity the client meant: if it disagrees with the verified token, the request is refused (409 IDENTITY_CHANGED) instead of activating a different account. Idempotent on repeat by the same user. Requires OIDC sign-in with a verified email.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1395,6 +1395,11 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 200
+                  },
+                  "expectSubject": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
                   }
                 },
                 "required": [
@@ -25001,7 +25006,7 @@
         "tags": [
           "Skill sources"
         ],
-        "description": "Register an org-level shared-skills source (a repo / git URL / tree path fed to `npx skills`). `skills` empty ⇒ install every skill the source exposes.",
+        "description": "Register an org-level shared-skills source (a repo / git URL / tree path fed to `npx skills`). `skills` empty ⇒ install every skill the source exposes. Rejected with 409 while any agent already enables skills under the requested source name — agents bind by name, so a new source must not silently capture existing selections.",
         "requestBody": {
           "required": true,
           "content": {
@@ -25198,6 +25203,36 @@
             }
           },
           "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -35285,6 +35320,17 @@
           },
           {
             "schema": {
+              "default": 0,
+              "type": "integer",
+              "minimum": -900,
+              "maximum": 900
+            },
+            "in": "query",
+            "name": "tz",
+            "required": false
+          },
+          {
+            "schema": {
               "type": "string"
             },
             "in": "path",
@@ -35386,12 +35432,49 @@
                         ],
                         "additionalProperties": false
                       }
+                    },
+                    "series": {
+                      "type": "object",
+                      "properties": {
+                        "bucket": {
+                          "type": "string",
+                          "enum": [
+                            "hour",
+                            "day"
+                          ]
+                        },
+                        "points": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": "string"
+                              },
+                              "costAmount": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "start",
+                              "costAmount"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "bucket",
+                        "points"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
                     "range",
                     "totals",
-                    "agents"
+                    "agents",
+                    "series"
                   ],
                   "additionalProperties": false
                 }
