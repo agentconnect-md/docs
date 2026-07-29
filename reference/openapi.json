@@ -22110,6 +22110,26 @@
                               }
                             ]
                           },
+                          "spaceId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "space": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "isPrivate": {
                             "type": "boolean"
                           },
@@ -22117,7 +22137,8 @@
                             "type": "string",
                             "enum": [
                               "channel",
-                              "im"
+                              "im",
+                              "mpim"
                             ]
                           },
                           "trigger": {
@@ -22142,6 +22163,8 @@
                         "required": [
                           "channelId",
                           "name",
+                          "spaceId",
+                          "space",
                           "isPrivate",
                           "kind",
                           "trigger",
@@ -22361,6 +22384,26 @@
                                 }
                               ]
                             },
+                            "spaceId": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "space": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "isPrivate": {
                               "type": "boolean"
                             },
@@ -22368,7 +22411,8 @@
                               "type": "string",
                               "enum": [
                                 "channel",
-                                "im"
+                                "im",
+                                "mpim"
                               ]
                             },
                             "trigger": {
@@ -22393,6 +22437,8 @@
                           "required": [
                             "channelId",
                             "name",
+                            "spaceId",
+                            "space",
                             "isPrivate",
                             "kind",
                             "trigger",
@@ -22501,6 +22547,26 @@
                         }
                       ]
                     },
+                    "spaceId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "space": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "isPrivate": {
                       "type": "boolean"
                     },
@@ -22508,7 +22574,8 @@
                       "type": "string",
                       "enum": [
                         "channel",
-                        "im"
+                        "im",
+                        "mpim"
                       ]
                     },
                     "trigger": {
@@ -22533,6 +22600,8 @@
                   "required": [
                     "channelId",
                     "name",
+                    "spaceId",
+                    "space",
                     "isPrivate",
                     "kind",
                     "trigger",
