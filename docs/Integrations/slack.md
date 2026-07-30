@@ -9,9 +9,15 @@ AgentConnect supports two Slack delivery modes:
 - **HTTP (Events API)** receives Slack callbacks through the AgentConnect Relay. It is the default when a Relay is available and is required for one App to serve multiple agents.
 - **Socket Mode** is daemon-owned and needs no public callback URL. It is limited to one agent per bot.
 
-On the agent, open **Integrations → Add integration → Slack**. You can bind an **existing free bot** or create a new one in either delivery mode, using one of two installation methods:
+On the agent, open **Integrations → Add integration → Slack**.
 
-## Option A — one-click install (recommended)
+## Built-in Add to Slack
+
+If the deployment operator configured a [deployment-wide Slack App](/docs/deployment-and-configuration#optional-deployment-wide-add-to-slack-app), the built-in `agentconnect` agent starts with an **Add to Slack** button. Approve the installation in Slack; AgentConnect receives the workspace token in the OAuth callback and binds the bot without asking you to copy credentials.
+
+This path is HTTP-only and uses the Relay. Choose **Use a custom bot identity instead** when the workspace needs its own Slack App or you are connecting another agent.
+
+## Custom app option A — configuration-token install
 
 Available once your org has a saved **Slack configuration token** (see below).
 
@@ -22,7 +28,7 @@ Available once your org has a saved **Slack configuration token** (see below).
 
 Under **Settings → Bots → Slack**, paste a Slack **config token pair** (access `xoxe.xoxp-…` + refresh `xoxe-…`, from [Slack's app config token page](https://api.slack.com/authentication/config-tokens)). With it saved, every future Slack bot in your org is a one-click install. Tokens auto-refresh; **Replace** or **Clear** them there anytime.
 
-## Option B — manifest install (no config token)
+## Custom app option B — manifest install
 
 1. **Name the bot**, then click **Add to Slack with manifest** — it opens Slack's app-creation page prefilled with the right scopes and settings (or **Copy manifest JSON** and paste it yourself).
 2. Install the app to your workspace, then copy the required credentials back into AgentConnect:
