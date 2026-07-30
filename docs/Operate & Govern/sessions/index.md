@@ -4,7 +4,7 @@ excerpt: Every agent run, replayable — filters, the transcript anatomy, tool c
 hidden: false
 ---
 
-**Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, webhooks, schedules, or the Playground. The list contains only sessions allowed by both the owning agent's team visibility and the session's own [Org or Private visibility](/docs/session-visibility).
+**Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, webhooks, schedules, or the Playground. The list contains only sessions allowed by both the owning agent's team visibility and the session's own [Everyone or Private visibility](/docs/session-visibility).
 
 ![A session transcript](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-detail.png)
 
@@ -38,7 +38,7 @@ The Control Plane stores session metadata such as title, status, timestamps, and
 
 When an authorized person opens a transcript, the console requests a bounded live read through the Control Plane BFF. The response is proxied from the daemon and is not persisted by the Control Plane. That is why metadata can remain visible while a daemon is offline, but its transcript cannot load.
 
-The session header shows **Org / Private** when you may change the audience. Making a session private hides the transcript immediately and can also change future memory capture; review the [session visibility and memory caveats](/docs/session-visibility) before tightening it.
+The session header shows **Everyone / Private** when you may change the audience. Making a session private hides the transcript immediately and can also change future memory capture; review the [session visibility and memory caveats](/docs/session-visibility) before tightening it.
 
 ## Sessions across messaging platforms
 

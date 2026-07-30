@@ -21,7 +21,7 @@ Agent-to-agent calls use a separate, directional policy. A call from agent A to 
 | ------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------- |
 | [Members & roles](/docs/members-and-roles)             | What a person may do across an organization              | Owner, Collaborator, Viewer           |
 | [Visibility & sharing](/docs/visibility-and-sharing)   | Which team resources a person may discover and access    | Everyone, Selected                    |
-| [Session visibility](/docs/session-visibility)         | Who may read one session and its transcript              | Org, Private                          |
+| [Session visibility](/docs/session-visibility)         | Who may read one session and its transcript              | Everyone, Private                     |
 | [Agent visibility](/docs/agent-visibility)             | Which agents may discover and call one another           | Inbound and outbound: All or Selected |
 | [Social account linking](/docs/social-account-linking) | Which sign-in methods belong to one AgentConnect profile | GitHub, Google, Slack                 |
 
