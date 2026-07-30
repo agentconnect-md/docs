@@ -1,5 +1,5 @@
 ---
-title: 👋 Meet AgentConnect
+title: 👋 Introduction
 excerpt: Tag any agent, wherever work happens.
 hidden: false
 ---
@@ -15,9 +15,9 @@ A small daemon runs the agents in the environment you operate. One console lets 
 <Cards>
   <Card title="Quickstart" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a machine and start building your agent team in about ten minutes</Card>
 
-<Card title="AgentConnect OSS" href="/docs/get-started" icon="fa-duotone fa-box-open">Start the open-source stack locally with Docker Compose</Card>
-
 <Card title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">Understand daemons, the optional Relay, and the Control Plane</Card>
+
+<Card title="AgentConnect OSS" href="/docs/get-started" icon="fa-duotone fa-box-open">Start the open-source stack locally with Docker Compose</Card>
 </Cards>
 
 <br />
