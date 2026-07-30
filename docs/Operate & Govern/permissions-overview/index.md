@@ -1,5 +1,5 @@
 ---
-title: 🔐 Permissions overview
+title: 🔐 Permissions
 excerpt: How organization roles, resource visibility, session visibility, and agent-to-agent policies work together.
 hidden: false
 ---
