@@ -24,19 +24,25 @@ A small daemon runs the agents in the environment you operate. One console lets 
 
 <br />
 
-## Why teams use AgentConnect
+## Why AgentConnect?
 
-- **Work stays where it already happens.** Agents join existing team channels and GitHub workflows instead of asking everyone to adopt another workspace.
-- **Every job can use the right runtime.** Run Claude Code, Codex, Gemini CLI, or another ACP-compatible runtime on the machine and workspace that fit the task.
-- **People and agents collaborate with boundaries.** Organization roles, resource and session visibility, repository access, and directional agent call policies compose instead of collapsing into one global permission.
-- **You control the stack.** Agent execution and workspaces stay in the environment you operate. The Apache-2.0 stack is available to self-host today.
+AI agents are taking on work across the team, but most still live in individual terminals. AgentConnect brings them into the team's shared workflows:
 
-## What that enables
+- **Work as one team.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens.
+- **Keep work where it happens.** Link agents to bots in Slack, Telegram, and Discord, or to repositories and workflows on GitHub.
+- **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
+- **Carry context forward.** Give each agent the memory and reusable skills it needs to build on earlier work.
+- **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
+- **Stay in control.** Self-host the Apache-2.0 stack, run agents in your environment, and change runtimes without locking the team to one vendor.
 
-- **Fast and deep PR review.** Let a quick model inspect every pull request, then mention a more capable reviewer only when the change needs it. [Build the workflow](/docs/fast-and-deep-pr-reviews).
-- **One Slack app with channel-specific specialists.** Keep one familiar bot identity while routing different channels to different agents. [Configure the pattern](/docs/one-slack-app-across-channels).
-- **Visible multi-agent handoffs.** A support agent can hand an incident to a specialist on another runtime and machine, open a PR, and return the result to the conversation where the work began.
-- **Event and scheduled work.** Wake agents from GitHub events, generic webhooks, or schedules and deliver the result back to the right team surface.
+## Build your agent team
+
+Create agents for the roles your team needs, give each one the runtime, model, workspace, and tools that fit the job, then connect them to the places where your team already works.
+
+- **Create a roster of agents.** Run reviewers, support agents, release agents, and other specialists side by side.
+- **Connect them to your platforms.** Link agents to bots in Slack, Telegram, or Discord, or let them work from GitHub repositories and events.
+- **Put each agent in the right place.** Choose the channels, repositories, webhooks, and schedules where each agent should respond.
+- **Work with them as a team.** Mention the right agent from a conversation or GitHub thread, and follow its work there or from the console.
 
 ## The basics
 
@@ -57,6 +63,14 @@ A small daemon runs the agents in the environment you operate. One console lets 
 
 <Card kind="tile" title="API Reference" href="/reference" icon="fa-duotone fa-code-simple">Automate the console's REST workflows</Card>
 </Cards>
+
+## Go further
+
+Once your agents are working, combine agents, models, and channels into more advanced team patterns:
+
+- **Layer fast and deep PR reviews.** Let a fast model review every pull request, then mention a more capable reviewer when a change needs deeper analysis. [Build the workflow](/docs/fast-and-deep-pr-reviews).
+- **Use one Slack app across channels.** Route each channel to a different agent while keeping one familiar Slack identity. [Configure the pattern](/docs/one-slack-app-across-channels).
+- **Hand off conversations across trusted workspaces.** Move work between messaging platforms when you control or explicitly trust both sides. [See the pattern](/docs/hand-off-conversations-across-messaging-platforms).
 
 ## Self-hosted or hosted
 
