@@ -307,10 +307,37 @@ The values must agree:
 - Without an API resource, omit `LOGTO_API_RESOURCE` and set `OIDC_AUDIENCE` to `LOGTO_APP_ID`.
 - Set or remove the Web and Control Plane values together. Configuring only one side leaves the console unable to authenticate its API calls.
 
+### Enable social account linking
+
+The sign-in configuration above enables the GitHub, Google, and Slack buttons for connectors that exist in Logto. To let a signed-in person link several providers to one AgentConnect profile, add all of the following:
+
+1. Enable Logto's **Account API** and give **Social identities** `Edit` access.
+2. Configure a Logto Management API M2M application for server-side connector lookup, identity metadata, and safe unlinking:
+
+```dotenv
+LOGTO_MGMT_ENDPOINT=https://tenant.example.com
+LOGTO_MGMT_APP_ID=<m2m-application-id>
+LOGTO_MGMT_APP_SECRET=<m2m-application-secret>
+LOGTO_MGMT_RESOURCE=https://tenant.example.com/api
+```
+
+All four values belong to one tenant. `LOGTO_MGMT_ENDPOINT`, `LOGTO_MGMT_APP_ID`, and `LOGTO_MGMT_APP_SECRET` must be set together; `LOGTO_MGMT_RESOURCE` defaults to the endpoint's `/api` URL.
+
+3. Give each account a verified primary email and configure a Logto email connector with the `UserPermissionValidation` template. AgentConnect uses that flow when Logto requires the person to prove ownership before changing sign-in methods.
+4. Register the console callback directly with every social provider, alongside the provider's normal Logto connector callback:
+
+```text
+<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback
+```
+
+Google and Slack accept multiple redirect URLs. For GitHub, use a GitHub App that supports multiple callback URLs; a GitHub OAuth App has only one callback URL.
+
+After restart, the avatar menu → **Your profile → Sign-in methods** shows the configured providers. The last linked method cannot be removed. See [Social account linking](/docs/social-account-linking) for the user-facing behavior and its current permission boundary.
+
 Restart the affected services after changing the file:
 
 ```bash
 docker compose --env-file compose.env up -d --force-recreate control-plane web
 ```
 
-Leaving all five variables unset preserves no-auth mode. In that mode the Control Plane deliberately admits every request as the fixed local owner, so it must remain private.
+Leaving the five sign-in variables in **Optional Logto sign-in** unset preserves no-auth mode. In that mode the Control Plane deliberately admits every request as the fixed local owner, so it must remain private.

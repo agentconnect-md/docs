@@ -26,7 +26,7 @@ For the chat platforms, the thing that lives in your Slack workspace / Telegram 
 - Deleting an integration **frees the bot** rather than destroying it — reuse it for another agent from the **Use an existing bot** picker.
 - Bots are managed org-wide under **Settings → Bots**: see [Bots](/docs/bots).
 
-Platform tiles are enabled based on what your agent's daemon supports. Telegram, Discord, Feishu/Lark, and Slack Socket Mode connect outbound from the daemon. A shared Slack App uses HTTP Events API through the Relay instead; see [Slack](/docs/slack).
+Platform tiles are enabled based on what your agent's daemon supports. Direct transports such as Slack Socket Mode, Telegram, Discord, and the Feishu/Lark long connection connect outbound from the daemon. Callback transports such as Slack and Feishu/Lark HTTP events, GitHub, generic webhooks, and webchat enter through the optional AgentConnect Relay and are forwarded to the daemon without passing through the Control Plane message path.
 
 ## Binding channels
 
@@ -39,6 +39,10 @@ Normally one bot ↔ one agent. A **shared bot** (Slack) can serve **multiple ag
 ### Cross-platform handoffs
 
 Connect the same agent to more than one chat platform and it can send a deliberate handoff from one conversation to another. Use this only between two messaging workspaces you trust and have approved to exchange information. The destination starts its own linked session rather than merging both platform transcripts. See [Hand off conversations between trusted workspaces](/docs/hand-off-conversations-across-messaging-platforms).
+
+### Restricted agents
+
+When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. See [Visibility & sharing](/docs/visibility-and-sharing#what-a-restricted-agent-changes).
 
 ## In-conversation commands
 
