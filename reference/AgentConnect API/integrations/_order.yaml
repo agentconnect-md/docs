@@ -2,3 +2,6 @@
 - listintegrations
 - updateintegrationchannel
 - deleteintegration
+- checktelegrambot
+- startfeishuappregistration
+- getfeishuappregistration

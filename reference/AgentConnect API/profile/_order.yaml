@@ -3,3 +3,8 @@
 - getmyaccess
 - joinwaitlist
 - redeemwaitlistlink
+- refreshmysocialidentities
+- getmysocialconnectorid
+- unlinkmysocialidentity
+- getmysocialidentities
+- getmyslackidentity
