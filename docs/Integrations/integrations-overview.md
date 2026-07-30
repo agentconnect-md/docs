@@ -4,15 +4,16 @@ excerpt: How agents meet channels — bots, integrations, shared bots, and the c
 hidden: false
 ---
 
-An **integration** binds one agent to one way of reaching it. Five kinds are supported:
+An **integration** binds one agent to one way of reaching it. Six kinds are supported:
 
-| Platform | The agent responds to | You provide |
-| --- | --- | --- |
-| [Slack](/docs/slack) | Mentions & messages in channels the bot is in | A Slack app (two-step install) |
-| [Telegram](/docs/telegram) | DMs and group messages | A bot token from @BotFather |
-| [Discord](/docs/discord) | Mentions & threads in your server | A bot token + invite |
-| [GitHub](/docs/github) | Issues, PRs, comments on watched repos | The AgentConnect GitHub app |
-| [Webhooks](/docs/webhooks) | Anything that can POST JSON | Nothing — we mint the endpoint |
+| Platform                   | The agent responds to                         | You provide                               |
+| -------------------------- | --------------------------------------------- | ----------------------------------------- |
+| [Slack](/docs/slack)       | Mentions & messages in channels the bot is in | A Slack app (two-step install)            |
+| [Telegram](/docs/telegram) | DMs and group messages                        | A bot token from @BotFather               |
+| [Discord](/docs/discord)   | Mentions & threads in your server             | A bot token + invite                      |
+| Feishu/Lark                | Mentions & messages in chats                  | One-click app setup or an App ID + secret |
+| [GitHub](/docs/github)     | Issues, PRs, comments on watched repos        | The AgentConnect GitHub app               |
+| [Webhooks](/docs/webhooks) | Anything that can POST JSON                   | Nothing — we mint the endpoint            |
 
 Add one from the agent page (**Integrations → Add integration**) or from the Agents list.
 
@@ -20,12 +21,12 @@ Add one from the agent page (**Integrations → Add integration**) or from the A
 
 ## Bots are identities, integrations are bindings
 
-For the chat platforms, the thing that lives in your Slack workspace / Telegram / Discord server is a **bot** — a durable identity with its own tokens. An integration binds *that bot* to *one agent*.
+For the chat platforms, the thing that lives in your Slack workspace / Telegram / Discord server is a **bot** — a durable identity with its own tokens. An integration binds _that bot_ to _one agent_.
 
 - Deleting an integration **frees the bot** rather than destroying it — reuse it for another agent from the **Use an existing bot** picker.
 - Bots are managed org-wide under **Settings → Bots**: see [Bots](/docs/bots).
 
-Platform tiles are enabled based on what your agent's daemon supports; the daemon is what actually connects to the platform, always outbound — no webhooks into your network, no public URLs.
+Platform tiles are enabled based on what your agent's daemon supports. Telegram, Discord, Feishu/Lark, and Slack Socket Mode connect outbound from the daemon. A shared Slack App uses HTTP Events API through the Relay instead; see [Slack](/docs/slack).
 
 ## Binding channels
 
@@ -33,16 +34,20 @@ There's no channel picker: **invite the bot to a channel and it starts listening
 
 ### Shared bots
 
-Normally one bot ↔ one agent. A **shared bot** (Slack) can serve **multiple agents through a single bot identity** — inbound messages arrive through AgentConnect's relay and route by channel: in **Settings → Bots**, expand the shared bot and pick the **Active agent** per channel. One "@Assistant" in Slack, different specialists behind it per channel.
+Normally one bot ↔ one agent. A **shared bot** (Slack) can serve **multiple agents through a single bot identity** — inbound messages arrive through AgentConnect's relay and route by channel: in **Settings → Bots**, expand the shared bot and pick the **Default dispatch** agent per channel. One "@Assistant" in Slack, different specialists behind it per channel.
+
+### Cross-platform handoffs
+
+Connect the same agent to more than one chat platform and it can send a deliberate handoff from one conversation to another. Use this only between two messaging workspaces you trust and have approved to exchange information. The destination starts its own linked session rather than merging both platform transcripts. See [Hand off conversations between trusted workspaces](/docs/hand-off-conversations-across-messaging-platforms).
 
 ## In-conversation commands
 
 In any channel conversation, a couple of commands are handled by the daemon itself (never sent to the agent) — they work even if the control plane is down:
 
-| Command | On Slack | Effect |
-| --- | --- | --- |
-| `/stop` or `/cancel` | `!stop` | Interrupt the agent's current turn |
-| `/queue <message>` | `!queue <message>` | Hold a message; deliver it when the agent goes idle |
+| Command              | On Slack           | Effect                                              |
+| -------------------- | ------------------ | --------------------------------------------------- |
+| `/stop` or `/cancel` | `!stop`            | Interrupt the agent's current turn                  |
+| `/queue <message>`   | `!queue <message>` | Hold a message; deliver it when the agent goes idle |
 
 Slack reserves `/…` for its own slash commands, hence the `!` alias there.
 
