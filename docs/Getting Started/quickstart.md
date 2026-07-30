@@ -4,7 +4,7 @@ excerpt: Sign in, connect a machine, create an agent and have your first convers
 hidden: false
 ---
 
-By the end of this guide you'll have an agent running on your own machine that you can talk to from the browser, ready to be wired into Slack, Telegram, Discord or GitHub.
+By the end of this guide you'll have an agent running on your own machine that you can talk to from the browser, ready to be wired into Slack, Telegram, Discord, Lark / Feishu, or GitHub.
 
 ## Before you start
 
@@ -15,19 +15,21 @@ You need:
 
 ## 1. Sign in
 
-Go to [app.agentconnect.md](https://app.agentconnect.md) and continue with **GitHub** or **Google**. There is no password — signing in for the first time creates your account and a personal organization.
+Open your AgentConnect console. If your organization already has Cloud access, use [app.agentconnect.md](https://app.agentconnect.md). For [AgentConnect OSS](/docs/get-started), use the Web URL from your deployment.
+
+When social sign-in is configured, continue with **GitHub**, **Google**, or **Slack**. There is no AgentConnect password. An ordinary first sign-in creates your profile and personal organization; an admission-gated deployment creates the organization when your account is activated. The default local OSS stack uses no-auth mode and opens the console directly.
 
 ![The AgentConnect sign-in page](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/login.png)
 
 ## 2. Connect a daemon
 
-A **daemon** is the AgentConnect process that runs on your machine. It hosts your agents and holds all platform connections, so nothing needs to reach your machine from the outside.
+A **daemon** is the AgentConnect process that runs on your machine. It hosts your agents, owns direct platform connections, and dials out to the Control Plane and optional Relay. Nothing needs to open an inbound connection to your machine.
 
 1. In the console, open **Daemons** and click **Add daemon**.
 2. Copy the command it shows and run it in a terminal on your machine:
 
 ```bash
-npx -y @agentconnect.md/daemon run --cp-url wss://api.agentconnect.md/daemon/ws --cp-key <your-one-time-key>
+npx -y @agentconnect.md/daemon run --cp-url <your-control-plane-ws-url> --cp-key <your-one-time-key>
 ```
 
 > 🔑 The key is minted for this daemon and **shown only once** — always copy the exact command from the console.
@@ -63,15 +65,17 @@ You'll see its replies, thinking and tool calls stream in, and you can switch mo
 
 The Playground is for trying things out — the point of AgentConnect is meeting your team where it chats:
 
-- [Connect Slack](/docs/slack) — two steps, no public URL required.
+- [Connect Slack](/docs/slack) — use direct Socket Mode or a Relay-backed shared app.
 - [Connect Telegram](/docs/telegram) — one token from @BotFather.
 - [Connect Discord](/docs/discord) — bot token plus two checkboxes.
+- [Connect Lark / Feishu](/docs/integrations-overview) — direct long connection or Relay-backed HTTP events.
 - [Watch GitHub repos](/docs/github) — trigger the agent from issues, PRs and comments.
 - [Add a webhook](/docs/webhooks) — trigger it from anything that can POST.
 
 ## What's next
 
-- [How it works](/docs/how-it-works) — where your code and conversations actually live (spoiler: on your machine).
+- [How it works](/docs/how-it-works) — understand the daemon, optional Relay, and Control Plane.
+- [Permissions](/docs/permissions-overview) — set roles, visibility, private sessions, and agent call policies.
 - [Sessions](/docs/sessions) — replay everything your agents did.
 - [Schedules](/docs/schedules) — run agents on a timer.
 - [MCP connector](/docs/mcp-connector) — add AgentConnect to Claude and ask about your agents, sessions and spend.

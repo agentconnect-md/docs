@@ -24,12 +24,14 @@ The **Environment** card sets env vars for the agent's sessions on the daemon �
 
 ## Agent visibility (sub-agent calls)
 
-Agents can call each other as sub-agents. The **Agent visibility** card controls who may call *this* one:
+Agents can call each other as sub-agents. The **Agent visibility** card controls both sides of that relationship:
 
-- **All agents** (default) — any agent in the org can delegate to it.
-- **Selected** — only the agents you pick.
+- **Inbound: Which agents can call this agent?**
+- **Outbound: Which agents can this agent call?**
 
-This is about agent-to-agent calls; who can *see* the agent is [Visibility & sharing](/docs/visibility-and-sharing).
+Each direction can allow **All agents** or a **Selected** list. A call is permitted only when the source's outbound policy and the target's inbound policy both allow it, and the agents are eligible in the current conversation.
+
+See [Agent visibility](/docs/agent-visibility) for the full policy and examples. Who on the team can see the agent is controlled separately by [Visibility & sharing](/docs/visibility-and-sharing).
 
 ## Memory
 

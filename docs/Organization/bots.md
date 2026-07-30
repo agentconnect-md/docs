@@ -1,10 +1,10 @@
 ---
 title: 🤖 Bots
-excerpt: The org-wide roster of Slack, Telegram and Discord bot identities — reuse, sharing, channel routing and cleanup.
+excerpt: The organization-wide roster of Slack, Telegram, Discord, and Lark / Feishu bot identities.
 hidden: false
 ---
 
-A **bot** is the durable identity that lives in your chat platform — the Slack app, the Telegram bot, the Discord application — with its tokens stored encrypted and used only from your daemons. Integrations bind bots to agents; the bots themselves are managed in **Settings → Bots**, one card per platform.
+A **bot** is the durable identity that lives in your chat platform: a Slack or Lark / Feishu app, Telegram bot, or Discord application. Integrations bind bots to agents; the bots themselves are managed in **Settings → Bots**, one card per platform.
 
 ## The roster
 
@@ -19,6 +19,7 @@ Expand a bot to see every channel it's present in. For a **shared** bot (one bot
 - **Slack** — a **Configure on Slack** deep link into the app's settings page, a refresh/sync action, and the org's **configuration token** block (paste a config token pair to unlock [one-click Slack installs](/docs/slack); **Replace** / **Clear** anytime).
 - **Discord** — an **Add to Discord** invite link, built for the app with the right scopes.
 - **Telegram** — the bot list with its agents.
+- **Lark / Feishu** — one-click app registration or a manual self-built app, using either a direct long connection or Relay-backed HTTP callbacks.
 
 ## Deleting a bot
 

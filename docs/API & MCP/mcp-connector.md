@@ -12,13 +12,13 @@ https://mcp.agentconnect.md
 
 Add it to Claude (or any client that speaks MCP over streamable HTTP) and your assistant can look into your organization for you:
 
-> *"Which of our agents are online right now?"*
-> *"What did we spend on tokens this week, per agent?"*
-> *"Did the nightly report schedule run — and did it succeed?"*
+> _"Which of our agents are online right now?"_
+> _"What did we spend on tokens this week, per agent?"_
+> _"Did the nightly report schedule run — and did it succeed?"_
 
 ## Connect from Claude
 
-**Claude (claude.ai / desktop):** Settings → **Connectors** → **Add custom connector**, paste `https://mcp.agentconnect.md`, and finish in the browser: sign in with GitHub or Google, **pick the organization** to bind, review the requested access (*View your agents, daemons, schedules, sessions, and usage*), and **Authorize**. No keys to copy — the flow is standard OAuth 2.1 with dynamic client registration.
+**Claude (claude.ai / desktop):** Settings → **Connectors** → **Add custom connector**, paste `https://mcp.agentconnect.md`, and finish in the browser: sign in with an enabled provider, **pick the organization** to bind, review the requested access (_View your agents, daemons, schedules, sessions, and usage_), and **Authorize**. No keys to copy — the flow is standard OAuth 2.1 with dynamic client registration.
 
 **Claude Code:**
 
@@ -39,16 +39,16 @@ Any other MCP client works the same way: OAuth if it supports the authorization-
 
 The current toolset is **read-only** — an assistant can inspect, never mutate:
 
-| Area | Tools |
-| --- | --- |
-| Identity | `whoami` — who you're acting as, which org this connection is bound to, your role |
-| Agents | `listAgents`, `getAgent` |
-| Daemons | `listDaemons` |
-| Schedules | `listCrons`, `getCron`, `listCronRuns` |
-| Sessions | `listSessions`, `getSession` — metadata (status, usage, links), **not the transcript** |
-| Usage | `getUsage` — totals + per-agent breakdown over a window |
+| Area         | Tools                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------------- |
+| Identity     | `whoami` — who you're acting as, which org this connection is bound to, your role                           |
+| Agents       | `listAgents`, `getAgent`                                                                                    |
+| Daemons      | `listDaemons`                                                                                               |
+| Schedules    | `listCrons`, `getCron`, `listCronRuns`                                                                      |
+| Sessions     | `listSessions`, `getSession` — metadata (status, usage, links), **not the transcript**                      |
+| Usage        | `getUsage` — totals + per-agent breakdown over a window                                                     |
 | Integrations | `listIntegrations`, `listBots` (bot metadata only — never token material), `listAgentHooks`, `listHookRuns` |
-| Members | `listMembers` |
+| Members      | `listMembers`                                                                                               |
 
 Transcripts stay where they always are — [on your daemons](/docs/how-it-works). The connector sees the same metadata the console list views show, nothing more.
 
