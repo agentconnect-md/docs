@@ -16,25 +16,31 @@ Each row shows the session title, when it ran and what triggered it, the agent, 
 
 The header carries the facts: agent, integration and channel (with a link to the original thread — e.g. the Slack permalink), daemon, runtime + model, participants, and a **Copy link** button. Stat cards summarize **Duration**, **Tokens**, **Cost**, **Tool calls**, and a **Token usage** card breaks tokens down: **Input / Output / Thought / Cache read / Cache write / Context** (how full the context window is) — whatever the runtime reports.
 
-Sessions snapshot their execution config: the header reflects what the run *actually used*, even if you've reconfigured the agent since.
+Sessions snapshot their execution config: the header reflects what the run _actually used_, even if you've reconfigured the agent since.
 
 ### The transcript
 
 User turns show the sender and the source (e.g. a `SLACK` chip). Agent turns are broken into steps, each tagged with a lane:
 
-| Lane | Meaning |
-| --- | --- |
-| **MSG** | A message posted to the conversation |
-| **THINK** | The agent's reasoning |
-| **PLAN** | A plan it laid out |
-| **TOOL** | A tool call — command, API call, file read |
-| **EDIT** | A file edit, with the touched files as chips |
+| Lane      | Meaning                                      |
+| --------- | -------------------------------------------- |
+| **MSG**   | A message posted to the conversation         |
+| **THINK** | The agent's reasoning                        |
+| **PLAN**  | A plan it laid out                           |
+| **TOOL**  | A tool call — command, API call, file read   |
+| **EDIT**  | A file edit, with the touched files as chips |
 
 Tool steps expand (**View detail**) into the raw **input / output / content / locations**, with diffs rendered and big payloads truncated behind **View full**.
 
 ## Where transcripts live
 
 Transcripts are **fetched live from the daemon that ran the session** — the control plane stores only metadata (title, status, token totals). That's why a transcript can't load while its daemon is offline, and why your conversations are never sitting in someone else's database.
+
+## Sessions across messaging platforms
+
+A cross-platform handoff keeps one session on the source platform and starts a linked session on the destination. The two transcripts remain separate: replies stay in the platform thread where they were written unless the agent deliberately reports a result back to the parent session.
+
+See [Hand off conversations between trusted workspaces](/docs/hand-off-conversations-across-messaging-platforms) for a Telegram-to-Slack example and a reusable agent instruction.
 
 ## Live sessions
 
