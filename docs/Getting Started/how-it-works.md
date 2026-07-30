@@ -62,7 +62,7 @@ If a daemon is offline, its agents are offline. The Control Plane can still show
 
 Everything belongs to an organization. Human access composes membership, role, resource visibility, and session visibility. Agent-to-agent calls use independent inbound and outbound policies. Start with the [Permissions overview](/docs/permissions-overview).
 
-With Logto-backed sign-in enabled, the console offers GitHub, Google, and Slack sign-in. A person may [link several sign-in methods](/docs/social-account-linking) to one profile. AgentConnect OSS leaves OIDC unset by default and runs in local no-auth mode, which must not be exposed publicly.
+With Logto-backed sign-in enabled, the console can offer GitHub, Google, and Slack sign-in, according to the deployment's configured provider list. A person may [link several sign-in methods](/docs/social-account-linking) to one profile. AgentConnect OSS leaves OIDC unset by default and runs in local no-auth mode, which must not be exposed publicly.
 
 ## Hosting choices
 

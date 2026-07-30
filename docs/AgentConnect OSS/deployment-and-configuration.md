@@ -1,6 +1,6 @@
 ---
 title: 🏗️ Deployment and configuration
-excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, GitHub App integration, optional Mem0, and Logto-backed sign-in.
+excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, GitHub and Slack Apps, optional Mem0, and Logto-backed sign-in.
 hidden: false
 ---
 
@@ -90,6 +90,16 @@ Run the command separately for each secret. Rotating `AGENTCONNECT_API_KEY_PEPPE
 
 PostgreSQL 18 data lives in the `agentconnect_postgres-data` Docker volume. `docker compose down` preserves it; `docker compose down --volumes` permanently deletes it. Back up the database before any non-throwaway use.
 
+## Preset agent provisioning
+
+By default, the Control Plane creates an `agentconnect` preset agent for every new organization and backfills it for existing organizations at startup. To disable future provisioning and backfills:
+
+```dotenv
+PRESET_AGENTS_ENABLED=false
+```
+
+The value must be the literal `true` or `false`. Turning provisioning off does not delete preset agents that already exist.
+
 ## Optional GitHub App
 
 Configure an instance-level GitHub App when you want to:
@@ -141,10 +151,11 @@ Under **Subscribe to events**, select:
 - `pull_request`;
 - `issue_comment`;
 - `pull_request_review_comment`;
-- `push`; and
-- `check_run` when using informational PR review Checks.
+- `push`.
 
 GitHub sends `installation` and `installation_repositories` events to GitHub Apps automatically; they are not manual subscription options.
+
+When the App has **Checks: Read and write**, GitHub also subscribes it to `check_run` and `check_suite` automatically. AgentConnect handles check reruns and the **Request review** action from those events, so you do not need to add either event manually.
 
 The App declaration is the maximum permission set. Each installation owner chooses the repositories and approves that set. AgentConnect then mints a short-lived token narrowed to one authorized repository and the agent's `read`, `comment`, or `write` tier. Existing installation owners must approve permission increases before AgentConnect can use them.
 
@@ -187,6 +198,43 @@ docker compose --env-file compose.env up -d --force-recreate control-plane relay
 Then open **Settings → GitHub** in AgentConnect, choose **Install on GitHub**, select the account and repositories, and return to the console. If GitHub says a permission update is pending, approve it as the installation owner and choose **Sync** in AgentConnect.
 
 The `LOGTO_MGMT_*` variables below are not required to enable the GitHub App. They add per-user GitHub authorization checks when Logto-backed sign-in is enabled; without them, repository authorization follows the AgentConnect organization and installation boundary.
+
+## Optional deployment-wide Add to Slack app
+
+A deployment-wide Slack App gives the built-in `agentconnect` agent an **Add to Slack** flow without asking each organization to create its own app. This is a chat bot integration and is separate from the `slack` social-login connector configured in Logto.
+
+The app uses Slack's Events API and therefore requires:
+
+- reachable HTTPS values for `AGENTCONNECT_PUBLIC_CP_URL` and `AGENTCONNECT_PUBLIC_RELAY_URL`;
+- a running Relay connected to the Control Plane; and
+- a Slack App configured from AgentConnect's current **HTTP** manifest.
+
+You can obtain the current manifest from the ordinary Slack integration flow: choose **HTTP callbacks**, then use **Copy manifest JSON**. Create a dedicated Slack App from that manifest and verify these public URLs in its settings:
+
+| Slack App setting         | URL                                                                    |
+| ------------------------- | ---------------------------------------------------------------------- |
+| OAuth redirect URL        | `<AGENTCONNECT_PUBLIC_CP_URL>/v1/integrations/slack/platform/callback` |
+| Event Subscriptions URL   | `<AGENTCONNECT_PUBLIC_RELAY_URL>/slack/events`                         |
+| Interactivity request URL | `<AGENTCONNECT_PUBLIC_RELAY_URL>/slack/interactions`                   |
+
+The OAuth redirect deliberately uses `/v1`, not `/api/v1`. Enable distribution if people will install the App into workspaces other than the one that owns it.
+
+Copy the App ID, Client ID, Client Secret, and Signing Secret from Slack into `compose.env`:
+
+```dotenv
+SLACK_PLATFORM_APP_ID=<app-id>
+SLACK_PLATFORM_CLIENT_ID=<client-id>
+SLACK_PLATFORM_CLIENT_SECRET=<client-secret>
+SLACK_PLATFORM_SIGNING_SECRET=<signing-secret>
+```
+
+Set all four values or omit all four. Recreate the Control Plane after a change:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane
+```
+
+When this integration is disabled, AgentConnect keeps the per-app quick-install and manifest flows available.
 
 ## Optional Mem0
 
@@ -287,6 +335,7 @@ AgentConnect does not include or start Logto. You may connect an existing Logto 
 LOGTO_ENDPOINT=https://tenant.example.com/
 LOGTO_APP_ID=<application-id>
 LOGTO_API_RESOURCE=https://api.example.com
+SOCIAL_PROVIDERS=github,google,slack
 
 OIDC_ISSUER=https://tenant.example.com/oidc
 OIDC_AUDIENCE=https://api.example.com
@@ -305,11 +354,26 @@ The values must agree:
 - `OIDC_ISSUER` is the Logto endpoint with `/oidc`.
 - When `LOGTO_API_RESOURCE` is set, `OIDC_AUDIENCE` must equal that resource.
 - Without an API resource, omit `LOGTO_API_RESOURCE` and set `OIDC_AUDIENCE` to `LOGTO_APP_ID`.
+- `SOCIAL_PROVIDERS` is a comma-separated list of the lowercase targets `github`, `google`, and `slack`. Set it to match the social connectors enabled in the tenant. Omitting it or setting `*` renders all three.
 - Set or remove the Web and Control Plane values together. Configuring only one side leaves the console unable to authenticate its API calls.
+
+`SOCIAL_PROVIDERS` controls the buttons and Profile methods that AgentConnect renders. It does not create connectors or check Logto's connector inventory; a button whose connector is absent lands on Logto's error page.
+
+### OAuth callback map
+
+The application callback and provider callbacks serve different parts of the flow:
+
+| Register with                     | Callback URI                                                                                    | Purpose                               |
+| --------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Logto Web application             | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback`                                                   | Finish AgentConnect sign-in           |
+| Each GitHub, Google, or Slack app | The exact URI shown by its Logto connector, normally `<LOGTO_ENDPOINT>/callback/<connector-id>` | Return normal social sign-in to Logto |
+| Each GitHub, Google, or Slack app | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback`                                            | Return Profile account linking        |
+
+The third callback is required only for AgentConnect's custom Profile linking flow. Do not replace it with Logto's `/account/callback/social/<connector-id>` URL, which belongs to Logto's prebuilt Account Center flow.
 
 ### Enable social account linking
 
-The sign-in configuration above enables the GitHub, Google, and Slack buttons for connectors that exist in Logto. To let a signed-in person link several providers to one AgentConnect profile, add all of the following:
+After matching `SOCIAL_PROVIDERS` to the tenant's connectors, add all of the following to let a signed-in person link several providers to one AgentConnect profile:
 
 1. Enable Logto's **Account API** and give **Social identities** `Edit` access.
 2. Configure a Logto Management API M2M application for server-side connector lookup, identity metadata, and safe unlinking:
@@ -324,7 +388,7 @@ LOGTO_MGMT_RESOURCE=https://tenant.example.com/api
 All four values belong to one tenant. `LOGTO_MGMT_ENDPOINT`, `LOGTO_MGMT_APP_ID`, and `LOGTO_MGMT_APP_SECRET` must be set together; `LOGTO_MGMT_RESOURCE` defaults to the endpoint's `/api` URL.
 
 3. Give each account a verified primary email and configure a Logto email connector with the `UserPermissionValidation` template. AgentConnect uses that flow when Logto requires the person to prove ownership before changing sign-in methods.
-4. Register the console callback directly with every social provider, alongside the provider's normal Logto connector callback:
+4. Register the console callback from the callback map directly with every social provider, alongside the provider's normal Logto connector callback:
 
 ```text
 <AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback

@@ -4,7 +4,7 @@ excerpt: Use GitHub, Google, and Slack sign-in methods with one AgentConnect pro
 hidden: false
 ---
 
-When Logto-backed authentication is configured, one AgentConnect profile can have multiple social sign-in methods. The supported provider targets are **GitHub**, **Google**, and **Slack**, provided that the deployment has enabled the matching Logto connectors.
+When Logto-backed authentication is configured, one AgentConnect profile can have multiple social sign-in methods. The supported provider targets are **GitHub**, **Google**, and **Slack**. An operator chooses which targets AgentConnect shows through `SOCIAL_PROVIDERS` and must configure the matching Logto connectors.
 
 Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
