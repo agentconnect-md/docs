@@ -36,7 +36,7 @@ These appear when the selected daemon and runtime advertise support. Exact choic
   Claude Code commonly reports **Default / Accept Edits / Auto / Don't Ask / Plan / Bypass**. Use the descriptions shown in the picker as the source of truth for the runtime installed on that daemon.
 
   Start conservative for agents on shared channels — you can change this per agent later, and per session in the Playground.
-- **Memory** — **Managed** (an AgentConnect-managed directory), **Native** (the runtime's own isolated memory), **External** (a configured provider such as Mem0), or **None**. See [External memory with Mem0 OSS](/docs/external-memory).
+- **Memory** — **Managed** (an AgentConnect-managed directory), **Native** (the runtime's own isolated memory), **External** (a configured provider such as Mem0), or **Off**. See [External memory with Mem0 OSS](/docs/external-memory).
 - **MCP servers** — attach any MCP servers configured on the daemon; the agent gets their tools in every session.
 
 ## Workspace

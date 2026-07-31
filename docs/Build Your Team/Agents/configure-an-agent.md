@@ -25,7 +25,7 @@ Other runtime behavior settings include:
 - **Allow change in chat** — when on, chat users can change session runtime settings and answer approval requests. When off, only people who can edit the agent can do so.
 - **Show footer** — add the agent, runtime, model and session links to replies.
 - **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
-- **Restrict file access** — run inside the daemon's supported sandbox boundary. A deployment may require this setting.
+- **Run in sandbox** — run inside the daemon's supported OS sandbox boundary. A deployment may require this setting.
 
 ## Description and persona
 
@@ -58,7 +58,7 @@ See [Agent visibility](/docs/agent-visibility) for the full policy and examples.
 
 ## Memory
 
-The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **None**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded.
+The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **Off**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded.
 
 For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [External memory with Mem0 OSS](/docs/external-memory).
 
