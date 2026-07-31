@@ -3680,6 +3680,16 @@
                           }
                         ]
                       },
+                      "ownerUserId": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "lastModifiedAt": {
                         "type": "string"
                       },
@@ -3705,6 +3715,9 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "canEdit": {
+                        "type": "boolean"
                       },
                       "canManageSharing": {
                         "type": "boolean"
@@ -3734,10 +3747,12 @@
                       "lastSeenAt",
                       "createdAt",
                       "createdBy",
+                      "ownerUserId",
                       "lastModifiedAt",
                       "lastModifiedBy",
                       "visibility",
                       "sharedWith",
+                      "canEdit",
                       "canManageSharing",
                       "canManageLifecycle"
                     ],
@@ -4251,6 +4266,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -4276,6 +4301,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -4305,10 +4333,12 @@
                     "lastSeenAt",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "canManageLifecycle"
                   ],
@@ -4580,6 +4610,36 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -4591,7 +4651,7 @@
         "tags": [
           "Daemons"
         ],
-        "description": "Set the daemon’s visibility (org-wide vs restricted) and share set. Requires edit rights on the daemon; sharedWith is intersected with current org members.",
+        "description": "Set an owned daemon’s visibility (org-wide vs restricted) and share set. Requires edit rights on the daemon; ownerless daemons stay org-visible, and sharedWith is intersected with current org members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5095,6 +5155,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -5120,6 +5190,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -5149,10 +5222,12 @@
                     "lastSeenAt",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "canManageLifecycle"
                   ],
@@ -5192,6 +5267,36 @@
             }
           },
           "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -7243,6 +7348,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -7268,6 +7383,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -7375,10 +7493,12 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
@@ -8094,6 +8214,16 @@
                           }
                         ]
                       },
+                      "ownerUserId": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "lastModifiedAt": {
                         "type": "string"
                       },
@@ -8119,6 +8249,9 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "canEdit": {
+                        "type": "boolean"
                       },
                       "canManageSharing": {
                         "type": "boolean"
@@ -8202,10 +8335,12 @@
                       "capabilities",
                       "createdAt",
                       "createdBy",
+                      "ownerUserId",
                       "lastModifiedAt",
                       "lastModifiedBy",
                       "visibility",
                       "sharedWith",
+                      "canEdit",
                       "canManageSharing",
                       "callPolicy",
                       "allowedCallerAgentIds",
@@ -8750,6 +8885,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -8775,6 +8920,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -8858,10 +9006,12 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
@@ -9855,6 +10005,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -9880,6 +10040,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -9963,10 +10126,12 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
@@ -11417,6 +11582,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -11442,6 +11617,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -11525,10 +11703,12 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
@@ -12273,6 +12453,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -12298,6 +12488,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -12381,10 +12574,12 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
@@ -12531,7 +12726,7 @@
         "tags": [
           "Agents"
         ],
-        "description": "Set the agent’s visibility (org-wide vs restricted) and share set. Requires edit rights on the agent; sharedWith is intersected with current org members.",
+        "description": "Set an owned agent’s visibility (org-wide vs restricted) and share set. Requires edit rights on the agent; ownerless agents stay org-visible, and sharedWith is intersected with current org members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -13078,6 +13273,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -13103,6 +13308,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -13186,10 +13394,12 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
@@ -13870,6 +14080,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -13895,6 +14115,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
                     },
                     "canManageSharing": {
                       "type": "boolean"
@@ -13978,10 +14201,12 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
+                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing",
                     "callPolicy",
                     "allowedCallerAgentIds",
@@ -26565,6 +26790,19 @@
                           }
                         ]
                       },
+                      "ownerUserId": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "canEdit": {
+                        "type": "boolean"
+                      },
                       "canManageSharing": {
                         "type": "boolean"
                       },
@@ -26587,6 +26825,8 @@
                       "visibility",
                       "sharedWith",
                       "createdBy",
+                      "ownerUserId",
+                      "canEdit",
                       "canManageSharing",
                       "headerNames",
                       "createdAt"
@@ -26730,6 +26970,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -26755,6 +27008,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "headerNames",
                     "createdAt",
@@ -26796,6 +27051,36 @@
             }
           },
           "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -26929,6 +27214,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -26951,6 +27249,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "headerNames",
                     "createdAt"
@@ -27101,6 +27401,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -27123,6 +27436,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "headerNames",
                     "createdAt"
@@ -27417,6 +27732,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -27442,6 +27770,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "headerNames",
                     "createdAt",
@@ -27522,7 +27852,7 @@
         "tags": [
           "MCP providers"
         ],
-        "description": "Set the provider’s visibility (org-wide vs restricted) and share set. Requires edit rights; sharedWith is intersected with current org members.",
+        "description": "Set an owned provider’s visibility (org-wide vs restricted) and share set. Requires edit rights; ownerless providers stay org-visible, and sharedWith is intersected with current org members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -27616,6 +27946,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -27638,6 +27981,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "headerNames",
                     "createdAt"
@@ -27678,6 +28023,36 @@
             }
           },
           "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -27802,6 +28177,19 @@
                           }
                         ]
                       },
+                      "ownerUserId": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "canEdit": {
+                        "type": "boolean"
+                      },
                       "canManageSharing": {
                         "type": "boolean"
                       },
@@ -27820,6 +28208,8 @@
                       "visibility",
                       "sharedWith",
                       "createdBy",
+                      "ownerUserId",
+                      "canEdit",
                       "canManageSharing",
                       "createdAt"
                     ],
@@ -27977,6 +28367,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -27995,6 +28398,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "createdAt"
                   ],
@@ -28034,6 +28439,36 @@
             }
           },
           "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -28194,6 +28629,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -28212,6 +28660,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "createdAt"
                   ],
@@ -28403,6 +28853,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -28421,6 +28884,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "createdAt"
                   ],
@@ -28912,7 +29377,7 @@
         "tags": [
           "Skill sources"
         ],
-        "description": "Set the source’s visibility (org-wide vs restricted) and share set. Requires edit rights; sharedWith is intersected with current org members.",
+        "description": "Set an owned source’s visibility (org-wide vs restricted) and share set. Requires edit rights; ownerless sources stay org-visible, and sharedWith is intersected with current org members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -29033,6 +29498,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -29051,6 +29529,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "createdAt"
                   ],
@@ -29090,6 +29570,36 @@
             }
           },
           "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -29430,6 +29940,19 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     },
@@ -29458,6 +29981,8 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
+                    "ownerUserId",
+                    "canEdit",
                     "canManageSharing",
                     "headerNames",
                     "createdAt",
@@ -32028,6 +32553,9 @@
                           "viewer"
                         ]
                       },
+                      "isCurrentUser": {
+                        "type": "boolean"
+                      },
                       "joinedAt": {
                         "type": "string"
                       }
@@ -32038,6 +32566,7 @@
                       "name",
                       "picture",
                       "role",
+                      "isCurrentUser",
                       "joinedAt"
                     ],
                     "additionalProperties": false
@@ -32141,6 +32670,9 @@
                         "viewer"
                       ]
                     },
+                    "isCurrentUser": {
+                      "type": "boolean"
+                    },
                     "joinedAt": {
                       "type": "string"
                     }
@@ -32151,6 +32683,7 @@
                     "name",
                     "picture",
                     "role",
+                    "isCurrentUser",
                     "joinedAt"
                   ],
                   "additionalProperties": false
@@ -32319,6 +32852,9 @@
                         "viewer"
                       ]
                     },
+                    "isCurrentUser": {
+                      "type": "boolean"
+                    },
                     "joinedAt": {
                       "type": "string"
                     }
@@ -32329,6 +32865,7 @@
                     "name",
                     "picture",
                     "role",
+                    "isCurrentUser",
                     "joinedAt"
                   ],
                   "additionalProperties": false
@@ -32430,11 +32967,11 @@
       },
       "delete": {
         "operationId": "removeMember",
-        "summary": "Remove a member",
+        "summary": "Leave or remove a member",
         "tags": [
           "Members"
         ],
-        "description": "Owner-only. Removes a member from the org; the last owner can’t be removed, which would orphan the org.",
+        "description": "Any member can remove their own membership to leave the org. Only owners can remove another member. The last owner can’t leave, which would orphan the org.",
         "parameters": [
           {
             "name": "orgId",
@@ -33276,6 +33813,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -33305,6 +33852,9 @@
                         "type": "string"
                       }
                     },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     }
@@ -33323,11 +33873,13 @@
                     "enabled",
                     "lastRunAt",
                     "createdBy",
+                    "ownerUserId",
                     "createdAt",
                     "lastModifiedBy",
                     "lastModifiedAt",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing"
                   ],
                   "additionalProperties": false
@@ -33577,6 +34129,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -33606,6 +34168,9 @@
                         "type": "string"
                       }
                     },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     }
@@ -33624,11 +34189,13 @@
                     "enabled",
                     "lastRunAt",
                     "createdBy",
+                    "ownerUserId",
                     "createdAt",
                     "lastModifiedBy",
                     "lastModifiedAt",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing"
                   ],
                   "additionalProperties": false
@@ -33905,6 +34472,16 @@
                           }
                         ]
                       },
+                      "ownerUserId": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "createdAt": {
                         "type": "string"
                       },
@@ -33934,6 +34511,9 @@
                           "type": "string"
                         }
                       },
+                      "canEdit": {
+                        "type": "boolean"
+                      },
                       "canManageSharing": {
                         "type": "boolean"
                       }
@@ -33952,11 +34532,13 @@
                       "enabled",
                       "lastRunAt",
                       "createdBy",
+                      "ownerUserId",
                       "createdAt",
                       "lastModifiedBy",
                       "lastModifiedAt",
                       "visibility",
                       "sharedWith",
+                      "canEdit",
                       "canManageSharing"
                     ],
                     "additionalProperties": false
@@ -34288,7 +34870,7 @@
         "tags": [
           "Crons"
         ],
-        "description": "Set the cron’s visibility (org-wide vs restricted) and share set. Requires edit rights on the cron; sharedWith is intersected with current org members.",
+        "description": "Set an owned cron’s visibility (org-wide vs restricted) and share set. Requires edit rights on the cron; ownerless crons stay org-visible, and sharedWith is intersected with current org members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -34432,6 +35014,16 @@
                         }
                       ]
                     },
+                    "ownerUserId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -34461,6 +35053,9 @@
                         "type": "string"
                       }
                     },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
                     "canManageSharing": {
                       "type": "boolean"
                     }
@@ -34479,11 +35074,13 @@
                     "enabled",
                     "lastRunAt",
                     "createdBy",
+                    "ownerUserId",
                     "createdAt",
                     "lastModifiedBy",
                     "lastModifiedAt",
                     "visibility",
                     "sharedWith",
+                    "canEdit",
                     "canManageSharing"
                   ],
                   "additionalProperties": false
@@ -37353,6 +37950,9 @@
                             "agentId": {
                               "type": "string"
                             },
+                            "platform": {
+                              "type": "string"
+                            },
                             "title": {
                               "anyOf": [
                                 {
@@ -37367,6 +37967,7 @@
                           "required": [
                             "id",
                             "agentId",
+                            "platform",
                             "title"
                           ],
                           "additionalProperties": false
@@ -37387,6 +37988,9 @@
                           "agentId": {
                             "type": "string"
                           },
+                          "platform": {
+                            "type": "string"
+                          },
                           "title": {
                             "anyOf": [
                               {
@@ -37401,6 +38005,7 @@
                         "required": [
                           "id",
                           "agentId",
+                          "platform",
                           "title"
                         ],
                         "additionalProperties": false
@@ -38163,7 +38768,7 @@
         "tags": [
           "Sessions"
         ],
-        "description": "Reclassifies a session as private or org-visible. Allowed for the session owner, and for org owners on sessions they can view (private sessions are visible only to their owner). Tightening cascades to descendant sessions and stops future agent-memory capture once the owning daemons acknowledge; memory already distilled is not retracted.",
+        "description": "Reclassifies a session as private or org-visible. Allowed only for the session's recorded owner (identity match) — roles grant no re-classification rights. Tightening cascades to descendant sessions and stops future agent-memory capture once the owning daemons acknowledge; memory already distilled is not retracted.",
         "requestBody": {
           "required": true,
           "content": {
