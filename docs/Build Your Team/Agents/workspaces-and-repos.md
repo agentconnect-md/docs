@@ -4,7 +4,7 @@ excerpt: Scratch vs GitHub workspaces, the GitHub app, credential-free git, and 
 hidden: false
 ---
 
-Every agent has a **workspace** — its working directory on the daemon. You chose its mode when creating the agent.
+Every agent has a **workspace** — its working directory on the daemon. Choose its source when creating the agent, or change it later from the **Workspace** tab.
 
 ## From scratch
 
@@ -32,15 +32,23 @@ With an app-installed repository the daemon never stores a git credential. Each 
 
 The agent page's **Workspace** tab is a live view into the working tree on the daemon — no upload involved:
 
-- the repo card with current branch and a **Pull latest** button (github mode) and **View on GitHub**;
+- an editable workspace card with the source, current branch, access level, a **Pull latest** button (GitHub mode), and **View on GitHub**;
 - a file tree with change badges and file preview;
 - a summary like *"128 items · 3 changed"*.
 
 If the daemon is offline the tab can't load — the files exist only there.
 
+## Change the workspace source
+
+Use **Edit workspace** on the Workspace card to switch between Scratch and GitHub, select another repository or branch, change the working directory, or change read/write access.
+
+Changing the source type, repository, or branch **replaces all daemon-local workspace files**. Commit, push, copy or otherwise back up anything you need before confirming. A GitHub target is cloned before the old workspace is replaced; if cloning or authorization fails, the existing workspace is left intact.
+
+Changing only the working directory or access level preserves the checkout. Every workspace edit still drains active work, restarts the agent against the resulting directory, and clears cached repository credentials. An enabled GitHub review or Check can block a change that removes the write access it requires.
+
 ## Additional authorized repositories
 
-Sometimes one repo isn't enough — a reviewer agent may need to read a shared library, or comment on a sibling repo. On the agent's **Configuration** tab, the Workspace card lists **Additional authorized repos**:
+Sometimes one repo isn't enough — a reviewer agent may need to read a shared library, or comment on a sibling repo. On the agent's **Workspace** tab, the Workspace card lists **Authorized repos**:
 
 - **Authorize repository** adds a grant with a tier: **read** (clone/fetch), **comment** (read + issue/PR comments), or **write** (push).
 - Grants are per-agent and revocable with one click.

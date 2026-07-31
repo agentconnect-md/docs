@@ -38,8 +38,7 @@ Sessions do not currently support a Selected member list or a public share link.
 When permitted, the session header shows an **Everyone / Private** control:
 
 - The matched session owner may publish their session to the organization or make it private.
-- An organization Owner may make a session set to Everyone private, but cannot read or reopen someone else's private session.
-- Ownership, rather than role, controls the session owner's choice. A Viewer can change a session they own.
+- Ownership, rather than organization role, controls this choice. A Viewer can change a session they own; an Owner cannot change someone else's session visibility.
 
 Making a session private hides its transcript immediately and applies the same tightening to agent-to-agent descendants. The daemon then acknowledges the memory-capture change.
 
@@ -49,8 +48,10 @@ For AgentConnect-managed or supported external memory, making a session private 
 
 Runtime-native memory has no per-session AgentConnect gate. A private transcript can therefore still influence what that runtime recalls in another session.
 
-## Current IM identity limitation
+## Matching linked Slack identities
 
-AgentConnect already records IM owners with a workspace-scoped identity such as a Slack workspace plus user ID. The console does not yet add linked platform identities to the viewer's authorization identity set.
+Slack direct-message sessions store a workspace-scoped owner identity: the Slack workspace ID plus the Slack user ID. On deployments with OIDC sign-in and the Logto Management API configured, AgentConnect adds a profile's linked, verified Slack identity to the viewer identity set.
 
-As a result, a private IM session may remain hidden in the console even after the same person links Slack as a sign-in method. The account link is available today, but using it for session-owner matching is still planned. See [Social account linking](/docs/social-account-linking).
+This makes existing matching Slack DM sessions visible to that profile without rewriting the session records. GitHub and Google links do not match Slack session ownership.
+
+In local no-auth mode, with a personal API key, or when Logto identity lookup is not configured or fails, authorization uses only the console identity and does not infer a Slack match. See [Social account linking](/docs/social-account-linking).

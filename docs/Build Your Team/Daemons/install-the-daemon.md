@@ -9,19 +9,19 @@ The daemon is the machine-side half of AgentConnect: it hosts your agents, drive
 ## Requirements
 
 - **macOS or Linux** (launchd and systemd are supported for background service mode).
-- **Node.js 24 or newer** — the daemon is published to npm as [`@agentconnect.md/daemon`](https://www.npmjs.com/package/@agentconnect.md/daemon).
+- **Node.js 24 or newer** — use [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli), the stable entry point that installs, launches and upgrades the daemon for you.
 - At least one agent runtime installed and authenticated on the machine — e.g. Claude Code (`claude`) or Codex (`codex`). The daemon **detects runtimes automatically** (from the machine's installed launchers, via the [ACP registry](https://agentclientprotocol.com)) and reports what it finds — runtimes, versions, models — to the console.
-- **Outbound network only.** The daemon dials out to the control plane (`wss://api.agentconnect.md`) and to the chat platforms. It never listens on a public port, so it runs fine on a laptop behind NAT.
+- **Outbound network only.** The daemon dials out to your configured Control Plane and to the chat platforms. It never listens on a public port, so it runs fine on a laptop behind NAT.
 
 ## Connect a machine
 
 In the console, open **Daemons → Add daemon**. The modal mints a one-time key and shows the exact command to run on the target machine:
 
 ```bash
-npx -y @agentconnect.md/daemon run --cp-url wss://api.agentconnect.md/daemon/ws --cp-key <one-time-key>
+npx -y @agentconnect.md/cli run --api-url <your-control-plane-ws-url> --api-key <one-time-key>
 ```
 
-Copy it from the console (the key is **shown only once**), run it, and watch the modal flip to **Daemon connected**. That's it — the daemon saves its credentials on first connect, registers, and starts heartbeating.
+Copy it from the console (the key is **shown only once**), run it, and watch the modal flip to **Daemon connected**. The **Run** command starts the daemon in the foreground using the supplied credentials. The CLI downloads the appropriate daemon release on first use, then registers it and starts heartbeating.
 
 ![Add daemon — copy the one-command install, the console waits for the daemon to appear](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png)
 
@@ -29,29 +29,29 @@ If you close the modal without ever connecting, use **Cancel** — it discards t
 
 ## Run it permanently
 
-`agentconnect run` stays in the foreground — good for a first try, wrong for a machine that should serve your team. Install it as a system service instead:
+`agentconnect run` stays in the foreground — good for a first try, wrong for a machine that should serve your team. Switch the Add daemon modal to **Install as service** and copy its `login` command instead:
 
 ```bash
-# interactive onboarding: verifies the key, saves config,
-# then offers to install + start the service
-npx -y @agentconnect.md/daemon login --cp-url wss://api.agentconnect.md/daemon/ws --cp-key <one-time-key>
+# Verifies the key and saves it, then offers to install and start the service.
+npx -y @agentconnect.md/cli login --api-url <your-control-plane-ws-url> --api-key <one-time-key>
 ```
 
-Or, if the daemon has connected once already (credentials are saved):
+If you have already authenticated with `login`, you can install and start the service separately:
 
 ```bash
-npx -y @agentconnect.md/daemon install-service   # register launchd / systemd service
-npx -y @agentconnect.md/daemon up                # start it
+npx -y @agentconnect.md/cli install-service   # register launchd / systemd service
+npx -y @agentconnect.md/cli up                # start it
 ```
 
 Manage it with:
 
 | Command | What it does |
 | --- | --- |
-| `agentconnect status` | Show service state, PID and the log file path |
-| `agentconnect up` / `down` / `restart` | Start / stop / restart the background service |
-| `agentconnect uninstall-service` | Stop and remove the service |
-| `agentconnect run` | Run in the foreground (ignores the service) |
+| `npx -y @agentconnect.md/cli status` | Show service state, PID and the log file path |
+| `npx -y @agentconnect.md/cli up` / `down` / `restart` | Start / stop / restart the background service |
+| `npx -y @agentconnect.md/cli uninstall-service` | Stop and remove the service |
+| `npx -y @agentconnect.md/cli run` | Run in the foreground (ignores the service) |
+| `npx -y @agentconnect.md/cli upgrade --restart` | Upgrade, restart, health-check and roll back on failure |
 
 ## What lands on disk
 
@@ -63,18 +63,23 @@ Everything the daemon owns lives under one root, `~/.agentconnect` by default:
 ├── agents/              # one directory per agent: config + workspace
 ├── state/local.sqlite   # local state (sessions, queues)
 ├── logs/daemon.log      # daemon log
-└── run/                 # runtime sockets
+├── run/                 # runtime sockets
+├── versions/            # installed daemon releases
+├── current              # active daemon release
+└── versions.json        # release channel and upgrade history
 ```
 
-Useful global flags (they work on every subcommand and override `config.json`):
+Useful CLI and daemon-run flags:
 
 | Flag | Meaning |
 | --- | --- |
 | `--root <dir>` | Use a different root than `~/.agentconnect` (env: `AGENTCONNECT_ROOT`) |
-| `--cp-url <url>` / `--cp-key <key>` | Control-plane endpoint and API key |
+| `--config <path>` | Read a different `config.json` |
+| `--api-url <url>` / `--api-key <key>` | Override the Control Plane endpoint and API key for `run`, or supply them to `login` |
 | `--agents-dir <dir>` | Override where agent directories live |
 | `--max-agents <n>` | Cap how many agents this daemon will host |
 | `--log-level <level>` | `trace` `debug` `info` `warn` `error` |
+| `--require-sandbox` | Refuse startup unless every agent can run inside an OS sandbox |
 | `--no-cp` | Run fully local without a control plane (advanced) |
 | `--dry-run` | Validate config, print the reconcile plan, exit |
 
@@ -82,6 +87,6 @@ One daemon per root: a lock file prevents a second copy from starting against th
 
 ## Good to know
 
-- **Updates:** `npx` with `-y` fetches the current release each cold start. If you pinned a version, rerun the install command to move.
+- **Updates:** the CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure.
 - **Offline control plane ≠ dead agents.** Established sessions and platform connections keep working while the control plane is unreachable; the daemon reconnects with backoff and re-registers.
-- **Multiple machines:** add as many daemons as you like — a beefy workstation for heavy agents, a laptop for experiments. Each agent is pinned to one daemon; see [Manage daemons](/docs/manage-daemons).
+- **Multiple machines:** add as many daemons as you like — a beefy workstation for heavy agents, a laptop for experiments. You can later move an agent between compatible online daemons; see [Manage daemons](/docs/manage-daemons).
