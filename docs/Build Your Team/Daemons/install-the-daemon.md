@@ -12,6 +12,7 @@ The daemon is the machine-side half of AgentConnect: it hosts your agents, drive
 - **Node.js 24 or newer** — use [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli), the stable entry point that installs, launches and upgrades the daemon for you.
 - At least one agent runtime installed and authenticated on the machine — e.g. Claude Code (`claude`) or Codex (`codex`). The daemon **detects runtimes automatically** (from the machine's installed launchers, via the [ACP registry](https://agentclientprotocol.com)) and reports what it finds — runtimes, versions, models — to the console.
 - **Outbound network only.** The daemon dials out to your configured Control Plane and to the chat platforms. It never listens on a public port, so it runs fine on a laptop behind NAT.
+- **Optional Linux sandboxing** requires `bubblewrap`, `ripgrep`, `socat`, and unprivileged user namespaces. The daemon runs a live capability probe at startup; macOS currently runs agents without this OS sandbox. See [Sandboxing](/docs/sandboxing).
 
 ## Connect a machine
 
@@ -79,7 +80,7 @@ Useful CLI and daemon-run flags:
 | `--agents-dir <dir>` | Override where agent directories live |
 | `--max-agents <n>` | Cap how many agents this daemon will host |
 | `--log-level <level>` | `trace` `debug` `info` `warn` `error` |
-| `--require-sandbox` | Refuse startup unless every agent can run inside an OS sandbox |
+| `--require-sandbox` | Require the supported Linux sandbox for every agent or refuse daemon startup; see [Sandboxing](/docs/sandboxing) |
 | `--no-cp` | Run fully local without a control plane (advanced) |
 | `--dry-run` | Validate config, print the reconcile plan, exit |
 
@@ -88,5 +89,6 @@ One daemon per root: a lock file prevents a second copy from starting against th
 ## Good to know
 
 - **Updates:** the CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure.
+- **Sandboxing:** a supported Linux daemon can confine selected agents, or require the boundary for every agent and fail closed. See [Sandboxing](/docs/sandboxing) before using it as a production guarantee.
 - **Offline control plane ≠ dead agents.** Established sessions and platform connections keep working while the control plane is unreachable; the daemon reconnects with backoff and re-registers.
 - **Multiple machines:** add as many daemons as you like — a beefy workstation for heavy agents, a laptop for experiments. You can later move an agent between compatible online daemons; see [Manage daemons](/docs/manage-daemons).

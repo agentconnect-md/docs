@@ -25,7 +25,7 @@ Other runtime behavior settings include:
 - **Allow change in chat** — when on, chat users can change session runtime settings and answer approval requests. When off, only people who can edit the agent can do so.
 - **Show footer** — add the agent, runtime, model and session links to replies.
 - **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
-- **Run in sandbox** — run inside the daemon's supported OS sandbox boundary. A deployment may require this setting.
+- **Run in sandbox** — place the runtime inside AgentConnect's Linux OS sandbox. The control is **Unavailable** when the selected daemon cannot enforce it and **Required** when the daemon operator has locked it on. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/docs/sandboxing).
 
 ## Description and persona
 
