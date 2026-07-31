@@ -29,7 +29,7 @@ A **daemon** is the AgentConnect process that runs on your machine. It hosts you
 2. Copy the command it shows and run it in a terminal on your machine:
 
 ```bash
-npx -y @agentconnect.md/daemon run --cp-url <your-control-plane-ws-url> --cp-key <your-one-time-key>
+npx -y @agentconnect.md/cli run --api-url <your-control-plane-ws-url> --api-key <your-one-time-key>
 ```
 
 > 🔑 The key is minted for this daemon and **shown only once** — always copy the exact command from the console.
@@ -53,11 +53,11 @@ The command above runs the daemon in the foreground, which is perfect for a firs
 
 ## 4. Talk to it
 
-Open your new agent and click **Playground**. This starts a live sandbox session with the agent running on your machine — ask it something:
+Open your new agent and click **Playground**. This opens a live conversation with the agent running on your machine — ask it something:
 
 > List the files in your workspace and tell me what kind of project this is.
 
-You'll see its replies, thinking and tool calls stream in, and you can switch model, reasoning effort or permission mode mid-conversation from the bar above the composer.
+Your first message creates a private session, which then appears under **Sessions** and can be reopened later. You'll see replies, reasoning and tool calls stream in, and you can switch model, reasoning effort or permission mode mid-conversation from the bar above the composer.
 
 ![A live Playground session](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png)
 

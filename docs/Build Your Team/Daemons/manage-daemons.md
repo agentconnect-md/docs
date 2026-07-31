@@ -14,9 +14,10 @@ hidden: false
 | --- | --- |
 | **Online** | Connected and heartbeating. Its agents are reachable. |
 | **Offline** | Not connected. Every agent on it shows as offline too, and transcripts it owns can't be fetched until it returns. |
-| **Paused** | Registered but not taking new work. |
 
-A daemon that never finished onboarding (key minted, command never run) shows as pending until it first connects.
+A daemon that never finished onboarding remains unconnected while the Add daemon flow waits for its first connection.
+
+An Owner-triggered restart or upgrade appears as a temporary **Restarting** or **Upgrading** operation. AgentConnect considers it successful only after the daemon re-registers; a timeout or failed health check is reported as failed rather than being inferred from a lost connection.
 
 ## Daemon detail
 
@@ -31,15 +32,19 @@ Click a daemon to open it:
 ## Actions
 
 - **Rename** — daemons get a generated name on first connect; double-click the name (or use the ⋯ menu) to give it a human one. Names like `build-box` or `dev-laptop` pay off once you have several.
-- **Reconnect** (offline daemons) — asks the daemon to re-establish its connection the next time it checks in.
-- **Delete** (offline daemons) — removes the daemon from the org. Agents pinned to it must be moved or deleted first; the machine itself just stops being authorized (its key is revoked).
+- **Restart** (online daemons, Owners) — drains work and asks the service supervisor to relaunch the same version.
+- **Upgrade** (online daemons, Owners) — installs a selected release, drains and relaunches, then health-checks the result. A failed upgrade rolls back when possible.
+- **Reconnect** (offline daemons) — mints a fresh one-time token and shows a command to run on that host. Its identity and agent placements are preserved.
+- **Delete** (offline daemons) — removes the daemon, revokes its keys and automatically leaves its agents unplaced. The local process and files remain on the machine until you stop or remove them there.
 
 ## Placement
 
-Every agent is **pinned to one daemon** — that machine owns its workspace, its runtime processes and its transcripts. You pick the daemon when creating the agent. To move an agent to a different machine, recreate it there (workspaces are machine-local by design).
+Every placed agent runs on one daemon — that machine owns its workspace, runtime processes and transcripts. You can move an agent from its **Configuration** tab when both daemons are online, ready and compatible with its runtime, model and MCP servers.
+
+A move cold-reprovisions the saved agent definition; it does not migrate daemon-local workspace, memory or transcript bytes. Commit or back up local work first, and expect GitHub workspaces to be cloned again on the target.
 
 ## Troubleshooting
 
-- **Stuck “Waiting for daemon…” in Add daemon** — the command probably failed in your terminal. Check that Node is ≥ 24 (`node -v`) and that the machine can reach `api.agentconnect.md` over HTTPS/WSS.
-- **Daemon shows offline but the process is running** — check the log (`agentconnect status` prints its path, default `~/.agentconnect/logs/daemon.log`). Repeated `connect/handshake failed` usually means the key was revoked (deleted daemon) — re-onboard with a fresh **Add daemon**.
+- **Stuck “Waiting for daemon…” in Add daemon** — the command probably failed in your terminal. Check that Node is ≥ 24 (`node -v`) and that the machine can reach your control-plane URL over HTTPS/WSS.
+- **Daemon shows offline but the process is running** — check the log (`npx -y @agentconnect.md/cli status` prints its path, default `~/.agentconnect/logs/daemon.log`). Repeated `connect/handshake failed` usually means the key was revoked — use **Reconnect** for that daemon, or onboard a new one if it was deleted.
 - **Runtime missing from the pickers** — the runtime isn't installed (or not on `PATH`) on that machine. Install it, then restart the daemon; it re-probes on start.

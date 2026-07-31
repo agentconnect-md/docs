@@ -1,18 +1,41 @@
 ---
 title: ⚙️ Configure an agent
-excerpt: The agent page — editing behavior, output verbosity, pausing, env vars, sub-agent policy, memory and the agent API.
+excerpt: Edit an agent's persona, runtime behavior, placement, workspace, access, memory, tools and API.
 hidden: false
 ---
 
-Open any agent from **Agents** to reach its page: status, meta chips (model, daemon, integrations, session count), a **Playground** button, and tabs — **Configuration**, **Workspace**, **Memory**, **API**, **Knowledge & Tools**.
+Open any agent from **Agents** to reach its page: status, meta chips (model, daemon, integrations, session count), a **Playground** button, and tabs — **Integrations**, **Configuration**, **Workspace**, **Memory**, **API**, and **Tools & Skills**.
 
 ![An agent's Configuration tab](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-detail.png)
 
-## General
+## Configuration
 
-**Edit** on the General card changes anything you set at creation (except workspace mode and daemon): display name, model, effort/reasoning, fast mode, permission mode — plus one field that only exists here:
+The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. **Edit** lets you change the display name, daemon, runtime, model, effort/reasoning, fast mode, permission mode and sandbox setting. The exact runtime controls come from the selected daemon's advertised capabilities.
 
-- **Output mode** — **Low / Medium / High**: how much of the agent's activity is posted back to the platform. **Low** posts final answers; **High** narrates tool use and progress. Chat channels usually want Low or Medium; the full detail is always in [Sessions](/docs/sessions) regardless.
+**Output mode** controls what reaches connected chat platforms; the full transcript remains available in [Sessions](/docs/sessions):
+
+- **Minimal** — one live-updating reply that settles on the final answer; intermediate steps stay in the status.
+- **Low** — replies only.
+- **Medium** — replies plus tool activity and plans.
+- **High** — Medium plus reasoning and tool outputs.
+- **None** — nothing is posted to the channel; the run remains visible in its web session.
+
+Other runtime behavior settings include:
+
+- **Allow change in chat** — when on, chat users can change session runtime settings and answer approval requests. When off, only people who can edit the agent can do so.
+- **Show footer** — add the agent, runtime, model and session links to replies.
+- **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
+- **Run in sandbox** — run inside the daemon's supported OS sandbox boundary. A deployment may require this setting.
+
+## Description and persona
+
+The Description card is edited separately. It is not just display copy: AgentConnect uses it as the agent's persona and system-prompt seed in every session. Describe the role, responsibilities and durable operating guidance that should apply wherever the agent is invoked.
+
+## Move an agent
+
+Choose another daemon in **Edit** to cold-move the agent. Save the move separately from other configuration changes. Both source and target must be online, ready and support agent moves; the target must also support the selected runtime, model and MCP servers.
+
+AgentConnect drains the active turn and reprovisions the control-plane-owned definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcript data. The source archive remains on the old machine, GitHub workspaces are cloned again, and old session bodies cannot be loaded from the console after the move.
 
 ## Pause
 
@@ -20,7 +43,7 @@ Open any agent from **Agents** to reach its page: status, meta chips (model, dae
 
 ## Environment variables
 
-The **Environment** card sets env vars for the agent's sessions on the daemon — API endpoints, feature flags, anything its tools need. Values live with the agent config on your daemon.
+The **Variables** and **Secrets** cards set environment values for the agent's sessions — API endpoints, feature flags, and credentials its tools need. Secrets are write-only in the console after saving.
 
 ## Agent visibility (sub-agent calls)
 
@@ -35,7 +58,7 @@ See [Agent visibility](/docs/agent-visibility) for the full policy and examples.
 
 ## Memory
 
-The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **None**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded.
+The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **Off**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded.
 
 For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [External memory with Mem0 OSS](/docs/external-memory).
 
@@ -45,10 +68,10 @@ The **API** tab shows how to talk to this agent from your own code: you mint a s
 
 For the REST surface (agents, sessions, schedules — everything the console does), see the [API reference](/reference).
 
-## Knowledge & Tools
+## Tools & Skills
 
-Shows the MCP servers available from the daemon runtime and anything indexed from the workspace (loaded on first clone and on each pull).
+Shows MCP tools available to the agent and the shared or agent-local skills it has enabled.
 
 ## Delete
 
-**Delete** (⋯ menu) removes the agent from the org. Its integrations are released (bots become reusable) and its workspace directory stays on the daemon's disk until cleaned up there.
+**Delete** (⋯ menu) removes the agent and its triggers from the organization. Its integrations are released so their bots can be reused, and AgentConnect tells the owning daemon to remove the agent's local directory. That daemon-side cleanup is best-effort if the machine is unreachable.

@@ -57,4 +57,4 @@ Slack reserves `/…` for its own slash commands, hence the `!` alias there.
 
 ## How chatty should an agent be?
 
-The agent's **Output mode** (Low / Medium / High) controls how much of its activity gets posted to the platform — final answers only, or a narrated play-by-play. Whatever you choose, the complete transcript is always in [Sessions](/docs/sessions).
+The agent's **Output mode** controls what reaches the platform: **Minimal** keeps one live-updating reply, **Low** posts replies, **Medium** adds tools and plans, **High** also includes reasoning and tool output, and **None** keeps the run in the web session only. The complete transcript is always in [Sessions](/docs/sessions).

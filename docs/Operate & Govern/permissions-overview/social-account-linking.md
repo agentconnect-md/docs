@@ -28,11 +28,11 @@ Linking or unlinking does not:
 - install or configure a Slack bot; or
 - grant a chat-platform user access to a restricted agent.
 
-## Session ownership status
+## Slack session ownership
 
-Social account linking is available today as a sign-in feature. Linked platform identities are not yet added to the authorization identity set used for private IM sessions.
+On deployments with OIDC sign-in and the Logto Management API configured, a linked, verified Slack identity is also used to match private Slack direct-message sessions. AgentConnect stores those owners as the Slack workspace ID plus user ID, so linking the matching account can make existing sessions visible without a backfill.
 
-In particular, linking Slack does not yet make a workspace-scoped Slack DM session visible to that console profile. AgentConnect records the workspace and user identity so the permission model can support that mapping later without changing the stored session. See [Session visibility](/docs/session-visibility).
+GitHub and Google links remain sign-in methods and do not affect Slack session ownership. Local no-auth mode, personal API keys, and deployments without a working Logto identity lookup use only the console identity and do not infer a Slack match. See [Session visibility](/docs/session-visibility).
 
 ## Self-hosted requirements
 
