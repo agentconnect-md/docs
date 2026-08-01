@@ -8,10 +8,10 @@ Use two agents to create a layered review workflow: a fast reviewer covers every
 
 Both agents watch the same repository through one AgentConnect GitHub App. Each has its own runtime, model, instructions, session, and review settings.
 
-| Agent          | Model profile           | Trigger          | PR review   | Role                                                                                        |
-| -------------- | ----------------------- | ---------------- | ----------- | ------------------------------------------------------------------------------------------- |
-| `quick-review` | Fast and cost-efficient | **updated**      | **Brief**   | Catch correctness issues, missing tests, and obvious regressions on every revision          |
-| `deep-review`  | Strong reasoning model  | **mention only** | **Details** | Investigate architecture, concurrency, security, migrations, and operational risk on demand |
+| Agent | Model profile | Trigger | PR review | Role |
+| --- | --- | --- | --- | --- |
+| `quick-review` | Fast and efficient | **updated** | **Brief** | Baseline correctness and regressions |
+| `deep-review` | Strong reasoning | **mention only** | **Details** | Architecture, security, migrations, operations |
 
 ## Before you start
 
@@ -100,9 +100,9 @@ For automatic model escalation without a maintainer mention, use trusted agent-t
 
 ## Troubleshooting
 
-| Symptom                                                      | Check                                                                                                                                   |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `@deep-review` does nothing                                  | Use the agent's exact name, post as a current `write` or `admin` maintainer, and confirm the hook listens for Pull requests in **mention only** mode. |
-| Both reviewers run                                           | Check whether the comment mentioned the GitHub App, which intentionally broadcasts to all matching reviewers.                           |
-| The deep reviewer cannot submit inline comments or a verdict | Confirm **Details**, agent repository **write** access, and effective App `pull_requests:write` permission.                             |
-| No informational Check appears                               | Confirm Check reporting is enabled and the installation has effective `checks:write` permission.                                        |
+| Symptom | Check |
+| --- | --- |
+| `@deep-review` does nothing | Exact agent name; `write`/`admin` author; **mention only** trigger |
+| Both reviewers run | Mention the agent, not the GitHub App |
+| No inline comments or verdict | **Details**; repository **write**; App `pull_requests:write` |
+| No informational Check | Check reporting and App `checks:write` |

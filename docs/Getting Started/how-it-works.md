@@ -44,15 +44,17 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 
 ## What lives where
 
-| Data                                   | Where it lives                                                                                                                                       |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Live platform messages and ACP updates | The daemon and, for callback ingress, the Relay data path. They are not persisted by the Control Plane.                                              |
-| Session transcripts and tool bodies    | The owning daemon. Authorized console reads are proxied on demand and are not persisted by the Control Plane.                                        |
-| Agent workspaces and git checkouts     | The owning daemon. Workspace browser reads are bounded and on demand.                                                                                |
-| Runtime credentials                    | The daemon uses the runtime login or credentials already available on that machine; the Control Plane does not store them.                           |
-| Platform bot tokens and tenant secrets | The Control Plane secret store, then only the component that needs them. At-rest protection depends on the deployment's secret-cipher configuration. |
-| Control metadata                       | The Control Plane stores organizations, agents, daemons, permissions, configuration, session metadata, and usage totals.                             |
-| Approved Knowledge and skills           | The Control Plane stores immutable, owner-approved Knowledge and managed-skill revisions. Pending Dream proposal bodies remain on their source daemon. |
+| Data | Stored by |
+| --- | --- |
+| Live messages and ACP updates | Daemon; Relay forwards callbacks |
+| Transcripts and tool bodies | Owning daemon |
+| Workspaces and git checkouts | Owning daemon |
+| Runtime credentials | Daemon machine |
+| Bot tokens and tenant secrets | Control Plane secret store |
+| Control metadata | Control Plane |
+| Approved Knowledge and skills | Control Plane |
+
+Authorized transcript, tool-body, and workspace reads are bounded and proxied from the owning daemon on demand; the Control Plane does not persist the response. Pending Dream proposal bodies also stay on their source daemon. Secret protection at rest depends on the deployment's secret-cipher configuration.
 
 ## Built to degrade gracefully
 

@@ -12,7 +12,7 @@ AgentConnect keeps organization management separate from agent enablement:
 | --- | --- | --- |
 | Connector or custom MCP server | **Tools & Skills → Connectors & MCP servers** | Agent → **Tools & Skills → Tools** |
 | Git skill source | **Tools & Skills → Skills library** | Agent → **Tools & Skills → Skills** |
-| Managed skill | Accept it under **Knowledge → Suggestions**, then manage it in the **Skills library** | Agent → **Tools & Skills → Skills** |
+| Managed skill | **Knowledge → Suggestions**, then **Skills library** | Agent → **Tools & Skills → Skills** |
 
 Adding something to the organization library does not automatically give it to every agent.
 
@@ -35,8 +35,8 @@ The Skills library contains two source types with different lifecycles:
 
 | Source type | How it gets there | Lifecycle |
 | --- | --- | --- |
-| **Git skill source** | Import a GitHub repository that contains one or more `SKILL.md` directories | Collaborators and Owners can edit or remove a source they can access. Updating it reinstalls the source for agents that enable it. |
-| **Managed skill** | An Owner accepts a skill proposed under **Knowledge → Suggestions** | Revisions are immutable. Owners can inspect revision history and archive or restore the skill. |
+| **Git skill source** | Import a repository with `SKILL.md` directories | Editable; updates reinstall enabled sources |
+| **Managed skill** | An Owner accepts a suggestion | Immutable revisions; archive or restore |
 
 Managed skills and Git sources remain clearly labeled even though they share one library. Accepting or importing a skill never enables it automatically.
 

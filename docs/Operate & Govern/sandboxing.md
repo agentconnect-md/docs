@@ -22,13 +22,15 @@ Use permission modes to shape normal agent behavior. Use sandboxing to limit the
 
 AgentConnect can place any ACP runtime inside the outer Linux OS sandbox when its daemon supports **Run in sandbox**. Some runtimes can also add a second, runtime-native boundary around model-authored tool processes. That inner layer is runtime-specific and does not replace the outer sandbox.
 
-| Runtime | Runtime-native tool sandbox in AgentConnect | What happens when **Run in sandbox** is on |
+| Runtime | Inner tool sandbox | Effective boundary |
 | --- | --- | --- |
-| **Claude Code** | **Available** | AgentConnect automatically enables Claude's native Bash sandbox inside the outer OS sandbox. Model-authored Bash commands and their child processes cannot read the Claude credentials available to the trusted parent runtime. Claude's in-process file tools and trusted stdio MCP servers are not moved into the inner sandbox; they remain inside the outer AgentConnect boundary. |
-| **Codex** | **Pending** | The runtime runs inside the outer AgentConnect OS sandbox. AgentConnect does not yet add a second, credential-isolating tool boundary; Codex permission modes still control its normal approval and access policy. |
-| **Other ACP runtimes** | **Not integrated** | The runtime runs inside the outer AgentConnect OS sandbox, without an additional runtime-native tool sandbox managed by AgentConnect. |
+| **Claude Code** | Available | Outer OS + native Bash sandbox |
+| **Codex** | Pending | Outer OS only |
+| **Other ACP runtimes** | Not integrated | Outer OS only |
 
-The table describes integration in AgentConnect, not every sandbox feature a runtime may offer when used on its own. For every runtime except the Claude Code case above, treat the outer OS sandbox as the documented isolation boundary.
+For Claude Code, AgentConnect automatically enables the native Bash sandbox inside the outer boundary. Model-authored Bash and its child processes cannot read the Claude credentials retained by the trusted parent. In-process file tools and trusted stdio MCP servers stay outside the inner sandbox, but remain inside the outer AgentConnect boundary.
+
+Codex permission modes still control normal approval and access policy; AgentConnect does not yet add a second credential-isolating boundary. For other runtimes, the outer OS sandbox is the documented isolation boundary. The table describes AgentConnect integration, not every feature a runtime may offer on its own.
 
 ## Prepare a Linux daemon
 
@@ -55,10 +57,10 @@ When adding or editing an agent, select a compatible Linux daemon and turn on **
 
 | State | Meaning |
 | --- | --- |
-| **On** | This agent requested the sandbox and its daemon currently supports it. |
-| **Off** | The daemon supports sandboxing, but this agent runs in the daemon user's normal environment. |
-| **Unavailable** | The selected daemon did not pass the Linux sandbox probe. The control cannot be enabled. |
-| **Required** | The daemon operator requires every agent to run sandboxed; the control is locked on. |
+| **On** | Requested and supported |
+| **Off** | Supported but not requested |
+| **Unavailable** | Probe failed; cannot be enabled |
+| **Required** | Daemon policy locks it on |
 
 If you move an agent to another computer, save the computer change before adjusting sandboxing. Availability always comes from the newly selected daemon rather than from the agent's previous machine.
 

@@ -112,13 +112,13 @@ docker compose down --volumes
 
 ## What AgentConnect OSS includes
 
-| Component     | Where it runs                | Purpose                                                                                              |
-| ------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Web console   | Docker                       | Configure agents, integrations, schedules, and inspect activity                                      |
-| Control Plane | Docker                       | Store control data, approved Knowledge, and managed skills; authenticate users and coordinate daemons |
-| Relay         | Docker                       | Accept webchat, webhook, GitHub, and shared-bot ingress and forward it directly to the owning daemon |
-| PostgreSQL    | Docker by default            | Persist Control Plane data, including approved Knowledge and managed skills                          |
-| Daemon        | Your host or another machine | Run agents, own workspaces and conversations, and connect directly to supported chat platforms       |
+| Component | Runs on | Role |
+| --- | --- | --- |
+| Web console | Docker | Configure and observe |
+| Control Plane | Docker | Auth, control data, and Knowledge |
+| Relay | Docker | Forward public ingress |
+| PostgreSQL | Docker | Persist Control Plane data |
+| Daemon | Host or another machine | Run agents, connections, and local data |
 
 The Compose stack also runs a short-lived migration job. It applies the selected Control Plane image's database migrations. When sign-in is disabled, Control Plane startup initializes only the fixed local organization required by no-auth mode; it does not add sample data.
 
@@ -126,10 +126,10 @@ The Compose stack also runs a short-lived migration job. It applies the selected
 
 The Relay is optional in the AgentConnect architecture, but it is included in the bundled Compose topology so every integration works without changing the stack.
 
-| Connection path   | Used for                                                                                        | Public ingress required?                                          |
-| ----------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Daemon direct     | Daemon-owned platform connections such as Slack Socket Mode, Telegram, Discord, and Lark / Feishu | No. The daemon opens outbound connections from the agent host     |
-| Through the Relay | GitHub App events, generic webhooks, webchat and Agent API traffic, and Slack or Lark / Feishu HTTP bots | Yes. The Relay accepts the callback and forwards it to the daemon |
+| Path | Used for | Public ingress |
+| --- | --- | --- |
+| Daemon direct | Slack Socket Mode, Telegram, Discord, Lark / Feishu | No |
+| Relay | GitHub, webhooks, webchat, Agent API, HTTP bots | Yes |
 
 Relay-delivered messages go directly from the Relay to the owning daemon. The Control Plane distributes routing metadata, but it does not carry or persist the message body.
 

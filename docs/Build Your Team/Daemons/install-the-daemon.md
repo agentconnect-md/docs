@@ -74,13 +74,13 @@ Useful CLI and daemon-run flags:
 
 | Flag | Meaning |
 | --- | --- |
-| `--root <dir>` | Use a different root than `~/.agentconnect` (env: `AGENTCONNECT_ROOT`) |
-| `--config <path>` | Read a different `config.json` |
-| `--api-url <url>` / `--api-key <key>` | Override the Control Plane endpoint and API key for `run`, or supply them to `login` |
-| `--agents-dir <dir>` | Override where agent directories live |
+| `--root <dir>` | Change the root (`AGENTCONNECT_ROOT`) |
+| `--config <path>` | Use another `config.json` |
+| `--api-url <url>` / `--api-key <key>` | Set Control Plane credentials for `run` or `login` |
+| `--agents-dir <dir>` | Change the agents directory |
 | `--max-agents <n>` | Cap how many agents this daemon will host |
 | `--log-level <level>` | `trace` `debug` `info` `warn` `error` |
-| `--require-sandbox` | Require the supported Linux sandbox for every agent or refuse daemon startup; see [Sandboxing](/docs/sandboxing) |
+| `--require-sandbox` | Fail startup unless every agent can be sandboxed |
 | `--no-cp` | Run fully local without a control plane (advanced) |
 | `--dry-run` | Validate config, print the reconcile plan, exit |
 

@@ -39,11 +39,11 @@ Enter:
 | Plugin transport | **Local · operator-installed stdio** |
 | Plugin id | `ai.mem0.memory.oss` |
 | Operator command reference | `mem0-oss` |
-| Expected manifest digest | Leave empty for the first connection, or enter a reviewed digest to pin it |
+| Expected manifest digest | Blank initially, or a reviewed digest |
 | Credential name | `apiKey` |
 | Credential header | `X-Mem0-Api-Key` |
 | Required | Checked |
-| Credential value | The API key issued by your Mem0 OSS server |
+| Credential value | Mem0 API key |
 | Non-secret connection config | `{}` |
 
 Then click **Create connection**. The credential is write-only: AgentConnect will show the logical name later, never its value.
@@ -82,12 +82,12 @@ The record panel is proxied live through the owning daemon; memory bodies are no
 
 | Status or reason | What to check |
 | --- | --- |
-| `probing` | The agent must be bound to the connection, its daemon must be online, and the daemon must have reloaded the allowlist. |
-| `invalid` / `local_plugin_not_allowed` | The connection's `mem0-oss` reference is missing from `config.json` on the agent's owning daemon. Add the exact key and restart. |
-| `invalid` / `secret_delivery_unavailable` | `secretEnv` does not map the logical `apiKey` to an environment variable. Use `{ "apiKey": "MEM0_API_KEY" }`. |
-| `invalid` / `conformance_failed` | The wrapper's plugin id, profile, credential contract, config schema, or MCP output did not match. Rebuild the current wrapper and verify the field values above. |
-| `degraded` / `plugin_unavailable` | The wrapper or Mem0 endpoint is temporarily unavailable. Check the daemon, Mem0 health, and the configured network address. The daemon retries; an unverified revision remains blocked until a probe succeeds. |
-| `degraded` / `plugin_process_exited` | The local wrapper exited. Check the Node path and built `dist/cli.js`; the daemon restarts it with backoff. |
-| `ready` | This revision passed compatibility checks and can serve recall/capture operations. |
+| `probing` | Bind an agent; bring its daemon online; reload the allowlist |
+| `invalid` / `local_plugin_not_allowed` | Add the exact `mem0-oss` allowlist key; restart |
+| `invalid` / `secret_delivery_unavailable` | Map `apiKey` to `MEM0_API_KEY` in `secretEnv` |
+| `invalid` / `conformance_failed` | Rebuild the wrapper; verify its manifest and config |
+| `degraded` / `plugin_unavailable` | Check daemon, Mem0 health, and network reachability |
+| `degraded` / `plugin_process_exited` | Check the Node path and built `dist/cli.js` |
+| `ready` | Verified for recall and capture |
 
 Editing the connection increments its revision and triggers a fresh check. Replacing credentials replaces the complete write-only secret set. Unbind every agent before deleting a connection; deleting it does **not** delete records in Mem0.
