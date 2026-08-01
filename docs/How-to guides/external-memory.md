@@ -1,5 +1,5 @@
 ---
-title: 🧠 Use Mem0 OSS as external memory
+title: 🧠 Mem0 external memory
 excerpt: Connect an agent to self-hosted Mem0, configure recall and capture, and verify memory across sessions.
 hidden: false
 ---

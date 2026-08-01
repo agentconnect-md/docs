@@ -1,5 +1,5 @@
 ---
-title: ⚡ Fast PR reviews with deep review on demand
+title: ⚡ Layered PR reviews
 excerpt: Review every PR revision with a fast model, then summon a stronger reviewer only when a change needs deeper analysis.
 hidden: false
 ---

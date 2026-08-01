@@ -1,5 +1,5 @@
 ---
-title: 🎭 One Slack app with different agents by channel
+title: 🎭 Shared Slack bot routing
 excerpt: Use one shared Slack identity while each channel dispatches to an agent with its own model, instructions, workspace, and trigger.
 hidden: false
 ---

@@ -1,5 +1,5 @@
 ---
-title: 🌉 Hand off conversations between trusted workspaces
+title: 🌉 Cross-platform handoffs
 excerpt: Move work between two messaging workspaces you trust, while keeping each platform's session and audience boundaries explicit.
 hidden: false
 ---
