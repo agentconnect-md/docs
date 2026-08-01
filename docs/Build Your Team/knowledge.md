@@ -27,12 +27,14 @@ Editing an entry publishes a new immutable revision instead of overwriting its h
 
 [Dreaming](/docs/configure-an-agent#dreaming) can turn recurring patterns from an agent's recent work into a proposed Knowledge entry or managed skill. A proposal never publishes itself:
 
+> **Temporary safety pause:** Production daemons currently keep Dream execution and staged suggestion review disabled while the isolation and review boundary is hardened. Existing suggestion metadata may remain visible, but its content and review actions are unavailable until that boundary is re-enabled.
+
 1. Open **Knowledge → Suggestions** as an organization Owner.
 2. Filter **Pending**, **Accepted**, or **Rejected** suggestions.
 3. Inspect the proposed Markdown or complete skill file tree and its source sessions.
 4. **Accept** it to create an approved immutable revision, or **Reject** it and keep the decision in review history.
 
-Pending proposal bodies remain on the source daemon until review. If that daemon is offline, the suggestion metadata remains visible, but its content cannot be opened or accepted until the daemon returns. Once accepted, Knowledge and managed-skill revisions are stored centrally so the team can use them independently of the proposing daemon.
+Pending proposal bodies remain on the source daemon until review. If that daemon is offline, upgrading, or paused for safety, the suggestion metadata remains visible, but its content cannot be opened or reviewed until the source is ready again. Once accepted, Knowledge and managed-skill revisions are stored centrally so the team can use them independently of the proposing daemon.
 
 An accepted Knowledge suggestion appears in the Knowledge library. An accepted managed skill appears in **Tools & Skills → Skills library** and still must be [enabled explicitly for each agent](/docs/tools-and-skills#enable-tools-and-skills-for-an-agent).
 
@@ -52,6 +54,6 @@ If the Control Plane is temporarily unavailable, `findKnowledge` returns a tool 
 
 ## Dreaming
 
-Dreaming is available with **Managed** memory. Open an agent's **Memory** tab, edit its memory settings, and enable **Dreaming**. You can run **Dream now**, schedule recurring runs, and optionally enable **Also mine reusable skills from repeated procedures**.
+Dreaming is configured with **Managed** memory. Open an agent's **Memory** tab to change its schedule, choose whether completed memory results wait for review or are adopted automatically, and optionally enable **Also mine reusable skills from repeated procedures**. Review is the default. While the temporary safety pause above is active, **Dream now** and scheduled runs do not execute in production.
 
 Dreams also stage proposed changes to the agent's own memory and agent-local skills. Those stay distinct from shared suggestions: accepting or discarding an agent-memory result never auto-accepts a Knowledge or managed-skill proposal, and organization Owners still review every shared proposal under **Knowledge → Suggestions**.
