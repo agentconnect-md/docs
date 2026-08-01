@@ -8,12 +8,12 @@ An **integration** binds one agent to one way of reaching it. Six kinds are supp
 
 | Platform                   | The agent responds to                         | You provide                               |
 | -------------------------- | --------------------------------------------- | ----------------------------------------- |
-| [Slack](/docs/slack)       | Mentions & messages in channels the bot is in | A Slack app (two-step install)            |
-| [Telegram](/docs/telegram) | DMs and group messages                        | A bot token from @BotFather               |
-| [Discord](/docs/discord)   | Mentions & threads in your server             | A bot token + invite                      |
-| Feishu/Lark                | Mentions & messages in chats                  | One-click app setup or an App ID + secret |
-| [GitHub](/docs/github)     | Issues, PRs, comments on watched repos        | The AgentConnect GitHub app               |
-| [Webhooks](/docs/webhooks) | Anything that can POST JSON                   | Nothing — we mint the endpoint            |
+| [Slack](/docs/slack)                 | Channels, threads, and DMs                    | Cloud Add to Slack or a custom Slack App  |
+| [Telegram](/docs/telegram)           | DMs and group messages                        | A bot token from @BotFather               |
+| [Discord](/docs/discord)             | Channels, threads, and DMs                    | A bot token; AgentConnect builds the invite |
+| [Lark / Feishu](/docs/lark-feishu)   | Group mentions and one-to-one chats           | One-click app setup or an App ID + secret |
+| [GitHub](/docs/github)               | Issues, PRs, comments on watched repos        | The AgentConnect GitHub app               |
+| [Webhooks](/docs/webhooks)           | Anything that can POST JSON                   | Nothing — we mint the endpoint            |
 
 Add one from the agent page (**Integrations → Add integration**) or from the Agents list.
 
@@ -21,12 +21,12 @@ Add one from the agent page (**Integrations → Add integration**) or from the A
 
 ## Bots are identities, integrations are bindings
 
-For the chat platforms, the thing that lives in your Slack workspace / Telegram / Discord server is a **bot** — a durable identity with its own tokens. An integration binds _that bot_ to _one agent_.
+For the chat platforms, the thing that lives in your Slack workspace, Telegram group, Discord server, or Lark / Feishu tenant is a **bot** — a durable identity with its own tokens. An integration binds _that bot_ to _one agent_.
 
 - Deleting an integration **frees the bot** rather than destroying it — reuse it for another agent from the **Use an existing bot** picker.
 - Bots are managed org-wide under **Settings → Bots**: see [Bots](/docs/bots).
 
-Platform tiles are enabled based on what your agent's daemon supports. Direct transports such as Slack Socket Mode, Telegram, Discord, and the Feishu/Lark long connection connect outbound from the daemon. Callback transports such as Slack and Feishu/Lark HTTP events, GitHub, generic webhooks, and webchat enter through the optional AgentConnect Relay and are forwarded to the daemon without passing through the Control Plane message path.
+Platform tiles are enabled based on what your agent's daemon supports. On AgentConnect Cloud, the built-in Slack app hides the callback setup behind **Add to Slack**. Direct transports such as Slack Socket Mode, Telegram, Discord, and the Lark / Feishu long connection connect outbound from the daemon. Callback transports such as Slack and Lark / Feishu HTTP events, GitHub, generic webhooks, and webchat enter through the AgentConnect Relay and are forwarded to the daemon without passing through the Control Plane message path.
 
 ## Binding channels
 

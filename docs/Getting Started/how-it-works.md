@@ -10,7 +10,8 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 
 ```
  Direct platform connections                 Callback-based ingress
- Slack Socket Mode / Telegram / Discord      Slack HTTP / GitHub / webhooks / webchat
+ Slack Socket / Telegram / Discord /          Slack or Lark / Feishu HTTP /
+ Lark / Feishu Long Connection                GitHub / webhooks / webchat
                  │                                         │
                  ▼                                         ▼
  ┌─────────────────────────────┐              ┌────────────────────────┐
@@ -31,11 +32,11 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 
 **The daemon** is a small process you run on a laptop, workstation, VM, or other machine. It:
 
-- opens outbound connections to the Control Plane, the Relay when used, and direct chat transports such as Slack Socket Mode, Telegram, and Discord;
+- opens outbound connections to the Control Plane, the Relay when used, and direct chat transports such as Slack Socket Mode, Telegram, Discord, and Lark / Feishu Long Connection;
 - launches and drives installed agent runtimes such as Claude Code and Codex over [ACP](https://agentclientprotocol.com);
 - owns the agents' working directories, git checkouts and transcripts.
 
-**The Relay** is optional public ingress. It terminates callback-based Slack and Lark traffic, GitHub and generic webhooks, and webchat, then forwards the request to the owning daemon. It does not durably store message content.
+**The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub and generic webhooks, and webchat, then forwards the request to the owning daemon. It does not durably store message content.
 
 **The Control Plane** manages authentication, organizations, permissions, registry, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed-skill revisions](/docs/knowledge). Its daemon WebSocket is used primarily for registration, heartbeats, configuration, orchestration commands, and telemetry. It also carries scoped request and response frames for authorized, on-demand console reads.
 
