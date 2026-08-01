@@ -17,7 +17,18 @@ On the agent: **Integrations → Add integration → GitHub**.
    - **updated** — creations plus updates and replies.
    - **mention** — only when the assigned agent or GitHub App is @-mentioned.
 
-> ⚠️ **Public repositories:** anyone can open an issue on a public repo — with _created_/_updated_ triggers that means untrusted strangers can start your agent. Prefer **mention**, a conservative [permission mode](/docs/create-an-agent), and read-only credentials there.
+## Who may trigger an agent
+
+AgentConnect checks the content author's **current repository permission** through GitHub. Only people with `write` or `admin` permission can start an agent automatically; GitHub's webhook `author_association` label is not used as authority.
+
+- An issue or pull request opened by someone without current `write` or `admin` permission does not start an agent, even if its body mentions the agent or GitHub App.
+- A current `write` or `admin` maintainer can explicitly mention the agent or App in a comment to request the first turn on an externally authored thread. The same mention from a read-only user does nothing.
+- An unmentioned follow-up follows the configured cadence only when both the commenter and the original issue or PR author still have `write` or `admin` permission.
+- Native review requests and Check reruns use the same current-maintainer boundary.
+
+AgentConnect checks the author of each comment, including edited content; the webhook sender is not substituted for the content author. Trigger permission is separate from what the agent may do afterward: comments, formal reviews, Checks, and repository writes still require the configured AgentConnect repository grant and GitHub App permissions.
+
+> ⚠️ **Public repositories:** external issue bodies, pull requests, diffs, and comments remain untrusted input even though they cannot dispatch an agent without a maintainer request. Use a conservative [permission mode](/docs/create-an-agent) and narrowly scoped repository credentials.
 
 ## What the agent does
 
@@ -35,7 +46,7 @@ For pull-request watches, expand **PR review** and choose:
 
 Formal reviews require agent repository **write** access and effective GitHub App `pull_requests:write` permission. Informational Checks additionally require `checks:write`.
 
-Several agents may watch the same repository. In a PR conversation, `@<agent-name>` targets one matching agent, while `@<github-app-name>` broadcasts to every matching reviewer. Both forms still respect event-family, label, installation, collaborator, and bot-sender safety checks.
+Several agents may watch the same repository. In a PR conversation, `@<agent-name>` targets one matching agent, while `@<github-app-name>` broadcasts to every matching reviewer. Both forms still respect event-family, label, installation, live maintainer authorization, and bot-sender safety checks.
 
 For a complete two-model setup, see [Fast PR reviews with deep review on demand](/docs/fast-and-deep-pr-reviews).
 

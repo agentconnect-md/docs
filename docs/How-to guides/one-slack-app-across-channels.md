@@ -72,11 +72,11 @@ Do not create another Slack App. Every connected agent now uses the same Slack b
 
 Open **Settings → Bots → Slack** and expand the shared bot. For each channel, choose its **Default dispatch** agent.
 
-Then choose the channel trigger from the agent's Slack integration:
+Then set the channel trigger from any connected agent's Slack integration. The trigger belongs to this shared bot and channel, so AgentConnect replicates the same effective setting across every member-agent row:
 
 - **@-mention** — run only when the bot is mentioned; unmentioned follow-ups continue in a thread the agent already joined.
 - **any message** — run the default agent for every message in that channel.
-- **off** — available for restricted agents when the conversation has not been enabled.
+- **Off** — mute all inbound routing for this shared bot in the channel, even for mentions, existing threads, and fallback to a sibling or default agent. Restricted agents also start Off until an editor enables the conversation.
 
 Every active shared-bot channel has exactly one default dispatch agent. Changing the owner in the Console preserves the channel's trigger.
 

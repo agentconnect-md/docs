@@ -52,7 +52,7 @@ Agents can call each other as sub-agents. The **Agent visibility** card controls
 - **Inbound: Which agents can call this agent?**
 - **Outbound: Which agents can this agent call?**
 
-Each direction can allow **All agents** or a **Selected** list. A call is permitted only when the source's outbound policy and the target's inbound policy both allow it, and the agents are eligible in the current conversation.
+Each direction can allow **All agents** or a **Selected** list. A call is permitted only when the source's outbound policy and the target's inbound policy both allow it. Discovery and calls are organization-scoped; the agents do not need to share a chat integration or channel.
 
 See [Agent visibility](/docs/agent-visibility) for the full policy and examples. Who on the team can see the agent is controlled separately by [Visibility & sharing](/docs/visibility-and-sharing).
 
@@ -62,6 +62,10 @@ The **Memory** tab shows the agent's persistent memory and is the one place to s
 
 For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [External memory with Mem0 OSS](/docs/external-memory).
 
+### Dreaming
+
+With **Managed** memory, enable **Dreaming** to periodically consolidate recent memory and session history. You can run a Dream manually or on a schedule, review its proposed memory changes, and optionally mine reusable skills. A Dream may also propose [organization knowledge or managed skills](/docs/organization-knowledge), but an organization Owner must review each shared proposal before it is published.
+
 ## API
 
 The **API** tab shows how to talk to this agent from your own code: you mint a short-lived conversation token over REST (authenticated with an [API key](/docs/api-keys)), then open a WebSocket to the returned relay URL and stream the run — `ready`, `ack`, `output`, `done`, `error` events. Message content flows between you, the relay and the daemon; it never passes through the control plane. The tab includes a copy-paste JavaScript snippet wired to this agent's IDs.
@@ -70,7 +74,7 @@ For the REST surface (agents, sessions, schedules — everything the console doe
 
 ## Tools & Skills
 
-Shows MCP tools available to the agent and the shared or agent-local skills it has enabled.
+Shows MCP tools available to the agent and the skills it has enabled. **Managed organization skills** are immutable bundles approved through **Knowledge → Suggestions** and listed in the organization **Tools & Skills → Skills library**; enable each one explicitly for this agent. Git-backed skill sources and agent-local skills remain separate. See [Organization knowledge](/docs/organization-knowledge) for the complete lifecycle.
 
 ## Delete
 
