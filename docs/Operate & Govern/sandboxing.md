@@ -52,7 +52,17 @@ If you move an agent to another computer, save the computer change before adjust
 
 ## Require it for every agent
 
-Per-agent sandboxing is optional by default. For a machine that must never run an unconfined agent, set the daemon-wide policy in its `config.json` (under `~/.agentconnect` by default):
+Per-agent sandboxing is optional by default. For a foreground daemon that must never run an unconfined agent, add `--require-sandbox` to the command you copy from **Daemons → Add daemon**:
+
+```bash
+npx -y @agentconnect.md/cli run --require-sandbox \
+  --api-url <your-control-plane-ws-url> \
+  --api-key <your-daemon-key>
+```
+
+The flag applies to that daemon process and does not modify `config.json`.
+
+For an installed background daemon, make the requirement persistent in its `config.json` (under `~/.agentconnect` by default):
 
 ```json
 {
@@ -66,14 +76,6 @@ Merge this into the existing file rather than replacing its other settings, then
 
 ```bash
 npx -y @agentconnect.md/cli restart
-```
-
-For a foreground run, the equivalent one-shot flag is `--require-sandbox`:
-
-```bash
-npx -y @agentconnect.md/cli --require-sandbox run \
-  --api-url <your-control-plane-ws-url> \
-  --api-key <your-daemon-key>
 ```
 
 Required mode is fail-closed: if the host is unsupported or the live probe fails, the daemon refuses to start. When it succeeds, the console shows **Run in sandbox: Required** for every agent placed there.
