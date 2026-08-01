@@ -12,8 +12,10 @@ hidden: false
 
 | Status | Meaning |
 | --- | --- |
-| **Online** | Connected and heartbeating. Its agents are reachable. |
-| **Offline** | Not connected. Every agent on it shows as offline too, and transcripts it owns can't be fetched until it returns. |
+| **Online** | Connected; agents are reachable |
+| **Offline** | Disconnected; agents are unavailable |
+
+Transcripts owned by an offline daemon cannot be fetched until it reconnects.
 
 A daemon that never finished onboarding remains unconnected while the Add daemon flow waits for its first connection.
 

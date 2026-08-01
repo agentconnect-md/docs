@@ -114,13 +114,13 @@ Do not use a routine handoff between workspaces with different trust levels, suc
 
 ## Troubleshooting
 
-| Symptom                                      | Check                                                                                                              |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| The agent cannot find the destination        | Confirm the destination integration is connected to this agent and its bot has joined the channel or chat.         |
-| The platform is right but workspace is wrong | Verify the bot under **Settings → Bots**. Do not approve the send based only on a repeated channel or group name.  |
-| A Telegram chat is missing                   | Start the bot or interact with it in that chat first; Telegram does not provide a complete chat directory to bots. |
-| The message arrives but no result comes back | Start a new top-level destination message and include an explicit instruction to report to the Parent session.     |
-| The wrong bot posts                          | Keep one destination bot for that platform on this agent, or give the agent the exact integration ID to use.       |
-| Messages start bouncing between platforms    | Remove automatic forwarding instructions and use one handoff plus one clearly defined return update.               |
+| Symptom | Check |
+| --- | --- |
+| Destination missing | Connect it and add the bot to the channel or chat |
+| Wrong workspace | Verify the bot under **Settings → Bots** |
+| Telegram chat missing | Start or use the bot in that chat first |
+| No result returns | Use a new top-level message and report to the Parent session |
+| Wrong bot posts | Keep one bot or specify the integration ID |
+| Messages bounce between platforms | Use one handoff and one defined return update |
 
 See [Integrations overview](/docs/integrations-overview) to connect platforms and [Sessions](/docs/sessions) to inspect each side of the handoff.

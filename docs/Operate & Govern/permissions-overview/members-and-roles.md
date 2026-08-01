@@ -23,7 +23,7 @@ An organization must always have at least one Owner, so its last Owner cannot be
 
 |                                                                                   | **Owner** | **Collaborator** | **Viewer** |
 | --------------------------------------------------------------------------------- | --------- | ---------------- | ---------- |
-| See organization resources, subject to [visibility](/docs/visibility-and-sharing) | ✓         | ✓                | ✓          |
+| See resources allowed by [visibility](/docs/visibility-and-sharing) | ✓ | ✓ | ✓ |
 | Read allowed sessions, usage, and transcripts                                     | ✓         | ✓                | ✓          |
 | Create resources and edit resources they can see                                  | ✓         | ✓                | —          |
 | Run agents from Playground or **Run now**                                         | ✓         | ✓                | —          |

@@ -16,9 +16,11 @@ After a bot discovers a channel, group, server, or gated direct message, it appe
 
 | Action | What happens | How to undo it |
 | --- | --- | --- |
-| **Off** | The bot stays in the conversation but ignores inbound messages there. Scheduled work and agent handoffs may still post to it. | Choose **On**, **@-mentions**, or **any message**, as applicable. |
-| **Leave** | The bot leaves on the chat platform and the conversation stops being listed. This is the row action only where AgentConnect can end that membership directly. | Invite the bot again. |
-| **Remove from this list** | AgentConnect hides the row without changing membership on the chat platform. The confirmation explains where the bot remains. | If the bot is still present, a later listing or message makes the row return. |
+| **Off** | Ignore inbound messages; outbound remains available | Choose an active trigger |
+| **Leave** | End the bot's platform membership | Invite the bot again |
+| **Remove from this list** | Hide the row; membership is unchanged | Later activity restores the row |
+
+Scheduled work and agent handoffs may still post when a conversation is **Off**. **Leave** appears only where AgentConnect can end membership directly; **Remove from this list** leaves the bot on the chat platform.
 
 You do not choose between **Leave** and **Remove from this list** on the same row. AgentConnect offers the strongest action that platform and conversation type support:
 

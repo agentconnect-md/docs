@@ -102,11 +102,11 @@ One inbound Slack message selects one agent. A shared bot is routing several cha
 
 ## Troubleshooting
 
-| Symptom                                  | Check                                                                                                                  |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Sharable** is unavailable              | Custom Apps must use **HTTP (Events API)** with a live Relay. The built-in Cloud app already satisfies this requirement. |
-| A channel is missing                     | Confirm the bot was invited, then wait for Slack's membership update to arrive; re-invite it if the event was missed.  |
-| The wrong agent answers                  | Check **Settings → Bots → Default dispatch** for that channel, then verify its trigger.                                |
-| Follow-ups keep using the previous agent | Start a new thread, or explicitly switch the thread's agent from its session controls. Thread affinity is intentional. |
+| Symptom | Check |
+| --- | --- |
+| **Sharable** is unavailable | Use HTTP delivery with a live Relay; Cloud is preconfigured |
+| A channel is missing | Invite or re-invite the bot; wait for membership sync |
+| The wrong agent answers | Check **Default dispatch** and the channel trigger |
+| Follow-ups use the previous agent | Start a new thread or switch the session agent |
 
 See [Slack](/docs/slack) for installation details and [Configure an agent](/docs/configure-an-agent) for models, prompts, workspaces, and permissions.

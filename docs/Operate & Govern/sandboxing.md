@@ -18,6 +18,20 @@ These controls compose; none replaces another:
 
 Use permission modes to shape normal agent behavior. Use sandboxing to limit the effect of a runtime, tool, or prompt that behaves unexpectedly.
 
+## Runtime sandbox support
+
+AgentConnect can place any ACP runtime inside the outer Linux OS sandbox when its daemon supports **Run in sandbox**. Some runtimes can also add a second, runtime-native boundary around model-authored tool processes. That inner layer is runtime-specific and does not replace the outer sandbox.
+
+| Runtime | Inner tool sandbox | Effective boundary |
+| --- | --- | --- |
+| **Claude Code** | Available | Outer OS + native Bash sandbox |
+| **Codex** | Pending | Outer OS only |
+| **Other ACP runtimes** | Not integrated | Outer OS only |
+
+For Claude Code, AgentConnect automatically enables the native Bash sandbox inside the outer boundary. Model-authored Bash and its child processes cannot read the Claude credentials retained by the trusted parent. In-process file tools and trusted stdio MCP servers stay outside the inner sandbox, but remain inside the outer AgentConnect boundary.
+
+Codex permission modes still control normal approval and access policy; AgentConnect does not yet add a second credential-isolating boundary. For other runtimes, the outer OS sandbox is the documented isolation boundary. The table describes AgentConnect integration, not every feature a runtime may offer on its own.
+
 ## Prepare a Linux daemon
 
 The host must provide:
@@ -43,10 +57,10 @@ When adding or editing an agent, select a compatible Linux daemon and turn on **
 
 | State | Meaning |
 | --- | --- |
-| **On** | This agent requested the sandbox and its daemon currently supports it. |
-| **Off** | The daemon supports sandboxing, but this agent runs in the daemon user's normal environment. |
-| **Unavailable** | The selected daemon did not pass the Linux sandbox probe. The control cannot be enabled. |
-| **Required** | The daemon operator requires every agent to run sandboxed; the control is locked on. |
+| **On** | Requested and supported |
+| **Off** | Supported but not requested |
+| **Unavailable** | Probe failed; cannot be enabled |
+| **Required** | Daemon policy locks it on |
 
 If you move an agent to another computer, save the computer change before adjusting sandboxing. Availability always comes from the newly selected daemon rather than from the agent's previous machine.
 
@@ -95,7 +109,7 @@ The runtime can read the workspace, its private home and memory, AgentConnect-ma
 
 The sandbox hides the daemon configuration and state, other agents' directories, the daemon user's home and runtime-state directories, and shared temporary directories. A process cannot make host-filesystem changes outside the allowed write roots even if the same path appears writable inside its private mount namespace.
 
-Claude Code, Codex, Qoder CLI, and Qoder CN CLI keep using the login of the OS user that runs the daemon through narrowly exposed credential storage, so token refreshes can persist. The rest of each runtime's state lives in its private home. Treat model-provider identity as daemon-user scoped: use separate daemon users or machines when agents must use different provider accounts.
+The trusted parent process for Claude Code, Codex, Qoder CLI, and Qoder CN CLI keeps using the login of the OS user that runs the daemon through narrowly exposed credential storage, so token refreshes can persist. The rest of each runtime's state lives in its private home. When Claude Code's inner tool sandbox is active, model-authored Bash cannot read the Claude credentials retained by that trusted parent. Treat model-provider identity as daemon-user scoped: use separate daemon users or machines when agents must use different provider accounts.
 
 ## Current limits
 

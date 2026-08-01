@@ -40,18 +40,18 @@ Any other MCP client works the same way: OAuth if it supports the authorization-
 
 With `mcp:read`, an assistant can inspect:
 
-| Area         | Tools                                                                                                       |
-| ------------ | ----------------------------------------------------------------------------------------------------------- |
-| Identity     | `whoami` — who you're acting as, which org this connection is bound to, your role                           |
-| Agents       | `listAgents`, `getAgent`                                                                                    |
-| Daemons      | `listDaemons`                                                                                               |
-| Schedules    | `listCrons`, `getCron`, `listCronRuns`                                                                      |
-| Sessions     | `listSessions`, `getSession` — metadata (status, usage, links), **not the transcript**                      |
-| Usage        | `getUsage` — totals + per-agent breakdown over a window                                                     |
-| Integrations | `listIntegrations`, `listBots` (bot metadata only — never token material), `listAgentHooks`, `listHookRuns` |
-| Members      | `listMembers`                                                                                               |
+| Area | Tools |
+| --- | --- |
+| Identity | `whoami` |
+| Agents | `listAgents`, `getAgent` |
+| Daemons | `listDaemons` |
+| Schedules | `listCrons`, `getCron`, `listCronRuns` |
+| Sessions | `listSessions`, `getSession` |
+| Usage | `getUsage` |
+| Integrations | `listIntegrations`, `listBots`, `listAgentHooks`, `listHookRuns` |
+| Members | `listMembers` |
 
-Session tools return metadata, not transcript contents. Transcripts stay where they always are — [on your daemons](/docs/how-it-works).
+`whoami` returns the current identity, organization, and role. Session tools return status, usage, and links—not transcript contents. `listBots` returns metadata, never token material; `getUsage` includes totals and per-agent breakdowns. Transcripts stay [on your daemons](/docs/how-it-works).
 
 ## Write tools
 

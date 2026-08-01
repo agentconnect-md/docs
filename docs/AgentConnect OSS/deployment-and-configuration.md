@@ -74,11 +74,13 @@ To connect a daemon from another machine, replace `localhost` with a hostname th
 
 The default values are intentionally predictable because the stack listens only on loopback. Replace them before changing network exposure:
 
-| Variable                         | Requirement                                                                     |
-| -------------------------------- | ------------------------------------------------------------------------------- |
-| `AGENTCONNECT_POSTGRES_PASSWORD` | Use URL-safe characters; the value is embedded in the PostgreSQL connection URL |
-| `AGENTCONNECT_API_KEY_PEPPER`    | At least 32 characters and stable for the lifetime of issued API keys           |
-| `AGENTCONNECT_RELAY_TOKEN`       | At least 32 characters; shared only by the Control Plane and Relay              |
+| Variable | Requirement |
+| --- | --- |
+| `AGENTCONNECT_POSTGRES_PASSWORD` | URL-safe characters |
+| `AGENTCONNECT_API_KEY_PEPPER` | At least 32 characters; keep stable |
+| `AGENTCONNECT_RELAY_TOKEN` | At least 32 characters |
+
+The PostgreSQL password is embedded in a connection URL. The Relay token is shared only by the Control Plane and Relay.
 
 Generate independent values, for example:
 
@@ -133,15 +135,17 @@ GitHub documents these fields in [Registering a GitHub App](https://docs.github.
 
 The following repository permissions enable all GitHub features currently implemented by AgentConnect:
 
-| Repository permission | Access         | AgentConnect use                                                                         |
-| --------------------- | -------------- | ---------------------------------------------------------------------------------------- |
-| Metadata              | Read-only      | Installation and repository identity; GitHub grants this automatically                   |
-| Contents              | Read and write | Clone, fetch, inspect branches, and push                                                 |
-| Issues                | Read and write | Receive issue events and post issue replies                                              |
-| Pull requests         | Read and write | Receive PR events, post replies, and submit formal reviews                               |
-| Actions               | Read and write | Inspect and run GitHub Actions for repositories with AgentConnect `write` access         |
-| Workflows             | Read and write | Push changes under `.github/workflows` for repositories with AgentConnect `write` access |
-| Checks                | Read and write | Publish informational **AgentConnect PR Review** Checks                                  |
+| Permission | Access | Used for |
+| --- | --- | --- |
+| Metadata | Read-only | Installation and repository identity |
+| Contents | Read and write | Clone, inspect, and push |
+| Issues | Read and write | Issue events and replies |
+| Pull requests | Read and write | PR events, replies, and reviews |
+| Actions | Read and write | Inspect and run Actions |
+| Workflows | Read and write | Write `.github/workflows` |
+| Checks | Read and write | PR review Checks |
+
+GitHub grants **Metadata** automatically.
 
 For repository selection and read-only cloning only, keep **Contents** read-only and omit the other optional permissions. Event subscriptions without write-back need read-only **Issues** or **Pull requests**; replies and formal reviews need write access. The AgentConnect `write` tier requires **Contents**, **Actions**, and **Workflows** at read and write. **Checks** is optional when you do not publish PR review Checks. AgentConnect cannot expand an installation beyond the permissions declared by the App.
 
