@@ -64,7 +64,9 @@ For a complete external-backend walkthrough, including recall/capture policies a
 
 ### Dreaming
 
-With **Managed** memory, enable **Dreaming** to periodically consolidate recent memory and session history. You can run a Dream manually or on a schedule, review its proposed memory changes, and optionally mine reusable skills. A Dream may also propose [Knowledge or managed skills](/docs/knowledge), but an organization Owner must review each shared proposal before it is published.
+With **Managed** memory, Dreaming can periodically consolidate recent memory and session history. Its default policy schedules a run every day at 04:00 in the daemon's timezone and leaves completed memory results for review. You can turn Dreaming off, remove the schedule for manual-only runs, explicitly opt in to automatic adoption, and optionally mine reusable skills. A Dream may also propose [Knowledge or managed skills](/docs/knowledge), but an organization Owner must review each shared proposal before it is published.
+
+> **Temporary safety pause:** Production daemons currently keep Dream execution and staged-result operations disabled while the isolation and review boundary is hardened. You can retain Dream settings and view historical job metadata, but manual and scheduled runs do not execute, and staged memory, skill, or Knowledge content cannot be opened, adopted, rejected, or discarded. Existing agents and ordinary managed-memory capture continue to work.
 
 ## API
 

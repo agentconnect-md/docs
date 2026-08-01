@@ -23,6 +23,8 @@ When you connect, AgentConnect validates the token and enables the limited **Mes
 
 Mention the bot in a server channel it can see and it answers; longer conversations continue in threads. You can also send it a direct message. AgentConnect registers its control commands as native Discord slash commands, including `/stop` and `/queue <message>`.
 
+To remove the bot, use **Leave server** on the server heading in the agent's integration card. Discord has no per-channel bot membership, so this leaves the whole server and removes every channel in it. Each channel row instead offers **Remove from this list**, which only hides that row; it can return while the bot remains in the server.
+
 ## Notes
 
 - If automatic Message Content setup was rejected, enable the intent manually in the Developer Portal and connect again.

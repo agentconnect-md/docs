@@ -30,16 +30,24 @@ Linking or unlinking does not:
 
 For a provider-by-provider comparison—including GitHub-only, Slack-only, and multi-provider profiles—see [Permissions with linked accounts](/docs/linked-account-permissions).
 
-## Slack session access
+## Provider-specific session access
+
+### Slack
 
 On deployments with OIDC sign-in and the Logto Management API configured, a linked, verified Slack identity participates in two session checks:
 
 - it matches the owner of private Slack direct-message sessions by workspace ID plus user ID; and
-- when the organization enables **Follow Slack conversation access**, it identifies the viewer whose current channel or group-DM membership Slack must confirm.
+- when the organization enables **Follow Slack conversation access**, it identifies the viewer whose current workspace or conversation access Slack must confirm.
 
-Linking the matching Slack account can make existing sessions visible without rewriting their records. Unlinking removes that recognized identity, so private Slack DMs and Slack-scoped shared sessions that depended on it are no longer visible. Organization membership or the Owner role does not substitute for the linked identity.
+For a public channel, an active full member of the installing workspace does not need to have joined that channel. Private channels and group DMs require current conversation membership; guests and Slack Connect users also require current conversation membership. Linking the matching Slack account can make existing sessions visible without rewriting their records. Unlinking removes that recognized identity, so private Slack DMs and Slack-scoped shared sessions that depended on it are no longer visible.
 
-GitHub and Google links remain sign-in methods and do not affect Slack session ownership or conversation membership. Local no-auth mode, personal API keys, and deployments without a working Logto identity lookup use only the console identity and do not infer a Slack match. See [Session visibility](/docs/session-visibility).
+### GitHub
+
+When the organization enables **Follow GitHub repository access**, sessions from a public repository remain available to everyone who can see the agent. A private-repository session requires a linked GitHub profile with current repository access.
+
+Linking GitHub can therefore make an existing private-repository session available without rewriting it. Unlinking GitHub removes that match immediately but does not uninstall the GitHub App or change repository grants. If someone follows a protected session link from GitHub without a linked profile, the not-found screen can offer **Link GitHub profile**; that hint does not reveal whether the session exists or bypass its access check.
+
+Where a provider identity is required, organization membership or the Owner role does not substitute for it. GitHub and Slack identities affect only their own provider checks, while Google remains a sign-in method with no provider-specific authorization. Local no-auth mode, personal API keys, and deployments without a working Logto identity lookup do not infer either linked identity. See [Session visibility](/docs/session-visibility).
 
 ## Self-hosted requirements
 
