@@ -40,7 +40,7 @@ Under **Settings → Bots → Slack**, paste a Slack **config token pair** (acce
 
 **Invite the bot to any channel** (`/invite @your-bot`) — it starts listening there; no channel picker in the console. Mention it to start a conversation; replies thread neatly under your message. It also answers DMs.
 
-Each channel the bot joins appears on the agent's Integrations card, with a **per-channel trigger**: respond only to **@-mentions** (default for busy channels) or to **any message**.
+Each channel the bot joins appears on the agent's Integrations card, with a **per-channel trigger**: respond only to **@-mentions** (the default), respond to **any message**, or switch the channel **Off**. Off mutes inbound activation without removing the Slack App or preventing scheduled and delegated outbound posts. See [Integrations overview](/docs/integrations-overview#binding-channels).
 
 Handy in-channel commands (handled by the daemon, see [Integrations overview](/docs/integrations-overview)): `!stop` interrupts the current turn, `!queue <message>` delivers a message once the agent is idle.
 

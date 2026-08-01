@@ -30,11 +30,19 @@ Platform tiles are enabled based on what your agent's daemon supports. Direct tr
 
 ## Binding channels
 
-There's no channel picker: **invite the bot to a channel and it starts listening there.** Each joined channel then shows up on the agent's Integrations card with a per-channel trigger — answer **@-mentions only** or **any message**. The org-wide channel roster for each bot lives in **Settings → Bots**.
+There's no channel picker: **invite the bot to a channel and it appears in AgentConnect.** Each joined channel then shows up on the agent's Integrations card with a per-channel trigger:
+
+- **@-mentions only** — the default; unmentioned follow-ups continue in a thread the agent already joined.
+- **Any message** — run the channel's agent for every message.
+- **Off** — do not respond in that channel, including to mentions, existing thread affinity, control commands, or shared-bot fallback.
+
+Off keeps the bot in the channel, preserves its row and past sessions, and only mutes inbound activation. A schedule or another agent's deliberate handoff can still post there. Remove the bot from the channel in the chat platform itself when it should leave entirely. The org-wide channel roster for each bot lives in **Settings → Bots**.
 
 ### Shared bots
 
 Normally one bot ↔ one agent. A **shared bot** (Slack) can serve **multiple agents through a single bot identity** — inbound messages arrive through AgentConnect's relay and route by channel: in **Settings → Bots**, expand the shared bot and pick the **Default dispatch** agent per channel. One "@Assistant" in Slack, different specialists behind it per channel.
+
+For a shared bot, the trigger belongs to the bot and channel rather than to one member agent. AgentConnect shows the same effective trigger on every connected agent's row. Switching it Off mutes all inbound routing through that shared bot in the channel, including fallback to a sibling or default agent.
 
 ### Cross-platform handoffs
 
@@ -42,7 +50,7 @@ Connect the same agent to more than one chat platform and it can send a delibera
 
 ### Restricted agents
 
-When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. See [Visibility & sharing](/docs/visibility-and-sharing#what-a-restricted-agent-changes).
+When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. That fail-closed gate is why the row starts Off; every agent can also choose Off later as an explicit channel mute. See [Visibility & sharing](/docs/visibility-and-sharing#what-a-restricted-agent-changes).
 
 ## In-conversation commands
 

@@ -29,7 +29,7 @@ AI agents are taking on work across the team, but most still live in individual 
 - **Work as one team.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens.
 - **Keep work where it happens.** Link agents to bots in Slack, Telegram, and Discord, or to repositories and workflows on GitHub.
 - **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
-- **Carry context forward.** Give each agent the memory and reusable skills it needs to build on earlier work.
+- **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [organization knowledge](/docs/organization-knowledge) that every agent can find on demand.
 - **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
 - **Stay in control.** Self-host the Apache-2.0 stack, run agents in your environment, and change runtimes without locking the team to one vendor.
 

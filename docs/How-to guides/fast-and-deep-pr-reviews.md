@@ -91,7 +91,7 @@ AgentConnect Checks are currently informational rather than required branch-prot
 
 ## Important behavior
 
-- The visible mention must come from an authorized human. A comment authored by the GitHub App is rejected as a trigger, even if its text contains `@deep-review`; this prevents bot-to-bot loops. GitHub's native **Request review** control can also request the App, but it runs every matching reviewer rather than only `deep-review`.
+- The visible mention must come from a current repository maintainer with `write` or `admin` permission. A comment authored by the GitHub App is rejected as a trigger, even if its text contains `@deep-review`; this prevents bot-to-bot loops. GitHub's native **Request review** control can also request the App, but it runs every matching reviewer rather than only `deep-review`.
 - A targeted `@deep-review` mention wins over the baseline reviewer's broader **updated** cadence for that delivery.
 - **Re-run all checks** reruns the current AgentConnect review Checks in the App's suite. Use the individual Check action when you want only one reviewer.
 - PR bodies, diffs, and comments are untrusted input. Use conservative agent permissions, especially on public repositories.
@@ -102,7 +102,7 @@ For automatic model escalation without a maintainer mention, use trusted agent-t
 
 | Symptom                                                      | Check                                                                                                                                   |
 | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `@deep-review` does nothing                                  | Use the agent's exact name, post as a repository collaborator, and confirm the hook listens for Pull requests in **mention only** mode. |
+| `@deep-review` does nothing                                  | Use the agent's exact name, post as a current `write` or `admin` maintainer, and confirm the hook listens for Pull requests in **mention only** mode. |
 | Both reviewers run                                           | Check whether the comment mentioned the GitHub App, which intentionally broadcasts to all matching reviewers.                           |
 | The deep reviewer cannot submit inline comments or a verdict | Confirm **Details**, agent repository **write** access, and effective App `pull_requests:write` permission.                             |
 | No informational Check appears                               | Confirm Check reporting is enabled and the installation has effective `checks:write` permission.                                        |

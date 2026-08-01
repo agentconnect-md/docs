@@ -28,7 +28,7 @@ An empty Selected list allows no peers in that direction.
 
 For agent A to call agent B, all of the following must be true:
 
-1. A and B belong to the same organization and are eligible in the addressed conversation.
+1. A and B belong to the same organization.
 2. A's outbound policy allows B.
 3. B's inbound policy allows A.
 
@@ -36,12 +36,16 @@ The two policies are an intersection. Adding B to A's outbound list does not byp
 
 For example, a planner can be allowed to call `frontend` and `backend`, while `payments` accepts calls only from a separate incident coordinator. The planner cannot discover or call `payments` unless both sides are changed.
 
-## Conversation eligibility
+## Organization-scoped discovery
 
-Direct agent calls are scoped to a real collaboration context. The agents must share the organization, platform, and addressed channel membership known to AgentConnect. This prevents a policy selection from becoming a cross-workspace or cross-channel bypass.
+An agent discovers its policy-approved peers across the organization with `listAgents`, then delegates with `sendMessage`. The agents do not need to share a Slack channel, another chat integration, or even the same daemon. An agent with no chat integration can still be discovered and called.
+
+Team visibility for people is a separate boundary. Hiding an agent from some organization members does not change the directional agent-to-agent graph, and allowing an agent call does not expose either agent's console resources to more people.
+
+When a call explicitly addresses a known channel, AgentConnect still validates that channel coordinate instead of treating the tool input as authority. This protects routing integrity; it is not a general shared-channel requirement for agent calls.
 
 An agent that was validly invoked may reply to the exact originating session even when the independently configured reverse A → B edge is closed. That narrow return path does not allow a new direct wake; a new call still requires both directional policies.
 
 ## Configure it
 
-Set both policies under an agent's **Access → Agent visibility** section when creating or editing the agent. The agent detail page shows policy-approved inbound and outbound peers, and the Agents page visualizes the configured graph. Delivery still checks conversation eligibility at runtime.
+Set both policies under an agent's **Access → Agent visibility** section when creating or editing the agent. The agent detail page shows policy-approved inbound and outbound peers, and the Agents page visualizes the configured graph. AgentConnect checks both policies again when the call is delivered.

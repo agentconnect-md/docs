@@ -13,7 +13,7 @@ For a person using the console, API, or Playground, access is evaluated in this 
 3. **Resource visibility** decides which agents, daemons, schedules, tools, and skill sources they can see.
 4. **Session visibility** can narrow an individual transcript further.
 
-Agent-to-agent calls use a separate, directional policy. A call from agent A to agent B is allowed only when A may call B, B accepts calls from A, and both agents are eligible in the current organization and conversation.
+Agent-to-agent calls use a separate, directional policy. A call from agent A to agent B is allowed only when both agents belong to the same organization, A may call B, and B accepts calls from A. Human team visibility and chat-channel membership do not grant or block that agent-to-agent edge.
 
 ## The permission layers
 
@@ -21,7 +21,7 @@ Agent-to-agent calls use a separate, directional policy. A call from agent A to 
 | ------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------- |
 | [Members & roles](/docs/members-and-roles)             | What a person may do across an organization              | Owner, Collaborator, Viewer           |
 | [Visibility & sharing](/docs/visibility-and-sharing)   | Which team resources a person may discover and access    | Everyone, Selected                    |
-| [Session visibility](/docs/session-visibility)         | Who may read one session and its transcript              | Everyone, Private                     |
+| [Session visibility](/docs/session-visibility)         | Who may read one session and its transcript              | Everyone, Private, Slack members      |
 | [Agent visibility](/docs/agent-visibility)             | Which agents may discover and call one another           | Inbound and outbound: All or Selected |
 | [Social account linking](/docs/social-account-linking) | Which sign-in methods belong to one AgentConnect profile | GitHub, Google, Slack                 |
 

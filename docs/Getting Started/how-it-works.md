@@ -37,7 +37,7 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 
 **The Relay** is optional public ingress. It terminates callback-based Slack and Lark traffic, GitHub and generic webhooks, and webchat, then forwards the request to the owning daemon. It does not durably store message content.
 
-**The Control Plane** manages authentication, organizations, permissions, registry, placement, integrations, schedules, and control metadata. Its daemon WebSocket is used primarily for registration, heartbeats, configuration, orchestration commands, and telemetry. It also carries scoped request and response frames for authorized, on-demand console reads.
+**The Control Plane** manages authentication, organizations, permissions, registry, placement, integrations, schedules, and control metadata. It also stores explicitly approved [organization knowledge and managed-skill revisions](/docs/organization-knowledge). Its daemon WebSocket is used primarily for registration, heartbeats, configuration, orchestration commands, and telemetry. It also carries scoped request and response frames for authorized, on-demand console reads.
 
 **The console** is the configuration and observation surface. When you open a transcript, tool body, memory view, or workspace file, the BFF requests a bounded live read from the owning daemon. The Control Plane proxies that response without persisting the body.
 
@@ -51,6 +51,7 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 | Runtime credentials                    | The daemon uses the runtime login or credentials already available on that machine; the Control Plane does not store them.                           |
 | Platform bot tokens and tenant secrets | The Control Plane secret store, then only the component that needs them. At-rest protection depends on the deployment's secret-cipher configuration. |
 | Control metadata                       | The Control Plane stores organizations, agents, daemons, permissions, configuration, session metadata, and usage totals.                             |
+| Approved organization content          | The Control Plane stores immutable, owner-approved organization knowledge and managed-skill revisions. Pending Dream proposal bodies remain on their source daemon. |
 
 ## Built to degrade gracefully
 
