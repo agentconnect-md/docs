@@ -74,3 +74,5 @@ Slack direct-message sessions store a workspace-scoped owner identity: the Slack
 Linking makes existing matching sessions available without rewriting them; unlinking removes that match immediately. GitHub and Google links do not match Slack session ownership or conversation membership.
 
 In local no-auth mode, with a personal API key, or when Logto identity lookup is not configured or fails, authorization uses only the console identity and does not infer a Slack match. See [Social account linking](/docs/social-account-linking).
+
+For the effect of every GitHub, Google, and Slack account combination, see [Permissions with linked accounts](/docs/linked-account-permissions).

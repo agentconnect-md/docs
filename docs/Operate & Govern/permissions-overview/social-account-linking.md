@@ -28,6 +28,8 @@ Linking or unlinking does not:
 - install or configure a Slack bot; or
 - grant a chat-platform user access to a restricted agent.
 
+For a provider-by-provider comparison—including GitHub-only, Slack-only, and multi-provider profiles—see [Permissions with linked accounts](/docs/linked-account-permissions).
+
 ## Slack session access
 
 On deployments with OIDC sign-in and the Logto Management API configured, a linked, verified Slack identity participates in two session checks:
