@@ -13,9 +13,7 @@ The built-in Slack app belongs to the built-in `agentconnect` agent. Place that 
 - open the **Getting started** card and choose **Add to Slack**; or
 - open the `agentconnect` agent, then **Integrations → Add integration → Slack**.
 
-Click **Add to Slack**, choose the workspace, and approve the requested permissions. The console waits for Slack and closes the setup automatically when the bot is ready. The installation initially serves the built-in agent; sharing it with more agents is an explicit later step.
-
-The Cloud app uses AgentConnect's Relay-backed Events API delivery. There is no transport or public-URL setup for a Cloud user.
+Click **Add to Slack**, choose the workspace, and approve the requested permissions. The console waits for Slack and closes the setup automatically when the bot is ready. AgentConnect recommends one bot identity per agent, so the installation initially serves only the built-in agent.
 
 ## Use it
 
@@ -28,16 +26,6 @@ Invite the bot to a channel:
 Mention it to start a conversation; unmentioned follow-ups stay in the thread the agent already joined. The bot also answers direct messages.
 
 Each discovered channel appears on the agent's Integrations card. Choose **@-mentions** (the default), **any message**, or **Off** for inbound activation. Off does not uninstall the app or block scheduled and delegated outbound posts. `!stop` interrupts the current turn and `!queue <message>` waits until the agent is idle.
-
-## Use one Slack app with multiple agents
-
-The built-in Cloud app starts as a one-agent bot. To use the same Slack identity in several channels with different agents:
-
-1. Open **Settings → Bots → Slack** and turn on **Sharable** for the bot.
-2. On each additional agent, choose **Integrations → Add integration → Slack → Use an existing bot** and select it.
-3. Back in **Settings → Bots**, expand the bot and choose each channel's **Default dispatch** agent.
-
-See [One Slack app with different agents by channel](/docs/one-slack-app-across-channels) for the full pattern.
 
 ## Give an agent a custom Slack identity
 
@@ -65,6 +53,16 @@ If Slack reports changed scopes, reinstall the App once before copying the Bot U
 - **Socket Mode** is a daemon-owned outbound connection. It needs no Relay or public callback URL and is limited to one agent per bot.
 
 Self-hosted deployments show the built-in **Add to Slack** path only after the operator configures the [deployment-wide Slack App](/docs/deployment-and-configuration#optional-deployment-wide-add-to-slack-app). Otherwise, use a custom App. HTTP is available only when the deployment has a public, connected Relay; without one, use Socket Mode.
+
+## Use one Slack app with multiple agents
+
+AgentConnect generally recommends one bot identity per agent. If your team deliberately wants one Slack identity to behave differently across channels, make the bot sharable and dispatch each channel to a different agent:
+
+1. Open **Settings → Bots → Slack** and turn on **Sharable** for the bot.
+2. On each additional agent, choose **Integrations → Add integration → Slack → Use an existing bot** and select it.
+3. Back in **Settings → Bots**, expand the bot and choose each channel's **Default dispatch** agent.
+
+See [One Slack app with different agents by channel](/docs/one-slack-app-across-channels) for the full pattern.
 
 ## Managing Slack bots
 
