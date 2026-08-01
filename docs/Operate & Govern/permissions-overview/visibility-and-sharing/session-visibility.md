@@ -42,7 +42,7 @@ When enabled, sessions from a Slack channel or group direct message are visible 
 
 One-to-one Slack DMs remain Private and use their matched owner instead of this setting. AgentConnect asks Slack for current access when a shared session is evaluated. It stores the immutable workspace and conversation reference with the session, but does not copy Slack's member list into its database. Organization roles, including Owner, do not override the Slack audience.
 
-The setting requires OIDC sign-in, linked identities, and a working Logto identity lookup. Missing identity data, a Slack lookup failure, or a historical session without a trusted source scope fails closed: the session stays hidden rather than falling back to Everyone. Settings reports unresolved historical sessions and a degraded provider state.
+Missing identity data, a Slack lookup failure, or a historical session without a trusted source scope fails closed: the session stays hidden rather than falling back to Everyone. Settings reports unresolved historical sessions and a degraded provider state.
 
 Turning the setting off makes **new** shared Slack sessions visible to Everyone who can see the agent. Sessions that were already synchronized keep following Slack; disabling the setting does not widen them retroactively.
 
@@ -57,7 +57,7 @@ When enabled, a GitHub-triggered session remains gated by its owning agent and f
 
 AgentConnect stores the repository's numeric ID and asks GitHub for its current visibility and, for a private repository, the viewer's current permission. It does not copy repository collaborators into its database. Organization roles, including Owner, do not override this check.
 
-The setting requires OIDC sign-in, linked-identity lookup, and working GitHub access checks. A provider failure or historical session without a trusted repository scope fails closed. Turning the setting off makes **new** GitHub sessions visible to Everyone who can see the agent; sessions already synchronized to GitHub access do not widen retroactively.
+A provider failure or historical session without a trusted repository scope fails closed. Turning the setting off makes **new** GitHub sessions visible to Everyone who can see the agent; sessions already synchronized to GitHub access do not widen retroactively.
 
 ## Who can see a private session
 
@@ -93,6 +93,12 @@ A private GitHub repository session is not owned by one GitHub user. Instead, Ag
 
 Linking can make existing matching Slack or private GitHub sessions available without rewriting them. Unlinking removes that provider match immediately. A Google identity does not satisfy either provider's checks, and identities from one provider never substitute for another.
 
-In local no-auth mode, with a personal API key, or when Logto identity lookup is not configured or fails, authorization uses only the console identity and does not infer a linked Slack or GitHub profile. See [Social account linking](/docs/social-account-linking).
+A personal API key or console identity does not stand in for a linked Slack or GitHub profile. See [Social account linking](/docs/social-account-linking).
 
 For the effect of every GitHub, Google, and Slack account combination, see [Permissions with linked accounts](/docs/linked-account-permissions).
+
+## AgentConnect OSS requirements
+
+Provider-based session access requires optional OIDC sign-in, linked identities, and working Logto identity lookup. Slack access also needs working Slack identity and conversation checks; GitHub access needs working repository checks. Local no-auth mode and deployments without that identity lookup do not infer a linked Slack or GitHub profile.
+
+See [Optional Logto sign-in](/docs/deployment-and-configuration#optional-logto-sign-in) and [Enable social account linking](/docs/deployment-and-configuration#enable-social-account-linking) for setup.

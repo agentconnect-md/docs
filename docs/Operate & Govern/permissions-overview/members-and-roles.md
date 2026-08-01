@@ -41,4 +41,4 @@ Viewers are read-only for team resources. One ownership-based exception is inten
 
 ## Your profile
 
-The avatar menu → **Your profile** shows your name, email, role, and membership date. You can edit your display name there. It also hosts [personal API keys](/docs/api-keys) and, when Logto-backed authentication is configured, your [linked social sign-in methods](/docs/social-account-linking).
+The avatar menu → **Your profile** shows your name, email, role, and membership date. You can edit your display name there. It also hosts [personal API keys](/docs/api-keys) and any [social sign-in methods](/docs/social-account-linking) available on your deployment.

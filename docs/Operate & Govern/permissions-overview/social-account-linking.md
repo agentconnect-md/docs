@@ -4,7 +4,7 @@ excerpt: Use GitHub, Google, and Slack sign-in methods with one AgentConnect pro
 hidden: false
 ---
 
-When Logto-backed authentication is configured, one AgentConnect profile can have multiple social sign-in methods. The supported provider targets are **GitHub**, **Google**, and **Slack**. An operator chooses which targets AgentConnect shows through `SOCIAL_PROVIDERS` and must configure the matching Logto connectors.
+One AgentConnect profile can use multiple social sign-in methods. Depending on what your deployment offers, you can link **GitHub**, **Google**, and **Slack** to the same profile.
 
 Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
@@ -34,7 +34,7 @@ For a provider-by-provider comparison—including GitHub-only, Slack-only, and m
 
 ### Slack
 
-On deployments with OIDC sign-in and the Logto Management API configured, a linked, verified Slack identity participates in two session checks:
+A linked, verified Slack identity participates in two session checks:
 
 - it matches the owner of private Slack direct-message sessions by workspace ID plus user ID; and
 - when the organization enables **Follow Slack conversation access**, it identifies the viewer whose current workspace or conversation access Slack must confirm.
@@ -47,10 +47,12 @@ When the organization enables **Follow GitHub repository access**, sessions from
 
 Linking GitHub can therefore make an existing private-repository session available without rewriting it. Unlinking GitHub removes that match immediately but does not uninstall the GitHub App or change repository grants. If someone follows a protected session link from GitHub without a linked profile, the not-found screen can offer **Link GitHub profile**; that hint does not reveal whether the session exists or bypass its access check.
 
-Where a provider identity is required, organization membership or the Owner role does not substitute for it. GitHub and Slack identities affect only their own provider checks, while Google remains a sign-in method with no provider-specific authorization. Local no-auth mode, personal API keys, and deployments without a working Logto identity lookup do not infer either linked identity. See [Session visibility](/docs/session-visibility).
+Where a provider identity is required, organization membership or the Owner role does not substitute for it. GitHub and Slack identities affect only their own provider checks, while Google remains a sign-in method with no provider-specific authorization. A personal API key or console identity does not stand in for a linked provider identity. See [Session visibility](/docs/session-visibility).
 
-## Self-hosted requirements
+## AgentConnect OSS setup
 
-The Profile card appears only when OIDC sign-in is enabled. A self-hosted operator must also enable Logto Account API social-identity editing, configure the Management API integration used for identity reads and safe unlinking, provide a verified-email flow, and register the account-link callback with each provider.
+AgentConnect OSS does not enable social sign-in by default. To offer linked accounts, configure optional Logto-backed OIDC sign-in, choose the displayed providers with `SOCIAL_PROVIDERS`, and create the matching Logto connectors. The Profile card appears only after OIDC sign-in is enabled.
+
+The operator must also enable Logto Account API social-identity editing, configure the Management API integration used for identity reads and safe unlinking, provide a verified-email flow, and register the account-link callback with each provider. Local no-auth mode does not infer a linked Slack or GitHub identity.
 
 See [Enable social account linking](/docs/deployment-and-configuration#enable-social-account-linking) for the complete setup.
