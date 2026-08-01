@@ -24,8 +24,8 @@ The following resources have independent visibility:
 - **Agents**
 - **Daemons**
 - **Schedules**
-- **MCP providers and OpenConnector connections**
-- **Shared skill sources**
+- [**MCP providers and OpenConnector connections**](/docs/tools-and-skills)
+- [**Shared skill sources**](/docs/tools-and-skills)
 
 Agent and daemon visibility are independent. A member may be allowed to see an agent without being allowed to see its hosting daemon. They cannot place or move an agent onto a daemon they cannot see.
 

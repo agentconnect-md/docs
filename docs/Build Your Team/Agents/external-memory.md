@@ -28,7 +28,7 @@ This walkthrough uses the **local stdio plugin** configured by the deployment op
 
 ## 1. Create the organization connection
 
-In the console, go to **Tools & Skills → External memory → Add connection**, then choose **Register a new plugin…**.
+In the console, go to [**Tools & Skills**](/docs/tools-and-skills) → **External memory → Add connection**, then choose **Register a new plugin…**.
 
 Enter:
 

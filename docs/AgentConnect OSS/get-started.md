@@ -108,16 +108,16 @@ To permanently delete the local database and start from an empty installation:
 docker compose down --volumes
 ```
 
-> This deletes all Control Plane data in the Compose database, including configuration, session metadata, and approved organization knowledge and managed skills. It cannot be undone. Daemon-local workspaces and transcripts are outside this volume and are not deleted by this command.
+> This deletes all Control Plane data in the Compose database, including configuration, session metadata, and approved Knowledge and managed skills. It cannot be undone. Daemon-local workspaces and transcripts are outside this volume and are not deleted by this command.
 
 ## What AgentConnect OSS includes
 
 | Component     | Where it runs                | Purpose                                                                                              |
 | ------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Web console   | Docker                       | Configure agents, integrations, schedules, and inspect activity                                      |
-| Control Plane | Docker                       | Store control data and approved organization content, authenticate users, and coordinate daemons    |
+| Control Plane | Docker                       | Store control data, approved Knowledge, and managed skills; authenticate users and coordinate daemons |
 | Relay         | Docker                       | Accept webchat, webhook, GitHub, and shared-bot ingress and forward it directly to the owning daemon |
-| PostgreSQL    | Docker by default            | Persist Control Plane data, including approved organization knowledge and managed skills             |
+| PostgreSQL    | Docker by default            | Persist Control Plane data, including approved Knowledge and managed skills                          |
 | Daemon        | Your host or another machine | Run agents, own workspaces and conversations, and connect directly to supported chat platforms       |
 
 The Compose stack also runs a short-lived migration job. It applies the selected Control Plane image's database migrations. When sign-in is disabled, Control Plane startup initializes only the fixed local organization required by no-auth mode; it does not add sample data.
@@ -148,7 +148,7 @@ It is not an HA production topology. Before exposing AgentConnect to a network, 
 
 ## Data boundaries stay the same
 
-AgentConnect OSS does not move agent execution into the central stack. Message bodies, attachment bytes, workspaces, live agent-session streams, agent memory, and pending Dream proposal bodies remain daemon-local. The Control Plane stores coordination metadata plus explicitly approved [organization knowledge and managed-skill revisions](/docs/organization-knowledge). Relay-delivered content goes from the Relay to the owning daemon rather than through the Control Plane.
+AgentConnect OSS does not move agent execution into the central stack. Message bodies, attachment bytes, workspaces, live agent-session streams, agent memory, and pending Dream proposal bodies remain daemon-local. The Control Plane stores coordination metadata plus explicitly approved [Knowledge and managed-skill revisions](/docs/knowledge). Relay-delivered content goes from the Relay to the owning daemon rather than through the Control Plane.
 
 ## Next
 
