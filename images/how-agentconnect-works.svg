@@ -29,8 +29,9 @@
       viewBox="0 0 10 10"
       refX="9"
       refY="5"
-      markerWidth="8"
-      markerHeight="8"
+      markerWidth="14"
+      markerHeight="14"
+      markerUnits="userSpaceOnUse"
       orient="auto-start-reverse"
     >
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#c62a78" />
@@ -40,8 +41,9 @@
       viewBox="0 0 10 10"
       refX="9"
       refY="5"
-      markerWidth="8"
-      markerHeight="8"
+      markerWidth="14"
+      markerHeight="14"
+      markerUnits="userSpaceOnUse"
       orient="auto-start-reverse"
     >
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e" />
@@ -51,8 +53,9 @@
       viewBox="0 0 10 10"
       refX="9"
       refY="5"
-      markerWidth="8"
-      markerHeight="8"
+      markerWidth="14"
+      markerHeight="14"
+      markerUnits="userSpaceOnUse"
       orient="auto-start-reverse"
     >
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#4f46e5" />
@@ -148,7 +151,7 @@
     x2="1110"
     y2="276"
     stroke="#4f46e5"
-    stroke-width="4"
+    stroke-width="3"
     stroke-dasharray="10 9"
     marker-start="url(#arrow-blue)"
     marker-end="url(#arrow-blue)"
@@ -202,7 +205,7 @@
     x2="690"
     y2="365"
     stroke="#c62a78"
-    stroke-width="6"
+    stroke-width="4"
     marker-start="url(#arrow-pink)"
     marker-end="url(#arrow-pink)"
   />
@@ -215,11 +218,11 @@
     d="M 514 550 H 550 V 623"
     fill="none"
     stroke="#0f766e"
-    stroke-width="5"
+    stroke-width="4"
     marker-end="url(#arrow-teal)"
   />
-  <text x="542" y="612" text-anchor="end" class="path-label" fill="#0f766e">
-    Callback ingress
+  <text x="566" y="590" class="path-label" fill="#0f766e">
+    Relay ingress
   </text>
   <g filter="url(#shadow)">
     <rect
@@ -251,7 +254,7 @@
     x2="690"
     y2="700"
     stroke="#0f766e"
-    stroke-width="6"
+    stroke-width="4"
     marker-end="url(#arrow-teal)"
   />
 
@@ -347,8 +350,8 @@
   </text>
 
   <!-- Legend -->
-  <line x1="64" y1="832" x2="94" y2="832" stroke="#c62a78" stroke-width="6" />
-  <line x1="94" y1="832" x2="124" y2="832" stroke="#0f766e" stroke-width="6" />
+  <line x1="64" y1="832" x2="94" y2="832" stroke="#c62a78" stroke-width="4" />
+  <line x1="94" y1="832" x2="124" y2="832" stroke="#0f766e" stroke-width="4" />
   <text x="140" y="839" class="footer">Live work</text>
   <line
     x1="272"
@@ -356,7 +359,7 @@
     x2="324"
     y2="832"
     stroke="#4f46e5"
-    stroke-width="4"
+    stroke-width="3"
     stroke-dasharray="9 8"
   />
   <text x="340" y="839" class="footer">Control and authorized reads</text>
