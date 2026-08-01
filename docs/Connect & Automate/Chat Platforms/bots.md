@@ -16,11 +16,11 @@ Expand a bot to see every channel it's present in. For a **shared** bot (one bot
 
 ## Platform extras
 
-- **Slack** — a **Configure on Slack** deep link into the app's settings page, a refresh/sync action, and the org's **configuration token** block (paste a config token pair to unlock [one-click Slack installs](/docs/slack); **Replace** / **Clear** anytime).
+- **Slack** — the Cloud **Add to Slack** app, custom Slack Apps, a **Configure on Slack** deep link, and refresh/sync. The signed-in user's optional configuration-token pair for creating dedicated Apps lives under **Your profile → Slack config token**, not in the bot roster.
 - **Discord** — an **Add to Discord** invite link, built for the app with the right scopes.
 - **Telegram** — the bot list with its agents.
-- **Lark / Feishu** — one-click app registration or a manual self-built app, using either a direct long connection or Relay-backed HTTP callbacks.
+- **[Lark / Feishu](/docs/lark-feishu)** — one-click app registration or a manual self-built app, using either a direct long connection or Relay-backed HTTP callbacks.
 
 ## Deleting a bot
 
-Only **free** bots can be deleted — uninstall/delete its integration first if an agent still uses it. Deleting removes the stored tokens from AgentConnect; the app itself you remove on the platform's side (Slack app settings / BotFather / Discord Developer Portal).
+Only **free** bots can be deleted — uninstall/delete its integration first if an agent still uses it. Deleting removes the stored tokens from AgentConnect; remove the app itself in Slack, BotFather, the Discord Developer Portal, or the Lark / Feishu developer console.

@@ -1,55 +1,71 @@
 ---
 title: 💬 Slack
-excerpt: Connect Slack through the Events API or Socket Mode, including one App shared across channel-specific agents.
+excerpt: Install the built-in AgentConnect Slack app in one click, or connect a custom app when an agent needs its own identity.
 hidden: false
 ---
 
-AgentConnect supports two Slack delivery modes:
+On **AgentConnect Cloud**, the recommended path is the built-in **Add to Slack** app. You approve the workspace installation; AgentConnect completes the OAuth flow and connects it without asking for an App manifest, token, signing secret, or callback URL.
 
-- **HTTP (Events API)** receives Slack callbacks through the AgentConnect Relay. It is the default when a Relay is available and is required for one App to serve multiple agents.
-- **Socket Mode** is daemon-owned and needs no public callback URL. It is limited to one agent per bot.
+## Add AgentConnect to Slack on Cloud
 
-On the agent, open **Integrations → Add integration → Slack**.
+The built-in Slack app belongs to the built-in `agentconnect` agent. Place that agent on a daemon and choose its runtime and model first, then use either entry point:
 
-## Built-in Add to Slack
+- open the **Getting started** card and choose **Add to Slack**; or
+- open the `agentconnect` agent, then **Integrations → Add integration → Slack**.
 
-If the deployment operator configured a [deployment-wide Slack App](/docs/deployment-and-configuration#optional-deployment-wide-add-to-slack-app), the built-in `agentconnect` agent starts with an **Add to Slack** button. Approve the installation in Slack; AgentConnect receives the workspace token in the OAuth callback and binds the bot without asking you to copy credentials.
+Click **Add to Slack**, choose the workspace, and approve the requested permissions. The console waits for Slack and closes the setup automatically when the bot is ready. The installation initially serves the built-in agent; sharing it with more agents is an explicit later step.
 
-This path is HTTP-only and uses the Relay. Choose **Use a custom bot identity instead** when the workspace needs its own Slack App or you are connecting another agent.
-
-## Custom app option A — configuration-token install
-
-Available once your org has a saved **Slack configuration token** (see below).
-
-1. Choose the delivery mode, **name the bot**, and click **Create & install**. Slack opens in a new tab — approve the install into your workspace.
-2. For **HTTP**, AgentConnect captures the signing secret and finishes automatically. For **Socket Mode**, follow **Generate the App-Level token**, create a token with `connections:write`, and paste it (`xapp-…`).
-
-### The configuration token
-
-Under **Settings → Bots → Slack**, paste a Slack **config token pair** (access `xoxe.xoxp-…` + refresh `xoxe-…`, from [Slack's app config token page](https://api.slack.com/authentication/config-tokens)). With it saved, every future Slack bot in your org is a one-click install. Tokens auto-refresh; **Replace** or **Clear** them there anytime.
-
-## Custom app option B — manifest install
-
-1. **Name the bot**, then click **Add to Slack with manifest** — it opens Slack's app-creation page prefilled with the right scopes and settings (or **Copy manifest JSON** and paste it yourself).
-2. Install the app to your workspace, then copy the required credentials back into AgentConnect:
-   - **Bot token** (`xoxb-…`) — required for both delivery modes.
-   - **Signing secret** — required for HTTP, from _Basic Information → App Credentials_.
-   - **App-Level token** (`xapp-…`) — required for Socket Mode, with `connections:write`.
+The Cloud app uses AgentConnect's Relay-backed Events API delivery. There is no transport or public-URL setup for a Cloud user.
 
 ## Use it
 
-**Invite the bot to any channel** (`/invite @your-bot`) — it starts listening there; no channel picker in the console. Mention it to start a conversation; replies thread neatly under your message. It also answers DMs.
+Invite the bot to a channel:
 
-Each channel the bot joins appears on the agent's Integrations card, with a **per-channel trigger**: respond only to **@-mentions** (the default), respond to **any message**, or switch the channel **Off**. Off mutes inbound activation without removing the Slack App or preventing scheduled and delegated outbound posts. See [Integrations overview](/docs/integrations-overview#binding-channels).
+```text
+/invite @your-bot
+```
 
-Handy in-channel commands (handled by the daemon, see [Integrations overview](/docs/integrations-overview)): `!stop` interrupts the current turn, `!queue <message>` delivers a message once the agent is idle.
+Mention it to start a conversation; unmentioned follow-ups stay in the thread the agent already joined. The bot also answers direct messages.
 
-## Shared Slack bots
+Each discovered channel appears on the agent's Integrations card. Choose **@-mentions** (the default), **any message**, or **Off** for inbound activation. Off does not uninstall the app or block scheduled and delegated outbound posts. `!stop` interrupts the current turn and `!queue <message>` waits until the agent is idle.
 
-When creating the bot you can tick **Shared bot** — one Slack app that serves **multiple agents**, routed per channel. Manage the routing under **Settings → Bots**: expand the bot's channel roster and set the **Default dispatch** agent for each channel. Inbound messages for shared bots arrive through AgentConnect's relay; replies still come straight from your daemon.
+## Use one Slack app with multiple agents
 
-For the complete setup, see [One Slack app with different agents by channel](/docs/one-slack-app-across-channels).
+The built-in Cloud app starts as a one-agent bot. To use the same Slack identity in several channels with different agents:
+
+1. Open **Settings → Bots → Slack** and turn on **Sharable** for the bot.
+2. On each additional agent, choose **Integrations → Add integration → Slack → Use an existing bot** and select it.
+3. Back in **Settings → Bots**, expand the bot and choose each channel's **Default dispatch** agent.
+
+See [One Slack app with different agents by channel](/docs/one-slack-app-across-channels) for the full pattern.
+
+## Give an agent a custom Slack identity
+
+On the built-in agent, choose **Use a custom bot identity instead** when it needs a dedicated Slack App. Other agents open the custom-identity flow directly. This is also the normal path when a self-hosted deployment does not publish a built-in app.
+
+### Configuration-token install
+
+This is the recommended custom-app path. If you have not saved a Slack configuration token yet, AgentConnect links to [Slack's configuration-token page](https://api.slack.com/authentication/config-tokens). Paste the access token (`xoxe.xoxp-…`) and its refresh token (`xoxe-…`) so AgentConnect can rotate it; an access token saved alone expires after roughly 12 hours. Slack scopes the pair to one user and workspace. AgentConnect saves it for that signed-in user, who can replace or clear it under **Your profile → Slack config token**.
+
+Name the App, click **Create & install**, and approve it in Slack. With **HTTP (Events API)** delivery, AgentConnect captures the bot token and signing secret and finishes without credential copy-and-paste. With **Socket Mode**, Slack still requires you to generate one App-Level token with `connections:write` and paste the resulting `xapp-…` token.
+
+### Manifest install
+
+Use the manual fallback when you cannot create Slack configuration tokens:
+
+1. Choose **Copy manifest & open Slack**, then create and install the App from the copied manifest.
+2. For **HTTP**, paste the Bot User OAuth token (`xoxb-…`) and signing secret.
+3. For **Socket Mode**, paste the Bot User OAuth token and an App-Level token (`xapp-…`) with `connections:write`.
+
+If Slack reports changed scopes, reinstall the App once before copying the Bot User OAuth token.
+
+## Delivery modes and self-hosting
+
+- **HTTP (Events API)** is the Cloud default. Inbound callbacks enter through the AgentConnect Relay and go directly to the owning daemon. HTTP is required for a sharable bot.
+- **Socket Mode** is a daemon-owned outbound connection. It needs no Relay or public callback URL and is limited to one agent per bot.
+
+Self-hosted deployments show the built-in **Add to Slack** path only after the operator configures the [deployment-wide Slack App](/docs/deployment-and-configuration#optional-deployment-wide-add-to-slack-app). Otherwise, use a custom App. HTTP is available only when the deployment has a public, connected Relay; without one, use Socket Mode.
 
 ## Managing Slack bots
 
-**Settings → Bots → Slack** lists every Slack bot in the org: which agent uses it, its channels, a **Configure on Slack** deep link into Slack's app settings, a sync/refresh action, and deletion for bots no agent is using.
+**Settings → Bots → Slack** lists every Slack bot in the organization: its workspace, transport, sharable state, connected agents and channels, a **Configure on Slack** link, refresh/reauthorization actions, and deletion for bots no agent is using.

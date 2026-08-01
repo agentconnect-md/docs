@@ -1,6 +1,6 @@
 ---
 title: 👾 Discord
-excerpt: A bot token, one intent checkbox and an invite link — then your agent lives in your Discord server.
+excerpt: Create a Discord application, paste its bot token, and use AgentConnect's ready-made server invite.
 hidden: false
 ---
 
@@ -10,20 +10,22 @@ The daemon connects to Discord's gateway outbound — no public endpoint require
 
 1. Open the [Discord Developer Portal](https://discord.com/developers/applications) → **New Application**, name it.
 2. Under **Bot**, copy the **token** (Reset Token if none is shown).
-3. Still under **Bot**, enable the **Message Content intent** — without it the bot can't read what people write.
 
 ## Connect it
 
-On your agent: **Integrations → Add integration → Discord**, paste the token. The dialog shows a **setup checklist** and an **Add to Discord** button — the invite link is built for your app with the right scopes (`bot` + `applications.commands`) and permissions (including **Create Public Threads**, which the agent uses to keep conversations tidy).
+On your agent, open **Integrations → Add integration → Discord** and paste the token. AgentConnect decodes the public application ID from it and shows **Add to Discord** with the required `bot` and `applications.commands` scopes and permissions, including public-thread creation.
 
-Click **Add to Discord**, pick your server, approve.
+Click **Add to Discord**, choose the server, approve the invite, then click **Connect**.
+
+When you connect, AgentConnect validates the token and enables the limited **Message Content Intent** on the Discord application automatically. You no longer need to turn on that checkbox before setup. If Discord refuses the automatic update, AgentConnect stops before saving the integration and tells you to enable **Bot → Privileged Gateway Intents → Message Content Intent** manually.
 
 ## Use it
 
-Mention the bot in a channel it can see and it answers — longer conversations continue in threads. `/stop` interrupts its current turn; `/queue <message>` delivers a message once it's idle.
+Mention the bot in a server channel it can see and it answers; longer conversations continue in threads. You can also send it a direct message. AgentConnect registers its control commands as native Discord slash commands, including `/stop` and `/queue <message>`.
 
 ## Notes
 
-- If the bot joins but never replies, re-check the **Message Content intent** — it's the most common miss.
+- If automatic Message Content setup was rejected, enable the intent manually in the Developer Portal and connect again.
+- If the bot cannot reply or create a thread, use **Settings → Bots → Discord → Add to Discord** to reinstall it with the current scopes and permissions.
 - One Discord bot binds to one agent; deleting the integration frees the bot for reuse.
-- Org-wide bot management (incl. re-invite links) lives under **Settings → Bots → Discord**.
+- Organization-wide bot management, including re-invite links, lives under **Settings → Bots → Discord**.

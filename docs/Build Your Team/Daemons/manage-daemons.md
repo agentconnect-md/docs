@@ -26,7 +26,7 @@ Click a daemon to open it:
 - **Runtimes** — what the daemon detected on the machine: each runtime (Claude Code, Codex, …) with its version, the models it reports, its MCP servers, and how many of your agents use it. This card is the ground truth for what the agent-creation pickers offer.
 - **Resources** — live CPU and memory.
 - **Agents** — the agents hosted here, with model and status.
-- **Capabilities** — what the daemon reported on register: ACP support, platform adapters (Slack/Telegram/Discord), and features such as the Linux **sandbox** capability or the daemon-wide **sandbox-required** policy.
+- **Capabilities** — what the daemon reported on register: ACP support, platform adapters (Slack, Telegram, Discord, Lark / Feishu), and features such as the Linux **sandbox** capability or the daemon-wide **sandbox-required** policy.
 - **Details** — version, last seen, created/modified, and [visibility](/docs/visibility-and-sharing).
 
 ## Actions

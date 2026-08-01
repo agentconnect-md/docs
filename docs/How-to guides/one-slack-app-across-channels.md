@@ -19,10 +19,9 @@ This is useful when different channels need different models, repositories, tool
 You need:
 
 - two or more online agents;
-- a live AgentConnect Relay with a public Slack callback URL; and
 - permission to create or install a Slack App in the workspace.
 
-Shared bots use Slack's **HTTP (Events API)** delivery through the Relay. A Socket Mode bot is daemon-owned and cannot be shared across agents.
+On AgentConnect Cloud, Relay-backed Slack delivery is already available. Shared bots use **HTTP (Events API)**; a Socket Mode bot is daemon-owned and cannot be shared across agents.
 
 AgentConnect OSS operators should configure [public Relay URLs](/docs/deployment-and-configuration#network-and-public-urls) before creating the App.
 
@@ -38,7 +37,19 @@ For example:
 - `security-agent` uses a stronger reasoning model with read-only access and a security-focused prompt; and
 - `support-agent` uses a fast model with product documentation tools.
 
-## 2. Create the shared Slack bot
+## 2. Make the Slack bot sharable
+
+### AgentConnect Cloud
+
+Start with the built-in app:
+
+1. On the built-in `agentconnect` agent, choose **Integrations → Add integration → Slack → Add to Slack** and approve the workspace installation. Skip this step if it is already connected.
+2. Open **Settings → Bots → Slack**.
+3. Turn on **Sharable** for the built-in AgentConnect bot.
+
+The Cloud app already uses HTTP delivery, so there is no callback URL, signing secret, or transport to configure.
+
+### Custom app or self-hosted deployment
 
 On the first agent, open **Integrations → Add integration → Slack**:
 
@@ -93,7 +104,7 @@ One inbound Slack message selects one agent. A shared bot is routing several cha
 
 | Symptom                                  | Check                                                                                                                  |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Shared bot** is unavailable            | Select **HTTP (Events API)** and confirm a live Relay is configured. Socket Mode bots cannot be shared.                |
+| **Sharable** is unavailable              | Custom Apps must use **HTTP (Events API)** with a live Relay. The built-in Cloud app already satisfies this requirement. |
 | A channel is missing                     | Confirm the bot was invited, then wait for Slack's membership update to arrive; re-invite it if the event was missed.  |
 | The wrong agent answers                  | Check **Settings → Bots → Default dispatch** for that channel, then verify its trigger.                                |
 | Follow-ups keep using the previous agent | Start a new thread, or explicitly switch the thread's agent from its session controls. Thread affinity is intentional. |

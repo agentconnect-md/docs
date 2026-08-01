@@ -8,7 +8,7 @@ Use this pattern only when the source and destination are **two messaging worksp
 
 > **Trust boundary:** Connecting an agent to two platforms gives it the ability to move content between them. It does not make an external, customer, partner, or community workspace trusted. Treat each as a separate boundary; if either side is not explicitly approved for this information, do not configure a routine handoff. Send a one-time, reviewed, and redacted message instead.
 
-Here, _workspace_ means a Slack workspace, Discord server, Feishu/Lark tenant, or known Telegram group or chat — not the agent's code workspace.
+Here, _workspace_ means a Slack workspace, Discord server, Lark / Feishu tenant, or known Telegram group or chat — not the agent's code workspace.
 
 Within that trust boundary, one AgentConnect agent can use more than one chat platform. A conversation can start in a Telegram DM, move to a trusted Slack incident channel for team input, and return a concise result to the original Telegram conversation.
 
@@ -18,7 +18,7 @@ This is a deliberate **handoff**, not a live mirror. Each platform keeps its own
 | ------------------------ | ------------------------- | ------------------------------------------------ |
 | Telegram DM              | Slack `#incidents`        | Escalating private investigation to a team       |
 | Slack engineering thread | Discord release channel   | Publishing a decision where another team works   |
-| Feishu/Lark project chat | Slack stakeholder channel | Sending an approved summary and collecting input |
+| Lark / Feishu project chat | Slack stakeholder channel | Sending an approved summary and collecting input |
 
 ## Before you start
 
@@ -37,7 +37,7 @@ Open the agent and add each chat integration under **Integrations**. Connect onl
 
 Use one bot per platform on this agent when possible. If several destination bots are connected, cross-platform sends use the first available one unless the agent is given a specific integration ID.
 
-Before the first handoff, check **Settings → Bots** and verify the Slack workspace or Feishu/Lark tenant for the bot, and the Discord server or Telegram chat around the destination. A familiar channel name is not enough: two workspaces can both contain `#incidents`.
+Before the first handoff, check **Settings → Bots** and verify the Slack workspace or Lark / Feishu tenant for the bot, and the Discord server or Telegram chat around the destination. A familiar channel name is not enough: two workspaces can both contain `#incidents`.
 
 ## 2. Confirm that the destination is reachable
 

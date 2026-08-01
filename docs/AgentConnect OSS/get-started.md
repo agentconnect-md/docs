@@ -128,8 +128,8 @@ The Relay is optional in the AgentConnect architecture, but it is included in th
 
 | Connection path   | Used for                                                                                        | Public ingress required?                                          |
 | ----------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Daemon direct     | Daemon-owned platform connections such as Slack Socket Mode, Telegram, Discord, and Feishu/Lark | No. The daemon opens outbound connections from the agent host     |
-| Through the Relay | GitHub App events, generic webhooks, webchat and Agent API traffic, and shared Slack HTTP bots  | Yes. The Relay accepts the callback and forwards it to the daemon |
+| Daemon direct     | Daemon-owned platform connections such as Slack Socket Mode, Telegram, Discord, and Lark / Feishu | No. The daemon opens outbound connections from the agent host     |
+| Through the Relay | GitHub App events, generic webhooks, webchat and Agent API traffic, and Slack or Lark / Feishu HTTP bots | Yes. The Relay accepts the callback and forwards it to the daemon |
 
 Relay-delivered messages go directly from the Relay to the owning daemon. The Control Plane distributes routing metadata, but it does not carry or persist the message body.
 
