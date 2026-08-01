@@ -76,6 +76,7 @@ The Playground is for trying things out — the point of AgentConnect is meeting
 
 - [How it works](/docs/how-it-works) — understand the daemon, optional Relay, and Control Plane.
 - [Permissions](/docs/permissions-overview) — set roles, visibility, private sessions, and agent call policies.
+- [Sandboxing](/docs/sandboxing) — confine agent runtimes on supported Linux daemons.
 - [Sessions](/docs/sessions) — replay everything your agents did.
 - [Schedules](/docs/schedules) — run agents on a timer.
 - [MCP connector](/docs/mcp-connector) — add AgentConnect to Claude and ask about your agents, sessions and spend.

@@ -30,6 +30,7 @@ Agent-to-agent calls use a separate, directional policy. A call from agent A to 
 Several controls use similar words but protect different boundaries:
 
 - An agent's **permission mode** controls what its runtime may do without asking during a run.
+- [Sandboxing](/docs/sandboxing) places the runtime inside an outer Linux OS boundary and limits its filesystem access.
 - A workspace's **repository access** controls whether the agent can read, comment, or write through the GitHub App.
 - Platform app scopes control what a Slack, Discord, Telegram, Lark, or GitHub app may do at that provider.
 - Tool, skill, secret, and daemon configuration controls what capabilities reach the agent process.

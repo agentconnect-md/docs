@@ -26,7 +26,7 @@ Click a daemon to open it:
 - **Runtimes** — what the daemon detected on the machine: each runtime (Claude Code, Codex, …) with its version, the models it reports, its MCP servers, and how many of your agents use it. This card is the ground truth for what the agent-creation pickers offer.
 - **Resources** — live CPU and memory.
 - **Agents** — the agents hosted here, with model and status.
-- **Capabilities** — what the daemon reported on register: ACP support, platform adapters (Slack/Telegram/Discord), features.
+- **Capabilities** — what the daemon reported on register: ACP support, platform adapters (Slack/Telegram/Discord), and features such as the Linux **sandbox** capability or the daemon-wide **sandbox-required** policy.
 - **Details** — version, last seen, created/modified, and [visibility](/docs/visibility-and-sharing).
 
 ## Actions
@@ -48,3 +48,4 @@ A move cold-reprovisions the saved agent definition; it does not migrate daemon-
 - **Stuck “Waiting for daemon…” in Add daemon** — the command probably failed in your terminal. Check that Node is ≥ 24 (`node -v`) and that the machine can reach your control-plane URL over HTTPS/WSS.
 - **Daemon shows offline but the process is running** — check the log (`npx -y @agentconnect.md/cli status` prints its path, default `~/.agentconnect/logs/daemon.log`). Repeated `connect/handshake failed` usually means the key was revoked — use **Reconnect** for that daemon, or onboard a new one if it was deleted.
 - **Runtime missing from the pickers** — the runtime isn't installed (or not on `PATH`) on that machine. Install it, then restart the daemon; it re-probes on start.
+- **Run in sandbox is unavailable** — the selected daemon did not pass the live Linux sandbox probe. Check its OS, `bubblewrap` / `ripgrep` / `socat` dependencies, user-namespace policy and logs, then restart it. See [Sandboxing](/docs/sandboxing).
