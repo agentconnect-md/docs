@@ -44,6 +44,8 @@ npx -y @agentconnect.md/cli install-service   # register launchd / systemd servi
 npx -y @agentconnect.md/cli up                # start it
 ```
 
+The background service starts the daemon with the same OS user's login-shell environment when possible. That makes runtime launchers installed through version managers or profile paths such as `~/.local/bin` available to runtime detection, and profile changes are picked up on the next restart. Install and authenticate agent runtimes as the user who owns the service.
+
 Manage it with:
 
 | Command | What it does |
