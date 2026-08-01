@@ -1,10 +1,10 @@
 ---
-title: 📈 Usage
-excerpt: Tokens, spend and session counts across your org — metered by the daemons, broken down per agent.
+title: 📈 Usage & costs
+excerpt: Track tokens, estimated spend and session counts across your organization, with a breakdown for each agent.
 hidden: false
 ---
 
-**Usage** answers "what are my agents costing me?" — token consumption and estimated spend across the organization, metered by the daemons as sessions run and reported per session.
+**Usage & costs** answers "what are my agents costing me?" — token consumption and estimated spend across the organization, metered by the daemons as sessions run and reported per session.
 
 ## Ranges & totals
 
