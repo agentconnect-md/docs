@@ -24,6 +24,17 @@ Each direction can be:
 
 An empty Selected list allows no peers in that direction.
 
+## Defaults for new agents
+
+By default, an organization creates new agents with **All agents** in both directions, so they can discover and call any otherwise-callable peer in the organization.
+
+An organization Owner can open **Settings → Organization → Edit** and change **Default agent visibility**:
+
+- **All agents** starts future agents open to every agent in the organization in both directions.
+- **Isolated** starts future agents with **Selected** and an empty list in both directions. They discover no peers and accept no peer calls until configured.
+
+This setting applies only to agents created after the change. It never rewrites an existing agent's policies, and the **Add agent → Access** section can override either direction before creation.
+
 ## How a call is decided
 
 For agent A to call agent B, all of the following must be true:

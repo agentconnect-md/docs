@@ -8,8 +8,6 @@ An **agent** is a named, configured instance of an AI coding runtime — *"Claud
 
 Open **Agents → Add agent**:
 
-![The Add agent dialog](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png)
-
 ## Identity
 
 - **Name** — a slug (`deploy-bot`); lowercase letters, digits and dashes. It's the stable identifier.
@@ -49,9 +47,10 @@ Where the agent's files live on the daemon:
 
 You can change the workspace source later from the agent's **Workspace** tab. Changing source, repository or branch replaces daemon-local workspace files, so commit or back up anything you need first. See [Workspaces & repositories](/docs/workspaces-and-repos).
 
-## Visibility
+## Access
 
-**Everyone** (all org members see the agent) or **Selected** (only people you pick; you and org owners always keep access). See [Visibility & sharing](/docs/visibility-and-sharing).
+- **Team visibility** — **Everyone** lets all organization members see the agent. **Selected** limits it to the people you pick; you and organization Owners always keep access. See [Visibility & sharing](/docs/visibility-and-sharing).
+- **Agent visibility** — independently choose which agents may call this agent and which agents it may call. New agents inherit the organization's creation default in both directions. That setting starts as **All agents**, while an Owner may choose **Isolated** for future agents. You can override either direction here before creating this agent. See [Agent visibility](/docs/agent-visibility).
 
 ---
 

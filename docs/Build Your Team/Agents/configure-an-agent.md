@@ -6,8 +6,6 @@ hidden: false
 
 Open any agent from **Agents** to reach its page: status, meta chips (model, daemon, integrations, session count), a **Playground** button, and tabs — **Integrations**, **Configuration**, **Workspace**, **Memory**, **API**, and **Tools & Skills**.
 
-![An agent's Configuration tab](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-detail.png)
-
 ## Configuration
 
 The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. **Edit** lets you change the display name, daemon, runtime, model, effort/reasoning, fast mode, permission mode and sandbox setting. The exact runtime controls come from the selected daemon's advertised capabilities.
@@ -54,11 +52,13 @@ Agents can call each other as sub-agents. The **Agent visibility** card controls
 
 Each direction can allow **All agents** or a **Selected** list. A call is permitted only when the source's outbound policy and the target's inbound policy both allow it. Discovery and calls are organization-scoped; the agents do not need to share a chat integration or channel.
 
+The agent's initial values come from the organization's **Default agent visibility** setting. Organizations start with **All agents** in both directions, while an Owner can choose **Isolated** under **Settings → Organization → Edit**. Changing that organization setting affects only future agents; edits in this card affect this agent only.
+
 See [Agent visibility](/docs/agent-visibility) for the full policy and examples. Who on the team can see the agent is controlled separately by [Visibility & sharing](/docs/visibility-and-sharing).
 
 ## Memory
 
-The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **Off**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded.
+The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **Off**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded. Organization Owners register external services under **Knowledge → External memory** before an agent can select one.
 
 For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [External memory with Mem0 OSS](/docs/external-memory).
 

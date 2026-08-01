@@ -28,7 +28,7 @@ This walkthrough uses the **local stdio plugin** configured by the deployment op
 
 ## 1. Create the organization connection
 
-In the console, go to [**Tools & Skills**](/docs/tools-and-skills) → **External memory → Add connection**, then choose **Register a new plugin…**.
+In the console, go to [**Knowledge**](/docs/knowledge) → **External memory → Add connection**, then choose **Register a new plugin…**.
 
 Enter:
 
@@ -46,8 +46,6 @@ Enter:
 
 Then click **Create connection**. The credential is write-only: AgentConnect will show the logical name later, never its value.
 
-![A populated local Mem0 external-memory connection](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-connection.png)
-
 The new connection initially shows **probing**. Its exact revision is checked on the daemon after an agent selects it.
 
 ## 2. Bind an agent and choose the policy
@@ -62,8 +60,6 @@ Choose the two policies independently:
 - **Capture → Every turn** sends the delivered user input and final reply to Mem0 after the reply is delivered. Enabling it requires confirming the data boundary.
 
 The defaults — 5 results, 8 KiB, and a 1-second timeout — are a good starting point. Click **Use external memory** or **Save external-memory policy**.
-
-![An agent using a ready external Mem0 connection](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-policy.png)
 
 The connection must pass the manifest, credential-contract, configuration, and capability checks for this exact revision before the agent can start with it. **Ready** is the normal active state. A revision that was already verified may later show **degraded** during a transient failure; the daemon keeps it admission-open and retries while recall itself fails open.
 
