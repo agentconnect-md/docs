@@ -1,6 +1,6 @@
 ---
 title: 🤝 Multi-agent work modes
-excerpt: Choose how specialized agents divide responsibilities, delegate work, review in layers, and share routing when needed.
+excerpt: Choose how a team of specialized agents divides responsibilities, delegates work, reviews in layers, and shares routing when needed.
 hidden: false
 ---
 
