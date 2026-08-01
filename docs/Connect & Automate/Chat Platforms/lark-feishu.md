@@ -45,4 +45,6 @@ The manual checklist remains visible in the integration dialog so you can verify
 - In a one-to-one chat, message the bot directly.
 - `/stop` interrupts the current turn; `/queue <message>` waits until the agent becomes idle.
 
+Lark / Feishu does not offer a bot self-leave action here. Remove the bot on the platform, then choose **Forget this conversation** from a stale row's menu if needed.
+
 One Lark / Feishu bot binds to one agent at a time. Deleting its integration frees the stored bot identity for **Use an existing bot**; it does not delete the app from the Lark or Feishu developer console. Organization-wide management lives under **Settings → Bots → Lark**, where **Configure** opens the correct regional developer console.

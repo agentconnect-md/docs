@@ -30,13 +30,18 @@ AgentConnect checks the author of each comment, including edited content; the we
 
 > ⚠️ **Public repositories:** external issue bodies, pull requests, diffs, and comments remain untrusted input even though they cannot dispatch an agent without a maintainer request. Use a conservative [permission mode](/docs/create-an-agent) and narrowly scoped repository credentials.
 
-The GitHub identity linked to a signed-in AgentConnect profile controls a different boundary: when optional per-user repository authorization is enabled, it identifies the console user for repository setup checks. Linking it does not install the GitHub App, grant a repository, or change the webhook-author rules above. See [Permissions with linked accounts](/docs/linked-account-permissions).
+A GitHub identity linked to a signed-in AgentConnect profile can participate in two separate console-user checks:
+
+- optional per-user repository authorization uses it during repository setup; and
+- **Settings → Session access → Follow GitHub repository access** uses it when deciding whether the viewer may read a session from a private repository.
+
+Public-repository sessions do not require a linked GitHub profile. Linking GitHub does not install the GitHub App, grant a repository, or change the webhook-author rules above. See [Permissions with linked accounts](/docs/linked-account-permissions).
 
 ## What the agent does
 
 Each qualifying event starts a session on the agent's daemon with the event as context (title, body, diff excerpt as applicable). The agent's replies post back to the thread as comments, subject to its repo authorization tier (**comment** or **write** — see [Workspaces & repositories](/docs/workspaces-and-repos)).
 
-Sessions triggered from GitHub appear in [Sessions](/docs/sessions) with the repo/thread as their channel, linked back to GitHub.
+Sessions triggered from GitHub appear in [Sessions](/docs/sessions) with the repo/thread as their channel, linked back to GitHub. When repository access sync is enabled, their read-only **GitHub access** audience follows the source repository's current visibility and the viewer's access rather than an AgentConnect role override.
 
 ## PR reviews
 

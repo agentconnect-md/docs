@@ -27,6 +27,8 @@ Mention it to start a conversation; unmentioned follow-ups stay in the thread th
 
 Each discovered channel appears on the agent's Integrations card. Choose **@-mentions** (the default), **any message**, or **Off** for inbound activation. Off does not uninstall the app or block scheduled and delegated outbound posts. `!stop` interrupts the current turn and `!queue <message>` waits until the agent is idle.
 
+The row menu can stop listing a stale conversation. To remove the bot from a channel, do it in Slack; AgentConnect updates the list automatically.
+
 ## Give an agent a custom Slack identity
 
 On the built-in agent, choose **Use a custom bot identity instead** when it needs a dedicated Slack App. Other agents open the custom-identity flow directly. This is also the normal path when a self-hosted deployment does not publish a built-in app.

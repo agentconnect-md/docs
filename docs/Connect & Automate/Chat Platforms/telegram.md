@@ -25,6 +25,8 @@ AgentConnect automates the check, not the setting itself: Telegram's Bot API doe
 
 `/stop` interrupts the agent's current turn; `/queue <message>` holds a message until it finishes (handled by the daemon, works even offline from the control plane).
 
+For a discovered group, open its row menu on the agent's integration card to **Leave group** on Telegram or **Forget this conversation** without touching Telegram.
+
 ## Notes
 
 - One Telegram bot binds to one agent. Deleting the integration frees the bot for reuse (**Use an existing bot** next time).
