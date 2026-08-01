@@ -325,7 +325,7 @@ Use **Remote · Streamable HTTP** when the wrapper should run as a service rathe
 
 The remote Relay enforces the reviewed wrapper endpoint and injects the write-only credential as `X-Mem0-Api-Key`; the wrapper translates it to Mem0 OSS's `X-API-Key`. The Mem0 upstream URL still comes only from the wrapper deployment, never from organization connection JSON.
 
-After the backend and wrapper are ready, continue with [External memory with Mem0 OSS](/docs/external-memory) to create the organization connection, bind an agent, choose recall and capture policies, and test cross-session recall.
+After the backend and wrapper are ready, continue with [the guide to using Mem0 OSS as external memory](/docs/external-memory) to create the organization connection, bind an agent, choose recall and capture policies, and test cross-session recall.
 
 ## Optional Logto sign-in
 

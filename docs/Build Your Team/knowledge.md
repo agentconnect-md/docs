@@ -42,7 +42,7 @@ Open **Knowledge → External memory** to register and manage approved memory se
 
 Creating a connection does not change any agent automatically. Open an agent's **Memory** tab, choose **External**, select the connection, and configure its recall and capture policies. The connection supplies the trusted service and credentials; the agent binding supplies the agent-scoped identity and policy.
 
-See [External memory with Mem0 OSS](/docs/external-memory) for a complete deployment, connection, binding, and recall test.
+Follow [the guide to using Mem0 OSS as external memory](/docs/external-memory) for a complete deployment, connection, binding, and recall test.
 
 ## How agents use Knowledge
 
