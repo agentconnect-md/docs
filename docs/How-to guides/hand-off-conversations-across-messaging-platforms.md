@@ -29,7 +29,7 @@ You need:
 - a bot that can post in the destination channel or chat; and
 - a clear rule for what information may leave the source conversation.
 
-The same agent owns both sides of this pattern. Connecting two different agents is an [agent-to-agent collaboration](/docs/configure-an-agent#agent-visibility-sub-agent-calls), not a cross-platform handoff.
+The same agent owns both sides of this pattern. Connecting two different agents is [agent-to-agent delegation](/docs/multi-agent-work-modes#agent-to-agent-delegation), not a cross-platform handoff.
 
 ## 1. Connect both platforms to the agent
 

@@ -120,6 +120,8 @@ Sandboxing is a strong runtime write boundary, but it is not every security cont
 - This is not a whole-host read allowlist. AgentConnect hides its own state, the daemon user's home, runtime state, other agents, and shared temporary storage, but unrelated host paths outside those protected roots may remain readable.
 - Secrets, MCP servers, repository credentials, and other resources deliberately assigned to the agent remain available inside the sandbox. Use [permissions](/docs/permissions-overview), scoped credentials, and separate daemon users alongside sandboxing.
 
+Implementation follow-ups for tighter host-read, network, socket, and non-Linux boundaries are tracked in [agentconnect#312](https://github.com/agentconnect-md/agentconnect/issues/312).
+
 ## Failure behavior
 
 The guarantee depends on how the daemon is configured:

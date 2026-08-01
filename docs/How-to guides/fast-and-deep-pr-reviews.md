@@ -8,6 +8,8 @@ Use two agents to create a layered review workflow: a fast reviewer covers every
 
 Both agents watch the same repository through one AgentConnect GitHub App. Each has its own runtime, model, instructions, session, and review settings.
 
+This is the layered-specialist pattern from [Multi-agent work modes](/docs/multi-agent-work-modes#layered-or-on-demand-specialists). Compare it with trigger fan-out and direct delegation before configuring the reviewers.
+
 | Agent | Model profile | Trigger | PR review | Role |
 | --- | --- | --- | --- | --- |
 | `quick-review` | Fast and efficient | **updated** | **Brief** | Baseline correctness and regressions |

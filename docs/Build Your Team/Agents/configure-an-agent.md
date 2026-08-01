@@ -54,7 +54,7 @@ Each direction can allow **All agents** or a **Selected** list. A call is permit
 
 The agent's initial values come from the organization's **Default agent visibility** setting. Organizations start with **All agents** in both directions, while an Owner can choose **Isolated** under **Settings → Organization → Edit**. Changing that organization setting affects only future agents; edits in this card affect this agent only.
 
-See [Agent visibility](/docs/agent-visibility) for the full policy and examples. Who on the team can see the agent is controlled separately by [Visibility & sharing](/docs/visibility-and-sharing).
+See [Multi-agent work modes](/docs/multi-agent-work-modes) to choose a collaboration pattern and [Agent visibility](/docs/agent-visibility) for the full call policy. Who on the team can see the agent is controlled separately by [Visibility & sharing](/docs/visibility-and-sharing).
 
 ## Memory
 
