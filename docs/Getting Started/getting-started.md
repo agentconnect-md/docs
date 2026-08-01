@@ -55,7 +55,7 @@ Create a roster of agents for the work your team already does, then connect each
 
 <Card kind="tile" title="Tools & Skills" href="/docs/tools-and-skills" icon="fa-duotone fa-toolbox">Register shared capabilities and enable them per agent</Card>
 
-<Card kind="tile" title="Knowledge" href="/docs/knowledge" icon="fa-duotone fa-books">Publish reviewed context that agents can find on demand</Card>
+<Card kind="tile" title="Knowledge" href="/docs/knowledge" icon="fa-duotone fa-books">Publish reviewed context and manage external memory connections</Card>
 
 <Card kind="tile" title="Permissions" href="/docs/permissions-overview" icon="fa-duotone fa-shield-halved">Control roles, visibility, repository access, and agent calls</Card>
 

@@ -49,8 +49,6 @@ The command above runs the daemon in the foreground, which is perfect for a firs
    - **From GitHub** — clone a repository and run the agent from a branch. (Needs the GitHub app; you can start from scratch and set up GitHub later.)
 4. Click **Create**.
 
-![Add agent — name, daemon, runtime, model and workspace](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png)
-
 ## 4. Talk to it
 
 Open your new agent and click **Playground**. This opens a live conversation with the agent running on your machine — ask it something:

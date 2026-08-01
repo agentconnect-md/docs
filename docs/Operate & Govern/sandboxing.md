@@ -95,7 +95,7 @@ The runtime can read the workspace, its private home and memory, AgentConnect-ma
 
 The sandbox hides the daemon configuration and state, other agents' directories, the daemon user's home and runtime-state directories, and shared temporary directories. A process cannot make host-filesystem changes outside the allowed write roots even if the same path appears writable inside its private mount namespace.
 
-Claude Code and Codex keep using the login of the OS user that runs the daemon through narrowly exposed credential storage, so token refreshes can persist. The rest of each runtime's state lives in its private home. Treat model-provider identity as daemon-user scoped: use separate daemon users or machines when agents must use different provider accounts.
+Claude Code, Codex, Qoder CLI, and Qoder CN CLI keep using the login of the OS user that runs the daemon through narrowly exposed credential storage, so token refreshes can persist. The rest of each runtime's state lives in its private home. Treat model-provider identity as daemon-user scoped: use separate daemon users or machines when agents must use different provider accounts.
 
 ## Current limits
 
@@ -121,7 +121,7 @@ Use required mode on production or shared machines where running unconfined is u
 - **The console says Unavailable** — confirm the daemon runs on Linux, install `bubblewrap`, `ripgrep`, and `socat`, verify that unprivileged user namespaces are permitted, then restart the daemon.
 - **The daemon refuses startup** — required mode is on and the live probe failed. Check the daemon log (`npx -y @agentconnect.md/cli status` prints its path) before disabling the policy.
 - **One sandboxed agent will not start** — check for a manually configured workspace outside that agent's directory. AgentConnect refuses layouts it cannot confine safely.
-- **Claude Code or Codex asks you to sign in** — authenticate that runtime as the same OS user that runs the daemon, then restart the agent host or daemon.
+- **Claude Code, Codex, or Qoder asks you to sign in** — authenticate that runtime as the same OS user that runs the daemon, then restart the agent host or daemon. For Qoder, a reported conflict between old per-agent and host authentication must be resolved before the daemon will choose either credential set.
 - **A local development server is unreachable** — the runtime runs in an isolated network namespace. Use a platform message, committed output, or another explicitly exposed interface instead of assuming the host can reach the sandbox's loopback port.
 
 For daemon installation and lifecycle commands, see [Install the daemon](/docs/install-the-daemon). To understand which files belong to an agent, see [Workspaces & repositories](/docs/workspaces-and-repos).

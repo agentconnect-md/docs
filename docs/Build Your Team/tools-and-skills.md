@@ -13,7 +13,6 @@ AgentConnect keeps organization management separate from agent enablement:
 | Connector or custom MCP server | **Tools & Skills → Connectors & MCP servers** | Agent → **Tools & Skills → Tools** |
 | Git skill source | **Tools & Skills → Skills library** | Agent → **Tools & Skills → Skills** |
 | Managed skill | Accept it under **Knowledge → Suggestions**, then manage it in the **Skills library** | Agent → **Tools & Skills → Skills** |
-| External memory connection | **Tools & Skills → External memory** | Agent → **Memory** |
 
 Adding something to the organization library does not automatically give it to every agent.
 
@@ -70,10 +69,6 @@ If AgentConnect cannot list the individual skills in a Git source, you can still
 
 MCP providers and Git skill sources have independent [team visibility](/docs/visibility-and-sharing): **Everyone** or **Selected**. Owners can always recover restricted team resources. Collaborators can create and edit resources they are allowed to access, while Viewers are read-only.
 
-Managed-skill approval, revision governance, and archive or restore actions require an organization Owner. Owners also review the trust boundary for [external memory connections](/docs/external-memory).
+Managed-skill approval, revision governance, and archive or restore actions require an organization Owner.
 
 Team visibility controls which people can discover and manage a resource. The agent's explicit enablement controls whether that capability reaches the agent process; the two checks are separate.
-
-## External memory
-
-The organization **Tools & Skills** page also hosts approved external-memory connections. The connection defines the trusted plugin and credentials; each agent chooses its own recall and capture policy from its **Memory** tab. See [External memory with Mem0 OSS](/docs/external-memory) for a complete setup and test.

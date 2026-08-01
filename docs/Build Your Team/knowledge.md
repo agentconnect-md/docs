@@ -1,17 +1,19 @@
 ---
 title: 📚 Knowledge
-excerpt: Publish reviewed team context that every agent can discover on demand.
+excerpt: Publish reviewed team context, review shared suggestions, and manage external memory connections.
 hidden: false
 ---
 
-Knowledge gives your agent team a reviewed, shared source of truth without copying the whole library into every prompt. Use it for durable runbooks, architecture decisions, product facts, and team practices. It is separate from an individual agent's [memory](/docs/configure-an-agent#memory), which belongs to that agent.
+Knowledge gives your agent team a reviewed, shared source of truth without copying the whole library into every prompt. Use it for durable runbooks, architecture decisions, product facts, and team practices. The same page also hosts organization-wide external memory connections in a separate card; each agent still chooses its own [memory backend and policy](/docs/configure-an-agent#memory).
 
-Open **Knowledge** in the console. Its two tabs separate published content from the queue that produced it:
+Open **Knowledge** in the console. Its two tabs separate published content from the proposal queue:
 
 - **Organization** contains published, revisioned Markdown that agents can search.
 - **Suggestions** is where organization Owners review Knowledge and managed-skill candidates proposed by Dreaming.
 
-All organization members can read published Knowledge. Only Owners can publish or revise entries, archive or restore them, and review suggestions.
+The **External memory** card appears below the tab content and contains approved memory services and account connections that agents may use.
+
+All organization members can read published Knowledge and see configured connection metadata. Only Owners can publish or revise entries, archive or restore them, review suggestions, and manage external memory connections.
 
 ## Publish Knowledge
 
@@ -33,6 +35,14 @@ Editing an entry publishes a new immutable revision instead of overwriting its h
 Pending proposal bodies remain on the source daemon until review. If that daemon is offline, the suggestion metadata remains visible, but its content cannot be opened or accepted until the daemon returns. Once accepted, Knowledge and managed-skill revisions are stored centrally so the team can use them independently of the proposing daemon.
 
 An accepted Knowledge suggestion appears in the Knowledge library. An accepted managed skill appears in **Tools & Skills → Skills library** and still must be [enabled explicitly for each agent](/docs/tools-and-skills#enable-tools-and-skills-for-an-agent).
+
+## Manage external memory connections
+
+Open **Knowledge → External memory** to register and manage approved memory services for the organization. An Owner reviews the plugin installation, endpoint or operator-provided command reference, credential contract, and stated network boundary before creating a connection. Secret values are write-only after saving. After the daemon probes the connection, its card shows the downstream hosts reported by the plugin.
+
+Creating a connection does not change any agent automatically. Open an agent's **Memory** tab, choose **External**, select the connection, and configure its recall and capture policies. The connection supplies the trusted service and credentials; the agent binding supplies the agent-scoped identity and policy.
+
+See [External memory with Mem0 OSS](/docs/external-memory) for a complete deployment, connection, binding, and recall test.
 
 ## How agents use Knowledge
 
