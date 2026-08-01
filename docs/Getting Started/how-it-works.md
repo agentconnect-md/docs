@@ -6,29 +6,9 @@ hidden: false
 
 AgentConnect is built around one architectural rule: **the Control Plane is not on the live message path.** Agent execution happens inside a daemon in the environment you operate. Platform ingress reaches that daemon directly or through the optional Relay.
 
-## The four pieces
+![AgentConnect channels and events reach agents running on a daemon, while the Control Plane coordinates over a separate control path](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/how-agentconnect-works.svg)
 
-```
- Direct platform connections                 Callback-based ingress
- Slack Socket / Telegram / Discord /          Slack or Lark / Feishu HTTP /
- Lark / Feishu Long Connection                GitHub / webhooks / webchat
-                 │                                         │
-                 ▼                                         ▼
- ┌─────────────────────────────┐              ┌────────────────────────┐
- │   Daemon                    │ ◄────────────│   Relay (optional)     │
- │   · agent runtimes over ACP │              │   · verify callbacks   │
- │   · workspaces and git      │              │   · forward to daemon  │
- │   · sessions and routing    │              └────────────────────────┘
- └─────────────────────────────┘
-                 ⇅ WebSocket: registry, config, telemetry,
-                   and bounded authorized read requests
- ┌─────────────────────────────┐              ┌────────────────────────┐
- │   Control Plane             │ ◄───────────►│   Console / REST API   │
- │   · auth and permissions    │     BFF      │                        │
- │   · registry and placement  │              └────────────────────────┘
- │   · control metadata        │
- └─────────────────────────────┘
-```
+## The four pieces
 
 **The daemon** is a small process you run on a laptop, workstation, VM, or other machine. It:
 
@@ -66,8 +46,10 @@ If a daemon is offline, its agents are offline. The Control Plane can still show
 
 Everything belongs to an organization. Human access composes membership, role, resource visibility, and session visibility. Agent-to-agent calls use independent inbound and outbound policies. Start with the [Permissions overview](/docs/permissions-overview).
 
-With Logto-backed sign-in enabled, the console can offer GitHub, Google, and Slack sign-in, according to the deployment's configured provider list. A person may [link several sign-in methods](/docs/social-account-linking) to one profile. AgentConnect OSS leaves OIDC unset by default and runs in local no-auth mode, which must not be exposed publicly.
+A person can [link several sign-in methods](/docs/social-account-linking) to one profile when those providers are available. Linked Slack and GitHub identities can also take part in provider-specific session access checks.
 
 ## Hosting choices
 
 The same architecture supports [AgentConnect OSS](/docs/get-started), where you operate the full stack, and AgentConnect Cloud, where the management console is hosted. In both cases, daemons run the agents and workspaces in the environment you operate.
+
+AgentConnect OSS keeps authentication optional and uses local no-auth mode by default. Before exposing it beyond localhost, configure [OIDC sign-in and the matching providers](/docs/deployment-and-configuration#optional-logto-sign-in).
