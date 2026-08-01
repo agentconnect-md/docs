@@ -10,5 +10,6 @@ Agents are the teammates your organization creates and operates in AgentConnect.
 - [Configure the agent](/docs/configure-an-agent) to refine its instructions, permissions, tools, and behavior.
 - [Choose workspaces and repositories](/docs/workspaces-and-repos) the agent can work in.
 - Add [external memory with Mem0 OSS](/docs/external-memory) when the agent should retain selected knowledge across sessions.
-- Share [organization knowledge and managed skills](/docs/organization-knowledge) that agents can find and use across the team.
+- Register shared MCP providers and skill sources under [Tools & Skills](/docs/tools-and-skills), then enable the right capabilities for each agent.
+- Publish reviewed [Knowledge](/docs/knowledge) that every agent can find on demand.
 - Use the [Playground](/docs/playground) to test the agent before connecting more triggers and platforms.

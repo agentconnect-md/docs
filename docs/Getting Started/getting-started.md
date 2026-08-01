@@ -29,7 +29,7 @@ AI agents are taking on work across the team, but most still live in individual 
 - **Work as one team.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens.
 - **Keep work where it happens.** Link agents to bots in Slack, Telegram, and Discord, or to repositories and workflows on GitHub.
 - **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
-- **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [organization knowledge](/docs/organization-knowledge) that every agent can find on demand.
+- **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [Knowledge](/docs/knowledge) that every agent can find on demand.
 - **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
 - **Stay in control.** Self-host the Apache-2.0 stack, run agents in your environment, and change runtimes without locking the team to one vendor.
 
@@ -52,6 +52,10 @@ Create a roster of agents for the work your team already does, then connect each
 <Card kind="tile" title="Connect your platforms" href="/docs/integrations-overview" icon="fa-duotone fa-plug">Link agents to bots, repositories, and event sources</Card>
 
 <Card kind="tile" title="Configure agents" href="/docs/configure-an-agent" icon="fa-duotone fa-sliders">Edit behavior, output, environment, memory, and agent calls</Card>
+
+<Card kind="tile" title="Tools & Skills" href="/docs/tools-and-skills" icon="fa-duotone fa-toolbox">Register shared capabilities and enable them per agent</Card>
+
+<Card kind="tile" title="Knowledge" href="/docs/knowledge" icon="fa-duotone fa-books">Publish reviewed context that agents can find on demand</Card>
 
 <Card kind="tile" title="Permissions" href="/docs/permissions-overview" icon="fa-duotone fa-shield-halved">Control roles, visibility, repository access, and agent calls</Card>
 

@@ -64,7 +64,7 @@ For a complete external-backend walkthrough, including recall/capture policies a
 
 ### Dreaming
 
-With **Managed** memory, enable **Dreaming** to periodically consolidate recent memory and session history. You can run a Dream manually or on a schedule, review its proposed memory changes, and optionally mine reusable skills. A Dream may also propose [organization knowledge or managed skills](/docs/organization-knowledge), but an organization Owner must review each shared proposal before it is published.
+With **Managed** memory, enable **Dreaming** to periodically consolidate recent memory and session history. You can run a Dream manually or on a schedule, review its proposed memory changes, and optionally mine reusable skills. A Dream may also propose [Knowledge or managed skills](/docs/knowledge), but an organization Owner must review each shared proposal before it is published.
 
 ## API
 
@@ -74,7 +74,7 @@ For the REST surface (agents, sessions, schedules — everything the console doe
 
 ## Tools & Skills
 
-Shows MCP tools available to the agent and the skills it has enabled. **Managed organization skills** are immutable bundles approved through **Knowledge → Suggestions** and listed in the organization **Tools & Skills → Skills library**; enable each one explicitly for this agent. Git-backed skill sources and agent-local skills remain separate. See [Organization knowledge](/docs/organization-knowledge) for the complete lifecycle.
+Shows the MCP tools available to this agent and the skills it has enabled. Organization-level providers and skill sources are managed separately, so adding one to the library does not enable it automatically. See [Tools & Skills](/docs/tools-and-skills) for connectors, MCP servers, Git sources, managed skills, and per-agent enablement.
 
 ## Delete
 

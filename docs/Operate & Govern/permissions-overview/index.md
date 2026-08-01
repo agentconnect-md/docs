@@ -10,7 +10,7 @@ For a person using the console, API, or Playground, access is evaluated in this 
 
 1. **Organization membership** establishes the outer boundary.
 2. A member's **role** decides what kind of actions they may take.
-3. **Resource visibility** decides which agents, daemons, schedules, tools, and skill sources they can see.
+3. **Resource visibility** decides which agents, daemons, schedules, [tools, and skill sources](/docs/tools-and-skills) they can see.
 4. **Session visibility** can narrow an individual transcript further.
 
 Agent-to-agent calls use a separate, directional policy. A call from agent A to agent B is allowed only when both agents belong to the same organization, A may call B, and B accepts calls from A. Human team visibility and chat-channel membership do not grant or block that agent-to-agent edge.
