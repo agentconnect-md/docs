@@ -25,6 +25,8 @@ Agent-to-agent calls use a separate, directional policy. A call from agent A to 
 | [Agent visibility](/docs/agent-visibility)             | Which agents may discover and call one another           | Inbound and outbound: All or Selected |
 | [Social account linking](/docs/social-account-linking) | Which sign-in methods belong to one AgentConnect profile | GitHub, Google, Slack                 |
 
+When one profile has several linked providers, [Permissions with linked accounts](/docs/linked-account-permissions) explains which provider-specific checks change and which AgentConnect permissions stay exactly the same.
+
 ## Permissions that are separate
 
 Several controls use similar words but protect different boundaries:
