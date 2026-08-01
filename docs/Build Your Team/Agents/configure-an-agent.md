@@ -60,7 +60,7 @@ See [Agent visibility](/docs/agent-visibility) for the full policy and examples.
 
 The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **Off**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded. Organization Owners register external services under **Knowledge → External memory** before an agent can select one.
 
-For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [External memory with Mem0 OSS](/docs/external-memory).
+For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [the guide to using Mem0 OSS as external memory](/docs/external-memory).
 
 ### Dreaming
 

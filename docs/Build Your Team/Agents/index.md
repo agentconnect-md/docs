@@ -9,7 +9,7 @@ Agents are the teammates your organization creates and operates in AgentConnect.
 - [Create an agent](/docs/create-an-agent) and choose its initial model, workspace, and daemon.
 - [Configure the agent](/docs/configure-an-agent) to refine its instructions, permissions, tools, and behavior.
 - [Choose workspaces and repositories](/docs/workspaces-and-repos) the agent can work in.
-- Add [external memory with Mem0 OSS](/docs/external-memory) when the agent should retain selected knowledge across sessions.
+- Follow [the guide to using Mem0 OSS as external memory](/docs/external-memory) when the agent should retain selected knowledge across sessions.
 - Register shared MCP providers and skill sources under [Tools & Skills](/docs/tools-and-skills), then enable the right capabilities for each agent.
 - Publish reviewed [Knowledge](/docs/knowledge) that every agent can find on demand.
 - Use the [Playground](/docs/playground) to test the agent before connecting more triggers and platforms.

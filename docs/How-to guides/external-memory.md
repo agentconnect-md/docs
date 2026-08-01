@@ -1,10 +1,12 @@
 ---
-title: 🧠 External memory with Mem0 OSS
-excerpt: Connect an agent to self-hosted Mem0, choose recall and capture policies, and inspect the resulting memory records.
+title: 🧠 Use Mem0 OSS as external memory
+excerpt: Connect an agent to self-hosted Mem0, configure recall and capture, and verify memory across sessions.
 hidden: false
 ---
 
 External memory lets an AgentConnect agent recall and save durable records in a memory system that you operate. This walkthrough uses [Mem0 OSS](https://github.com/mem0ai/mem0) with AgentConnect's first-party Mem0 wrapper.
+
+By the end, your organization will have one approved Mem0 connection and an agent that can capture a fact in one session and recall it in another.
 
 The data path has four parts:
 
