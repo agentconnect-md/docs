@@ -46,6 +46,8 @@ A cross-platform handoff keeps one session on the source platform and starts a l
 
 See [Hand off conversations between trusted workspaces](/docs/hand-off-conversations-across-messaging-platforms) for a Telegram-to-Slack example and a reusable agent instruction.
 
+Agent-to-agent work also creates linked parent and child sessions, while shared-bot routing and trigger fan-out keep each selected agent in its own session. Compare the relationships in [Multi-agent work modes](/docs/multi-agent-work-modes).
+
 ## Live sessions
 
 A session that's still running streams in place — typing indicators, new steps appearing as they happen. Playground/web sessions add a composer plus in-session switches (model, effort, permission mode, fast mode) and a **Cancel** button; see [Playground](/docs/playground).

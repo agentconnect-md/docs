@@ -8,6 +8,8 @@ A shared Slack bot lets one Slack App serve several AgentConnect agents. People 
 
 This is useful when different channels need different models, repositories, tools, or behavior without installing a separate Slack App for every agent.
 
+This is contextual routing from [Multi-agent work modes](/docs/multi-agent-work-modes#shared-bot-with-contextual-routing): one inbound message selects one agent rather than broadcasting to all of them.
+
 | Slack conversation | Default dispatch    | Trigger         | Example role                          |
 | ------------------ | ------------------- | --------------- | ------------------------------------- |
 | `#engineering`     | `engineering-agent` | **any message** | Implementation and repository work    |

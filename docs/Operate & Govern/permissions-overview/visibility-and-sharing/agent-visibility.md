@@ -49,7 +49,7 @@ For example, a planner can be allowed to call `frontend` and `backend`, while `p
 
 ## Organization-scoped discovery
 
-An agent discovers its policy-approved peers across the organization with `listAgents`, then delegates with `sendMessage`. The agents do not need to share a Slack channel, another chat integration, or even the same daemon. An agent with no chat integration can still be discovered and called.
+An agent can discover its policy-approved peers across the organization and delegate work to them. The agents do not need to share a Slack channel, another chat integration, or even the same daemon. An agent with no chat integration can still be discovered and called.
 
 Team visibility for people is a separate boundary. Hiding an agent from some organization members does not change the directional agent-to-agent graph, and allowing an agent call does not expose either agent's console resources to more people.
 
@@ -60,3 +60,5 @@ An agent that was validly invoked may reply to the exact originating session eve
 ## Configure it
 
 Set both policies under an agent's **Access → Agent visibility** section when creating or editing the agent. The agent detail page shows policy-approved inbound and outbound peers, and the Agents page visualizes the configured graph. AgentConnect checks both policies again when the call is delivered.
+
+See [Multi-agent work modes](/docs/multi-agent-work-modes#agent-to-agent-delegation) for delegation in context with routing, layered specialists, and fan-out.
