@@ -111,7 +111,7 @@
   <g filter="url(#shadow)">
     <rect
       x="690"
-      y="78"
+      y="50"
       width="840"
       height="140"
       rx="20"
@@ -120,23 +120,23 @@
       stroke-width="2"
     />
   </g>
-  <rect x="722" y="111" width="42" height="42" rx="11" fill="#4f46e5" />
+  <rect x="722" y="83" width="42" height="42" rx="11" fill="#4f46e5" />
   <text
     x="743"
-    y="139"
+    y="111"
     text-anchor="middle"
     style="font:700 17px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill:#ffffff"
   >
     AC
   </text>
-  <text x="782" y="132" class="card-title">Control Plane + console</text>
-  <text x="782" y="165" class="card-copy">
+  <text x="782" y="104" class="card-title">Control Plane + console</text>
+  <text x="782" y="137" class="card-copy">
     Configure the fleet, permissions, schedules, and the work each person may see.
   </text>
-  <rect x="1282" y="111" width="214" height="38" rx="10" fill="#ffffff" />
+  <rect x="1282" y="83" width="214" height="38" rx="10" fill="#ffffff" />
   <text
     x="1389"
-    y="136"
+    y="108"
     text-anchor="middle"
     style="font:700 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill:#4f46e5"
   >
@@ -144,12 +144,13 @@
   </text>
   <line
     x1="1110"
-    y1="218"
+    y1="190"
     x2="1110"
     y2="276"
     stroke="#4f46e5"
     stroke-width="4"
     stroke-dasharray="10 9"
+    marker-start="url(#arrow-blue)"
     marker-end="url(#arrow-blue)"
   />
   <text x="1130" y="255" class="path-label" fill="#4f46e5">
@@ -162,7 +163,7 @@
       x="64"
       y="190"
       width="450"
-      height="360"
+      height="410"
       rx="22"
       fill="#ffffff"
       stroke="#c9d0d9"
@@ -183,12 +184,14 @@
   <text x="194" y="425" text-anchor="middle" class="chip">Lark / Feishu</text>
 
   <text x="100" y="480" class="eyebrow">PUBLIC CALLBACKS</text>
-  <rect x="100" y="499" width="116" height="42" rx="10" fill="#f4f6f8" />
-  <text x="158" y="526" text-anchor="middle" class="chip">GitHub</text>
-  <rect x="228" y="499" width="132" height="42" rx="10" fill="#f4f6f8" />
-  <text x="294" y="526" text-anchor="middle" class="chip">Webhook</text>
-  <rect x="372" y="499" width="106" height="42" rx="10" fill="#f4f6f8" />
-  <text x="425" y="526" text-anchor="middle" class="chip">Webchat</text>
+  <rect x="100" y="499" width="242" height="42" rx="10" fill="#f4f6f8" />
+  <text x="221" y="526" text-anchor="middle" class="chip">Slack / Lark / Feishu HTTP</text>
+  <rect x="354" y="499" width="124" height="42" rx="10" fill="#f4f6f8" />
+  <text x="416" y="526" text-anchor="middle" class="chip">GitHub</text>
+  <rect x="100" y="547" width="132" height="42" rx="10" fill="#f4f6f8" />
+  <text x="166" y="574" text-anchor="middle" class="chip">Webhook</text>
+  <rect x="244" y="547" width="116" height="42" rx="10" fill="#f4f6f8" />
+  <text x="302" y="574" text-anchor="middle" class="chip">Webchat</text>
 
   <!-- Direct live path -->
   <line
@@ -207,19 +210,19 @@
 
   <!-- Optional Relay path -->
   <path
-    d="M 514 520 H 550 V 598"
+    d="M 514 550 H 550 V 623"
     fill="none"
     stroke="#0f766e"
     stroke-width="5"
     marker-end="url(#arrow-teal)"
   />
-  <text x="542" y="573" text-anchor="end" class="path-label" fill="#0f766e">
+  <text x="542" y="612" text-anchor="end" class="path-label" fill="#0f766e">
     Callback ingress
   </text>
   <g filter="url(#shadow)">
     <rect
       x="246"
-      y="600"
+      y="625"
       width="364"
       height="150"
       rx="20"
@@ -228,23 +231,23 @@
       stroke-width="2"
     />
   </g>
-  <text x="278" y="648" class="card-title">Relay</text>
-  <rect x="380" y="619" width="110" height="34" rx="17" fill="#ccfbf1" />
+  <text x="278" y="673" class="card-title">Relay</text>
+  <rect x="380" y="644" width="110" height="34" rx="17" fill="#ccfbf1" />
   <text
     x="435"
-    y="642"
+    y="667"
     text-anchor="middle"
     style="font:700 15px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill:#0f766e"
   >
     OPTIONAL
   </text>
-  <text x="278" y="682" class="card-copy">Verify callbacks and forward them</text>
-  <text x="278" y="712" class="card-copy">without persisting message content.</text>
+  <text x="278" y="707" class="card-copy">Verify callbacks and forward them</text>
+  <text x="278" y="737" class="card-copy">without persisting message content.</text>
   <line
     x1="610"
-    y1="675"
+    y1="700"
     x2="690"
-    y2="675"
+    y2="700"
     stroke="#0f766e"
     stroke-width="6"
     marker-end="url(#arrow-teal)"
@@ -294,7 +297,7 @@
   </text>
   <text x="802" y="467" class="agent-title">Claude Code</text>
   <text x="802" y="493" class="agent-copy">support-agent</text>
-  <text x="758" y="536" class="agent-copy">Own role and workspace</text>
+  <text x="758" y="536" class="agent-copy">Role · workspace</text>
 
   <rect x="976" y="432" width="220" height="132" rx="16" fill="#ffffff" stroke="#e7c7d7" />
   <circle cx="1014" cy="469" r="19" fill="#11161d" />
@@ -308,7 +311,7 @@
   </text>
   <text x="1046" y="467" class="agent-title">Codex</text>
   <text x="1046" y="493" class="agent-copy">review-agent</text>
-  <text x="1002" y="536" class="agent-copy">Own model and permissions</text>
+  <text x="1002" y="536" class="agent-copy">Model · permissions</text>
 
   <rect x="1220" y="432" width="274" height="132" rx="16" fill="#ffffff" stroke="#e7c7d7" />
   <circle cx="1258" cy="469" r="19" fill="#f1e7f7" />
@@ -322,7 +325,7 @@
   </text>
   <text x="1290" y="467" class="agent-title">Any ACP agent</text>
   <text x="1290" y="493" class="agent-copy">your next specialist</text>
-  <text x="1246" y="536" class="agent-copy">Agents can call each other</text>
+  <text x="1246" y="536" class="agent-copy">Can call other agents</text>
 
   <line x1="952" y1="498" x2="976" y2="498" stroke="#c62a78" stroke-width="3" />
   <line x1="1196" y1="498" x2="1220" y2="498" stroke="#c62a78" stroke-width="3" />
