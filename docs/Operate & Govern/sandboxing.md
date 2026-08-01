@@ -18,6 +18,18 @@ These controls compose; none replaces another:
 
 Use permission modes to shape normal agent behavior. Use sandboxing to limit the effect of a runtime, tool, or prompt that behaves unexpectedly.
 
+## Runtime sandbox support
+
+AgentConnect can place any ACP runtime inside the outer Linux OS sandbox when its daemon supports **Run in sandbox**. Some runtimes can also add a second, runtime-native boundary around model-authored tool processes. That inner layer is runtime-specific and does not replace the outer sandbox.
+
+| Runtime | Runtime-native tool sandbox in AgentConnect | What happens when **Run in sandbox** is on |
+| --- | --- | --- |
+| **Claude Code** | **Available** | AgentConnect automatically enables Claude's native Bash sandbox inside the outer OS sandbox. Model-authored Bash commands and their child processes cannot read the Claude credentials available to the trusted parent runtime. Claude's in-process file tools and trusted stdio MCP servers are not moved into the inner sandbox; they remain inside the outer AgentConnect boundary. |
+| **Codex** | **Pending** | The runtime runs inside the outer AgentConnect OS sandbox. AgentConnect does not yet add a second, credential-isolating tool boundary; Codex permission modes still control its normal approval and access policy. |
+| **Other ACP runtimes** | **Not integrated** | The runtime runs inside the outer AgentConnect OS sandbox, without an additional runtime-native tool sandbox managed by AgentConnect. |
+
+The table describes integration in AgentConnect, not every sandbox feature a runtime may offer when used on its own. For every runtime except the Claude Code case above, treat the outer OS sandbox as the documented isolation boundary.
+
 ## Prepare a Linux daemon
 
 The host must provide:
@@ -95,7 +107,7 @@ The runtime can read the workspace, its private home and memory, AgentConnect-ma
 
 The sandbox hides the daemon configuration and state, other agents' directories, the daemon user's home and runtime-state directories, and shared temporary directories. A process cannot make host-filesystem changes outside the allowed write roots even if the same path appears writable inside its private mount namespace.
 
-Claude Code, Codex, Qoder CLI, and Qoder CN CLI keep using the login of the OS user that runs the daemon through narrowly exposed credential storage, so token refreshes can persist. The rest of each runtime's state lives in its private home. Treat model-provider identity as daemon-user scoped: use separate daemon users or machines when agents must use different provider accounts.
+The trusted parent process for Claude Code, Codex, Qoder CLI, and Qoder CN CLI keeps using the login of the OS user that runs the daemon through narrowly exposed credential storage, so token refreshes can persist. The rest of each runtime's state lives in its private home. When Claude Code's inner tool sandbox is active, model-authored Bash cannot read the Claude credentials retained by that trusted parent. Treat model-provider identity as daemon-user scoped: use separate daemon users or machines when agents must use different provider accounts.
 
 ## Current limits
 
