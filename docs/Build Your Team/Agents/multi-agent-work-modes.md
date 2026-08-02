@@ -36,18 +36,18 @@ Use this mode when the roles serve different teams or workflows and their output
 
 ## Shared conversation
 
-**Use this for direct collaboration.** Bring several agents into the same private Playground or Slack thread and watch their work together.
+**Use this for direct collaboration.** Bring several agents into the same Playground or IM conversation and watch their work together. Supported chat platforms are Slack, Telegram, Discord, Lark, and Feishu.
 
 ```mermaid
 flowchart LR
-  Person["People"] --> Conversation["Playground or Slack thread"]
+  Person["People"] --> Conversation["Playground or IM conversation"]
   Conversation --> Coding["Coding agent"]
   Conversation --> Review["Review agent"]
   Coding --> Conversation
   Review --> Conversation
 ```
 
-A Playground message without an explicit mention reaches every participant; `@AgentName` narrows a turn to the named agents. In Slack, address the agents through their bot identities and ordinary channel trigger rules. Every agent keeps its own configuration and session while the console presents the participant work as one conversation.
+A Playground message without an explicit mention reaches every participant; `@AgentName` narrows a turn to the named agents. In a chat platform, address agents through their bot identities and normal conversation trigger rules. Every agent keeps its own configuration and session while the console presents the participant work as one conversation.
 
 Use this mode when people want agents to compare approaches or contribute different specialties in real time. For an agent coordinating other agents, use delegation below. See [Playground](/docs/playground) and [Sessions](/docs/sessions) for the conversation behavior.
 

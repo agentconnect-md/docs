@@ -24,7 +24,7 @@ The transcript separates messages, reasoning, plans, tool calls, and file edits.
 
 ## When several agents share a conversation
 
-Each agent still runs in its own session with its own configuration and permissions. In a multi-agent Playground or Slack thread, the console presents those participant sessions as one conversation with attributed activity and combined current usage.
+Each agent still runs in its own session with its own configuration and permissions. In a multi-agent Playground or supported IM conversation, the console presents those participant sessions as one conversation with attributed activity and combined current usage. This applies to Slack, Telegram, Discord, Lark, and Feishu conversations.
 
 This grouping is a view over the sessions, not a new permission boundary. You see only the participant work you are allowed to read. See [Multi-agent work modes](/docs/multi-agent-work-modes) for ways to bring agents together.
 
