@@ -1,5 +1,5 @@
 ---
-title: 🔐 Linked-account permissions
+title: 👤 Linked-account permissions
 excerpt: Understand exactly what changes—and what does not—when one profile links GitHub, Google, and Slack.
 hidden: false
 ---

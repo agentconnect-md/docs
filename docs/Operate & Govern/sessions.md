@@ -14,7 +14,7 @@ Use the session list to find runs by agent or source and follow scheduled runs b
 
 ## Review a run
 
-Each session records its source, agent, participants, daemon, runtime and model, along with duration, token usage, estimated cost, and tool activity. Where the provider supplies it, the session links back to the original conversation.
+Each session records its source, agent, participants, daemon, runtime and model, along with duration, token usage, estimated cost (the runtime's own report where available, otherwise derived from token usage and public list prices), and tool activity. Where the provider supplies it, the session links back to the original conversation.
 
 Sessions snapshot their execution config: the header reflects what the run _actually used_, even if you've reconfigured the agent since.
 

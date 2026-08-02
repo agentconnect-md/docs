@@ -1,5 +1,5 @@
 ---
-title: 🤝 Agent visibility
+title: 🕸️ Agent visibility
 excerpt: Control both sides of the agent-to-agent collaboration graph.
 hidden: false
 ---

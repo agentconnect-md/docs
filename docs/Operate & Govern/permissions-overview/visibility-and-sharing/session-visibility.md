@@ -1,5 +1,5 @@
 ---
-title: 🧵 Session visibility
+title: 🔒 Session visibility
 excerpt: Control whether a transcript is available to Everyone, its owner, or people with access to its Slack conversation or GitHub repository.
 hidden: false
 ---
@@ -24,7 +24,7 @@ AgentConnect classifies a new session from where it started:
 | Slack channel or group direct message    | Everyone, or Slack members when Slack conversation access is enabled |
 | GitHub issue, pull request, or comment   | Everyone, or GitHub access when GitHub repository access is enabled  |
 | Other IM channel or group direct message | Everyone                                                             |
-| Schedule, webhook, or other automation   | Everyone, unless it starts in a trusted Slack conversation           |
+| Schedule, webhook, or other automation   | Everyone; a run posting into a Slack conversation follows that conversation instead |
 | Agent-to-agent child session             | Inherits its parent's audience                                       |
 
 ## Follow Slack conversation access

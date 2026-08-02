@@ -1,5 +1,5 @@
 ---
-title: 🔗 MCP connector
+title: 🧩 MCP connector
 excerpt: Add AgentConnect to Claude or any MCP client — inspect and manage agents, sessions, schedules and integrations in plain language.
 hidden: false
 ---
