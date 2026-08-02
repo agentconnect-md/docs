@@ -129,7 +129,7 @@ The Relay is optional in the AgentConnect architecture, but it is included in th
 | Path | Used for | Public ingress |
 | --- | --- | --- |
 | Daemon direct | Slack Socket Mode, Telegram, Discord, Lark / Feishu | No |
-| Relay | GitHub, webhooks, webchat, Agent API, HTTP bots | Yes |
+| Relay | GitHub, webhooks, webchat, HTTP bots | Yes |
 
 Relay-delivered messages go directly from the Relay to the owning daemon. The Control Plane distributes routing metadata, but it does not carry or persist the message body.
 

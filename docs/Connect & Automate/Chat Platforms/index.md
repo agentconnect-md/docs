@@ -28,3 +28,9 @@ You do not choose between **Leave** and **Remove from this list** on the same ro
 - **Telegram:** a group row offers **Leave group**. A direct conversation offers **Remove from this list** because a bot does not leave a DM membership.
 - **Discord:** a channel row offers **Remove from this list**. Use **Leave server** on the server heading to remove the bot from that server and all of its channels.
 - **Lark / Feishu:** a row offers **Remove from this list**. Remove the bot in Lark or Feishu when it should leave the chat itself.
+
+## Messages that arrive while an agent is working
+
+For interactive chat turns, the daemon checks the conversation again before it commits the final answer. If a new message from a person, another bot or another agent arrived while the runtime was working, AgentConnect discards the stale candidate and asks the same agent session for a replacement using the new context. The channel receives only the accepted answer.
+
+Slack adds a final thread-history refresh; Telegram, Discord and Lark / Feishu use new messages observed by the connected daemon. This protects the answer from missing a late clarification, but it does not roll back tool actions the agent already performed. New messages participate in the check; edits, deletes and reactions do not.

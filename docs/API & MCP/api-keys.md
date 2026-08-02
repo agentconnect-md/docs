@@ -36,5 +36,4 @@ The same key also authenticates the [MCP connector](/docs/mcp-connector) in head
 ## Other credentials, for completeness
 
 - **Daemon keys** — minted by **Add daemon**, they authenticate a *machine*, not a person. Shown once in the install command; revoked when the daemon is deleted.
-- **Webchat tokens** — short-lived, per-conversation tokens your code mints (with a personal key) to stream an agent over WebSocket; see the agent's [API tab](/docs/configure-an-agent).
 - **Bot tokens** — belong to the chat platforms; see [Bots](/docs/bots).

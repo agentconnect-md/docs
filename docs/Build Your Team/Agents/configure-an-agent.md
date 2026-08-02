@@ -1,10 +1,10 @@
 ---
 title: ⚙️ Configure an agent
-excerpt: Edit an agent's persona, runtime behavior, placement, workspace, access, memory, tools and API.
+excerpt: Edit an agent's persona, runtime behavior, placement, workspace, access, memory, tools and skills.
 hidden: false
 ---
 
-Open any agent from **Agents** to reach its page: status, meta chips (model, daemon, integrations, session count), a **Playground** button, and tabs — **Integrations**, **Configuration**, **Workspace**, **Memory**, **API**, and **Tools & Skills**.
+Open any agent from **Agents** to reach its page: status, meta chips (model, daemon, integrations, session count), a **Playground** button, and tabs — **Integrations**, **Configuration**, **Workspace**, **Memory**, and **Tools & Skills**.
 
 ## Configuration
 
@@ -22,6 +22,7 @@ Other runtime behavior settings include:
 
 - **Allow change in chat** — when on, chat users can change session runtime settings and answer approval requests. When off, only people who can edit the agent can do so.
 - **Show footer** — add the agent, runtime, model and session links to replies.
+- **Show status bar** — show model, context, usage and session controls in Slack threads. This is on by default and does not add a status row on other chat platforms.
 - **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
 - **Run in sandbox** — place the runtime inside AgentConnect's Linux OS sandbox. The control is **Unavailable** when the selected daemon cannot enforce it and **Required** when the daemon operator has locked it on. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/docs/sandboxing).
 
@@ -34,6 +35,14 @@ The Description card is edited separately. It is not just display copy: AgentCon
 Choose another daemon in **Edit** to cold-move the agent. Save the move separately from other configuration changes. Both source and target must be online, ready and support agent moves; the target must also support the selected runtime, model and MCP servers.
 
 AgentConnect drains the active turn and reprovisions the control-plane-owned definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcript data. The source archive remains on the old machine, GitHub workspaces are cloned again, and old session bodies cannot be loaded from the console after the move.
+
+### Recover from a stopped source daemon
+
+A safe move cannot finish while the source daemon is offline because AgentConnect cannot confirm that its copy stopped. After you select an online, compatible destination, the editor offers **Force reassign** as a disaster-recovery action.
+
+Use it only when the source machine is permanently stopped and cannot reconnect. You must confirm that condition before the action is enabled. Force reassign bypasses only the source acknowledgement; the target must still be ready and compatible with the agent's runtime, model, MCP servers and managed skills.
+
+If the source is still running, both copies may process messages. A source that reconnects later is told to detach its stale copy, but that reconciliation is not a substitute for shutting the machine down first. Force reassign is still a cold reprovision: workspace files, memory, transcripts and attachments remain on the source machine.
 
 ## Pause
 
@@ -67,12 +76,6 @@ For a complete external-backend walkthrough, including recall/capture policies a
 With **Managed** memory, Dreaming can periodically consolidate recent memory and session history. Its default policy schedules a run every day at 04:00 in the daemon's timezone and leaves completed memory results for review. You can turn Dreaming off, remove the schedule for manual-only runs, explicitly opt in to automatic adoption, and optionally mine reusable skills. A Dream may also propose [Knowledge or managed skills](/docs/knowledge), but an organization Owner must review each shared proposal before it is published.
 
 > **Temporary safety pause:** Production daemons currently keep Dream execution and staged-result operations disabled while the isolation and review boundary is hardened. You can retain Dream settings and view historical job metadata, but manual and scheduled runs do not execute, and staged memory, skill, or Knowledge content cannot be opened, adopted, rejected, or discarded. Existing agents and ordinary managed-memory capture continue to work.
-
-## API
-
-The **API** tab shows how to talk to this agent from your own code: you mint a short-lived conversation token over REST (authenticated with an [API key](/docs/api-keys)), then open a WebSocket to the returned relay URL and stream the run — `ready`, `ack`, `output`, `done`, `error` events. Message content flows between you, the relay and the daemon; it never passes through the control plane. The tab includes a copy-paste JavaScript snippet wired to this agent's IDs.
-
-For the REST surface (agents, sessions, schedules — everything the console does), see the [API reference](/reference).
 
 ## Tools & Skills
 

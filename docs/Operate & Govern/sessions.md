@@ -18,6 +18,8 @@ The header carries the facts: agent, integration and channel (with a link to the
 
 Sessions snapshot their execution config: the header reflects what the run _actually used_, even if you've reconfigured the agent since.
 
+On desktop, a session detail page shows a left rail of the same agent's other sessions once the agent has at least two. You can pin sessions you compare often; pins stay in that browser and do not change server metadata or access.
+
 ### The transcript
 
 User turns show the sender and the source (e.g. a `SLACK` chip). Agent turns are broken into steps, each tagged with a lane:

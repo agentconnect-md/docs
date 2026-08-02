@@ -35,19 +35,29 @@ The Skills library contains two source types with different lifecycles:
 
 | Source type | How it gets there | Lifecycle |
 | --- | --- | --- |
-| **Git skill source** | Import a repository with `SKILL.md` directories | Editable; updates reinstall enabled sources |
+| **Git skill source** | Search skills.sh or import a GitHub repository | Editable; updates reinstall enabled sources |
 | **Managed skill** | An Owner accepts a suggestion | Immutable revisions; archive or restore |
 
-Managed skills and Git sources remain clearly labeled even though they share one library. Accepting or importing a skill never enables it automatically.
+Managed skills and Git sources remain clearly labeled even though they share one library. Adding a skill to the library never enables it automatically.
 
-### Import a Git skill source
+### Install from skills.sh
+
+Use the public [skills.sh](https://skills.sh) registry when you know the capability you want but not its repository:
+
+1. Open **Tools & Skills → Skills library** and choose **Install from skills.sh**.
+2. Search by skill name and select a result.
+3. Optionally change its library name, choose its team visibility, and select **Install**.
+
+Each result registers exactly that skill from its `owner/repo` source. It becomes an ordinary Git skill source in the organization library and remains disabled until you enable it for an agent. If the registry cannot be reached, retry later or use **Import from GitHub** with a repository you already know.
+
+### Import from GitHub
 
 1. Open **Tools & Skills → Skills library** and choose **Import from GitHub**.
 2. Enter `owner/repo` or a GitHub repository URL. The repository should contain each skill in a folder with a `SKILL.md` file.
 3. Optionally set a display name, branch/tag/commit **Ref**, **Subdir**, or a list of specific **Skills**. Leave Skills blank to include all discovered skills.
 4. Choose its team visibility and select **Import**.
 
-Only public skill repositories are supported today. If you set **Subdir**, provide a **Ref** unless AgentConnect can resolve the repository's default branch through the organization's GitHub App.
+Both registry installation and direct import support only public skill repositories today. If you set **Subdir**, provide a **Ref** unless AgentConnect can resolve the repository's default branch through the organization's GitHub App.
 
 The owning daemon materializes enabled sources with `npx skills add`. Pin a tag or commit when you need reproducible skill content; a moving branch can resolve to newer repository content when it is installed again. Before deleting a source, disable it on every agent that uses it.
 
