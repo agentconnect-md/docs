@@ -26,7 +26,7 @@ AgentConnect classifies a new session from where it started:
 | Lark or Feishu group chat                | Everyone, or Feishu / Lark members when chat access is enabled        |
 | GitHub issue, pull request, or comment   | Everyone, or GitHub access when repository access is enabled          |
 | Telegram or Discord shared conversation  | Everyone                                                              |
-| Schedule, webhook, or other automation   | Everyone; a run posting into a Slack conversation follows that conversation instead |
+| Schedule, webhook, or other automation   | Everyone, or the destination audience for Slack, Lark, or Feishu                    |
 | Agent-to-agent child session             | Inherits its parent's audience                                       |
 
 ## Follow Slack conversation access
@@ -111,4 +111,4 @@ For the effect of linking several providers, see [Permissions with linked accoun
 
 Provider-based session access requires optional OIDC sign-in, linked identities, and working Logto identity lookup. Slack access also needs conversation checks; Lark and Feishu need matching regional platform apps and chat-membership checks; GitHub needs repository checks. Local no-auth mode does not infer a linked provider profile.
 
-See [Optional Logto sign-in](/docs/deployment-and-configuration#optional-logto-sign-in) and [Enable social account linking](/docs/deployment-and-configuration#enable-social-account-linking) for setup.
+See [Optional Logto sign-in](/docs/deployment-and-configuration#optional-logto-sign-in), [Enable social account linking](/docs/deployment-and-configuration#enable-social-account-linking), and [Lark and Feishu session access](/docs/deployment-and-configuration#lark-and-feishu-session-access) for setup.

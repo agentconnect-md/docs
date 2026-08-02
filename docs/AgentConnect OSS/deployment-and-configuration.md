@@ -402,6 +402,21 @@ Google and Slack accept multiple redirect URLs. For GitHub, use a GitHub App tha
 
 After restart, the avatar menu → **Your profile → Sign-in methods** shows the configured providers. The last linked method cannot be removed. See [Social account linking](/docs/social-account-linking) for the user-facing behavior and its current permission boundary.
 
+### Lark and Feishu session access
+
+Adding `lark` or `feishu` to `SOCIAL_PROVIDERS` enables sign-in and Profile linking only. To use a linked identity for direct-message ownership or current chat-membership checks, the Control Plane also needs the regional platform app used by both the Logto connector and the messaging integration:
+
+```dotenv
+FEISHU_PLATFORM_APP_ID=<app-id>
+FEISHU_PLATFORM_APP_SECRET=<app-secret>
+LARK_PLATFORM_APP_ID=<app-id>
+LARK_PLATFORM_APP_SECRET=<app-secret>
+```
+
+Each regional pair is optional, but its ID and secret must be set together. Lark and Feishu are independent; configure only the regions your deployment offers.
+
+> The stock `compose.yaml` does not currently forward these four values to the Control Plane. The default Compose stack can offer Lark or Feishu sign-in and Profile linking, but leave **Follow Feishu / Lark access** off unless your deployment injects the matching pair through a Compose override or another orchestrator.
+
 Restart the affected services after changing the file:
 
 ```bash
