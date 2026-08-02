@@ -12,6 +12,6 @@ Read [Bots](/docs/bots) to understand reusable bot identities and shared-bot rou
 
 ## Manage conversations
 
-After a bot discovers a channel, group, server, or gated direct message, the conversation appears on the agent's integration. Choose whether the agent responds only to mentions, to any message, or not at all.
+After a bot discovers a channel, group, or gated direct message, the conversation appears on the agent's integration. Channels and groups can respond only to mentions, to any message, or not at all; gated direct messages use **On** or **Off**.
 
 Turning a conversation **Off** mutes inbound activation without removing the bot or preventing deliberate outbound work such as schedules and agent handoffs. Manage actual bot membership in the chat platform when you want the bot to leave a conversation.

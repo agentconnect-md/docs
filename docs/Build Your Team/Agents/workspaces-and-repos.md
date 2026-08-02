@@ -30,7 +30,7 @@ With an app-installed repository the daemon never stores a git credential. Each 
 
 ## The Workspace tab
 
-The agent's **Workspace** tab reads the working tree directly from its daemon. Authorized users can inspect and edit files or pull repository updates, but the view is unavailable while that daemon is offline because the files exist only on that machine.
+The agent's **Workspace** tab reads the working tree directly from its daemon. Authorized users can inspect any workspace, edit files in a scratch workspace, or pull updates for a GitHub workspace. The view is unavailable while that daemon is offline because the files exist only on that machine.
 
 ## Change the workspace source
 
