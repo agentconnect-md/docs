@@ -36,7 +36,7 @@ There's no channel picker: **invite the bot to a channel and it appears in Agent
 - **Any message** — run the channel's agent for every message.
 - **Off** — do not respond in that channel, including to mentions, existing thread affinity, control commands, or shared-bot fallback.
 
-Off keeps the bot in the channel, preserves its row and past sessions, and only mutes inbound activation. A schedule or another agent's deliberate handoff can still post there. Each row menu shows one platform-appropriate exit action: either leave through AgentConnect or only remove the row from the list. The individual chat-platform guides explain which outcome applies. The org-wide channel roster for each bot lives in **Settings → Bots**.
+Off keeps the bot in the channel, preserves past sessions, and only mutes inbound activation. A schedule or another agent's deliberate handoff can still post there. Manage the bot's actual channel or server membership on the chat platform.
 
 ### Shared bots
 

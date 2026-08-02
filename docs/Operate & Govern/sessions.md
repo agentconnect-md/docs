@@ -1,6 +1,6 @@
 ---
 title: 🧵 Sessions
-excerpt: Every agent run, replayable — filters, the transcript anatomy, tool call detail, and live sessions.
+excerpt: Review agent runs, inspect transcripts, and understand where session data lives.
 hidden: false
 ---
 
@@ -8,31 +8,19 @@ hidden: false
 
 ![A session transcript](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-detail.png)
 
-## The list
+## Find a session
 
-Each row shows the session title, when it ran and what triggered it, the agent, the integration + channel, status, and tokens. Filter by **agent**, **integration**, **channel**, or **trigger** — triggers group into **People** (who wrote), **Webhooks** and **Schedules**. Sessions triggered by a schedule link back to it.
+Use the session list to find runs by agent or source and follow scheduled runs back to the schedule that created them.
 
-## Inside a session
+## Review a run
 
-The header carries the facts: agent, integration and channel (with a link to the original thread — e.g. the Slack permalink), daemon, runtime + model, participants, and a **Copy link** button. Stat cards summarize **Duration**, **Tokens**, **Cost**, **Tool calls**, and a **Token usage** card breaks tokens down: **Input / Output / Thought / Cache read / Cache write / Context** (how full the context window is) — whatever the runtime reports.
+Each session records its source, agent, participants, daemon, runtime and model, along with duration, token usage, estimated cost, and tool activity. Where the provider supplies it, the session links back to the original conversation.
 
 Sessions snapshot their execution config: the header reflects what the run _actually used_, even if you've reconfigured the agent since.
 
-On desktop, a session detail page shows a left rail of the same agent's other sessions once the agent has at least two. You can pin sessions you compare often; pins stay in that browser and do not change server metadata or access.
-
 ### The transcript
 
-User turns show the sender and the source (e.g. a `SLACK` chip). Agent turns are broken into steps, each tagged with a lane:
-
-| Lane      | Meaning                                      |
-| --------- | -------------------------------------------- |
-| **MSG**   | A message posted to the conversation         |
-| **THINK** | The agent's reasoning                        |
-| **PLAN**  | A plan it laid out                           |
-| **TOOL**  | A tool call — command, API call, file read   |
-| **EDIT**  | A file edit, with the touched files as chips |
-
-Tool steps expand (**View detail**) into the raw **input / output / content / locations**, with diffs rendered and big payloads truncated behind **View full**.
+The transcript separates messages, reasoning, plans, tool calls, and file edits. Tool activity includes the available input and output, with diffs for file changes, so you can understand how the agent reached its result.
 
 ## Where transcripts live
 
@@ -52,4 +40,4 @@ Agent-to-agent work also creates linked parent and child sessions, while shared-
 
 ## Live sessions
 
-A session that's still running streams in place — typing indicators, new steps appearing as they happen. Playground/web sessions add a composer plus in-session switches (model, effort, permission mode, fast mode) and a **Cancel** button; see [Playground](/docs/playground).
+Running sessions update in place. Sessions started in the [Playground](/docs/playground) can also be continued from the browser.

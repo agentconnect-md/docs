@@ -21,7 +21,7 @@ All organization members can read published Knowledge and see configured connect
 2. Choose **Publish knowledge** and add the title, Markdown content, and optional summary and tags.
 3. Publish the entry.
 
-Editing an entry publishes a new immutable revision instead of overwriting its history. Archive an entry when agents should stop finding it; turn on **Include archived** to inspect or restore archived content.
+Editing an entry publishes a new immutable revision instead of overwriting its history. Archive an entry when agents should stop finding it; archived content can be inspected or restored later.
 
 ## Review Dream suggestions
 
@@ -30,9 +30,8 @@ Editing an entry publishes a new immutable revision instead of overwriting its h
 > **Temporary safety pause:** Production daemons currently keep Dream execution and staged suggestion review disabled while the isolation and review boundary is hardened. Existing suggestion metadata may remain visible, but its content and review actions are unavailable until that boundary is re-enabled.
 
 1. Open **Knowledge → Suggestions** as an organization Owner.
-2. Filter **Pending**, **Accepted**, or **Rejected** suggestions.
-3. Inspect the proposed Markdown or complete skill file tree and its source sessions.
-4. **Accept** it to create an approved immutable revision, or **Reject** it and keep the decision in review history.
+2. Inspect the proposed Markdown or complete skill file tree and its source sessions.
+3. **Accept** it to create an approved immutable revision, or **Reject** it and keep the decision in review history.
 
 Pending proposal bodies remain on the source daemon until review. If that daemon is offline, upgrading, or paused for safety, the suggestion metadata remains visible, but its content cannot be opened or reviewed until the source is ready again. Once accepted, Knowledge and managed-skill revisions are stored centrally so the team can use them independently of the proposing daemon.
 

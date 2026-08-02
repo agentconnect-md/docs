@@ -30,13 +30,7 @@ With an app-installed repository the daemon never stores a git credential. Each 
 
 ## The Workspace tab
 
-The agent page's **Workspace** tab is a live view into the working tree on the daemon — no upload involved:
-
-- an editable workspace card with the source, current branch, access level, a **Pull latest** button (GitHub mode), and **View on GitHub**;
-- a file tree with change badges and file preview;
-- a summary like *"128 items · 3 changed"*.
-
-If the daemon is offline the tab can't load — the files exist only there.
+The agent's **Workspace** tab reads the working tree directly from its daemon. Authorized users can inspect any workspace, edit files in a scratch workspace, or pull updates for a GitHub workspace. The view is unavailable while that daemon is offline because the files exist only on that machine.
 
 ## Change the workspace source
 

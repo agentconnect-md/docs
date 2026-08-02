@@ -1,10 +1,10 @@
 ---
 title: 🛠️ Manage daemons
-excerpt: What the Daemons pages tell you — status, detected runtimes, resources — and the actions you can take.
+excerpt: Monitor daemon health, maintain services, and move agents safely between machines.
 hidden: false
 ---
 
-**Daemons** in the console lists every machine connected to your organization. Each card shows the daemon's name, version, status, live CPU and memory utilization, how many agents it hosts, and when it was last seen.
+**Daemons** lists the machines connected to your organization. Open one to inspect its health, available runtimes, resources, hosted agents, capabilities, and visibility.
 
 ![The Daemons list](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png)
 
@@ -17,23 +17,10 @@ hidden: false
 
 Transcripts owned by an offline daemon cannot be fetched until it reconnects.
 
-A daemon that never finished onboarding remains unconnected while the Add daemon flow waits for its first connection.
-
 An Owner-triggered restart or upgrade appears as a temporary **Restarting** or **Upgrading** operation. AgentConnect considers it successful only after the daemon re-registers; a timeout or failed health check is reported as failed rather than being inferred from a lost connection.
-
-## Daemon detail
-
-Click a daemon to open it:
-
-- **Runtimes** — what the daemon detected on the machine: each runtime (Claude Code, Codex, …) with its version, the models it reports, its MCP servers, and how many of your agents use it. This card is the ground truth for what the agent-creation pickers offer.
-- **Resources** — live CPU and memory.
-- **Agents** — the agents hosted here, with model and status.
-- **Capabilities** — what the daemon reported on register: ACP support, platform adapters (Slack, Telegram, Discord, Lark / Feishu), and features such as the Linux **sandbox** capability or the daemon-wide **sandbox-required** policy.
-- **Details** — version, last seen, created/modified, and [visibility](/docs/visibility-and-sharing).
 
 ## Actions
 
-- **Rename** — daemons get a generated name on first connect; double-click the name (or use the ⋯ menu) to give it a human one. Names like `build-box` or `dev-laptop` pay off once you have several.
 - **Restart** (online daemons, Owners) — drains work and asks the service supervisor to relaunch the same version.
 - **Upgrade** (online daemons, Owners) — installs a selected release, drains and relaunches, then health-checks the result. A failed upgrade rolls back when possible.
 - **Reconnect** (offline daemons) — mints a fresh one-time token and shows a command to run on that host. Its identity and agent placements are preserved.
@@ -45,11 +32,9 @@ Every placed agent runs on one daemon — that machine owns its workspace, runti
 
 A move cold-reprovisions the saved agent definition; it does not migrate daemon-local workspace, memory or transcript bytes. Commit or back up local work first, and expect GitHub workspaces to be cloned again on the target.
 
-If the source daemon is offline because its machine is permanently stopped, select a compatible online destination and use the guarded **Force reassign** recovery action. Do not use it for a temporarily disconnected machine: two live copies may process messages. See [Recover from a stopped source daemon](/docs/configure-an-agent#recover-from-a-stopped-source-daemon).
-
 ## Troubleshooting
 
 - **Stuck “Waiting for daemon…” in Add daemon** — the command probably failed in your terminal. Check that Node is ≥ 24 (`node -v`) and that the machine can reach your control-plane URL over HTTPS/WSS.
 - **Daemon shows offline but the process is running** — check the log (`npx -y @agentconnect.md/cli status` prints its path, default `~/.agentconnect/logs/daemon.log`). Repeated `connect/handshake failed` usually means the key was revoked — use **Reconnect** for that daemon, or onboard a new one if it was deleted.
-- **Runtime missing from the pickers** — run `command -v <runtime>` as the same OS user that owns the daemon service, then restart it. The service reloads that user's login-shell environment on each start. If the runtime is still missing, check the daemon log for a shell-profile fallback or error.
+- **Runtime missing from the pickers** — make sure the runtime is installed, authenticated, and on `PATH` for the OS user that owns the daemon service. Restart the daemon, then check its log if the runtime is still missing.
 - **Run in sandbox is unavailable** — the selected daemon did not pass the live Linux sandbox probe. Check its OS, `bubblewrap` / `ripgrep` / `socat` dependencies, user-namespace policy and logs, then restart it. See [Sandboxing](/docs/sandboxing).
