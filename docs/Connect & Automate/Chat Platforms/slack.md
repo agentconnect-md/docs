@@ -8,7 +8,7 @@ On **AgentConnect Cloud**, the recommended path is the built-in **Add to Slack**
 
 ## Add AgentConnect to Slack on Cloud
 
-The built-in Slack app belongs to the built-in `agentconnect` agent. Place that agent on a daemon and choose its runtime and model first, then use either entry point:
+The built-in Slack app belongs to the built-in `agentconnect` agent — the preset agent AgentConnect creates for every organization. Place that agent on a daemon and choose its runtime and model first, then use either entry point:
 
 - open the **Getting started** card and choose **Add to Slack**; or
 - open the `agentconnect` agent, then **Integrations → Add integration → Slack**.

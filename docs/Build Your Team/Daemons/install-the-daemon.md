@@ -1,5 +1,5 @@
 ---
-title: 🖥️ Install the daemon
+title: 📥 Install the daemon
 excerpt: Put the AgentConnect daemon on any machine — one command to try it, one more to make it permanent.
 hidden: false
 ---

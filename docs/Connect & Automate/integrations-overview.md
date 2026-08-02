@@ -54,14 +54,17 @@ When an agent's team visibility is **Selected**, its chat conversations are gate
 
 ## In-conversation commands
 
-In any channel conversation, a couple of commands are handled by the daemon itself (never sent to the agent) — they work even if the control plane is down:
+In any channel conversation, a few commands are handled by the daemon itself (never sent to the agent) — they work even if the control plane is down:
 
 | Command              | On Slack           | Effect                                              |
 | -------------------- | ------------------ | --------------------------------------------------- |
 | `/stop` or `/cancel` | `!stop`            | Interrupt the agent's current turn                  |
 | `/queue <message>`   | `!queue <message>` | Hold a message; deliver it when the agent goes idle |
+| `/status`            | `!status`          | Show the session's model, context, and token usage  |
+| `/model`, `/effort`, `/permission` | `!model`, … | List or switch the session's model, reasoning effort, or permission mode |
+| `/fast on` / `/fast off` | `!fast on` / `!fast off` | Toggle the session's fast mode                |
 
-Slack reserves `/…` for its own slash commands, hence the `!` alias there.
+Slack reserves `/…` for its own slash commands, hence the `!` alias there. The runtime-setting commands (`/model`, `/effort`, `/permission`, `/fast`) work only when the agent's **Allow change in chat** setting is on.
 
 ## How chatty should an agent be?
 

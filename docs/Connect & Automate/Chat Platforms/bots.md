@@ -1,5 +1,5 @@
 ---
-title: 🤖 Bots
+title: 🪪 Bots
 excerpt: The organization-wide roster of Slack, Telegram, Discord, and Lark / Feishu bot identities.
 hidden: false
 ---
