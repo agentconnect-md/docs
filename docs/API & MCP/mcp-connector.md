@@ -10,8 +10,6 @@ AgentConnect ships a hosted **MCP server** at:
 https://mcp.agentconnect.md
 ```
 
-On [AgentConnect OSS](/docs/get-started), the same MCP endpoint is served by your deployment's Control Plane at `<your-control-plane-url>/v1/mcp`.
-
 Add it to Claude (or any client that speaks MCP over streamable HTTP) and your assistant can work with your organization for you:
 
 > _"Which of our agents are online right now?"_
