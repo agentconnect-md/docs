@@ -55,14 +55,6 @@ On Ubuntu 24.04, AppArmor may still prevent `bubblewrap` from creating an unpriv
 sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 ```
 
-Alternatively, keep the system-wide restriction enabled and load Ubuntu's `bwrap-userns-restrict` AppArmor profile:
-
-```bash
-sudo apt-get install --yes apparmor-profiles
-sudo install -m 0644 /usr/share/apparmor/extra-profiles/bwrap-userns-restrict /etc/apparmor.d/bwrap-userns-restrict
-sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
-```
-
 Restart the daemon after installing the dependencies. It does not trust the presence of binaries alone: it launches a short sandboxed process to verify that the required mechanism can start. When the probe succeeds, the daemon reports the **sandbox** capability to the console.
 
 Non-Linux daemons report sandboxing as unavailable. They can still run agents, but the AgentConnect OS sandbox described on this page is not active.
