@@ -1,0 +1,13 @@
+- listorganizationknowledge
+- createorganizationknowledge
+- getorganizationknowledge
+- updateorganizationknowledge
+- listorganizationknowledgerevisions
+- archiveorganizationknowledge
+- listmanagedskills
+- getmanagedskill
+- listmanagedskillrevisions
+- archivemanagedskill
+- listorganizationknowledgesuggestions
+- readorganizationknowledgesuggestion
+- revieworganizationknowledgesuggestion

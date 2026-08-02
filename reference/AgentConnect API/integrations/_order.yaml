@@ -5,3 +5,5 @@
 - checktelegrambot
 - startfeishuappregistration
 - getfeishuappregistration
+- deleteintegrationchannel
+- leaveintegrationconversation

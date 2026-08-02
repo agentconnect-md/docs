@@ -4,3 +4,7 @@
 - getsession
 - listsessionfacets
 - setsessionvisibility
+- getslacksessionaccess
+- setslacksessionaccess
+- getgithubsessionaccess
+- setgithubsessionaccess

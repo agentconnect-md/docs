@@ -38,3 +38,8 @@
 - readagentmemorydreamskill
 - acceptagentmemorydreamskill
 - dismissagentmemorydreamskill
+- mintwebchatconversationtoken
+- addwebchatconversationagent
+- listwebchatmcpoperations
+- getwebchatmcpoperation
+- decidewebchatmcpoperation
