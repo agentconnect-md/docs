@@ -4,7 +4,7 @@ excerpt: Mint personal keys that act as you against the REST API — list agents
 hidden: false
 ---
 
-Everything the console does rides a REST API at `https://api.agentconnect.md` — and you can call it yourself. On [AgentConnect OSS](/docs/get-started), the bundled stack serves the same API at `<your-control-plane-url>/api/v1`. A **personal API key** authenticates as *you*, with *your role*, in **one organization**.
+Everything the console does rides a REST API at `https://api.agentconnect.md` — and you can call it yourself. On [AgentConnect OSS](/docs/oss-get-started), the bundled stack serves the same API at `<your-control-plane-url>/api/v1`. A **personal API key** authenticates as *you*, with *your role*, in **one organization**.
 
 ## Create a key
 

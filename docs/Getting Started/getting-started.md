@@ -17,7 +17,7 @@ A small daemon runs the agents in the environment you operate. One console lets 
 
 <Card title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">Understand daemons, the optional Relay, and the Control Plane</Card>
 
-<Card title="AgentConnect OSS" href="/docs/get-started" icon="fa-duotone fa-box-open">Start the open-source stack locally with Docker Compose</Card>
+<Card title="AgentConnect OSS" href="/docs/oss-get-started" icon="fa-duotone fa-box-open">Start the open-source stack locally with Docker Compose</Card>
 </Cards>
 
 <br />
@@ -72,6 +72,6 @@ Once your agents are working, combine agents, models, and channels into more adv
 
 ## Self-hosted or hosted
 
-[AgentConnect OSS](/docs/get-started) runs the Web console, Control Plane, Relay, and PostgreSQL in your environment. The default Docker Compose stack is intended for local evaluation and is available now.
+[AgentConnect OSS](/docs/oss-get-started) runs the Web console, Control Plane, Relay, and PostgreSQL in your environment. The default Docker Compose stack is intended for local evaluation and is available now.
 
 [AgentConnect Cloud](https://app.agentconnect.md/waitlist) is planned as the hosted management console and is currently accepting early-access sign-ups. In either model, agent processes and workspaces run in the environment you operate.
