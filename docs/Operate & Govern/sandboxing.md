@@ -25,12 +25,14 @@ AgentConnect can place any ACP runtime inside the outer Linux OS sandbox when it
 | Runtime | Inner tool sandbox | Effective boundary |
 | --- | --- | --- |
 | **Claude Code** | Available | Outer OS + native Bash sandbox |
-| **Codex** | Pending | Outer OS only |
+| **Codex** | Available | Outer OS + native tool sandbox |
 | **Other ACP runtimes** | Not integrated | Outer OS only |
 
 For Claude Code, AgentConnect automatically enables the native Bash sandbox inside the outer boundary. Model-authored Bash and its child processes cannot read the Claude credentials retained by the trusted parent. In-process file tools and trusted stdio MCP servers stay outside the inner sandbox, but remain inside the outer AgentConnect boundary.
 
-Codex permission modes still control normal approval and access policy; AgentConnect does not yet add a second credential-isolating boundary. For other runtimes, the outer OS sandbox is the documented isolation boundary. The table describes AgentConnect integration, not every feature a runtime may offer on its own.
+For Codex, AgentConnect keeps model-authored terminal and file operations away from login credentials, including in **Full Access**.
+
+For other runtimes, the outer OS sandbox is the documented isolation boundary. The table describes AgentConnect integration, not every feature a runtime may offer on its own.
 
 ## Prepare a Linux daemon
 
