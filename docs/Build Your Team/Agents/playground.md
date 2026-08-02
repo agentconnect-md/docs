@@ -1,10 +1,10 @@
 ---
 title: 🧪 Playground
-excerpt: A live browser session with any agent — try prompts, switch models and permission modes, no channel required.
+excerpt: Start a private browser conversation with one or several agents, without connecting a channel.
 hidden: false
 ---
 
-The **Playground** button on an agent page opens a live conversation with that agent, straight from the browser. It's the fastest way to check that a new agent works, iterate on prompts, or debug behavior — before (or without) wiring the agent into a channel.
+Playground is a private browser conversation with agents running on your daemons. Open it from an agent page for a single-agent session, or use the Home composer to bring several agents into the same conversation.
 
 ![A Playground session](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png)
 
@@ -14,12 +14,20 @@ Playground creates a real session on the agent's daemon, using the same runtime,
 
 You can change supported runtime settings for the next turn without altering the agent's saved configuration, and interrupt a turn when needed.
 
+## Work with several agents
+
+Add agents before the first message from the Home composer, or add them to an existing Playground conversation.
+
+- A message without an `@AgentName` goes to every participant. Each agent may answer or stay silent.
+- An explicit `@AgentName` narrows that turn to the named participant or participants.
+- Every agent keeps its own configuration while the browser combines their activity into one conversation.
+
 ## When the session is saved
 
-Opening Playground starts with an empty, temporary view. Your first message creates a real private session on the agent's daemon. It appears in **Sessions**, labeled **Playground** with you as the sender ("You"), and you can reopen it later and continue where you left off.
+Opening Playground starts with an empty, temporary view. Your first message saves the private conversation under **Sessions**, where you can reopen it later.
 
 ## Tips
 
 - Test **permission modes** here before using an agent in a shared channel — try *Plan* or *Ask for approval* first, watch what it wants to do, then relax.
 - The Playground respects the agent's workspace: an agent cloned from GitHub will answer questions about that repo out of the box.
-- If the composer reports the agent as unreachable, check its daemon is online — Playground sessions run on the daemon, not in the cloud.
+- If the composer reports an agent as unreachable, check its daemon is online — Playground sessions run on the participating daemons, not in the cloud.
