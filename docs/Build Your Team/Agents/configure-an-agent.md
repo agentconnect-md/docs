@@ -4,7 +4,7 @@ excerpt: Edit an agent's persona, runtime behavior, placement, workspace, access
 hidden: false
 ---
 
-Open any agent from **Agents** to reach its page: status, meta chips (model, daemon, integrations, session count), a **Playground** button, and tabs — **Integrations**, **Configuration**, **Workspace**, **Memory**, and **Tools & Skills**.
+Open an agent from **Agents** to manage its integrations, runtime, workspace, access, memory, tools, and skills.
 
 ## Configuration
 
@@ -22,7 +22,6 @@ Other runtime behavior settings include:
 
 - **Allow change in chat** — when on, chat users can change session runtime settings and answer approval requests. When off, only people who can edit the agent can do so.
 - **Show footer** — add the agent, runtime, model and session links to replies.
-- **Show status bar** — show model, context, usage and session controls in Slack threads. This is on by default and does not add a status row on other chat platforms.
 - **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
 - **Run in sandbox** — place the runtime inside AgentConnect's Linux OS sandbox. The control is **Unavailable** when the selected daemon cannot enforce it and **Required** when the daemon operator has locked it on. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/docs/sandboxing).
 
@@ -35,18 +34,6 @@ The Description card is edited separately. It is not just display copy: AgentCon
 Choose another daemon in **Edit** to cold-move the agent. Save the move separately from other configuration changes. Both source and target must be online, ready and support agent moves; the target must also support the selected runtime, model and MCP servers.
 
 AgentConnect drains the active turn and reprovisions the control-plane-owned definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcript data. The source archive remains on the old machine, GitHub workspaces are cloned again, and old session bodies cannot be loaded from the console after the move.
-
-### Recover from a stopped source daemon
-
-A safe move cannot finish while the source daemon is offline because AgentConnect cannot confirm that its copy stopped. After you select an online, compatible destination, the editor offers **Force reassign** as a disaster-recovery action.
-
-Use it only when the source machine is permanently stopped and cannot reconnect. You must confirm that condition before the action is enabled. Force reassign bypasses only the source acknowledgement; the target must still be ready and compatible with the agent's runtime, model, MCP servers and managed skills.
-
-If the source is still running, both copies may process messages. A source that reconnects later is told to detach its stale copy, but that reconciliation is not a substitute for shutting the machine down first. Force reassign is still a cold reprovision: workspace files, memory, transcripts and attachments remain on the source machine.
-
-## Pause
-
-**Pause** (⋯ menu) stops the agent from processing new messages without deleting anything — integrations stay bound, history stays. Unpause to resume.
 
 ## Environment variables
 

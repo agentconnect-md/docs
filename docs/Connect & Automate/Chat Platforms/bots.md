@@ -8,18 +8,11 @@ A **bot** is the durable identity that lives in your chat platform: a Slack or L
 
 ## The roster
 
-Each row is one bot: which agents it serves, who created it, whether it's **sharable**, and actions. **Show in use** filters the list. A bot whose integration was deleted becomes **free** — it stays installed on the platform and can be rebound to another agent instantly (the **Use an existing bot** option when adding an integration).
+The roster shows the bot identities registered with the organization and the agents currently using them. Deleting an integration frees its bot for reuse without uninstalling it from the chat platform.
 
 ## Channel roster & shared-bot routing
 
-Expand a bot to see every channel it's present in. For a **shared** bot (one bot serving several agents — see [Integrations overview](/docs/integrations-overview)), each channel row has an **Active agent** picker: that's where you decide which agent answers in which channel.
-
-## Platform extras
-
-- **Slack** — the Cloud **Add to Slack** app, custom Slack Apps, a **Configure on Slack** deep link, and refresh/sync. The signed-in user's optional configuration-token pair for creating dedicated Apps lives under **Your profile → Slack config token**, not in the bot roster.
-- **Discord** — an **Add to Discord** invite link, built for the app with the right scopes.
-- **Telegram** — the bot list with its agents.
-- **[Lark / Feishu](/docs/lark-feishu)** — one-click app registration or a manual self-built app, using either a direct long connection or Relay-backed HTTP callbacks.
+For a **shared** bot, one identity can serve several agents and route each channel to a different active agent. See [Integrations overview](/docs/integrations-overview) for the model and [One Slack app with different agents by channel](/docs/one-slack-app-across-channels) for the complete setup.
 
 ## Deleting a bot
 

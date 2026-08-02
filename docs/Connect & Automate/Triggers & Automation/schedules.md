@@ -20,13 +20,9 @@ hidden: false
 - **Target integration** — optional. Pick one of the agent's integration channels and the run posts its output there, threading replies under it. Leave it on **None — session only** for a headless run you read in Sessions.
 - **Visibility** — who in the org sees the schedule ([details](/docs/visibility-and-sharing)).
 
-New schedules start **enabled**; the toggle on the list (or detail header) pauses them without losing anything.
+## Run and review schedules
 
-## The schedule page
-
-- Header: enabled toggle, next run, the cron expression in plain words, and target channel. **Edit** shows the saved timezone.
-- **Run now** fires an off-cycle run immediately — perfect while iterating on the prompt. The run appears below once the daemon reports it.
-- **Runs** — history with status (**Running / Success / Failed**), target, duration, and a link to each run's session.
+Use **Run now** to test a schedule without waiting for its next firing. Each run is recorded with its outcome and a link to the corresponding session. You can also pause a schedule without deleting its configuration.
 
 ## Notes
 

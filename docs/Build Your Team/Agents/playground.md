@@ -10,10 +10,9 @@ The **Playground** button on an agent page opens a live conversation with that a
 
 ## What you get
 
-- A real session on the agent's daemon — same runtime, same workspace, same tools as a channel conversation.
-- Streaming output: replies, thinking, tool calls and file edits appear as they happen, exactly like the [session transcript view](/docs/sessions).
-- **In-session switches** in the bar above the composer: **model**, **reasoning effort**, **permission mode**, **fast mode** — they apply to your next turn, without touching the agent's saved configuration. Live token count, context usage and cost sit alongside.
-- **Cancel** interrupts the agent mid-turn.
+Playground creates a real session on the agent's daemon, using the same runtime, workspace, and tools as a channel conversation. Its output streams into the same kind of [session transcript](/docs/sessions).
+
+You can change supported runtime settings for the next turn without altering the agent's saved configuration, and interrupt a turn when needed.
 
 ## When the session is saved
 
