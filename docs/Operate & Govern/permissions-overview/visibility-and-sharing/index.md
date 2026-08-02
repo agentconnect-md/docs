@@ -29,7 +29,7 @@ The following resources have independent visibility:
 
 Agent and daemon visibility are independent. A member may be allowed to see an agent without being allowed to see its hosting daemon. They cannot place or move an agent onto a daemon they cannot see.
 
-Other resources derive access from a parent. Integrations, webhooks, workspace operations, session metadata, usage, and transcript reads are gated by their agent; [session visibility](/docs/session-visibility) can narrow them to an owner or the current audience of a source Slack conversation or GitHub repository. Schedule configuration and run history are gated by the schedule. Daemon keys are gated by the daemon. Bots are organization-wide infrastructure and do not have their own Selected audience.
+Other resources derive access from a parent. Integrations, webhooks, workspace operations, session metadata, usage, and transcript reads are gated by their agent; [session visibility](/docs/session-visibility) can narrow them to an owner or the current audience of a source conversation or repository. Schedule configuration and run history are gated by the schedule. Daemon keys are gated by the daemon. Bots are organization-wide infrastructure and do not have their own Selected audience.
 
 ## What a restricted agent changes
 

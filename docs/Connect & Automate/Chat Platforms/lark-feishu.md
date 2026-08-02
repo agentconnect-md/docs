@@ -4,14 +4,14 @@ excerpt: Create a Lark or Feishu bot in one click, with Long Connection by defau
 hidden: false
 ---
 
-AgentConnect supports international **Lark** and China-region **Feishu** through the same integration. The recommended setup creates a self-built app through the platform's official authorization flow and connects its permissions, event subscription, and credentials automatically.
+AgentConnect supports international **Lark** and China-region **Feishu** as separate regional choices in the same setup flow. The recommended setup creates a self-built app through the platform's official authorization flow and connects its permissions, event subscription, and credentials automatically.
 
 ## Connect in one click
 
 The agent must already be placed on a daemon that reports Lark / Feishu support.
 
-1. On the agent, open **Integrations → Add integration → Lark**.
-2. Keep **One-click** selected, then choose **Lark — International** or **Feishu — China**.
+1. On the agent, open **Integrations → Add integration** and select **Lark** or **Feishu**.
+2. Keep **One-click** selected.
 3. Keep **Long connection** unless you deliberately want Relay-backed HTTP callbacks.
 4. Name the bot and click **Create Lark bot** or **Create Feishu bot**.
 5. In the new platform tab, review and approve the app and its requested permissions.
@@ -45,4 +45,4 @@ The manual checklist remains visible in the integration dialog so you can verify
 - In a one-to-one chat, message the bot directly.
 - `/stop` interrupts the current turn; `/queue <message>` waits until the agent becomes idle.
 
-One Lark / Feishu bot binds to one agent at a time. Deleting its integration frees the stored bot identity for **Use an existing bot**; it does not delete the app from the Lark or Feishu developer console. Organization-wide management lives under **Settings → Bots → Lark**, where **Configure** opens the correct regional developer console.
+One Lark or Feishu bot binds to one agent at a time. Deleting its integration frees the stored bot identity for **Use an existing bot**; it does not delete the app from the platform developer console. Organization-wide management lives under the matching **Settings → Bots → Lark** or **Feishu** tab, where **Configure** opens the correct regional developer console.

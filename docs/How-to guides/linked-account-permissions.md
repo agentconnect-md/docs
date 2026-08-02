@@ -1,12 +1,12 @@
 ---
 title: 👤 Linked-account permissions
-excerpt: Understand exactly what changes—and what does not—when one profile links GitHub, Google, and Slack.
+excerpt: Understand what changes—and what does not—when one profile links several providers.
 hidden: false
 ---
 
-One AgentConnect profile can use GitHub, Google, and Slack as sign-in methods. Linking another provider gives the same profile another way to sign in and, where supported, a provider-specific identity for a narrowly defined permission check.
+One AgentConnect profile can use GitHub, Google, Slack, Lark, and Feishu as sign-in methods. Linking another provider gives the same profile another way to sign in and, where supported, a provider-specific identity for a narrowly defined permission check.
 
-It does **not** combine the providers into one pool of permissions. A GitHub identity is used only for GitHub checks, a Slack identity is used only for Slack session checks, and Google currently adds no provider-specific AgentConnect authorization.
+It does **not** combine the providers into one pool of permissions. Each provider identity is used only for checks against that provider; Google currently adds no provider-specific AgentConnect authorization.
 
 ## What never changes
 
@@ -29,6 +29,8 @@ See [Permissions](/docs/permissions-overview) for the organization, role, resour
 | **GitHub** | Sign-in and a GitHub identity for setup and session checks | App installation or repository access |
 | **Google** | Sign-in | Provider-specific authorization |
 | **Slack** | Sign-in and one workspace identity for session checks | Bot installation or cross-workspace identity |
+| **Lark** | Sign-in and one app-scoped identity for session checks | Bot installation or Feishu identity |
+| **Feishu** | Sign-in and one app-scoped identity for session checks | Bot installation or Lark identity |
 
 Two optional GitHub policies use the linked identity for different decisions:
 
@@ -39,20 +41,16 @@ Both policies still require the deployment's GitHub App to cover the repository.
 
 GitHub webhook authorization is separate again: AgentConnect checks the current repository permission of the issue, pull-request, or comment author. The signed-in console user's linked GitHub account does not grant another GitHub author permission to trigger an agent. See [GitHub](/docs/github).
 
-## Linked-account state matrix
+## Checks stay provider-specific
 
-The matrix assumes all three providers are enabled. The GitHub column assumes both optional GitHub policies are on. A check uses only the identity in its own provider.
+| Permission check | Identity AgentConnect uses |
+| --- | --- |
+| GitHub setup or a private-repository session | Linked GitHub profile |
+| Slack direct message or shared conversation | Linked Slack workspace profile |
+| Lark direct message or shared conversation | Linked Lark profile for the same app |
+| Feishu direct message or shared conversation | Linked Feishu profile for the same app |
 
-| Linked methods | GitHub setup and private sessions | Slack DMs and shared sessions | Unlinking |
-| --- | --- | --- | --- |
-| **GitHub** | Uses GitHub identity | No match | Link another method first |
-| **Google** | No match | No match | Link another method first |
-| **Slack** | No match | Uses workspace identity | Link another method first |
-| **GitHub + Google** | Uses GitHub identity | No match | Either method |
-| **GitHub + Slack** | Uses GitHub identity | Uses workspace identity | Either method |
-| **All three** | Uses GitHub identity | Uses workspace identity | Any one method |
-
-Public GitHub sessions remain available to anyone who can see the agent. Linking still does not change the profile, organization role, resource grants, App installations, or provider access.
+Linking several methods lets one AgentConnect profile satisfy several independent checks. It does not let one provider substitute for another. Public GitHub sessions remain available to anyone who can see the agent.
 
 ## Unlinking a provider
 
@@ -61,16 +59,17 @@ Unlinking removes only that sign-in method and its provider-specific identity:
 - Removing **GitHub** does not uninstall the GitHub App or delete existing agents and repository grants. The profile can no longer pass the per-user setup gate or read synchronized private-repository sessions until GitHub is linked again. Public-repository sessions are unaffected.
 - Removing **Google** removes a sign-in option and no provider-specific permission.
 - Removing **Slack** removes the workspace identity from authorization immediately. Existing Slack session records are not deleted, but private DMs and Slack-scoped shared sessions that depended on the match are no longer visible. Relinking the same workspace identity can make them visible again without rewriting the sessions.
+- Removing **Lark** or **Feishu** removes only that regional identity. Matching private DMs and membership-scoped sessions are no longer visible until the same identity is linked again.
 
 The final linked sign-in method cannot be removed. See [Social account linking](/docs/social-account-linking) for the link and unlink workflow.
 
 ## Current behavior, not a permission union
 
-Linked Slack identity support for private DM ownership and Slack conversation access is implemented today. Linked GitHub identity checks for repository setup and private-repository session access are also implemented. See [Session visibility](/docs/session-visibility) for the exact audience checks and failure behavior.
+Linked Slack, Lark, and Feishu identities can participate in their matching session checks. Linked GitHub identity checks apply to repository setup and private-repository session access. See [Session visibility](/docs/session-visibility) for the audience model.
 
-AgentConnect does not currently create a broader identity union across providers or Slack workspaces. Do not assume that:
+AgentConnect does not create a broader permission union across providers or provider workspaces. Do not assume that:
 
-- GitHub or Google can prove ownership of a Slack session;
-- Slack or Google can satisfy a GitHub repository gate;
-- one Slack identity represents the same user in every workspace; or
+- one social account can prove ownership of another provider's session;
+- one provider can satisfy another provider's repository or conversation gate;
+- one Slack, Lark, or Feishu identity represents the same user in every workspace or app; or
 - linking any provider widens organization access or resource visibility.
