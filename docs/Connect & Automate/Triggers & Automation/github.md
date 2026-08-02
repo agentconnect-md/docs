@@ -61,7 +61,7 @@ For a complete two-model setup, see [Fast PR reviews with deep review on demand]
 
 The agent page groups its GitHub integration as one card — one row per watched repository with:
 
-- event toggles and the trigger cadence select (**created / updated / mention only**),
+- event toggles and the trigger cadence select (**create / update / @-mention**),
 - recent deliveries (what fired, when, and the session it started),
 - **Add repository** to watch more repos with the same agent.
 
