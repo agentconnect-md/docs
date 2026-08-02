@@ -91,11 +91,11 @@ Slack direct-message sessions store a workspace-scoped owner identity: the Slack
 
 A private GitHub repository session is not owned by one GitHub user. Instead, AgentConnect uses the viewer's linked GitHub profile to check that repository's current access. Public repository sessions do not require a linked GitHub profile.
 
-Linking can make existing matching Slack or private GitHub sessions available without rewriting them. Unlinking removes that provider match immediately. A Google identity does not satisfy either provider's checks, and identities from one provider never substitute for another.
+Linking can make existing matching Slack or private GitHub sessions available without rewriting them. Unlinking removes that provider match immediately. Google, Lark, and Feishu identities do not satisfy either provider's checks, and identities from one provider never substitute for another.
 
 A personal API key or console identity does not stand in for a linked Slack or GitHub profile. See [Social account linking](/docs/social-account-linking).
 
-For the effect of every GitHub, Google, and Slack account combination, see [Permissions with linked accounts](/docs/linked-account-permissions).
+For the effect of linked sign-in methods on permissions, see [Permissions with linked accounts](/docs/linked-account-permissions).
 
 ## AgentConnect OSS requirements
 

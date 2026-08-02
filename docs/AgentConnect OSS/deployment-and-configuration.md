@@ -358,20 +358,42 @@ The values must agree:
 - `OIDC_ISSUER` is the Logto endpoint with `/oidc`.
 - When `LOGTO_API_RESOURCE` is set, `OIDC_AUDIENCE` must equal that resource.
 - Without an API resource, omit `LOGTO_API_RESOURCE` and set `OIDC_AUDIENCE` to `LOGTO_APP_ID`.
-- `SOCIAL_PROVIDERS` is a comma-separated list of the lowercase targets `github`, `google`, and `slack`. Set it to match the social connectors enabled in the tenant. Omitting it or setting `*` renders all three.
+- `SOCIAL_PROVIDERS` is a comma-separated list of the lowercase targets `github`, `google`, `slack`, `lark`, and `feishu`. Set it to match the social connectors enabled in the tenant. Omitting it keeps the original GitHub, Google, and Slack set; setting `*` explicitly renders the whole catalog.
 - Set or remove the Web and Control Plane values together. Configuring only one side leaves the console unable to authenticate its API calls.
 
 `SOCIAL_PROVIDERS` controls the buttons and Profile methods that AgentConnect renders. It does not create connectors or check Logto's connector inventory; a button whose connector is absent lands on Logto's error page.
+
+Logto provides a built-in [Feishu Web connector](https://docs.logto.io/integrations/feishu-web). It does not provide a built-in Lark connector, and putting a Lark App ID into the Feishu connector does not work because that connector calls the hard-coded `passport.feishu.cn` endpoints.
+
+For Lark, create Logto's generic [OAuth 2.0 connector](https://docs.logto.io/integrations/oauth2), set its identity provider name to `lark`, use the Lark App ID and App Secret, and configure:
+
+```json
+{
+  "authorizationEndpoint": "https://passport.larksuite.com/suite/passport/oauth/authorize",
+  "tokenEndpoint": "https://passport.larksuite.com/suite/passport/oauth/token",
+  "userInfoEndpoint": "https://passport.larksuite.com/suite/passport/oauth/userinfo",
+  "tokenEndpointAuthMethod": "client_secret_post",
+  "tokenEndpointResponseType": "json",
+  "profileMap": {
+    "id": "sub",
+    "name": "name",
+    "avatar": "avatar_url",
+    "email": "email"
+  }
+}
+```
+
+Name the button **Lark** and set `SOCIAL_PROVIDERS` to include `lark`. This uses the same OAuth response shape as the Feishu connector but sends the Lark credentials to the matching international endpoints.
 
 ### OAuth callback map
 
 The application callback and provider callbacks serve different parts of the flow:
 
-| Register with                     | Callback URI                                                                                    | Purpose                               |
-| --------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
-| Logto Web application             | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback`                                                   | Finish AgentConnect sign-in           |
-| Each GitHub, Google, or Slack app | The exact URI shown by its Logto connector, normally `<LOGTO_ENDPOINT>/callback/<connector-id>` | Return normal social sign-in to Logto |
-| Each GitHub, Google, or Slack app | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback`                                            | Return Profile account linking        |
+| Register with                  | Callback URI                                                                                    | Purpose                               |
+| ------------------------------ | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Logto Web application          | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback`                                                   | Finish AgentConnect sign-in           |
+| Each enabled social provider   | The exact URI shown by its Logto connector, normally `<LOGTO_ENDPOINT>/callback/<connector-id>` | Return normal social sign-in to Logto |
+| Each enabled social provider   | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback`                                            | Return Profile account linking        |
 
 The third callback is required only for AgentConnect's custom Profile linking flow. Do not replace it with Logto's `/account/callback/social/<connector-id>` URL, which belongs to Logto's prebuilt Account Center flow.
 

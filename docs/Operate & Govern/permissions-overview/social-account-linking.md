@@ -1,10 +1,10 @@
 ---
 title: 🔗 Social account linking
-excerpt: Use GitHub, Google, and Slack sign-in methods with one AgentConnect profile.
+excerpt: Use several social sign-in methods with one AgentConnect profile.
 hidden: false
 ---
 
-One AgentConnect profile can use multiple social sign-in methods. Depending on what your deployment offers, you can link **GitHub**, **Google**, and **Slack** to the same profile.
+One AgentConnect profile can use multiple social sign-in methods. Depending on what your deployment offers, you can link **GitHub**, **Google**, **Slack**, **Lark**, and **Feishu** to the same profile.
 
 Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
@@ -48,6 +48,8 @@ When the organization enables **Follow GitHub repository access**, sessions from
 Linking GitHub can therefore make an existing private-repository session available without rewriting it. Unlinking GitHub removes that match immediately but does not uninstall the GitHub App or change repository grants. If someone follows a protected session link from GitHub without a linked profile, the not-found screen can offer **Link GitHub profile**; that hint does not reveal whether the session exists or bypass its access check.
 
 Where a provider identity is required, organization membership or the Owner role does not substitute for it. GitHub and Slack identities affect only their own provider checks, while Google remains a sign-in method with no provider-specific authorization. A personal API key or console identity does not stand in for a linked provider identity. See [Session visibility](/docs/session-visibility).
+
+Lark and Feishu also act as sign-in methods only today. Linking either one does not match a chat user's app-scoped identity, reveal Lark or Feishu sessions, or grant access to a restricted agent. Feishu uses Logto's built-in connector; Lark requires Logto's generic OAuth 2.0 connector configured with the Lark passport endpoints.
 
 ## AgentConnect OSS setup
 

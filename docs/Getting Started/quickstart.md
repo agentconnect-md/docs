@@ -17,7 +17,7 @@ You need:
 
 Open your AgentConnect console. If your organization already has Cloud access, use [app.agentconnect.md](https://app.agentconnect.md). For [AgentConnect OSS](/docs/oss-get-started), use the Web URL from your deployment.
 
-When social sign-in is configured, continue with one of the deployment's enabled providers: **GitHub**, **Google**, or **Slack**. There is no AgentConnect password. An ordinary first sign-in creates your profile and personal organization; an admission-gated deployment creates the organization when your account is activated. The default local OSS stack uses no-auth mode and opens the console directly.
+When social sign-in is configured, continue with one of the deployment's enabled providers: **GitHub**, **Google**, **Slack**, **Lark**, or **Feishu**. There is no AgentConnect password. An ordinary first sign-in creates your profile and personal organization; an admission-gated deployment creates the organization when your account is activated. The default local OSS stack uses no-auth mode and opens the console directly.
 
 ![The AgentConnect sign-in page](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/login.png)
 
