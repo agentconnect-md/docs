@@ -148,7 +148,7 @@ It is not an HA production topology. Before exposing AgentConnect to a network, 
 
 ## Data boundaries stay the same
 
-AgentConnect OSS does not move agent execution into the central stack. Message bodies, attachment bytes, workspaces, live agent-session streams, agent memory, and pending Dream proposal bodies remain daemon-local. The Control Plane stores coordination metadata plus explicitly approved [Knowledge and managed-skill revisions](/docs/knowledge). Relay-delivered content goes from the Relay to the owning daemon rather than through the Control Plane.
+AgentConnect OSS does not move agent execution into the central stack. Message bodies, attachment bytes, workspaces, live agent-session streams, agent memory, and pending [Dreaming](/docs/configure-an-agent#dreaming) proposal bodies remain daemon-local. The Control Plane stores coordination metadata plus explicitly approved [Knowledge and managed-skill revisions](/docs/knowledge). Relay-delivered content goes from the Relay to the owning daemon rather than through the Control Plane.
 
 ## Next
 

@@ -4,7 +4,7 @@ excerpt: Trigger agents from issues, pull requests and comments — and let them
 hidden: false
 ---
 
-A GitHub integration makes an agent **watch a repository**: new issues, pull requests and comments become sessions, and the agent can write back as PR/issue comments. It rides the deployment's [AgentConnect GitHub app](/docs/workspaces-and-repos). Managed AgentConnect does not require a webhook per repository; an AgentConnect OSS operator configures one deployment-level GitHub App webhook on the Relay.
+A GitHub integration makes an agent **watch a repository**: new issues, pull requests and comments become sessions, and the agent can write back as PR/issue comments. It rides the deployment's [AgentConnect GitHub app](/docs/workspaces-and-repos). AgentConnect Cloud does not require a webhook per repository; an AgentConnect OSS operator configures one deployment-level GitHub App webhook on the Relay.
 
 ## Watch a repository
 
@@ -15,7 +15,7 @@ On the agent: **Integrations → Add integration → GitHub**.
 3. **Trigger when** — how eagerly the agent wakes up:
    - **created** — only when a PR or issue is opened.
    - **updated** — creations plus updates and replies.
-   - **mention** — only when the assigned agent or GitHub App is @-mentioned.
+   - **mention only** — only when the assigned agent or GitHub App is @-mentioned.
 
 ## Who may trigger an agent
 
@@ -61,7 +61,7 @@ For a complete two-model setup, see [Fast PR reviews with deep review on demand]
 
 The agent page groups its GitHub integration as one card — one row per watched repository with:
 
-- event toggles and the trigger cadence select (**when created / updated / mention**),
+- event toggles and the trigger cadence select (**created / updated / mention only**),
 - recent deliveries (what fired, when, and the session it started),
 - **Add repository** to watch more repos with the same agent.
 

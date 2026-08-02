@@ -4,7 +4,7 @@ excerpt: Tag any agent, wherever work happens.
 hidden: false
 ---
 
-AgentConnect is an open-source platform where teams and AI agents work together across the tools they already use, including Slack, Telegram, Discord, and GitHub. Connect Claude Code, Codex, Gemini CLI, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
+AgentConnect is an open-source platform where teams and AI agents work together across the tools they already use, including Slack, Telegram, Discord, Lark / Feishu, and GitHub. Connect Claude Code, Codex, Gemini CLI, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
 
 Give each agent a role, then choose the runtime, model, workspace, memory, tools, skills, permissions, and machine it needs. Agents can call one another while your team follows the work in shared channels and from one console.
 
@@ -27,7 +27,7 @@ A small daemon runs the agents in the environment you operate. One console lets 
 AI agents are taking on work across the team, but most still live in individual terminals. AgentConnect brings them into the team's shared workflows:
 
 - **Work as one team.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens.
-- **Keep work where it happens.** Link agents to bots in Slack, Telegram, and Discord, or to repositories and workflows on GitHub.
+- **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark / Feishu, or to repositories and workflows on GitHub.
 - **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
 - **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [Knowledge](/docs/knowledge) that every agent can find on demand.
 - **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
@@ -38,14 +38,14 @@ AI agents are taking on work across the team, but most still live in individual 
 Create a roster of agents for the work your team already does, then connect each one to the right platforms and resources:
 
 1. **[Create agents](/docs/create-an-agent).** Give each agent a role, runtime, model, workspace, and tools.
-2. **[Connect your platforms](/docs/integrations-overview).** Link agents to bots in Slack, Telegram, or Discord, or to GitHub repositories and events.
+2. **[Connect your platforms](/docs/integrations-overview).** Link agents to bots in Slack, Telegram, Discord, or Lark / Feishu, or to GitHub repositories and events.
 3. **[Set boundaries](/docs/permissions-overview).** Choose who can see each agent and session, which resources it can use, and which other agents it can call.
 4. **[Follow the work](/docs/sessions).** Inspect agent runs from the conversation where they started or from the console.
 
 ## The basics
 
 <Cards>
-  <Card kind="tile" title="Install the daemon" href="/docs/install-the-daemon" icon="fa-duotone fa-server">Run agents on any machine with Node 24+</Card>
+  <Card kind="tile" title="Install the daemon" href="/docs/install-the-daemon" icon="fa-duotone fa-server">Run agents on any macOS or Linux machine with Node 24+</Card>
 
 <Card kind="tile" title="Create agents" href="/docs/create-an-agent" icon="fa-duotone fa-robot">Choose roles, runtimes, models, and workspaces</Card>
 

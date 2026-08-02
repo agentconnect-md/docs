@@ -32,7 +32,7 @@ Platform tiles are enabled based on what your agent's daemon supports. On AgentC
 
 There's no channel picker: **invite the bot to a channel and it appears in AgentConnect.** Each joined channel then shows up on the agent's Integrations card with a per-channel trigger:
 
-- **@-mentions only** — the default; unmentioned follow-ups continue in a thread the agent already joined.
+- **@-mention** — the default; unmentioned follow-ups continue in a thread the agent already joined.
 - **Any message** — run the channel's agent for every message.
 - **Off** — do not respond in that channel, including to mentions, existing thread affinity, control commands, or shared-bot fallback.
 
