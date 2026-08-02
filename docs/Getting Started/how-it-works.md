@@ -16,7 +16,7 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 - launches and drives installed agent runtimes such as Claude Code and Codex over [ACP](https://agentclientprotocol.com);
 - owns the agents' working directories, git checkouts and transcripts.
 
-**The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub and generic webhooks, and webchat, then forwards the request to the owning daemon. It does not durably store message content.
+**The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub and generic webhooks, and webchat (the browser transport behind the [Playground](/docs/playground)), then forwards the request to the owning daemon. It does not durably store message content.
 
 **The Control Plane** manages authentication, organizations, permissions, registry, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed-skill revisions](/docs/knowledge). Its daemon WebSocket is used primarily for registration, heartbeats, configuration, orchestration commands, and telemetry. It also carries scoped request and response frames for authorized, on-demand console reads.
 
@@ -34,7 +34,7 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 | Control metadata | Control Plane |
 | Approved Knowledge and skills | Control Plane |
 
-Authorized transcript, tool-body, and workspace reads are bounded and proxied from the owning daemon on demand; the Control Plane does not persist the response. Pending Dream proposal bodies also stay on their source daemon. Secret protection at rest depends on the deployment's secret-cipher configuration.
+Authorized transcript, tool-body, and workspace reads are bounded and proxied from the owning daemon on demand; the Control Plane does not persist the response. Pending [Dreaming](/docs/configure-an-agent#dreaming) proposal bodies also stay on their source daemon. Secret protection at rest depends on the deployment's secret-cipher configuration.
 
 ## Built to degrade gracefully
 

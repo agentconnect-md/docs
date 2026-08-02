@@ -318,10 +318,10 @@ The distinction matters:
 Restart the daemon so the new allowlist is active:
 
 ```bash
-agentconnect restart
+npx -y @agentconnect.md/cli restart
 ```
 
-Run `agentconnect status` if you need the service state or log path. If the daemon runs in the foreground, stop and rerun it instead. If it uses a non-default `--root`, edit that root's `config.json`.
+Run `npx -y @agentconnect.md/cli status` if you need the service state or log path. If the daemon runs in the foreground, stop and rerun it instead. If it uses a non-default `--root`, edit that root's `config.json`.
 
 ### Remote-wrapper alternative
 
@@ -408,4 +408,4 @@ Restart the affected services after changing the file:
 docker compose --env-file compose.env up -d --force-recreate control-plane web
 ```
 
-Leaving the five sign-in variables in **Optional Logto sign-in** unset preserves no-auth mode. In that mode the Control Plane deliberately admits every request as the fixed local owner, so it must remain private.
+Leaving the sign-in variables in **Optional Logto sign-in** unset preserves no-auth mode. In that mode the Control Plane deliberately admits every request as the fixed local owner, so it must remain private.

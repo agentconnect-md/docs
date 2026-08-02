@@ -49,7 +49,7 @@ sudo apt-get install --yes bubblewrap ripgrep socat
 
 Restart the daemon after installing the dependencies. It does not trust the presence of binaries alone: it launches a short sandboxed process to verify that the required mechanism can start. When the probe succeeds, the daemon reports the **sandbox** capability to the console.
 
-macOS and Windows daemons report sandboxing as unavailable. They can still run agents, but the AgentConnect OS sandbox described on this page is not active.
+Non-Linux daemons report sandboxing as unavailable. They can still run agents, but the AgentConnect OS sandbox described on this page is not active.
 
 ## Enable it for one agent
 

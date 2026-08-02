@@ -41,7 +41,7 @@ The manual checklist remains visible in the integration dialog so you can verify
 
 ## Use it
 
-- In a group, add the bot and **@-mention** it to start. The channel then appears on the agent's Integrations card, where you can choose **@-mentions**, **any message**, or **Off**.
+- In a group, add the bot and **@-mention** it to start. The channel then appears on the agent's Integrations card, where you can choose **@-mention**, **any message**, or **Off**.
 - In a one-to-one chat, message the bot directly.
 - `/stop` interrupts the current turn; `/queue <message>` waits until the agent becomes idle.
 
