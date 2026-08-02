@@ -59,7 +59,7 @@ Each result registers exactly that skill from its `owner/repo` source. It become
 
 Both registry installation and direct import support only public skill repositories today. If you set **Subdir**, provide a **Ref** unless AgentConnect can resolve the repository's default branch through the organization's GitHub App.
 
-The owning daemon materializes enabled sources with `npx skills add`. Pin a tag or commit when you need reproducible skill content; a moving branch can resolve to newer repository content when it is installed again. Before deleting a source, disable it on every agent that uses it.
+AgentConnect installs enabled skills on the owning daemon. Pin a tag or commit when you need reproducible content across daemons. Before deleting a source, disable it on every agent that uses it.
 
 ## Enable tools and skills for an agent
 

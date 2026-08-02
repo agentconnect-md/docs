@@ -26,14 +26,7 @@ These appear when the selected daemon and runtime advertise support. Exact choic
 
 - **Effort** (Claude Code) — **Low / Medium / High / Extra / Max / Ultracode**, controlling how much thinking the agent puts in. On Codex the field is **Reasoning**: **Light / Medium / High / Extra High**.
 - **Fast mode** — **On / Off**; the runtime's faster-output mode where available.
-- **Permission mode** — how much the agent may do without asking. Current Codex modes are:
-  - **Read Only** — asks when needed and runs in a read-only sandbox.
-  - **Ask for approval** — the default; can write inside the workspace and asks before actions that require approval.
-  - **Full Access** — full-access mode, including network and locations outside the workspace where the runtime and host allow it.
-
-  Claude Code commonly reports **Default / Accept Edits / Auto / Don't Ask / Plan / Bypass**. Use the descriptions shown in the picker as the source of truth for the runtime installed on that daemon.
-
-  Start conservative for agents on shared channels — you can change this per agent later, and per session in the Playground.
+- **Permission mode** — how much the runtime may do without asking. Available modes, including **Auto**, are runtime-defined and can vary by runtime and version. Use the picker descriptions as the source of truth, and start conservative for agents on shared channels; you can change the mode later per agent or Playground session.
 - **Run in sandbox** — place the runtime inside AgentConnect's Linux OS sandbox when the selected daemon supports it. This outer OS boundary is separate from the runtime's permission mode. See [Sandboxing](/docs/sandboxing).
 - **Memory** — **Managed** (an AgentConnect-managed directory), **Native** (the runtime's own isolated memory), **External** (a configured provider such as Mem0), or **Off**. See [the guide to using Mem0 OSS as external memory](/docs/external-memory) for setup.
 - **MCP servers** — attach any MCP servers configured on the daemon; the agent gets their tools in every session.

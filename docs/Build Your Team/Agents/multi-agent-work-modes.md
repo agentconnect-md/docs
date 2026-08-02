@@ -4,13 +4,14 @@ excerpt: Choose how a team of specialized agents divides responsibilities, deleg
 hidden: false
 ---
 
-AgentConnect is designed for teams of specialized agents. For most teams, the best starting point is several focused agents, each connected to its own bot or integration. Add agent-to-agent delegation when those specialists need to work together.
+AgentConnect is designed for teams of specialized agents. For most teams, the best starting point is several focused agents, each connected to its own bot or integration. Bring several into one Playground conversation when a person wants to work with them together, and add agent-to-agent delegation when one agent should coordinate the work.
 
 Layered specialists are a common next step, especially for pull-request review. Trigger fan-out and shared-bot routing are useful when a workflow specifically needs parallel opinions or one consolidated platform identity.
 
 | Starting point | Work mode | Agents run | Typical use |
 | --- | --- | --- | --- |
 | Default | Specialized agents | One addressed agent | A role-based agent team |
+| Direct collaboration | Shared Playground | Several together | Compare or collaborate live |
 | Core collaboration | Agent delegation | Parent and workers | Coordinated subtasks |
 | Common workflow | Layered specialists | One per request | Fast and deep PR review |
 | Parallel analysis | Trigger fan-out | Several independently | Independent reviews |
@@ -32,6 +33,23 @@ flowchart LR
 Each path keeps its own integration identity, agent configuration, and session. The agents work independently until a workflow deliberately connects them.
 
 Use this mode when the roles serve different teams or workflows and their outputs do not need to be combined. Start with [Create an agent](/docs/create-an-agent), then give each one a focused persona and environment under [Configure an agent](/docs/configure-an-agent).
+
+## Shared Playground conversation
+
+**Use this for direct collaboration.** One person can bring several agents into the same private browser conversation and watch their work together.
+
+```mermaid
+flowchart LR
+  Person["One person"] --> Conversation["Private Playground"]
+  Conversation --> Coding["Coding agent"]
+  Conversation --> Review["Review agent"]
+  Coding --> Conversation
+  Review --> Conversation
+```
+
+A message without an explicit mention reaches every participant; `@AgentName` narrows a turn to the named agents. Every agent keeps its own configuration while the browser presents their work as one conversation.
+
+Use this mode when a person wants agents to compare approaches or contribute different specialties in real time. For an agent coordinating other agents, use delegation below. See [Playground](/docs/playground) for the conversation behavior.
 
 ## Agent-to-agent delegation
 
