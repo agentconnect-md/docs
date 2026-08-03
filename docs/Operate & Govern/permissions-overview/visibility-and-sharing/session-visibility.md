@@ -50,6 +50,8 @@ Turning the setting off makes **new** shared Slack sessions visible to Everyone 
 
 ## Follow Feishu / Lark access
 
+This audience currently requires a self-hosted deployment with the matching Lark or Feishu social sign-in configured. AgentConnect Cloud does not offer either regional sign-in method yet.
+
 An organization Owner can enable **Settings → Session access → Follow Feishu / Lark access**. Group sessions then require a linked profile with current membership in the source chat. Direct messages remain Private.
 
 The messaging integration and linked identity must use the same regional platform app because Lark and Feishu identities are app-scoped. Sessions from a custom app with another App ID keep the ordinary Everyone or Private model. Turning the setting off affects new sessions only; sessions already synchronized keep following their source chat.

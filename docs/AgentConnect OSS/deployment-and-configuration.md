@@ -335,6 +335,8 @@ After the backend and wrapper are ready, continue with [the guide to using Mem0 
 
 AgentConnect does not include or start Logto. You may connect an existing Logto tenant by configuring both the browser client and Control Plane verifier:
 
+Lark and Feishu social sign-in are self-hosted options. AgentConnect Cloud currently offers GitHub, Google, and Slack sign-in only.
+
 ```dotenv
 LOGTO_ENDPOINT=https://tenant.example.com/
 LOGTO_APP_ID=<application-id>

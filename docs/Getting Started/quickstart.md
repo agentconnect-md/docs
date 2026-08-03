@@ -17,7 +17,7 @@ You need:
 
 Open your AgentConnect console. If your organization already has Cloud access, use [app.agentconnect.md](https://app.agentconnect.md). For [AgentConnect OSS](/docs/oss-get-started), use the Web URL from your deployment.
 
-When social sign-in is configured, continue with one of the deployment's enabled providers: **GitHub**, **Google**, **Slack**, **Lark**, or **Feishu**. There is no AgentConnect password. An ordinary first sign-in creates your profile and personal organization; an admission-gated deployment creates the organization when your account is activated. The default local OSS stack uses no-auth mode and opens the console directly.
+AgentConnect Cloud currently offers **GitHub**, **Google**, and **Slack** sign-in. A self-hosted deployment can also enable **Lark** and **Feishu** through its own Logto tenant. There is no AgentConnect password. An ordinary first sign-in creates your profile and personal organization; an admission-gated deployment creates the organization when your account is activated. The default local OSS stack uses no-auth mode and opens the console directly.
 
 ![The AgentConnect sign-in page](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/login.png)
 
@@ -66,7 +66,7 @@ The Playground is for trying things out — the point of AgentConnect is meeting
 - [Connect Slack](/docs/slack) — start with Cloud's built-in Add to Slack app, or use a custom identity.
 - [Connect Telegram](/docs/telegram) — one token from @BotFather, with automatic privacy-status checks.
 - [Connect Discord](/docs/discord) — paste a bot token; AgentConnect builds the invite and enables Message Content Intent.
-- [Connect Lark / Feishu](/docs/lark-feishu) — one-click setup with a direct long connection or Relay-backed HTTP events.
+- [Connect Lark / Feishu](/docs/lark-feishu) — use Lark on Cloud; self-hosted deployments can connect either region.
 - [Watch GitHub repos](/docs/github) — trigger the agent from issues, PRs and comments.
 - [Add a webhook](/docs/webhooks) — trigger it from anything that can POST.
 

@@ -4,7 +4,7 @@ excerpt: Use several social sign-in methods with one AgentConnect profile.
 hidden: false
 ---
 
-One AgentConnect profile can use multiple social sign-in methods. Depending on what your deployment offers, you can link **GitHub**, **Google**, **Slack**, **Lark**, and **Feishu** to the same profile.
+One AgentConnect profile can use multiple social sign-in methods. AgentConnect Cloud currently offers **GitHub**, **Google**, and **Slack**. A self-hosted deployment can additionally enable **Lark** and **Feishu** through its own Logto tenant.
 
 Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
@@ -41,7 +41,7 @@ A linked, verified Slack identity participates in two session checks:
 
 For a public channel, an active full member of the installing workspace does not need to have joined that channel. Private channels and group DMs require current conversation membership; guests and Slack Connect users also require current conversation membership. Linking the matching Slack account can make existing sessions visible without rewriting their records. Unlinking removes that recognized identity, so private Slack DMs and Slack-scoped shared sessions that depended on it are no longer visible.
 
-### Lark and Feishu
+### Lark and Feishu on self-hosted deployments
 
 A linked Lark or Feishu identity can match private direct-message ownership. When the organization enables **Follow Feishu / Lark access**, it can also prove current membership in a group chat.
 

@@ -4,7 +4,7 @@ excerpt: Understand what changes—and what does not—when one profile links se
 hidden: false
 ---
 
-One AgentConnect profile can use GitHub, Google, Slack, Lark, and Feishu as sign-in methods. Linking another provider gives the same profile another way to sign in and, where supported, a provider-specific identity for a narrowly defined permission check.
+AgentConnect Cloud offers GitHub, Google, and Slack as sign-in methods. A self-hosted deployment can also enable Lark and Feishu. Linking another provider gives the same profile another way to sign in and, where supported, a provider-specific identity for a narrowly defined permission check.
 
 It does **not** combine the providers into one pool of permissions. Each provider identity is used only for checks against that provider; Google currently adds no provider-specific AgentConnect authorization.
 
