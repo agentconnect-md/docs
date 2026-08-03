@@ -8,3 +8,5 @@
 - setslacksessionaccess
 - getgithubsessionaccess
 - setgithubsessionaccess
+- getfeishularksessionaccess
+- setfeishularksessionaccess
