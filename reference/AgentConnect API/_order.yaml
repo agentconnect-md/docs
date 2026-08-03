@@ -12,6 +12,7 @@
 - mcp-providers
 - skill-sources
 - organization-knowledge
+- organization-variables-secrets
 - external-memory
 - crons
 - hooks

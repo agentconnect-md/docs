@@ -6678,7 +6678,8 @@
                       "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
                     },
                     "additionalProperties": {
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 65536
                     }
                   },
                   "secrets": {
@@ -6688,7 +6689,8 @@
                       "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
                     },
                     "additionalProperties": {
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 65536
                     }
                   },
                   "mcpServers": {
@@ -6880,6 +6882,9 @@
                             "enum": [
                               "github"
                             ]
+                          },
+                          "worktree": {
+                            "type": "boolean"
                           },
                           "gitRepo": {
                             "type": "string",
@@ -7239,6 +7244,31 @@
                         "type": "string"
                       }
                     },
+                    "organizationVariables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "organizationSecretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -7453,6 +7483,9 @@
                                 "github"
                               ]
                             },
+                            "worktree": {
+                              "type": "boolean"
+                            },
                             "gitRepo": {
                               "type": "string"
                             },
@@ -7477,6 +7510,7 @@
                           },
                           "required": [
                             "mode",
+                            "worktree",
                             "gitRepo"
                           ],
                           "additionalProperties": false
@@ -7649,6 +7683,8 @@
                     "pause",
                     "env",
                     "secretKeys",
+                    "organizationVariables",
+                    "organizationSecretKeys",
                     "mcpServers",
                     "skills",
                     "managedSkills",
@@ -8133,6 +8169,31 @@
                           "type": "string"
                         }
                       },
+                      "organizationVariables": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "value"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "organizationSecretKeys": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
                       "mcpServers": {
                         "type": "array",
                         "items": {
@@ -8347,6 +8408,9 @@
                                   "github"
                                 ]
                               },
+                              "worktree": {
+                                "type": "boolean"
+                              },
                               "gitRepo": {
                                 "type": "string"
                               },
@@ -8371,6 +8435,7 @@
                             },
                             "required": [
                               "mode",
+                              "worktree",
                               "gitRepo"
                             ],
                             "additionalProperties": false
@@ -8519,6 +8584,8 @@
                       "pause",
                       "env",
                       "secretKeys",
+                      "organizationVariables",
+                      "organizationSecretKeys",
                       "mcpServers",
                       "skills",
                       "managedSkills",
@@ -8832,6 +8899,31 @@
                         "type": "string"
                       }
                     },
+                    "organizationVariables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "organizationSecretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -9046,6 +9138,9 @@
                                 "github"
                               ]
                             },
+                            "worktree": {
+                              "type": "boolean"
+                            },
                             "gitRepo": {
                               "type": "string"
                             },
@@ -9070,6 +9165,7 @@
                           },
                           "required": [
                             "mode",
+                            "worktree",
                             "gitRepo"
                           ],
                           "additionalProperties": false
@@ -9218,6 +9314,8 @@
                     "pause",
                     "env",
                     "secretKeys",
+                    "organizationVariables",
+                    "organizationSecretKeys",
                     "mcpServers",
                     "skills",
                     "managedSkills",
@@ -9526,7 +9624,8 @@
                           "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
                         },
                         "additionalProperties": {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 65536
                         }
                       },
                       {
@@ -9543,7 +9642,8 @@
                     "additionalProperties": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 65536
                         },
                         {
                           "type": "null"
@@ -10015,6 +10115,31 @@
                         "type": "string"
                       }
                     },
+                    "organizationVariables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "organizationSecretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -10229,6 +10354,9 @@
                                 "github"
                               ]
                             },
+                            "worktree": {
+                              "type": "boolean"
+                            },
                             "gitRepo": {
                               "type": "string"
                             },
@@ -10253,6 +10381,7 @@
                           },
                           "required": [
                             "mode",
+                            "worktree",
                             "gitRepo"
                           ],
                           "additionalProperties": false
@@ -10401,6 +10530,8 @@
                     "pause",
                     "env",
                     "secretKeys",
+                    "organizationVariables",
+                    "organizationSecretKeys",
                     "mcpServers",
                     "skills",
                     "managedSkills",
@@ -11321,6 +11452,9 @@
                           "github"
                         ]
                       },
+                      "worktree": {
+                        "type": "boolean"
+                      },
                       "repoFullName": {
                         "type": "string",
                         "pattern": "^[^/\\s]+\\/[^/\\s]+$"
@@ -11620,6 +11754,31 @@
                         "type": "string"
                       }
                     },
+                    "organizationVariables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "organizationSecretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -11834,6 +11993,9 @@
                                 "github"
                               ]
                             },
+                            "worktree": {
+                              "type": "boolean"
+                            },
                             "gitRepo": {
                               "type": "string"
                             },
@@ -11858,6 +12020,7 @@
                           },
                           "required": [
                             "mode",
+                            "worktree",
                             "gitRepo"
                           ],
                           "additionalProperties": false
@@ -12006,6 +12169,8 @@
                     "pause",
                     "env",
                     "secretKeys",
+                    "organizationVariables",
+                    "organizationSecretKeys",
                     "mcpServers",
                     "skills",
                     "managedSkills",
@@ -12522,6 +12687,31 @@
                         "type": "string"
                       }
                     },
+                    "organizationVariables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "organizationSecretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -12736,6 +12926,9 @@
                                 "github"
                               ]
                             },
+                            "worktree": {
+                              "type": "boolean"
+                            },
                             "gitRepo": {
                               "type": "string"
                             },
@@ -12760,6 +12953,7 @@
                           },
                           "required": [
                             "mode",
+                            "worktree",
                             "gitRepo"
                           ],
                           "additionalProperties": false
@@ -12908,6 +13102,8 @@
                     "pause",
                     "env",
                     "secretKeys",
+                    "organizationVariables",
+                    "organizationSecretKeys",
                     "mcpServers",
                     "skills",
                     "managedSkills",
@@ -13370,6 +13566,31 @@
                         "type": "string"
                       }
                     },
+                    "organizationVariables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "organizationSecretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -13584,6 +13805,9 @@
                                 "github"
                               ]
                             },
+                            "worktree": {
+                              "type": "boolean"
+                            },
                             "gitRepo": {
                               "type": "string"
                             },
@@ -13608,6 +13832,7 @@
                           },
                           "required": [
                             "mode",
+                            "worktree",
                             "gitRepo"
                           ],
                           "additionalProperties": false
@@ -13756,6 +13981,8 @@
                     "pause",
                     "env",
                     "secretKeys",
+                    "organizationVariables",
+                    "organizationSecretKeys",
                     "mcpServers",
                     "skills",
                     "managedSkills",
@@ -14205,6 +14432,31 @@
                         "type": "string"
                       }
                     },
+                    "organizationVariables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "organizationSecretKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "mcpServers": {
                       "type": "array",
                       "items": {
@@ -14419,6 +14671,9 @@
                                 "github"
                               ]
                             },
+                            "worktree": {
+                              "type": "boolean"
+                            },
                             "gitRepo": {
                               "type": "string"
                             },
@@ -14443,6 +14698,7 @@
                           },
                           "required": [
                             "mode",
+                            "worktree",
                             "gitRepo"
                           ],
                           "additionalProperties": false
@@ -14591,6 +14847,8 @@
                     "pause",
                     "env",
                     "secretKeys",
+                    "organizationVariables",
+                    "organizationSecretKeys",
                     "mcpServers",
                     "skills",
                     "managedSkills",
@@ -34696,6 +34954,1078 @@
         }
       }
     },
+    "/v1\\ngh/orgs/{orgId}/environment": {
+      "get": {
+        "operationId": "listOrganizationEnvironment",
+        "summary": "List organization variables and secrets",
+        "tags": [
+          "Organization variables & secrets"
+        ],
+        "description": "Lists the organization environment registry. Owner-only. Variable values are returned; secret values never are — only whether material is stored. Bindings are filtered to agents the caller can view.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "variable",
+                          "secret"
+                        ]
+                      },
+                      "variableValue": {
+                        "type": "string"
+                      },
+                      "secretConfigured": {
+                        "type": "boolean"
+                      },
+                      "audience": {
+                        "type": "string",
+                        "enum": [
+                          "all",
+                          "selected"
+                        ]
+                      },
+                      "visibleAgentIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        }
+                      },
+                      "version": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "key",
+                      "kind",
+                      "audience",
+                      "visibleAgentIds",
+                      "version",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createOrganizationEnvironmentEntry",
+        "summary": "Create an organization variable or secret",
+        "tags": [
+          "Organization variables & secrets"
+        ],
+        "description": "Defines one organization-owned entry and targets it at all agents or a selected set. A secret value is write-only: it is accepted here and never returned. `all` enrolls every agent the caller may edit and auto-enrolls agents on later authorized configuration writes; it never reaches an agent the caller cannot manage. `key` and `kind` are immutable afterwards.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "variable",
+                      "secret"
+                    ]
+                  },
+                  "value": {
+                    "type": "string",
+                    "maxLength": 65536
+                  },
+                  "audience": {
+                    "type": "string",
+                    "enum": [
+                      "all",
+                      "selected"
+                    ]
+                  },
+                  "agentIds": {
+                    "maxItems": 512,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  }
+                },
+                "required": [
+                  "key",
+                  "kind",
+                  "value",
+                  "audience"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "variable",
+                        "secret"
+                      ]
+                    },
+                    "variableValue": {
+                      "type": "string"
+                    },
+                    "secretConfigured": {
+                      "type": "boolean"
+                    },
+                    "audience": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "visibleAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      }
+                    },
+                    "version": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "key",
+                    "kind",
+                    "audience",
+                    "visibleAgentIds",
+                    "version",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/orgs/{orgId}/environment/{entryId}": {
+      "patch": {
+        "operationId": "updateOrganizationEnvironmentEntry",
+        "summary": "Replace a value or retarget an organization entry",
+        "tags": [
+          "Organization variables & secrets"
+        ],
+        "description": "Replaces the value and/or changes the audience under `expectedVersion`. An omitted value leaves it unchanged, which is how the Console keeps an existing secret while editing other fields. Switching to `all` enrolls every agent the caller may edit and keeps existing delegated bindings; switching to `selected` stops automatic enrollment without revoking bindings to private agents the caller cannot see. `key` and `kind` cannot change — rename or convert by deleting and recreating.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expectedVersion": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "value": {
+                    "type": "string",
+                    "maxLength": 65536
+                  },
+                  "audience": {
+                    "type": "string",
+                    "enum": [
+                      "all",
+                      "selected"
+                    ]
+                  }
+                },
+                "required": [
+                  "expectedVersion"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "entryId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "variable",
+                        "secret"
+                      ]
+                    },
+                    "variableValue": {
+                      "type": "string"
+                    },
+                    "secretConfigured": {
+                      "type": "boolean"
+                    },
+                    "audience": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "visibleAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      }
+                    },
+                    "version": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "key",
+                    "kind",
+                    "audience",
+                    "visibleAgentIds",
+                    "version",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteOrganizationEnvironmentEntry",
+        "summary": "Delete an organization variable or secret",
+        "tags": [
+          "Organization variables & secrets"
+        ],
+        "description": "Removes the entry and every binding it had, exercising the authority each binding already delegated. The agents that were receiving it are not disclosed. Each affected daemon then receives a full snapshot without the key, so any same-key agent-local row becomes effective again. A process already running keeps the old value until its next safe replacement point.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "entryId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response"
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/orgs/{orgId}/environment/{entryId}/agents/{agentId}": {
+      "put": {
+        "operationId": "assignOrganizationEnvironmentEntry",
+        "summary": "Assign an organization entry to one agent",
+        "tags": [
+          "Organization variables & secrets"
+        ],
+        "description": "Idempotently binds the entry to one agent. Valid only while the entry targets selected agents. Requires `resource.edit` on the target, not merely `resource.view` — an agent the caller cannot manage returns 404, identical to a missing one. The binding is a durable delegation: organization environment managers may afterwards rotate the entry without gaining visibility into this agent.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "entryId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "agentId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "variable",
+                        "secret"
+                      ]
+                    },
+                    "variableValue": {
+                      "type": "string"
+                    },
+                    "secretConfigured": {
+                      "type": "boolean"
+                    },
+                    "audience": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "visibleAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      }
+                    },
+                    "version": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "key",
+                    "kind",
+                    "audience",
+                    "visibleAgentIds",
+                    "version",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "unassignOrganizationEnvironmentEntry",
+        "summary": "Unassign an organization entry from one agent",
+        "tags": [
+          "Organization variables & secrets"
+        ],
+        "description": "Idempotently removes one binding. Valid only while the entry targets selected agents, and requires `resource.edit` on the target. The agent then receives a full snapshot without the key, so a retained same-key agent-local row becomes effective again without re-entering its value.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "entryId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "agentId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "variable",
+                        "secret"
+                      ]
+                    },
+                    "variableValue": {
+                      "type": "string"
+                    },
+                    "secretConfigured": {
+                      "type": "boolean"
+                    },
+                    "audience": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "selected"
+                      ]
+                    },
+                    "visibleAgentIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      }
+                    },
+                    "version": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "key",
+                    "kind",
+                    "audience",
+                    "visibleAgentIds",
+                    "version",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1\\ngh/orgs/{orgId}/connectors/config": {
       "get": {
         "operationId": "getConnectorsConfig",
@@ -44782,6 +46112,20 @@
                         }
                       ]
                     },
+                    "feishuRegion": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "feishu",
+                            "lark"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "visibilityState": {
                       "type": "string",
                       "enum": [
@@ -44888,6 +46232,7 @@
                     "visibility",
                     "externalProvider",
                     "externalResolution",
+                    "feishuRegion",
                     "visibilityState",
                     "canChangeVisibility",
                     "accessSyncDegraded",
@@ -45793,6 +47138,10 @@
     {
       "name": "Organization knowledge",
       "description": "Accepted organization knowledge, managed Agent Skills bundles, and Dream suggestions."
+    },
+    {
+      "name": "Organization variables & secrets",
+      "description": "Organization-owned environment variables and secrets, defined once and assigned to all or selected agents. Owner-only. Secret values are write-only — accepted on create/replace and never returned."
     },
     {
       "name": "External memory",
