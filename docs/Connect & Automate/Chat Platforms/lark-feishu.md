@@ -1,10 +1,12 @@
 ---
 title: 🪽 Lark / Feishu
-excerpt: Connect Lark on Cloud, or Lark / Feishu when self-hosting.
+excerpt: Connect a Lark or Feishu bot with one-click or manual setup.
 hidden: false
 ---
 
-AgentConnect Cloud currently offers international **Lark**. China-region **Feishu** requires a self-hosted deployment. Self-hosted deployments can use either regional choice through the same setup flow.
+AgentConnect Cloud and self-hosted deployments support international **Lark** and China-region **Feishu** as separate regional choices in the same setup flow.
+
+Cloud supports both bot integrations. Lark / Feishu social sign-in and **Follow Feishu / Lark access** currently require a self-hosted deployment.
 
 The recommended setup creates a self-built app through the platform's official authorization flow and connects its permissions, event subscription, and credentials automatically.
 
@@ -25,7 +27,7 @@ AgentConnect follows the authorization in the original dialog. Once approved, it
 - **Long connection** is the default. The daemon opens an outbound connection to Lark / Feishu, so it needs no public callback URL.
 - **HTTP callbacks** enter through the AgentConnect Relay and are forwarded directly to the owning daemon. The option appears only when the deployment has a public, connected Relay. One-click setup configures the callback security and request URL for you.
 
-For Cloud Lark users, leave the default Long connection selected. Delivery choice does not change which agent runs or where its workspace and session transcript live.
+For most Cloud users, leave the default Long connection selected. Delivery choice does not change which agent runs or where its workspace and session transcript live.
 
 ## Manual self-built app
 

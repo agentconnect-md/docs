@@ -66,7 +66,7 @@ The Playground is for trying things out — the point of AgentConnect is meeting
 - [Connect Slack](/docs/slack) — start with Cloud's built-in Add to Slack app, or use a custom identity.
 - [Connect Telegram](/docs/telegram) — one token from @BotFather, with automatic privacy-status checks.
 - [Connect Discord](/docs/discord) — paste a bot token; AgentConnect builds the invite and enables Message Content Intent.
-- [Connect Lark / Feishu](/docs/lark-feishu) — use Lark on Cloud; self-hosted deployments can connect either region.
+- [Connect Lark / Feishu](/docs/lark-feishu) — one-click setup with a direct long connection or Relay-backed HTTP events.
 - [Watch GitHub repos](/docs/github) — trigger the agent from issues, PRs and comments.
 - [Add a webhook](/docs/webhooks) — trigger it from anything that can POST.
 
