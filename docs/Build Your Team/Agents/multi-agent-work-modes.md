@@ -4,20 +4,20 @@ excerpt: Choose how a team of specialized agents divides responsibilities, deleg
 hidden: false
 ---
 
-AgentConnect is designed for teams of specialized agents. For most teams, the best starting point is several focused agents, each connected to its own bot or integration. Bring several into one Playground conversation when a person wants to work with them together, and add agent-to-agent delegation when one agent should coordinate the work.
+AgentConnect is designed for teams of specialized agents. For most teams, the best starting point is several focused agents, each connected to its own bot or integration. Bring several into one conversation when people want to work with them together, and add agent-to-agent delegation when one agent should coordinate the work.
 
 Layered specialists are a common next step, especially for pull-request review. Trigger fan-out and shared-bot routing are useful when a workflow specifically needs parallel opinions or one consolidated platform identity.
 
 | Starting point | Work mode | Agents run | Typical use |
 | --- | --- | --- | --- |
 | Default | Specialized agents | One addressed agent | A role-based agent team |
-| Direct collaboration | Shared Playground | Several together | Compare or collaborate live |
+| Direct collaboration | Shared conversation | Several together | Compare or collaborate live |
 | Core collaboration | Agent delegation | Parent and workers | Coordinated subtasks |
 | Common workflow | Layered specialists | One per request | Fast and deep PR review |
 | Parallel analysis | Trigger fan-out | Several independently | Independent reviews |
 | Advanced routing | Shared bot routing | One routed agent | One bot across channels |
 
-The identity that appears on Slack or GitHub does not decide which resources an agent can access. Each agent keeps its own configuration and permission boundaries in every mode.
+The identity that appears on a chat platform or GitHub does not decide which resources an agent can access. Each agent keeps its own configuration and permission boundaries in every mode.
 
 ## Specialized agents
 
@@ -34,22 +34,22 @@ Each path keeps its own integration identity, agent configuration, and session. 
 
 Use this mode when the roles serve different teams or workflows and their outputs do not need to be combined. Start with [Create an agent](/docs/create-an-agent), then give each one a focused persona and environment under [Configure an agent](/docs/configure-an-agent).
 
-## Shared Playground conversation
+## Shared conversation
 
-**Use this for direct collaboration.** One person can bring several agents into the same private browser conversation and watch their work together.
+**Use this for direct collaboration.** Bring several agents into the same Playground or IM conversation and watch their work together. Supported chat platforms are Slack, Telegram, Discord, Lark, and Feishu.
 
 ```mermaid
 flowchart LR
-  Person["One person"] --> Conversation["Private Playground"]
+  Person["People"] --> Conversation["Playground or IM conversation"]
   Conversation --> Coding["Coding agent"]
   Conversation --> Review["Review agent"]
   Coding --> Conversation
   Review --> Conversation
 ```
 
-A message without an explicit mention reaches every participant; `@AgentName` narrows a turn to the named agents. Every agent keeps its own configuration while the browser presents their work as one conversation.
+A Playground message without an explicit mention reaches every participant; `@AgentName` narrows a turn to the named agents. In a chat platform, address agents through their bot identities and normal conversation trigger rules. Every agent keeps its own configuration and session while the console presents the participant work as one conversation.
 
-Use this mode when a person wants agents to compare approaches or contribute different specialties in real time. For an agent coordinating other agents, use delegation below. See [Playground](/docs/playground) for the conversation behavior.
+Use this mode when people want agents to compare approaches or contribute different specialties in real time. For an agent coordinating other agents, use delegation below. See [Playground](/docs/playground) and [Sessions](/docs/sessions) for the conversation behavior.
 
 ## Agent-to-agent delegation
 

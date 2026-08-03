@@ -21,11 +21,13 @@ Agent-to-agent calls use a separate, directional policy. A call from agent A to 
 | ------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------- |
 | [Members & roles](/docs/members-and-roles)             | What a person may do across an organization              | Owner, Collaborator, Viewer           |
 | [Visibility & sharing](/docs/visibility-and-sharing)   | Which team resources a person may discover and access    | Everyone, Selected                    |
-| [Session visibility](/docs/session-visibility)         | Who may read one session and its transcript              | Everyone, Private, Slack members, GitHub access |
+| [Session visibility](/docs/session-visibility)         | Who may read one session and its transcript              | Everyone, Private, provider access   |
 | [Agent visibility](/docs/agent-visibility)             | Which agents may discover and call one another           | Inbound and outbound: All or Selected |
 | [Social account linking](/docs/social-account-linking) | Which sign-in methods belong to one AgentConnect profile | GitHub, Google, Slack                 |
 
 When one profile has several linked providers, [Permissions with linked accounts](/docs/linked-account-permissions) explains which provider-specific checks change and which AgentConnect permissions stay exactly the same.
+
+Self-hosted deployments can also enable Lark and Feishu sign-in.
 
 ## Permissions that are separate
 

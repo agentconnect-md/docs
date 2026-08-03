@@ -335,11 +335,13 @@ After the backend and wrapper are ready, continue with [the guide to using Mem0 
 
 AgentConnect does not include or start Logto. You may connect an existing Logto tenant by configuring both the browser client and Control Plane verifier:
 
+Lark and Feishu social sign-in are self-hosted options. AgentConnect Cloud currently offers GitHub, Google, and Slack sign-in only.
+
 ```dotenv
 LOGTO_ENDPOINT=https://tenant.example.com/
 LOGTO_APP_ID=<application-id>
 LOGTO_API_RESOURCE=https://api.example.com
-SOCIAL_PROVIDERS=github,google,slack
+SOCIAL_PROVIDERS=github,google,slack,lark,feishu
 
 OIDC_ISSUER=https://tenant.example.com/oidc
 OIDC_AUDIENCE=https://api.example.com
@@ -358,7 +360,7 @@ The values must agree:
 - `OIDC_ISSUER` is the Logto endpoint with `/oidc`.
 - When `LOGTO_API_RESOURCE` is set, `OIDC_AUDIENCE` must equal that resource.
 - Without an API resource, omit `LOGTO_API_RESOURCE` and set `OIDC_AUDIENCE` to `LOGTO_APP_ID`.
-- `SOCIAL_PROVIDERS` is a comma-separated list of the lowercase targets `github`, `google`, and `slack`. Set it to match the social connectors enabled in the tenant. Omitting it or setting `*` renders all three.
+- `SOCIAL_PROVIDERS` is a comma-separated list of the lowercase targets `github`, `google`, `slack`, `lark`, and `feishu`. Set it to match the social connectors enabled in the tenant. Omitting it keeps GitHub, Google, and Slack; setting `*` opts into all five.
 - Set or remove the Web and Control Plane values together. Configuring only one side leaves the console unable to authenticate its API calls.
 
 `SOCIAL_PROVIDERS` controls the buttons and Profile methods that AgentConnect renders. It does not create connectors or check Logto's connector inventory; a button whose connector is absent lands on Logto's error page.
@@ -367,11 +369,11 @@ The values must agree:
 
 The application callback and provider callbacks serve different parts of the flow:
 
-| Register with                     | Callback URI                                                                                    | Purpose                               |
-| --------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
-| Logto Web application             | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback`                                                   | Finish AgentConnect sign-in           |
-| Each GitHub, Google, or Slack app | The exact URI shown by its Logto connector, normally `<LOGTO_ENDPOINT>/callback/<connector-id>` | Return normal social sign-in to Logto |
-| Each GitHub, Google, or Slack app | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback`                                            | Return Profile account linking        |
+| Register with         | Callback URI                                                                                    | Purpose                               |
+| --------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Logto Web application | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback`                                                   | Finish AgentConnect sign-in           |
+| Each social app       | The exact URI shown by its Logto connector, normally `<LOGTO_ENDPOINT>/callback/<connector-id>` | Return normal social sign-in to Logto |
+| Each social app       | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback`                                            | Return Profile account linking        |
 
 The third callback is required only for AgentConnect's custom Profile linking flow. Do not replace it with Logto's `/account/callback/social/<connector-id>` URL, which belongs to Logto's prebuilt Account Center flow.
 
@@ -401,6 +403,21 @@ All four values belong to one tenant. `LOGTO_MGMT_ENDPOINT`, `LOGTO_MGMT_APP_ID`
 Google and Slack accept multiple redirect URLs. For GitHub, use a GitHub App that supports multiple callback URLs; a GitHub OAuth App has only one callback URL.
 
 After restart, the avatar menu → **Your profile → Sign-in methods** shows the configured providers. The last linked method cannot be removed. See [Social account linking](/docs/social-account-linking) for the user-facing behavior and its current permission boundary.
+
+### Lark and Feishu session access
+
+Adding `lark` or `feishu` to `SOCIAL_PROVIDERS` enables sign-in and Profile linking only. To use a linked identity for direct-message ownership or current chat-membership checks, the Control Plane also needs the regional platform app used by both the Logto connector and the messaging integration:
+
+```dotenv
+FEISHU_PLATFORM_APP_ID=<app-id>
+FEISHU_PLATFORM_APP_SECRET=<app-secret>
+LARK_PLATFORM_APP_ID=<app-id>
+LARK_PLATFORM_APP_SECRET=<app-secret>
+```
+
+Each regional pair is optional, but its ID and secret must be set together. Lark and Feishu are independent; configure only the regions your deployment offers.
+
+> The stock `compose.yaml` does not currently forward these four values to the Control Plane. The default Compose stack can offer Lark or Feishu sign-in and Profile linking, but leave **Follow Feishu / Lark access** off unless your deployment injects the matching pair through a Compose override or another orchestrator.
 
 Restart the affected services after changing the file:
 
