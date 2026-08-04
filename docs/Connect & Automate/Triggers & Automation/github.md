@@ -39,7 +39,7 @@ Public-repository read-only setup and public-repository sessions do not require 
 
 ## What the agent does
 
-Each qualifying event starts a session on the agent's daemon with the event as context (title, body, diff excerpt as applicable). Posting comments, reviews, Checks, or repository changes requires **Read & write** authorization; a read-only agent can still inspect supported event context. See [Workspaces & repositories](/docs/workspaces-and-repos).
+Each qualifying event starts a session on the agent's daemon with the event as context (title, body, diff excerpt as applicable). An enabled watch can post the agent's ordinary final reply even when its workspace is **Read only**. Formal reviews, status Checks, and repository changes require **Read & write** authorization. See [Workspaces & repositories](/docs/workspaces-and-repos).
 
 Sessions triggered from GitHub appear in [Sessions](/docs/sessions) with the repo/thread as their channel, linked back to GitHub. When repository access sync is enabled, their read-only **GitHub access** audience follows the source repository's current visibility and the viewer's access rather than an AgentConnect role override.
 
@@ -70,5 +70,5 @@ The agent page groups its GitHub integration as one card — one row per watched
 ## Requirements
 
 - The **GitHub app** must be installed for your org (**Settings → GitHub → Install on GitHub**); the integration dialog offers the install button if it's missing, with an **I've installed it — sync** refresh.
-- Ordinary write-back, formal reviews, and Checks require **Read & write** repository authorization.
+- An enabled watch can post its ordinary final reply with **Read only** access. Formal reviews, Checks, and repository changes require **Read & write**.
 - On AgentConnect OSS, the operator must first [configure the deployment GitHub App and its Relay webhook](/docs/deployment-and-configuration#optional-github-app).
