@@ -1,6 +1,6 @@
 ---
 title: ⚙️ Configure an agent
-excerpt: Edit an agent's persona, runtime behavior, placement, workspace, access, memory, tools and skills.
+excerpt: Edit an agent's persona, runtime, workspace, access, variables, memory, tools, and skills.
 hidden: false
 ---
 
@@ -35,9 +35,11 @@ Choose another daemon in **Edit** to cold-move the agent. Save the move separate
 
 AgentConnect drains the active turn and reprovisions the control-plane-owned definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcript data. The source archive remains on the old machine, GitHub workspaces are cloned again, and old session bodies cannot be loaded from the console after the move.
 
-## Environment variables
+## Variables and secrets
 
-The **Variables** and **Secrets** cards set environment values for the agent's sessions — API endpoints, feature flags, and credentials its tools need. Secrets are write-only in the console after saving.
+The **Variables** and **Secrets** cards set environment values owned by this agent — API endpoints, feature flags, and credentials its tools need. Secrets are write-only after saving.
+
+Organization Owners can define a value once under **Settings → Variables & secrets** and assign it to all or selected agents. Assigned rows carry an **Organization** label and are read-only from the agent page. See [Variables & secrets](/docs/variables-and-secrets) for precedence, rotation, and secret handling.
 
 ## Agent visibility (sub-agent calls)
 
