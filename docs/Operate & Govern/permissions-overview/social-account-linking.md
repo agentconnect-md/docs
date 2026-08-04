@@ -37,7 +37,7 @@ For a provider-by-provider comparison, including profiles with several linked me
 A linked, verified Slack identity participates in two session checks:
 
 - it matches the owner of private Slack direct-message sessions by workspace ID plus user ID; and
-- when the organization enables **Follow Slack conversation access**, it identifies the viewer whose current workspace or conversation access Slack must confirm.
+- when the organization enables **Follow Slack access**, it identifies the viewer whose current workspace or conversation access Slack must confirm.
 
 For a public channel, an active full member of the installing workspace does not need to have joined that channel. Private channels and group DMs require current conversation membership; guests and Slack Connect users also require current conversation membership. Linking the matching Slack account can make existing sessions visible without rewriting their records. Unlinking removes that recognized identity, so private Slack DMs and Slack-scoped shared sessions that depended on it are no longer visible.
 
@@ -49,7 +49,7 @@ This check applies only when the messaging integration and the Logto connector u
 
 ### GitHub
 
-When the organization enables **Follow GitHub repository access**, sessions from a public repository remain available to everyone who can see the agent. A private-repository session requires a linked GitHub profile with current repository access.
+When the organization enables **Follow GitHub access**, sessions from a public repository remain available to everyone who can see the agent. A private-repository session requires a linked GitHub profile with current repository access.
 
 Linking GitHub can therefore make an existing private-repository session available without rewriting it. Unlinking GitHub removes that match immediately but does not uninstall the GitHub App or change repository grants. If someone follows a protected session link from GitHub without a linked profile, the not-found screen can offer **Link GitHub profile**; that hint does not reveal whether the session exists or bypass its access check.
 

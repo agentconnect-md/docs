@@ -10,7 +10,7 @@ Every session has its own audience in addition to the visibility of its agent:
 - **Private** makes the session available only to its matched owner.
 - **Slack members** means access follows the source Slack conversation and the viewer's current Slack access.
 - **Feishu / Lark members** means access follows the source chat and the viewer's current membership.
-- **GitHub access** means access follows the current visibility and permissions of the source GitHub repository.
+- **GitHub members** means access follows the current visibility and permissions of the source GitHub repository.
 
 Session visibility can only narrow access. It never reveals a session to someone who cannot see the owning agent, even when that person has access to the source conversation or repository.
 
@@ -21,17 +21,17 @@ AgentConnect classifies a new session from where it started:
 | Session origin                           | Default                                                              |
 | ---------------------------------------- | -------------------------------------------------------------------- |
 | Playground, webchat, or Web API launch   | Private                                                              |
-| One-to-one IM direct message             | Private                                                              |
+| One-to-one IM direct message             | Private — except a Lark or Feishu DM once chat access is enabled      |
 | Slack channel or group direct message    | Everyone, or Slack members when Slack access is enabled               |
-| Lark or Feishu group chat                | Everyone, or Feishu / Lark members when chat access is enabled        |
-| GitHub issue, pull request, or comment   | Everyone, or GitHub access when repository access is enabled          |
+| Lark or Feishu chat, including one-to-one | Everyone, or Feishu / Lark members when chat access is enabled       |
+| GitHub issue, pull request, or comment   | Everyone, or GitHub members when repository access is enabled          |
 | Telegram or Discord shared conversation  | Everyone                                                              |
 | Schedule, webhook, or other automation   | Everyone, or the destination audience for Slack, Lark, or Feishu                    |
 | Agent-to-agent child session             | Inherits its parent's audience                                       |
 
-## Follow Slack conversation access
+## Follow Slack access
 
-An organization Owner can open **Settings → Session access** and enable **Follow Slack conversation access**. It is disabled by default.
+An organization Owner can open **Settings → Session access** and enable **Follow Slack access**. It is disabled by default.
 
 When enabled, sessions from a Slack channel or group direct message are visible only to people who:
 
@@ -52,13 +52,15 @@ Turning the setting off makes **new** shared Slack sessions visible to Everyone 
 
 The Lark and Feishu bot integrations are available on Cloud, but this audience currently requires a self-hosted deployment with the matching regional social sign-in configured. AgentConnect Cloud does not offer Lark / Feishu permission sync or sign-in yet.
 
-An organization Owner can enable **Settings → Session access → Follow Feishu / Lark access**. Group sessions then require a linked profile with current membership in the source chat. Direct messages remain Private.
+An organization Owner can enable **Settings → Session access → Follow Feishu / Lark access**. Sessions then require a linked profile with current membership in the source chat.
+
+Unlike Slack, this covers one-to-one chats as well. A Lark or Feishu DM session that was **Private** moves to the **Feishu members** / **Lark members** audience when you enable the setting: the gate becomes live chat membership rather than the stored owner identity, and the participant can no longer switch it back themselves. In practice the audience is still just that chat's members, but the label and the mechanism change.
 
 The messaging integration and linked identity must use the same regional platform app because Lark and Feishu identities are app-scoped. Sessions from a custom app with another App ID keep the ordinary Everyone or Private model. Turning the setting off affects new sessions only; sessions already synchronized keep following their source chat.
 
-## Follow GitHub repository access
+## Follow GitHub access
 
-An organization Owner can also enable **Settings → Session access → Follow GitHub repository access**. It is disabled by default.
+An organization Owner can also enable **Settings → Session access → Follow GitHub access**. It is disabled by default.
 
 When enabled, a GitHub-triggered session remains gated by its owning agent and follows the source repository:
 

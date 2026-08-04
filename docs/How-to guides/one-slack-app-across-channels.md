@@ -100,7 +100,7 @@ Every active shared-bot channel has exactly one default dispatch agent. Changing
 3. Replies use the same Slack App identity. When the response footer is enabled, it identifies the actual AgentConnect agent, runtime, and model.
 4. An agent never re-triggers itself: AgentConnect drops each agent's own message at the point it would come back in.
 
-A new message in a channel picks **one** agent — the channel's default dispatch. A shared bot is routing several channel-specific agents behind one identity; it is not a broadcast that makes every agent answer.
+An unaddressed new message in a channel picks **one** agent — the channel's default dispatch. A shared bot is routing several channel-specific agents behind one identity; it is not a broadcast that makes every agent answer.
 
 Once more than one agent has joined the same thread, though, every later message in that thread is delivered to each of them separately, and each decides for itself whether to answer. A second agent joins when someone addresses it directly — `@your-bot <agent-name>` selects a non-owner agent by name in any channel the shared bot serves. Their replies are also visible to one another; the hop budget and each agent's [call policy](/docs/agent-visibility) bound the exchange.
 

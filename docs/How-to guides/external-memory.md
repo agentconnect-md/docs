@@ -61,7 +61,7 @@ Choose the two policies independently:
 - **Capture → Manual only** sends content only when a memory is explicitly saved.
 - **Capture → Every turn** sends the delivered user input and final reply to Mem0 after the reply is delivered. Enabling it requires confirming the data boundary.
 
-The defaults — 5 results, 8 KiB, and a 1-second timeout — are a good starting point. Click **Use external memory** or **Save external-memory policy**.
+The defaults — 5 results, 8 KiB, and a 3-second timeout — are a good starting point. Click **Save memory settings**.
 
 The connection must pass the manifest, credential-contract, configuration, and capability checks for this exact revision before the agent can start with it. **Ready** is the normal active state. A revision that was already verified may later show **degraded** during a transient failure; the daemon keeps it admission-open and retries while recall itself fails open.
 
@@ -76,7 +76,7 @@ For the clearest end-to-end test, temporarily set **Capture → Every turn**:
 
 With **Recall → Every turn**, the new session should answer from the stored record. A different agent should not see it because AgentConnect supplies a different trusted `agent_id` scope.
 
-The record panel is proxied live through the owning daemon; memory bodies are not copied into the control plane. Mem0 OSS supports search, list, get, create, delete, and history in this integration. It intentionally does not expose record editing because Mem0's ID-only update route cannot satisfy AgentConnect's optimistic-version requirement.
+The record panel is proxied live through the owning daemon; memory bodies are not copied into the control plane. This integration supports recall (search), capture, list, get, create, delete, and history. It intentionally does not expose record editing because Mem0's ID-only update route cannot satisfy AgentConnect's optimistic-version requirement.
 
 ## Connection status and troubleshooting
 

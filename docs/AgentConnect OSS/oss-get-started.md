@@ -26,7 +26,7 @@ cd agentconnect
 docker compose up -d --pull always
 ```
 
-The first run downloads the images, starts PostgreSQL 18, applies all database migrations, creates the fixed local organization required by no-auth mode, and then starts the three long-running services. It does not add sample data.
+The first run downloads the images, starts PostgreSQL 18, applies all database migrations, creates the fixed local organization required by no-auth mode, and then starts the three long-running services. It adds no sample data — the one thing you will find already there is the built-in `agentconnect` agent, which every organization gets ([turn it off](/docs/deployment-and-configuration#preset-agent-provisioning) if you would rather start empty).
 
 Check the result:
 
@@ -44,7 +44,7 @@ Open:
 http://localhost:3000
 ```
 
-The default stack has no sign-in provider. Clicking the continue button enters the single local organization. This mode admits every local request and is safe only while the stack remains bound to `127.0.0.1`.
+The default stack has no sign-in provider, so the console opens directly in the single local organization with no sign-in step. This mode admits every local request and is safe only while the stack remains bound to `127.0.0.1`.
 
 You can inspect the service probes directly:
 
@@ -120,7 +120,7 @@ docker compose down --volumes
 | PostgreSQL | Docker | Persist Control Plane data |
 | Daemon | Host or another machine | Run agents, connections, and local data |
 
-The Compose stack also runs a short-lived migration job. It applies the selected Control Plane image's database migrations. When sign-in is disabled, Control Plane startup initializes only the fixed local organization required by no-auth mode; it does not add sample data.
+The Compose stack also runs a short-lived migration job. It applies the selected Control Plane image's database migrations. When sign-in is disabled, Control Plane startup initializes the fixed local organization required by no-auth mode and provisions the built-in `agentconnect` agent into it. It adds no other data.
 
 ## Relay and direct connections
 

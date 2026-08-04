@@ -14,8 +14,8 @@ The recommended setup creates a self-built app through the platform's official a
 
 The agent must already be placed on a daemon that reports Lark / Feishu support.
 
-1. On the agent, open **Integrations → Add integration** and select **Lark** or **Feishu**.
-2. Keep **One-click** selected.
+1. On the agent, open **Integrations → Add integration** and select the **Lark / Feishu** tile. One tile covers both; a switcher on it picks the region.
+2. Keep **One-click** selected and choose **Lark** (international) or **Feishu** (China).
 3. Keep **Long connection** unless you deliberately want Relay-backed HTTP callbacks.
 4. Name the bot and click **Create Lark bot** or **Create Feishu bot**.
 5. In the new platform tab, review and approve the app and its requested permissions.

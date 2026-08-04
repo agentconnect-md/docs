@@ -33,7 +33,7 @@ AgentConnect checks the author of each comment, including edited content; the we
 A GitHub identity linked to a signed-in AgentConnect profile can participate in two separate console-user checks:
 
 - optional per-user repository authorization uses it to verify private-repository access and every write grant; and
-- **Settings → Session access → Follow GitHub repository access** uses it when deciding whether the viewer may read a session from a private repository.
+- **Settings → Session access → Follow GitHub access** uses it when deciding whether the viewer may read a session from a private repository.
 
 Public-repository read-only setup and public-repository sessions do not require a linked GitHub profile. Linking GitHub does not install the GitHub App, grant a repository, or change the webhook-author rules above. See [Permissions with linked accounts](/docs/linked-account-permissions).
 
@@ -41,7 +41,7 @@ Public-repository read-only setup and public-repository sessions do not require 
 
 Each qualifying event starts a session on the agent's daemon with the event as context (title, body, diff excerpt as applicable). An enabled watch can post the agent's ordinary final reply even when its workspace is **Read only**. Formal reviews, status Checks, and repository changes require **Read & write** authorization. See [Workspaces & repositories](/docs/workspaces-and-repos).
 
-Sessions triggered from GitHub appear in [Sessions](/docs/sessions) with the repo/thread as their channel, linked back to GitHub. When repository access sync is enabled, their read-only **GitHub access** audience follows the source repository's current visibility and the viewer's access rather than an AgentConnect role override.
+Sessions triggered from GitHub appear in [Sessions](/docs/sessions) with the repo/thread as their channel, linked back to GitHub. When repository access sync is enabled, their read-only **GitHub members** audience follows the source repository's current visibility and the viewer's access rather than an AgentConnect role override.
 
 ## PR reviews
 
