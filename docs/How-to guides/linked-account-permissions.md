@@ -34,10 +34,10 @@ See [Permissions](/docs/permissions-overview) for the organization, role, resour
 
 Two optional GitHub policies use the linked identity for different decisions:
 
-- **Per-user repository authorization** checks the signed-in person during repository setup. A linked GitHub identity is always required. For a public repository, `read` and AgentConnect `comment` setup can pass even when GitHub reports no effective permission for that user. For a private repository, those levels require effective repository access; `write` requires `write` or `admin`.
+- **Per-user repository authorization** checks the signed-in person during repository setup. Public repositories can be selected read-only without a linked GitHub identity. Private repositories require a linked identity with access, and **Read & write** always requires the linked GitHub user to have `write` or `admin` permission.
 - **Follow GitHub repository access** controls who may read GitHub-triggered sessions. Public-repository sessions require no linked identity; private-repository sessions require a linked GitHub profile with current repository access.
 
-Both policies still require the deployment's GitHub App to cover the repository. Neither linking nor either policy grants repository access by itself.
+The repository picker and GitHub event integrations still require the deployment's GitHub App to cover the repository. A public repository can also be used as an anonymous read-only workspace without the App. Neither linking nor either policy grants repository access by itself.
 
 GitHub webhook authorization is separate again: AgentConnect checks the current repository permission of the issue, pull-request, or comment author. The signed-in console user's linked GitHub account does not grant another GitHub author permission to trigger an agent. See [GitHub](/docs/github).
 
@@ -56,7 +56,7 @@ Linking several methods lets one AgentConnect profile satisfy several independen
 
 Unlinking removes only that sign-in method and its provider-specific identity:
 
-- Removing **GitHub** does not uninstall the GitHub App or delete existing agents and repository grants. The profile can no longer pass the per-user setup gate or read synchronized private-repository sessions until GitHub is linked again. Public-repository sessions are unaffected.
+- Removing **GitHub** does not uninstall the GitHub App or delete existing agents and repository grants. The profile can still select public repositories read-only, but cannot verify private-repository or write access or read synchronized private-repository sessions until GitHub is linked again. Public-repository sessions are unaffected.
 - Removing **Google** removes a sign-in option and no provider-specific permission.
 - Removing **Slack** removes the workspace identity from authorization immediately. Existing Slack session records are not deleted, but private DMs and Slack-scoped shared sessions that depended on the match are no longer visible. Relinking the same workspace identity can make them visible again without rewriting the sessions.
 - Removing **Lark** or **Feishu** removes only that regional identity. Matching private DMs and membership-scoped sessions are no longer visible until the same identity is linked again.
@@ -65,7 +65,7 @@ The final linked sign-in method cannot be removed. See [Social account linking](
 
 ## Current behavior, not a permission union
 
-Linked Slack, Lark, and Feishu identities can participate in their matching session checks. Linked GitHub identity checks apply to repository setup and private-repository session access. See [Session visibility](/docs/session-visibility) for the audience model.
+Linked Slack, Lark, and Feishu identities can participate in their matching session checks. A linked GitHub identity proves private-repository and write access during setup, and private-repository access when reading synchronized sessions. See [Session visibility](/docs/session-visibility) for the audience model.
 
 AgentConnect does not create a broader permission union across providers or provider workspaces. Do not assume that:
 

@@ -40,7 +40,7 @@ The host must provide:
 
 - `bwrap` (`bubblewrap`), `socat`, and `rg` (`ripgrep`)
 - Linux support for unprivileged user namespaces
-- Node.js 24 or newer, as required by the daemon itself
+- Node.js 24.12 or newer, as required by the daemon itself
 
 For example, on Ubuntu or Debian:
 

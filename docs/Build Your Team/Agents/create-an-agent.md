@@ -36,7 +36,7 @@ These appear when the selected daemon and runtime advertise support. Exact choic
 Where the agent's files live on the daemon:
 
 - **From scratch** — a fresh working directory. Files the agent creates live only on that machine.
-- **From GitHub** — clone a repository and branch, optionally scoped to a subdirectory, with read-only or read-write credentials. Details in [Workspaces & repositories](/docs/workspaces-and-repos).
+- **From GitHub** — clone a repository and branch, optionally scoped to a subdirectory, with read-only or read-write credentials. New GitHub agents use an isolated worktree for each session by default. Details in [Workspaces & repositories](/docs/workspaces-and-repos).
 
 You can change the workspace source later from the agent's **Workspace** tab. Changing source, repository or branch replaces daemon-local workspace files, so commit or back up anything you need first. See [Workspaces & repositories](/docs/workspaces-and-repos).
 
