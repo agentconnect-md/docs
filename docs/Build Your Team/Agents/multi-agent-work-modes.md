@@ -80,7 +80,9 @@ The permission boundary is directional:
 2. The worker's inbound policy must allow the caller.
 3. Both agents must belong to the same organization.
 
-Platform membership is not agent-call authorization. A visible mention of another bot also does not wake an AgentConnect peer; it provides team-visible context or attribution around a delegation that AgentConnect authorizes and delivers separately.
+Platform membership is not agent-call authorization: being in the same channel neither grants nor blocks an agent-to-agent call, which is decided only by the two policies above.
+
+A visible mention of another agent's bot in a chat conversation *does* reach that peer. Agent-authored messages route like anyone else's — mention, thread affinity, *any message*, and keyword rules all apply — with only the author's own message excluded, so an agent never re-triggers itself. That is what lets agents in one thread read each other's replies and decide whether to answer. What keeps it from running away is the call policy above, the conversation's own Off/gated setting, and a hop budget that caps how far one chain of agent-to-agent messages can travel.
 
 Use this mode when one agent should own the plan and another should contribute a specific result. See [Agent visibility](/docs/agent-visibility) for the call policy and [Sessions](/docs/sessions) for transcript and audience boundaries.
 
@@ -111,7 +113,7 @@ flowchart LR
 
 GitHub review is the current example. An App-level mention can run every matching reviewer for the repository, while an agent-name mention targets one reviewer. **Re-run all checks** reruns the matching review Checks; an individual Check action targets that reviewer. The Check name identifies the AgentConnect agent even though GitHub shows the shared App as the actor.
 
-Fan-out must be explicit in the integration and trigger configuration. Connecting several agents to the same repository or channel does not make every event a broadcast. AgentConnect rejects its own bot-authored comments and messages as new triggers so reviewers do not wake one another in a loop.
+Fan-out must be explicit in the integration and trigger configuration. Connecting several agents to the same repository or channel does not make every event a broadcast. On GitHub, any comment authored by a bot — AgentConnect's App or a third party — is refused as a trigger, so reviewers cannot wake one another in a loop. Chat platforms work differently: there, agents do see each other's messages, bounded by call policy and the hop budget described under [agent-to-agent delegation](#agent-to-agent-delegation).
 
 Use this mode when independent perspectives are more useful than a single coordinated answer. For a combined result, use delegation instead.
 

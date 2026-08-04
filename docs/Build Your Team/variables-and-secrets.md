@@ -53,14 +53,27 @@ Organization names are unique across variables and secrets. Names and types cann
 
 Secret values are write-only. After saving, AgentConnect shows the name and a mask; editing offers **Replace value** instead of reading the current value. Variable values remain visible to people who can view the assigned agent, so do not store credentials as variables.
 
-For AgentConnect OSS, write-only controls what users can retrieve through the product. Configure [secret storage encryption](/docs/deployment-and-configuration#secret-storage) separately to protect values at rest.
+Write-only controls what people can retrieve through the product, not how the value is stored everywhere. For AgentConnect OSS, configure [secret storage encryption](/docs/deployment-and-configuration#secret-storage) to protect values at rest in the Control Plane database. The daemon that runs the agent keeps its own copy of the resolved value in the agent's local configuration file, readable by the operating-system user that runs the daemon. Treat every machine you connect as trusted with the secrets of the agents placed on it.
 
 Secrets are available to the agent runtime and its tools. AgentConnect attempts to mask known literal secret values if they appear in agent output, but masking is not a security boundary. Give each agent only the secrets it needs and use appropriate [permissions](/docs/permissions-overview) and [sandboxing](/docs/sandboxing).
 
-Variables and secrets are injected only into the runtime environment. They do not expand placeholders in agent descriptions, schedules, integration settings, or other configuration.
+Variables and secrets reach the agent as environment values only. They do not expand placeholders in agent descriptions, schedules, integration settings, or other configuration.
+
+### Kubernetes and Docker credentials
+
+Two names are delivered as files instead, because the tools that need them expect a path rather than a value:
+
+| You set | The agent's tools get |
+| --- | --- |
+| `KUBECONFIG_DATA` | `KUBECONFIG`, pointing at the written kubeconfig file |
+| `DOCKER_CONFIG_DATA` (or the older `DOCKER_AUTH_CONFIG`) | `DOCKER_CONFIG`, pointing at the written config directory |
+
+Put the file's full contents in the `…_DATA` secret. AgentConnect writes it into the agent's own directory with owner-only permissions and removes the original name from the environment, so `kubectl` and `docker` work without any extra setup — but a script that reads `KUBECONFIG_DATA` directly will find nothing.
+
+These files exist only while the agent is working. AgentConnect writes them before each turn and deletes them about a minute after the agent goes quiet, and again when its runtime stops or the daemon restarts.
 
 ## Updates and removal
 
-Rotating, retargeting, or deleting an organization entry updates the affected agents. A process that is already running may keep the old value until its runtime reaches a safe restart point, so a rotation is not instantaneous revocation from an active process.
+Rotating, retargeting, or deleting an organization entry updates the affected agents. Because the value is part of what defines the runtime process, an affected agent is restarted to pick it up: a turn in flight is interrupted rather than allowed to finish. Rotate during a quiet moment if that matters for the work in progress.
 
 Removing an assignment restores a same-name agent-local fallback. If there is no fallback, the value disappears from future runtime processes.

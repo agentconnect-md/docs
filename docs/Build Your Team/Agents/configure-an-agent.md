@@ -31,9 +31,17 @@ The Description card is edited separately. It is not just display copy: AgentCon
 
 ## Move an agent
 
-Choose another daemon in **Edit** to cold-move the agent. Save the move separately from other configuration changes. Both source and target must be online, ready and support agent moves; the target must also support the selected runtime, model and MCP servers.
+Choose another daemon in **Edit** to cold-move the agent. Save the move separately from other configuration changes. A normal move needs both source and target online, ready and supporting agent moves; the target must also support the selected runtime, model and MCP servers.
 
 AgentConnect drains the active turn and reprovisions the control-plane-owned definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcript data. The source archive remains on the old machine, GitHub workspaces are cloned again, and old session bodies cannot be loaded from the console after the move.
+
+### Force reassign an agent off a dead daemon
+
+A normal move waits for the source daemon to confirm that it stopped the old copy, so it cannot rescue an agent from a machine that will never come back. Pick an online, compatible target while the source is offline and a **Force reassign** button appears.
+
+Force reassign is disaster recovery, not a second move mode. It skips only the source's confirmation — target readiness, capacity, runtime, model, MCP and managed-skill compatibility are still enforced, and AgentConnect refuses it while the source is ready or merely reconnecting. Before it proceeds you must tick a confirmation that the source machine is permanently stopped and cannot reconnect.
+
+That confirmation matters: if the old machine does come back, two copies of the agent can process the same messages until placement reconciliation tells the stale one to detach.
 
 ## Variables and secrets
 

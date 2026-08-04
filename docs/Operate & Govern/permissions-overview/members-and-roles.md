@@ -26,7 +26,8 @@ An organization must always have at least one Owner, so its last Owner cannot be
 | See resources allowed by [visibility](/docs/visibility-and-sharing) | ✓ | ✓ | ✓ |
 | Read allowed sessions, usage, and transcripts                                     | ✓         | ✓                | ✓          |
 | Create resources and edit resources they can see                                  | ✓         | ✓                | —          |
-| Run agents from Playground or **Run now**                                         | ✓         | ✓                | —          |
+| Talk to an agent they can see in the [Playground](/docs/playground)               | ✓         | ✓                | ✓          |
+| Start a scheduled run with **Run now**                                            | ✓         | ✓                | —          |
 | Change sharing on resources they can edit                                         | ✓         | ✓                | —          |
 | Install or sync the GitHub App and manage organization bots                       | ✓         | ✓                | —          |
 | Uninstall a GitHub App installation                                               | ✓         | —                | —          |
@@ -40,7 +41,10 @@ A [private session](/docs/session-visibility) likewise has no organization Owner
 
 Collaborators can change the audience of any resource they are allowed to edit. This includes sharing it with more members or switching it back to **Everyone**. Share sensitive resources only with collaborators you trust to manage that audience.
 
-Viewers are read-only for team resources. One session-specific exception is intentional: a Viewer may still change the visibility of a session whose owner identity matches them.
+Viewers are read-only for *configuration*: they cannot create, edit, or delete team resources. Two exceptions are intentional, and both matter when you choose who to make a Viewer:
+
+- A Viewer may change the visibility of a session whose owner identity matches them.
+- **A Viewer can talk to any agent they can see, from the [Playground](/docs/playground).** That starts a real run on the daemon with the agent's full configuration behind it — its tools, MCP servers, repository access, and secrets. The Viewer cannot change how the agent is configured, but they can use it. Restrict a sensitive agent with [team visibility](/docs/visibility-and-sharing) rather than relying on the Viewer role to keep people away from it.
 
 ## Your profile
 
