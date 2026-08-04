@@ -11,13 +11,19 @@ Team visibility controls the audience for a resource. New resources are visible 
 Supported create and edit surfaces have a **Visibility** or **Team visibility** field:
 
 - **Everyone** means every organization member may see the resource.
-- **Selected** means the current resource owner and the current organization members you select may see it.
+- **Selected** means exactly the current organization members you select may see it.
 
-Selected must always retain at least one current organization member. The resource owner is included and cannot be removed from the sharing control, so selecting no additional members means owner-only, not nobody. AgentConnect rejects a change to Selected when the resource has no owner who is still an organization member.
+Selected must always retain at least one current organization member. When you switch an empty **Everyone** selection to **Selected**, AgentConnect initially selects you for convenience. You can remove yourself after selecting someone else, but you cannot remove the last selected member. The API also rejects a Selected audience that is empty after filtering out people who are no longer members.
 
-The creator shown in a resource's history is audit information and may differ from its current owner; being the creator does not grant access by itself. The organization Owner role also does not bypass Selected visibility. A member's [role](/docs/members-and-roles) still decides whether allowed access is read-only or editable.
+The creator shown in a resource's history is audit information only; being the creator does not grant access by itself. Team resources do not have a separate owner who is automatically included. The organization Owner role also does not bypass Selected visibility. A member's [role](/docs/members-and-roles) still decides whether allowed access is read-only or editable.
 
 Anyone who can edit a resource can also change its audience. A selected Collaborator may therefore share it onward; a selected Viewer remains read-only.
+
+## When a member leaves
+
+AgentConnect removes a departing member from every Selected audience. Resources that still have another selected member keep that audience unchanged. If removing the member would leave a resource with nobody selected, AgentConnect adds the acting Owner when they remove someone else, or the longest-standing remaining Owner when a member leaves on their own. The resource remains reachable without changing to **Everyone**, and its creator history does not change.
+
+The removal confirmation identifies affected resources and tells you when this repair is needed.
 
 ## Resources with their own visibility
 
