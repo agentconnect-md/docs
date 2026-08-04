@@ -331,98 +331,10 @@ The remote Relay enforces the reviewed wrapper endpoint and injects the write-on
 
 After the backend and wrapper are ready, continue with [the guide to using Mem0 OSS as external memory](/docs/external-memory) to create the organization connection, bind an agent, choose recall and capture policies, and test cross-session recall.
 
-## Optional Logto sign-in
+## Optional Logto authentication
 
-AgentConnect does not include or start Logto. You may connect an existing Logto tenant by configuring both the browser client and Control Plane verifier:
+AgentConnect does not include or start Logto. The default local stack keeps authentication off, but any network-exposed deployment should configure a Logto tenant for real user identities and renewable Control Plane tokens.
 
-Lark and Feishu social sign-in are self-hosted options. AgentConnect Cloud currently offers GitHub, Google, and Slack sign-in only.
+Self-hosted Logto OSS provides every Logto feature required by AgentConnect without a paid license. Logto Cloud requires a plan that includes a custom API Resource for normal production sessions; its Free plan is suitable only for short evaluation with AgentConnect's current ID-token fallback.
 
-```dotenv
-LOGTO_ENDPOINT=https://tenant.example.com/
-LOGTO_APP_ID=<application-id>
-LOGTO_API_RESOURCE=https://api.example.com
-SOCIAL_PROVIDERS=github,google,slack,lark,feishu
-
-OIDC_ISSUER=https://tenant.example.com/oidc
-OIDC_AUDIENCE=https://api.example.com
-```
-
-In Logto, register this redirect URI for the Web application:
-
-```text
-http://localhost:3000/auth/callback
-```
-
-If you changed `AGENTCONNECT_PUBLIC_WEB_URL`, use that origin followed by `/auth/callback`.
-
-The values must agree:
-
-- `OIDC_ISSUER` is the Logto endpoint with `/oidc`.
-- When `LOGTO_API_RESOURCE` is set, `OIDC_AUDIENCE` must equal that resource.
-- Without an API resource, omit `LOGTO_API_RESOURCE` and set `OIDC_AUDIENCE` to `LOGTO_APP_ID`.
-- `SOCIAL_PROVIDERS` is a comma-separated list of the lowercase targets `github`, `google`, `slack`, `lark`, and `feishu`. Set it to match the social connectors enabled in the tenant. Omitting it keeps GitHub, Google, and Slack; setting `*` opts into all five.
-- Set or remove the Web and Control Plane values together. Configuring only one side leaves the console unable to authenticate its API calls.
-
-`SOCIAL_PROVIDERS` controls the buttons and Profile methods that AgentConnect renders. It does not create connectors or check Logto's connector inventory; a button whose connector is absent lands on Logto's error page.
-
-### OAuth callback map
-
-The application callback and provider callbacks serve different parts of the flow:
-
-| Register with         | Callback URI                                                                                    | Purpose                               |
-| --------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
-| Logto Web application | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback`                                                   | Finish AgentConnect sign-in           |
-| Each social app       | The exact URI shown by its Logto connector, normally `<LOGTO_ENDPOINT>/callback/<connector-id>` | Return normal social sign-in to Logto |
-| Each social app       | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback`                                            | Return Profile account linking        |
-
-The third callback is required only for AgentConnect's custom Profile linking flow. Do not replace it with Logto's `/account/callback/social/<connector-id>` URL, which belongs to Logto's prebuilt Account Center flow.
-
-### Enable social account linking
-
-After matching `SOCIAL_PROVIDERS` to the tenant's connectors, add all of the following to let a signed-in person link several providers to one AgentConnect profile:
-
-1. Enable Logto's **Account API** and give **Social identities** `Edit` access.
-2. Configure a Logto Management API M2M application for server-side connector lookup, identity metadata, and safe unlinking:
-
-```dotenv
-LOGTO_MGMT_ENDPOINT=https://tenant.example.com
-LOGTO_MGMT_APP_ID=<m2m-application-id>
-LOGTO_MGMT_APP_SECRET=<m2m-application-secret>
-LOGTO_MGMT_RESOURCE=https://tenant.example.com/api
-```
-
-All four values belong to one tenant. `LOGTO_MGMT_ENDPOINT`, `LOGTO_MGMT_APP_ID`, and `LOGTO_MGMT_APP_SECRET` must be set together; `LOGTO_MGMT_RESOURCE` defaults to the endpoint's `/api` URL.
-
-3. Give each account a verified primary email and configure a Logto email connector with the `UserPermissionValidation` template. AgentConnect uses that flow when Logto requires the person to prove ownership before changing sign-in methods.
-4. Register the console callback from the callback map directly with every social provider, alongside the provider's normal Logto connector callback:
-
-```text
-<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback
-```
-
-Google and Slack accept multiple redirect URLs. For GitHub, use a GitHub App that supports multiple callback URLs; a GitHub OAuth App has only one callback URL.
-
-After restart, the avatar menu → **Your profile → Sign-in methods** shows the configured providers. The last linked method cannot be removed. See [Social account linking](/docs/social-account-linking) for the user-facing behavior and its current permission boundary.
-
-### Lark and Feishu session access
-
-Adding `lark` or `feishu` to `SOCIAL_PROVIDERS` enables sign-in and Profile linking only. To use a linked identity for direct-message ownership or current chat-membership checks, the Control Plane also needs the regional platform app used by both the Logto connector and the messaging integration:
-
-```dotenv
-FEISHU_PLATFORM_APP_ID=<app-id>
-FEISHU_PLATFORM_APP_SECRET=<app-secret>
-LARK_PLATFORM_APP_ID=<app-id>
-LARK_PLATFORM_APP_SECRET=<app-secret>
-```
-
-Each regional pair is optional, but its ID and secret must be set together. Lark and Feishu are independent; configure only the regions your deployment offers.
-
-> The stock `compose.yaml` does not currently forward these four values to the Control Plane. The default Compose stack can offer Lark or Feishu sign-in and Profile linking, but leave **Follow Feishu / Lark access** off unless your deployment injects the matching pair through a Compose override or another orchestrator.
-
-Restart the affected services after changing the file:
-
-```bash
-docker compose --env-file compose.env up -d --force-recreate control-plane web
-```
-
-Leaving the sign-in variables in **Optional Logto sign-in** unset preserves no-auth mode. In that mode the Control Plane deliberately admits every request as the fixed local owner, so it must remain private.
+Follow [Logto authentication](/docs/logto-authentication) to create the SPA and machine-to-machine applications, Control Plane API Resource, social connectors, Account API access, email verification, callbacks, and regional identity settings.

@@ -113,4 +113,4 @@ For the effect of linking several providers, see [Permissions with linked accoun
 
 Provider-based session access requires optional OIDC sign-in, linked identities, and working Logto identity lookup. Slack access also needs conversation checks; Lark and Feishu need matching regional platform apps and chat-membership checks; GitHub needs repository checks. Local no-auth mode does not infer a linked provider profile.
 
-See [Optional Logto sign-in](/docs/deployment-and-configuration#optional-logto-sign-in), [Enable social account linking](/docs/deployment-and-configuration#enable-social-account-linking), and [Lark and Feishu session access](/docs/deployment-and-configuration#lark-and-feishu-session-access) for setup.
+See [Logto authentication](/docs/logto-authentication) for sign-in, account linking, and regional provider setup.

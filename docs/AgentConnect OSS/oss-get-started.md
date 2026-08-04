@@ -153,6 +153,7 @@ AgentConnect OSS does not move agent execution into the central stack. Message b
 ## Next
 
 - [Deployment and configuration](/docs/deployment-and-configuration)
+- [Configure authentication with Logto](/docs/logto-authentication)
 - [Configure optional Mem0 memory](/docs/deployment-and-configuration#optional-mem0)
 - [Install the daemon as a service](/docs/install-the-daemon)
 - [Learn how AgentConnect keeps execution daemon-local](/docs/how-it-works)

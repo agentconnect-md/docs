@@ -52,4 +52,4 @@ A person can [link several sign-in methods](/docs/social-account-linking) to one
 
 The same architecture supports [AgentConnect OSS](/docs/oss-get-started), where you operate the full stack, and AgentConnect Cloud, where the management console is hosted. In both cases, daemons run the agents and workspaces in the environment you operate.
 
-AgentConnect OSS keeps authentication optional and uses local no-auth mode by default. Before exposing it beyond localhost, configure [OIDC sign-in and the matching providers](/docs/deployment-and-configuration#optional-logto-sign-in).
+AgentConnect OSS keeps authentication optional and uses local no-auth mode by default. Before exposing it beyond localhost, configure [production sign-in with Logto](/docs/logto-authentication).
