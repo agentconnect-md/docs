@@ -54,9 +54,13 @@ The Lark and Feishu bot integrations are available on Cloud, but this audience c
 
 An organization Owner can enable **Settings → Session access → Follow Feishu / Lark access**. Sessions then require a linked profile with current membership in the source chat.
 
+Even while Follow access is off, a configured regional permission app can use live membership to prove the owner of a Private one-to-one session created by another bot app. This fallback remains owner-only; it does not synchronize or widen shared chats.
+
 Unlike Slack, this covers one-to-one chats as well. A Lark or Feishu DM session that was **Private** moves to the **Feishu members** / **Lark members** audience when you enable the setting: the gate becomes live chat membership rather than the stored owner identity, and the participant can no longer switch it back themselves. In practice the audience is still just that chat's members, but the label and the mechanism change.
 
-The messaging integration and linked identity must use the same regional platform app because Lark and Feishu identities are app-scoped. Sessions from a custom app with another App ID keep the ordinary Everyone or Private model. Turning the setting off affects new sessions only; sessions already synchronized keep following their source chat.
+A self-hosted deployment can use one regional permission app to check chats served by multiple bot apps; their App IDs do not need to match. The Logto connector must support storing the linked person's provider token. See [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission-sync) for setup and connector requirements.
+
+Turning the setting off affects new sessions only; sessions already synchronized keep following their source chat.
 
 ## Follow GitHub access
 
@@ -103,7 +107,7 @@ Slack direct-message sessions store a workspace-scoped owner identity: the Slack
 
 A private GitHub repository session is not owned by one GitHub user. Instead, AgentConnect uses the viewer's linked GitHub profile to check that repository's current access. Public repository sessions do not require a linked GitHub profile.
 
-Lark and Feishu direct messages use an app-scoped owner identity. Group sessions can use the same linked regional identity to confirm current chat membership when the organization enables the corresponding access setting.
+Lark and Feishu direct messages first use their app-scoped owner identity. A configured permission app can fall back to live membership for a Private direct message from another bot app. When the organization enables the corresponding access setting, direct messages and group sessions use live chat membership as their synchronized audience.
 
 Linking can make existing matching provider sessions available without rewriting them. Unlinking removes that provider match immediately. A Google identity does not satisfy these checks, and identities from one provider never substitute for another.
 
@@ -113,6 +117,6 @@ For the effect of linking several providers, see [Permissions with linked accoun
 
 ## AgentConnect OSS requirements
 
-Provider-based session access requires optional OIDC sign-in, linked identities, and working Logto identity lookup. Slack access also needs conversation checks; Lark and Feishu need matching regional platform apps and chat-membership checks; GitHub needs repository checks. Local no-auth mode does not infer a linked provider profile.
+Provider-based session access requires optional OIDC sign-in, linked identities, and working Logto identity lookup. Slack access also needs conversation checks; Lark and Feishu need a token-storing regional connector, a permission app, and chat-membership checks; GitHub needs repository checks. Local no-auth mode does not infer a linked provider profile.
 
 See [Logto authentication](/docs/logto-authentication) for sign-in, account linking, and regional provider setup.

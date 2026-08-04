@@ -10,7 +10,7 @@ Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
 ## Link an account
 
-Choose **Link** beside a provider and complete its authorization flow. AgentConnect may first send a verification code to your verified primary email so it can confirm that you still control the current profile.
+Choose **Link** beside a provider and complete its authorization flow. GitHub and Google do not require an ownership code. Slack and Standard OAuth connectors can first ask for a code sent to the current profile's verified primary email; on a self-hosted deployment, ask the operator whether email verification is configured.
 
 After linking, you can sign in through any linked provider and reach the same AgentConnect profile, organizations, memberships, and personal settings.
 
@@ -43,9 +43,9 @@ For a public channel, an active full member of the installing workspace does not
 
 ### Lark and Feishu on self-hosted deployments
 
-A linked Lark or Feishu identity can match private direct-message ownership. When the organization enables **Follow Feishu / Lark access**, it can also prove current membership in a group chat.
+A linked Lark or Feishu identity can directly match a Private direct-message session from the same app. With a regional permission app configured, a live membership check also covers a direct message created by another bot app and remains owner-only even before Follow access is enabled.
 
-This check applies only when the messaging integration and the Logto connector use the same regional platform app. Lark and Feishu identities are separate, and a custom bot created with another App ID keeps the ordinary organization visibility model.
+When the organization enables **Follow Feishu / Lark access**, AgentConnect applies that live membership check as the audience for synchronized chats. One regional permission app can evaluate chats from multiple bot apps; their App IDs do not need to match. This requires a Standard OAuth connector that stores the provider user token.
 
 ### GitHub
 
@@ -59,6 +59,6 @@ Where a provider identity is required, organization membership or the Owner role
 
 AgentConnect OSS does not enable social sign-in by default. To offer linked accounts, configure optional Logto-backed OIDC sign-in, choose the displayed providers with `SOCIAL_PROVIDERS`, and create the matching Logto connectors. The Profile card appears only after OIDC sign-in is enabled.
 
-The operator must also enable Logto Account API social-identity editing, configure the Management API integration used for identity reads and safe unlinking, provide a verified-email flow, and register the account-link callback with each provider. Local no-auth mode does not infer a linked provider identity.
+The operator must also enable Logto Account API social-identity editing, configure the Management API integration used for identity reads and safe unlinking, provide working email delivery for profiles that require an ownership code, and register the account-link callback with each provider. Local no-auth mode does not infer a linked provider identity.
 
 See [Logto authentication](/docs/logto-authentication#4-enable-social-account-linking) for the complete setup.

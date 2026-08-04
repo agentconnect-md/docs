@@ -38,7 +38,7 @@ Without an API Resource, AgentConnect can fall back to the SPA's ID token. That 
 | Social connectors | Chosen sign-in providers |
 | Account API | Linking providers |
 | Machine-to-machine application | Linking and provider access |
-| Email connector | Securing account changes |
+| Email connector | Ownership codes when required |
 
 ## 1. Create the SPA application
 
@@ -117,7 +117,23 @@ AgentConnect requests the `email`, `profile`, and `identities` scopes needed by 
 
 ### Email verification
 
-Configure a Logto email connector with the `UserPermissionValidation` template, and ensure each person has a verified primary email. Logto may require this verification before a person changes linked sign-in methods.
+Email delivery is not required for every provider:
+
+| Provider | Email connector needed for profile linking |
+| --- | --- |
+| GitHub | No |
+| Google | No |
+| Slack | Yes |
+| Feishu / Lark with Standard OAuth | Depends; configure if **Send code** appears |
+
+For Slack, Logto asks for an ownership code when the current profile has a password, primary email, or primary phone. Configure email delivery whenever you offer Slack profile linking, even if some social-only profiles can complete the flow without a code.
+
+If a profile sees **Send code**, it needs both a verified Logto `primaryEmail` and working email delivery. An email stored only inside a social identity is not sufficient. Configure a Logto [email connector](https://docs.logto.io/connectors/email-connectors):
+
+1. Open **Console → Connectors → Email and SMS connectors → Set up**.
+2. Choose an email provider. For Logto OSS, use SMTP, HTTP, or another supported provider connector.
+3. Ensure the connector handles the [`UserPermissionValidation` template](https://docs.logto.io/connectors/email-connectors/email-templates) and that the template includes the `{{code}}` placeholder.
+4. Send a test message, then choose **Save and Done**.
 
 Logto OSS does not include Logto Cloud's built-in email delivery service. Use SMTP, HTTP, or another supported email connector and account for any provider cost.
 
@@ -177,9 +193,15 @@ docker compose --env-file compose.env up -d --force-recreate control-plane web
 
 ## Lark and Feishu permission sync
 
-Lark and Feishu social sign-in and account linking are self-hosted options. To let a linked identity prove direct-message ownership or current group-chat membership, the Logto connector and the AgentConnect messaging integration must use the same regional platform app because their user IDs are app-scoped.
+Lark and Feishu social sign-in and account linking are self-hosted options. The permission setup is separate: it uses a linked person's provider token to check whether they currently belong to each source chat. This can prove the owner of a Private cross-bot direct message; enabling **Follow Feishu / Lark access** extends the same live check to synchronized chat audiences.
 
-Configure the matching pair for each region you offer:
+One regional permission app can check sessions created by multiple AgentConnect bot apps. The permission app does not send or receive AgentConnect messages, and its App ID does not need to match the bot App IDs.
+
+For each region you want to synchronize:
+
+1. Create a dedicated Lark or Feishu app. Enable its **Bot** capability and grant `im:chat:readonly` or `im:chat.members:read`; the platform requires Bot capability for its [membership-check API](https://open.feishu.cn/document/server-docs/group/chat-member/is_in_chat).
+2. Configure Logto's [Standard OAuth 2.0 connector](https://docs.logto.io/integrations/oauth2) with target `lark` or `feishu`. Enable [third-party token storage](https://docs.logto.io/secret-vault/federated-token-set) so AgentConnect can retrieve the provider's access and refresh tokens.
+3. Use that permission app's credentials below. These are not the credentials of every AgentConnect bot:
 
 ```dotenv
 FEISHU_PLATFORM_APP_ID=<app-id>
@@ -194,14 +216,17 @@ Add the values to `compose.env`, then recreate the Control Plane:
 docker compose --env-file compose.env up -d --force-recreate control-plane
 ```
 
-**Follow Feishu / Lark access** stays unavailable until at least one regional pair is configured.
+The setting stays unavailable until at least one regional permission app is configured. Access checks fail closed if Logto cannot return a valid provider token.
 
 ## Verify the setup
 
 1. Open the console in a private browser window and sign in through one configured provider.
 2. Open **Your profile → Sign-in methods** and confirm the configured providers appear.
-3. Link a second provider, then unlink it again; the final sign-in method remains protected.
-4. Confirm the Web console can continue calling the Control Plane after the original access token expires.
+3. Confirm GitHub or Google profile linking proceeds without an ownership code.
+4. If you offer Slack or another connector that asks for a code, confirm the `UserPermissionValidation` email arrives and completes the link.
+5. Unlink the second provider again; the final sign-in method remains protected.
+6. If you enabled Lark or Feishu permission sync, confirm the linked profile can open an allowed chat session created through a different bot App ID.
+7. Confirm the Web console can continue calling the Control Plane after the original access token expires.
 
 An immediate `401` normally means the API identifier and `OIDC_AUDIENCE` do not match. A provider button that reaches a Logto error page normally means the connector target is absent or not enabled in the sign-in experience.
 
