@@ -43,9 +43,9 @@ For a public channel, an active full member of the installing workspace does not
 
 ### Lark and Feishu on self-hosted deployments
 
-A linked Lark or Feishu identity can directly match private-message ownership when the identity and bot come from the same app. That app-scoped match is not permission sync.
+A linked Lark or Feishu identity can directly match a Private direct-message session from the same app. With a regional permission app configured, a live membership check also covers a direct message created by another bot app and remains owner-only even before Follow access is enabled.
 
-When the organization enables **Follow Feishu / Lark access**, AgentConnect instead checks current membership in the source chat. One regional permission app can evaluate chats from multiple bot apps; their App IDs do not need to match. This requires a Standard OAuth connector that stores the provider user token.
+When the organization enables **Follow Feishu / Lark access**, AgentConnect applies that live membership check as the audience for synchronized chats. One regional permission app can evaluate chats from multiple bot apps; their App IDs do not need to match. This requires a Standard OAuth connector that stores the provider user token.
 
 ### GitHub
 

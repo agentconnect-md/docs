@@ -193,7 +193,7 @@ docker compose --env-file compose.env up -d --force-recreate control-plane web
 
 ## Lark and Feishu permission sync
 
-Lark and Feishu social sign-in and account linking are self-hosted options. **Follow Feishu / Lark access** is a separate capability: it uses a linked person's provider token to check whether they currently belong to each source chat.
+Lark and Feishu social sign-in and account linking are self-hosted options. The permission setup is separate: it uses a linked person's provider token to check whether they currently belong to each source chat. This can prove the owner of a Private cross-bot direct message; enabling **Follow Feishu / Lark access** extends the same live check to synchronized chat audiences.
 
 One regional permission app can check sessions created by multiple AgentConnect bot apps. The permission app does not send or receive AgentConnect messages, and its App ID does not need to match the bot App IDs.
 

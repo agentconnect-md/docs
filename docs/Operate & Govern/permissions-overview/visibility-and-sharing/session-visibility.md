@@ -54,6 +54,8 @@ The Lark and Feishu bot integrations are available on Cloud, but this audience c
 
 An organization Owner can enable **Settings → Session access → Follow Feishu / Lark access**. Sessions then require a linked profile with current membership in the source chat.
 
+Even while Follow access is off, a configured regional permission app can use live membership to prove the owner of a Private one-to-one session created by another bot app. This fallback remains owner-only; it does not synchronize or widen shared chats.
+
 Unlike Slack, this covers one-to-one chats as well. A Lark or Feishu DM session that was **Private** moves to the **Feishu members** / **Lark members** audience when you enable the setting: the gate becomes live chat membership rather than the stored owner identity, and the participant can no longer switch it back themselves. In practice the audience is still just that chat's members, but the label and the mechanism change.
 
 A self-hosted deployment can use one regional permission app to check chats served by multiple bot apps; their App IDs do not need to match. The Logto connector must support storing the linked person's provider token. See [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission-sync) for setup and connector requirements.
@@ -105,7 +107,7 @@ Slack direct-message sessions store a workspace-scoped owner identity: the Slack
 
 A private GitHub repository session is not owned by one GitHub user. Instead, AgentConnect uses the viewer's linked GitHub profile to check that repository's current access. Public repository sessions do not require a linked GitHub profile.
 
-Lark and Feishu direct messages use an app-scoped owner identity while they remain Private. When the organization enables the corresponding access setting, direct messages and group sessions use live chat membership instead, including sessions created through other bot apps in the same region.
+Lark and Feishu direct messages first use their app-scoped owner identity. A configured permission app can fall back to live membership for a Private direct message from another bot app. When the organization enables the corresponding access setting, direct messages and group sessions use live chat membership as their synchronized audience.
 
 Linking can make existing matching provider sessions available without rewriting them. Unlinking removes that provider match immediately. A Google identity does not satisfy these checks, and identities from one provider never substitute for another.
 
