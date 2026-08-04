@@ -73,7 +73,7 @@ A provider failure or historical session without a trusted repository scope fail
 
 A private session is visible only when its stored owner identity matches one of the signed-in person's recognized identities. There is deliberately no Owner override for private transcripts.
 
-Organization roles do not bypass either boundary. A restricted team resource uses its current resource owner plus explicit current-member shares, while a Private session uses a matched owner identity. These are different ownership models, but neither grants visibility merely because someone is an organization Owner. A private session is treated like a direct-message transcript, not an organization asset.
+Organization roles do not bypass either boundary. A restricted team resource uses its complete explicit Selected audience, while a Private session uses a matched owner identity. Resource creators receive no implicit access, and neither boundary grants visibility merely because someone is an organization Owner. A private session is treated like a direct-message transcript, not an organization asset.
 
 Sessions do not currently support a Selected member list or a public share link.
 

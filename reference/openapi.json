@@ -16,7 +16,7 @@
     "schemas": {}
   },
   "paths": {
-    "/v1\\ngh/orgs": {
+    "/api/v1/orgs": {
       "get": {
         "operationId": "listOrganizations",
         "summary": "List your organizations",
@@ -474,7 +474,7 @@
         }
       }
     },
-    "/v1\\ngh/me": {
+    "/api/v1/me": {
       "get": {
         "operationId": "getMyProfile",
         "summary": "Get your profile",
@@ -727,7 +727,7 @@
         }
       }
     },
-    "/v1\\ngh/me/social-identities/refresh": {
+    "/api/v1/me/social-identities/refresh": {
       "post": {
         "operationId": "refreshMySocialIdentities",
         "summary": "Refresh your cached sign-in methods",
@@ -772,7 +772,7 @@
         }
       }
     },
-    "/v1\\ngh/me/social-identities/connectors/{target}": {
+    "/api/v1/me/social-identities/connectors/{target}": {
       "get": {
         "operationId": "getMySocialConnectorId",
         "summary": "Resolve a social connector id",
@@ -968,7 +968,7 @@
         }
       }
     },
-    "/v1\\ngh/me/social-identities/{target}": {
+    "/api/v1/me/social-identities/{target}": {
       "delete": {
         "operationId": "unlinkMySocialIdentity",
         "summary": "Unlink a social sign-in method",
@@ -1175,7 +1175,7 @@
         }
       }
     },
-    "/v1\\ngh/me/social-identities": {
+    "/api/v1/me/social-identities": {
       "get": {
         "operationId": "getMySocialIdentities",
         "summary": "Get your sign-in methods",
@@ -1352,7 +1352,7 @@
         }
       }
     },
-    "/v1\\ngh/me/social-identities/slack": {
+    "/api/v1/me/social-identities/slack": {
       "get": {
         "operationId": "getMySlackIdentity",
         "summary": "Get your Slack workspace identity",
@@ -1509,7 +1509,7 @@
         }
       }
     },
-    "/v1\\ngh/me/keys": {
+    "/api/v1/me/keys": {
       "get": {
         "operationId": "listMyApiKeys",
         "summary": "List your API keys",
@@ -1748,7 +1748,7 @@
         }
       }
     },
-    "/v1\\ngh/me/keys/{id}": {
+    "/api/v1/me/keys/{id}": {
       "delete": {
         "operationId": "revokeMyApiKey",
         "summary": "Revoke an API key",
@@ -1890,7 +1890,7 @@
         }
       }
     },
-    "/v1\\ngh/me/access": {
+    "/api/v1/me/access": {
       "get": {
         "operationId": "getMyAccess",
         "summary": "Get your app-admission state",
@@ -1982,7 +1982,7 @@
         }
       }
     },
-    "/v1\\ngh/waitlist": {
+    "/api/v1/waitlist": {
       "post": {
         "operationId": "joinWaitlist",
         "summary": "Join the waitlist",
@@ -2188,7 +2188,7 @@
         }
       }
     },
-    "/v1\\ngh/waitlist/redeem": {
+    "/api/v1/waitlist/redeem": {
       "post": {
         "operationId": "redeemWaitlistLink",
         "summary": "Redeem a waitlist activation link",
@@ -2397,7 +2397,7 @@
         }
       }
     },
-    "/v1\\ngh/invite-links/accept": {
+    "/api/v1/invite-links/accept": {
       "post": {
         "operationId": "acceptOrganizationInviteLink",
         "summary": "Accept an organization invite link",
@@ -2571,7 +2571,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/": {
+    "/api/v1/orgs/{orgId}/": {
       "get": {
         "operationId": "getOrganization",
         "summary": "Get the organization",
@@ -3268,7 +3268,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/selection": {
+    "/api/v1/orgs/{orgId}/selection": {
       "put": {
         "operationId": "selectOrganization",
         "summary": "Select the organization",
@@ -3323,7 +3323,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons": {
+    "/api/v1/orgs/{orgId}/daemons": {
       "get": {
         "operationId": "listDaemons",
         "summary": "List daemons",
@@ -3798,16 +3798,6 @@
                           }
                         ]
                       },
-                      "ownerUserId": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
                       "lastModifiedAt": {
                         "type": "string"
                       },
@@ -3865,7 +3855,6 @@
                       "lastSeenAt",
                       "createdAt",
                       "createdBy",
-                      "ownerUserId",
                       "lastModifiedAt",
                       "lastModifiedBy",
                       "visibility",
@@ -3883,7 +3872,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/{id}": {
+    "/api/v1/orgs/{orgId}/daemons/{id}": {
       "patch": {
         "operationId": "updateDaemon",
         "summary": "Rename a daemon",
@@ -4384,16 +4373,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -4451,7 +4430,6 @@
                     "lastSeenAt",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -4649,7 +4627,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/token": {
+    "/api/v1/orgs/{orgId}/daemons/token": {
       "post": {
         "operationId": "createDaemonToken",
         "summary": "Issue a daemon enrollment token",
@@ -4762,14 +4740,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/{id}/sharing": {
+    "/api/v1/orgs/{orgId}/daemons/{id}/sharing": {
       "put": {
         "operationId": "setDaemonSharing",
         "summary": "Set daemon sharing",
         "tags": [
           "Daemons"
         ],
-        "description": "Set an owned daemon’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
+        "description": "Set a daemon’s visibility (Everyone vs Selected) and complete Selected audience. Requires edit rights; Selected must retain at least one current organization member, and sharedWith is intersected with current membership.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5273,16 +5251,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -5340,7 +5308,6 @@
                     "lastSeenAt",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -5447,7 +5414,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/{id}/upgrade": {
+    "/api/v1/orgs/{orgId}/daemons/{id}/upgrade": {
       "post": {
         "operationId": "upgradeDaemon",
         "summary": "Upgrade a daemon",
@@ -5706,7 +5673,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/{id}/restart": {
+    "/api/v1/orgs/{orgId}/daemons/{id}/restart": {
       "post": {
         "operationId": "restartDaemon",
         "summary": "Restart a daemon",
@@ -5944,7 +5911,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/{id}/lifecycle/{opId}": {
+    "/api/v1/orgs/{orgId}/daemons/{id}/lifecycle/{opId}": {
       "get": {
         "operationId": "getDaemonLifecycleOp",
         "summary": "Get a daemon lifecycle op",
@@ -6100,7 +6067,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/{id}/keys": {
+    "/api/v1/orgs/{orgId}/daemons/{id}/keys": {
       "get": {
         "operationId": "listDaemonKeys",
         "summary": "List a daemon’s keys",
@@ -6353,7 +6320,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
+    "/api/v1/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
       "delete": {
         "operationId": "revokeDaemonKey",
         "summary": "Revoke a daemon key",
@@ -6522,7 +6489,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents": {
+    "/api/v1/orgs/{orgId}/agents": {
       "post": {
         "operationId": "createAgent",
         "summary": "Create an agent",
@@ -7546,16 +7513,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -7696,7 +7653,6 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -8471,16 +8427,6 @@
                           }
                         ]
                       },
-                      "ownerUserId": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
                       "lastModifiedAt": {
                         "type": "string"
                       },
@@ -8597,7 +8543,6 @@
                       "capabilities",
                       "createdAt",
                       "createdBy",
-                      "ownerUserId",
                       "lastModifiedAt",
                       "lastModifiedBy",
                       "visibility",
@@ -8623,7 +8568,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}": {
+    "/api/v1/orgs/{orgId}/agents/{id}": {
       "get": {
         "operationId": "getAgent",
         "summary": "Get an agent",
@@ -9201,16 +9146,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -9327,7 +9262,6 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -10417,16 +10351,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -10543,7 +10467,6 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -10869,7 +10792,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/skill-sources": {
+    "/api/v1/orgs/{orgId}/agents/{id}/skill-sources": {
       "get": {
         "operationId": "listAgentSkillSources",
         "summary": "List an agent’s enabled skill sources",
@@ -10988,7 +10911,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/permission-requests": {
+    "/api/v1/orgs/{orgId}/agents/{id}/permission-requests": {
       "get": {
         "operationId": "listAgentPermissionRequests",
         "summary": "List agent approval requests",
@@ -11207,7 +11130,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/permission-requests/{requestId}/decision": {
+    "/api/v1/orgs/{orgId}/agents/{id}/permission-requests/{requestId}/decision": {
       "post": {
         "operationId": "decideAgentPermissionRequest",
         "summary": "Decide an agent approval request",
@@ -11414,7 +11337,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace": {
+    "/api/v1/orgs/{orgId}/agents/{id}/workspace": {
       "put": {
         "operationId": "setAgentWorkspace",
         "summary": "Edit an agent workspace",
@@ -12056,16 +11979,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -12182,7 +12095,6 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -12387,7 +12299,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/daemon": {
+    "/api/v1/orgs/{orgId}/agents/{id}/daemon": {
       "put": {
         "operationId": "moveAgentDaemon",
         "summary": "Move an agent to another daemon",
@@ -12989,16 +12901,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -13115,7 +13017,6 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -13260,14 +13161,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/sharing": {
+    "/api/v1/orgs/{orgId}/agents/{id}/sharing": {
       "put": {
         "operationId": "setAgentSharing",
         "summary": "Set agent sharing",
         "tags": [
           "Agents"
         ],
-        "description": "Set an owned agent’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
+        "description": "Set an agent’s visibility (Everyone vs Selected) and complete Selected audience. Requires edit rights; Selected must retain at least one current organization member, and sharedWith is intersected with current membership.",
         "requestBody": {
           "required": true,
           "content": {
@@ -13868,16 +13769,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -13994,7 +13885,6 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -14109,7 +13999,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/call-policy": {
+    "/api/v1/orgs/{orgId}/agents/{id}/call-policy": {
       "put": {
         "operationId": "setAgentCallPolicy",
         "summary": "Set directional agent visibility",
@@ -14734,16 +14624,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "lastModifiedAt": {
                       "type": "string"
                     },
@@ -14860,7 +14740,6 @@
                     "capabilities",
                     "createdAt",
                     "createdBy",
-                    "ownerUserId",
                     "lastModifiedAt",
                     "lastModifiedBy",
                     "visibility",
@@ -14975,14 +14854,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/files": {
+    "/api/v1/orgs/{orgId}/agents/{id}/workspace/files": {
       "get": {
         "operationId": "listAgentWorkspaceFiles",
         "summary": "List workspace files",
         "tags": [
           "Agent workspace"
         ],
-        "description": "Proxy one directory page live from the owning daemon; a missing directory is data (exists:false), not an error. 503 when unplaced or the daemon is offline.",
+        "description": "Proxy one directory page live from the owning daemon. Pass sessionId to browse an authorized isolated session worktree; a missing directory is data (exists:false), not an error. 503 when unplaced or the daemon is offline.",
         "parameters": [
           {
             "name": "orgId",
@@ -14991,6 +14870,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "in": "query",
+            "name": "sessionId",
+            "required": false
           },
           {
             "schema": {
@@ -15140,6 +15028,36 @@
               }
             }
           },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "503": {
             "description": "Default Response",
             "content": {
@@ -15173,7 +15091,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/skills/local": {
+    "/api/v1/orgs/{orgId}/agents/{id}/skills/local": {
       "get": {
         "operationId": "listAgentLocalSkills",
         "summary": "List an agent’s local skills",
@@ -15323,14 +15241,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/file": {
+    "/api/v1/orgs/{orgId}/agents/{id}/workspace/file": {
       "get": {
         "operationId": "readAgentWorkspaceFile",
         "summary": "Read a workspace file",
         "tags": [
           "Agent workspace"
         ],
-        "description": "Proxy one byte slice of a file live from the owning daemon (64 KiB default; page with offset while truncated). A missing file is data (exists:false); binary files come back encoding:none.",
+        "description": "Proxy one byte slice of a file live from the owning daemon (64 KiB default; page with offset while truncated). Pass sessionId to read an authorized isolated session worktree. A missing file is data (exists:false); binary files come back encoding:none.",
         "parameters": [
           {
             "name": "orgId",
@@ -15339,6 +15257,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "in": "query",
+            "name": "sessionId",
+            "required": false
           },
           {
             "schema": {
@@ -15484,6 +15411,36 @@
             }
           },
           "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -16005,7 +15962,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory": {
       "get": {
         "operationId": "readAgentMemory",
         "summary": "Read the agent memory index",
@@ -16243,7 +16200,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/files": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/files": {
       "get": {
         "operationId": "listAgentMemoryFiles",
         "summary": "List agent memory files",
@@ -16406,7 +16363,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/file": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/file": {
       "get": {
         "operationId": "readAgentMemoryFile",
         "summary": "Read a memory file",
@@ -16880,7 +16837,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/history": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/history": {
       "get": {
         "operationId": "listAgentMemoryFileHistory",
         "summary": "List memory file history",
@@ -17156,7 +17113,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/surface": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/surface": {
       "get": {
         "operationId": "getAgentMemorySurface",
         "summary": "Get the agent memory administration surface",
@@ -17346,7 +17303,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/search": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/records/search": {
       "post": {
         "operationId": "searchAgentMemoryRecords",
         "summary": "Search external-memory records",
@@ -17643,7 +17600,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/records": {
       "get": {
         "operationId": "listAgentMemoryRecords",
         "summary": "List external-memory records",
@@ -18239,7 +18196,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/{recordId}": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/records/{recordId}": {
       "get": {
         "operationId": "getAgentMemoryRecord",
         "summary": "Get an external-memory record",
@@ -19067,7 +19024,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/{recordId}/history": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/records/{recordId}/history": {
       "get": {
         "operationId": "listAgentMemoryRecordHistory",
         "summary": "List external-memory record history",
@@ -19395,7 +19352,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams": {
       "post": {
         "operationId": "startAgentMemoryDream",
         "summary": "Start a memory dream",
@@ -20263,7 +20220,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}": {
       "get": {
         "operationId": "getAgentMemoryDream",
         "summary": "Get a memory dream",
@@ -20669,7 +20626,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/cancel": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/cancel": {
       "post": {
         "operationId": "cancelAgentMemoryDream",
         "summary": "Cancel a memory dream",
@@ -21105,7 +21062,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/adopt": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/adopt": {
       "post": {
         "operationId": "adoptAgentMemoryDream",
         "summary": "Adopt a memory dream",
@@ -21560,7 +21517,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/discard": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/discard": {
       "post": {
         "operationId": "discardAgentMemoryDream",
         "summary": "Discard a memory dream",
@@ -21996,7 +21953,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}": {
       "get": {
         "operationId": "readAgentMemoryDreamSkill",
         "summary": "Read a mined skill candidate",
@@ -22224,7 +22181,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/accept": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/accept": {
       "post": {
         "operationId": "acceptAgentMemoryDreamSkill",
         "summary": "Accept a mined skill",
@@ -22685,7 +22642,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/dismiss": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/dismiss": {
       "post": {
         "operationId": "dismissAgentMemoryDreamSkill",
         "summary": "Dismiss a mined skill",
@@ -23130,7 +23087,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/files": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/files": {
       "get": {
         "operationId": "listAgentMemoryDreamFiles",
         "summary": "List a dream's staged files",
@@ -23338,7 +23295,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/file": {
+    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/file": {
       "get": {
         "operationId": "readAgentMemoryDreamFile",
         "summary": "Read a dream's staged file",
@@ -23618,14 +23575,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
+    "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
       "get": {
         "operationId": "getAgentWorkspaceGitStatus",
         "summary": "Get workspace git status",
         "tags": [
           "Agent workspace"
         ],
-        "description": "Report whether the owning daemon’s checkout is clean; a dirty tree or a from-scratch (non-repo) workspace is data (clean/isRepo), not an error.",
+        "description": "Report whether the owning daemon’s checkout is clean. Pass sessionId for an authorized isolated session worktree; a dirty tree or a from-scratch (non-repo) workspace is data (clean/isRepo), not an error.",
         "parameters": [
           {
             "name": "orgId",
@@ -23634,6 +23591,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "in": "query",
+            "name": "sessionId",
+            "required": false
           },
           {
             "schema": {
@@ -23835,6 +23801,36 @@
               }
             }
           },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "503": {
             "description": "Default Response",
             "content": {
@@ -23868,7 +23864,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/gitpull": {
+    "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitpull": {
       "post": {
         "operationId": "pullAgentWorkspace",
         "summary": "Pull the workspace",
@@ -24025,7 +24021,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/repos": {
+    "/api/v1/orgs/{orgId}/agents/{agentId}/repos": {
       "get": {
         "operationId": "listAgentRepoAuthorizations",
         "summary": "List an agent’s repository authorizations",
@@ -24427,7 +24423,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/repos/{repoAuthId}": {
+    "/api/v1/orgs/{orgId}/agents/{agentId}/repos/{repoAuthId}": {
       "patch": {
         "operationId": "updateAgentRepoAuthorization",
         "summary": "Upgrade a repository authorization",
@@ -24849,7 +24845,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/token": {
+    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/token": {
       "post": {
         "operationId": "mintWebchatToken",
         "summary": "Mint a webchat token",
@@ -24985,7 +24981,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/webchat/conversations/token": {
+    "/api/v1/orgs/{orgId}/webchat/conversations/token": {
       "post": {
         "operationId": "mintWebchatConversationToken",
         "summary": "Mint a conversation webchat token",
@@ -25151,7 +25147,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/webchat/conversations/{conversationId}/agents": {
+    "/api/v1/orgs/{orgId}/webchat/conversations/{conversationId}/agents": {
       "post": {
         "operationId": "addWebchatConversationAgent",
         "summary": "Add an agent to a webchat conversation",
@@ -25297,7 +25293,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations": {
+    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations": {
       "get": {
         "operationId": "listWebchatMcpOperations",
         "summary": "List pending webchat MCP operations",
@@ -25428,7 +25424,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}": {
+    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}": {
       "get": {
         "operationId": "getWebchatMcpOperation",
         "summary": "Get a webchat MCP operation",
@@ -25566,7 +25562,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}/decision": {
+    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}/decision": {
       "post": {
         "operationId": "decideWebchatMcpOperation",
         "summary": "Decide a webchat MCP operation",
@@ -25754,7 +25750,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/integrations/telegram/check": {
+    "/api/v1/orgs/{orgId}/integrations/telegram/check": {
       "post": {
         "operationId": "checkTelegramBot",
         "summary": "Check a Telegram bot",
@@ -25851,7 +25847,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/integrations": {
+    "/api/v1/orgs/{orgId}/integrations": {
       "post": {
         "operationId": "createIntegration",
         "summary": "Add an integration",
@@ -26438,7 +26434,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
+    "/api/v1/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
       "patch": {
         "operationId": "updateIntegrationChannel",
         "summary": "Update a channel",
@@ -26866,7 +26862,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/integrations/{id}/leave": {
+    "/api/v1/orgs/{orgId}/integrations/{id}/leave": {
       "post": {
         "operationId": "leaveIntegrationConversation",
         "summary": "Leave a conversation",
@@ -27106,7 +27102,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/integrations/{id}": {
+    "/api/v1/orgs/{orgId}/integrations/{id}": {
       "delete": {
         "operationId": "deleteIntegration",
         "summary": "Remove an integration",
@@ -27229,7 +27225,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/integrations/feishu/app": {
+    "/api/v1/orgs/{orgId}/integrations/feishu/app": {
       "post": {
         "operationId": "startFeishuAppRegistration",
         "summary": "Start Lark / Feishu app registration",
@@ -27511,7 +27507,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/integrations/feishu/app/{id}": {
+    "/api/v1/orgs/{orgId}/integrations/feishu/app/{id}": {
       "get": {
         "operationId": "getFeishuAppRegistration",
         "summary": "Poll Lark / Feishu app registration",
@@ -27638,7 +27634,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/bots": {
+    "/api/v1/orgs/{orgId}/bots": {
       "get": {
         "operationId": "listBots",
         "summary": "List bots",
@@ -27853,7 +27849,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/bots/{id}": {
+    "/api/v1/orgs/{orgId}/bots/{id}": {
       "get": {
         "operationId": "getBot",
         "summary": "Get a bot",
@@ -28550,7 +28546,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/bots/{id}/slack/refresh": {
+    "/api/v1/orgs/{orgId}/bots/{id}/slack/refresh": {
       "post": {
         "operationId": "refreshSlackBot",
         "summary": "Refresh a Slack app",
@@ -28728,7 +28724,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/mcp-providers": {
+    "/api/v1/orgs/{orgId}/mcp-providers": {
       "get": {
         "operationId": "listMcpProviders",
         "summary": "List MCP providers",
@@ -28793,16 +28789,6 @@
                           }
                         ]
                       },
-                      "ownerUserId": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
                       "canEdit": {
                         "type": "boolean"
                       },
@@ -28828,7 +28814,6 @@
                       "visibility",
                       "sharedWith",
                       "createdBy",
-                      "ownerUserId",
                       "canEdit",
                       "canManageSharing",
                       "headerNames",
@@ -28973,16 +28958,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -29011,7 +28986,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
@@ -29146,7 +29120,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}": {
+    "/api/v1/orgs/{orgId}/mcp-providers/{id}": {
       "get": {
         "operationId": "getMcpProvider",
         "summary": "Get an MCP provider",
@@ -29217,16 +29191,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -29252,7 +29216,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
@@ -29404,16 +29367,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -29439,7 +29392,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
@@ -29664,7 +29616,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}/grant/rotate": {
+    "/api/v1/orgs/{orgId}/mcp-providers/{id}/grant/rotate": {
       "post": {
         "operationId": "rotateMcpProviderGrant",
         "summary": "Rotate an MCP provider grant key",
@@ -29735,16 +29687,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -29773,7 +29715,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
@@ -29848,14 +29789,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}/sharing": {
+    "/api/v1/orgs/{orgId}/mcp-providers/{id}/sharing": {
       "put": {
         "operationId": "setMcpProviderSharing",
         "summary": "Set MCP provider sharing",
         "tags": [
           "MCP providers"
         ],
-        "description": "Set an owned provider’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
+        "description": "Set an MCP provider’s visibility (Everyone vs Selected) and complete Selected audience. Requires edit rights; Selected must retain at least one current organization member, and sharedWith is intersected with current membership.",
         "requestBody": {
           "required": true,
           "content": {
@@ -29949,16 +29890,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -29984,7 +29915,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
@@ -30088,7 +30018,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/skill-sources": {
+    "/api/v1/orgs/{orgId}/skill-sources": {
       "get": {
         "operationId": "listSkillSources",
         "summary": "List skill sources",
@@ -30180,16 +30110,6 @@
                           }
                         ]
                       },
-                      "ownerUserId": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
                       "canEdit": {
                         "type": "boolean"
                       },
@@ -30211,7 +30131,6 @@
                       "visibility",
                       "sharedWith",
                       "createdBy",
-                      "ownerUserId",
                       "canEdit",
                       "canManageSharing",
                       "createdAt"
@@ -30377,16 +30296,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -30408,7 +30317,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "createdAt"
@@ -30541,7 +30449,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/skill-sources/registry/search": {
+    "/api/v1/orgs/{orgId}/skill-sources/registry/search": {
       "get": {
         "operationId": "searchSkillRegistry",
         "summary": "Search the skills.sh registry",
@@ -30677,7 +30585,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/skill-sources/{id}": {
+    "/api/v1/orgs/{orgId}/skill-sources/{id}": {
       "get": {
         "operationId": "getSkillSource",
         "summary": "Get a skill source",
@@ -30775,16 +30683,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -30806,7 +30704,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "createdAt"
@@ -31006,16 +30903,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -31037,7 +30924,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "createdAt"
@@ -31261,7 +31147,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/skill-sources/{id}/skills": {
+    "/api/v1/orgs/{orgId}/skill-sources/{id}/skills": {
       "get": {
         "operationId": "listSkillSourceSkills",
         "summary": "List a skill source’s skills",
@@ -31360,7 +31246,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/skill-sources/preview": {
+    "/api/v1/orgs/{orgId}/skill-sources/preview": {
       "post": {
         "operationId": "previewSkillSource",
         "summary": "Preview a GitHub skill source",
@@ -31523,14 +31409,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/skill-sources/{id}/sharing": {
+    "/api/v1/orgs/{orgId}/skill-sources/{id}/sharing": {
       "put": {
         "operationId": "setSkillSourceSharing",
         "summary": "Set skill source sharing",
         "tags": [
           "Skill sources"
         ],
-        "description": "Set an owned source’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
+        "description": "Set a skill source’s visibility (Everyone vs Selected) and complete Selected audience. Requires edit rights; Selected must retain at least one current organization member, and sharedWith is intersected with current membership.",
         "requestBody": {
           "required": true,
           "content": {
@@ -31651,16 +31537,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -31682,7 +31558,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "createdAt"
@@ -31785,7 +31660,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/knowledge": {
+    "/api/v1/orgs/{orgId}/knowledge": {
       "get": {
         "operationId": "listOrganizationKnowledge",
         "summary": "List accepted organization knowledge",
@@ -32255,7 +32130,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/knowledge/{id}": {
+    "/api/v1/orgs/{orgId}/knowledge/{id}": {
       "get": {
         "operationId": "getOrganizationKnowledge",
         "summary": "Get organization knowledge",
@@ -32826,7 +32701,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/knowledge/{id}/revisions": {
+    "/api/v1/orgs/{orgId}/knowledge/{id}/revisions": {
       "get": {
         "operationId": "listOrganizationKnowledgeRevisions",
         "summary": "List immutable organization knowledge revisions",
@@ -33035,7 +32910,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/knowledge/{id}/archive": {
+    "/api/v1/orgs/{orgId}/knowledge/{id}/archive": {
       "post": {
         "operationId": "archiveOrganizationKnowledge",
         "summary": "Archive or restore organization knowledge",
@@ -33317,7 +33192,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/managed-skills": {
+    "/api/v1/orgs/{orgId}/managed-skills": {
       "get": {
         "operationId": "listManagedSkills",
         "summary": "List accepted managed Agent Skills bundles",
@@ -33468,7 +33343,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/managed-skills/{id}": {
+    "/api/v1/orgs/{orgId}/managed-skills/{id}": {
       "get": {
         "operationId": "getManagedSkill",
         "summary": "Get a managed Agent Skills bundle",
@@ -33646,7 +33521,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/managed-skills/{id}/revisions": {
+    "/api/v1/orgs/{orgId}/managed-skills/{id}/revisions": {
       "get": {
         "operationId": "listManagedSkillRevisions",
         "summary": "List immutable managed skill revisions",
@@ -33859,7 +33734,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/managed-skills/{id}/archive": {
+    "/api/v1/orgs/{orgId}/managed-skills/{id}/archive": {
       "post": {
         "operationId": "archiveManagedSkill",
         "summary": "Archive or restore a managed Agent Skills bundle",
@@ -34086,7 +33961,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/knowledge-suggestions": {
+    "/api/v1/orgs/{orgId}/knowledge-suggestions": {
       "get": {
         "operationId": "listOrganizationKnowledgeSuggestions",
         "summary": "List retained Dream suggestions",
@@ -34410,7 +34285,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/knowledge-suggestions/{id}/content": {
+    "/api/v1/orgs/{orgId}/knowledge-suggestions/{id}/content": {
       "get": {
         "operationId": "readOrganizationKnowledgeSuggestion",
         "summary": "Read one daemon-local suggestion body",
@@ -34669,7 +34544,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/knowledge-suggestions/{id}/review": {
+    "/api/v1/orgs/{orgId}/knowledge-suggestions/{id}/review": {
       "post": {
         "operationId": "reviewOrganizationKnowledgeSuggestion",
         "summary": "Accept or reject one Dream suggestion",
@@ -35104,7 +34979,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/environment": {
+    "/api/v1/orgs/{orgId}/environment": {
       "get": {
         "operationId": "listOrganizationEnvironment",
         "summary": "List organization variables and secrets",
@@ -35458,7 +35333,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/environment/{entryId}": {
+    "/api/v1/orgs/{orgId}/environment/{entryId}": {
       "patch": {
         "operationId": "updateOrganizationEnvironmentEntry",
         "summary": "Replace a value or retarget an organization entry",
@@ -35774,7 +35649,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/environment/{entryId}/agents/{agentId}": {
+    "/api/v1/orgs/{orgId}/environment/{entryId}/agents/{agentId}": {
       "put": {
         "operationId": "assignOrganizationEnvironmentEntry",
         "summary": "Assign an organization entry to one agent",
@@ -36176,7 +36051,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/connectors/config": {
+    "/api/v1/orgs/{orgId}/connectors/config": {
       "get": {
         "operationId": "getConnectorsConfig",
         "summary": "Connectors feature status",
@@ -36217,7 +36092,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/connectors/catalog": {
+    "/api/v1/orgs/{orgId}/connectors/catalog": {
       "get": {
         "operationId": "listConnectorProviders",
         "summary": "Browse connector providers",
@@ -36362,7 +36237,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/connectors/connections": {
+    "/api/v1/orgs/{orgId}/connectors/connections": {
       "post": {
         "operationId": "createConnectorConnection",
         "summary": "Create a connector connection",
@@ -36484,16 +36359,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "canEdit": {
                       "type": "boolean"
                     },
@@ -36525,7 +36390,6 @@
                     "visibility",
                     "sharedWith",
                     "createdBy",
-                    "ownerUserId",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
@@ -36690,7 +36554,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/connectors/connections/{id}/reconnect": {
+    "/api/v1/orgs/{orgId}/connectors/connections/{id}/reconnect": {
       "post": {
         "operationId": "reconnectConnectorConnection",
         "summary": "Reconnect a connector connection",
@@ -36890,7 +36754,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/memory-plugin-installations": {
+    "/api/v1/orgs/{orgId}/memory-plugin-installations": {
       "get": {
         "operationId": "listMemoryPluginInstallations",
         "summary": "List memory plugin installations",
@@ -37355,7 +37219,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/memory-plugin-installations/{id}": {
+    "/api/v1/orgs/{orgId}/memory-plugin-installations/{id}": {
       "delete": {
         "operationId": "deleteMemoryPluginInstallation",
         "summary": "Delete a memory plugin installation",
@@ -37478,7 +37342,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/external-memory-connections": {
+    "/api/v1/orgs/{orgId}/external-memory-connections": {
       "get": {
         "operationId": "listExternalMemoryConnections",
         "summary": "List external-memory connections",
@@ -38006,7 +37870,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/external-memory-connections/{id}": {
+    "/api/v1/orgs/{orgId}/external-memory-connections/{id}": {
       "get": {
         "operationId": "getExternalMemoryConnection",
         "summary": "Get an external-memory connection",
@@ -38688,7 +38552,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/external-memory-connections/{id}/grant/rotate": {
+    "/api/v1/orgs/{orgId}/external-memory-connections/{id}/grant/rotate": {
       "post": {
         "operationId": "rotateExternalMemoryConnectionGrant",
         "summary": "Rotate an external-memory relay grant",
@@ -39028,7 +38892,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/members": {
+    "/api/v1/orgs/{orgId}/members": {
       "get": {
         "operationId": "listMembers",
         "summary": "List members",
@@ -39298,7 +39162,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/members/{id}": {
+    "/api/v1/orgs/{orgId}/members/{id}": {
       "patch": {
         "operationId": "updateMember",
         "summary": "Change a member’s role",
@@ -39631,14 +39495,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/members/{id}/removal-preview": {
+    "/api/v1/orgs/{orgId}/members/{id}/removal-preview": {
       "get": {
         "operationId": "previewMemberRemoval",
         "summary": "Preview a leave or removal",
         "tags": [
           "Members"
         ],
-        "description": "What DELETE /members/:id would do: which member inherits the departing member’s resources, and how many they own — split into the restricted ones (reached through ownership or an explicit share) and the `recipientOnly` subset of those that no remaining member is shared with, which only the recipient would still be able to see. Same authorization as the removal itself. Advisory only: nothing is locked, and the removal re-derives its recipient inside the transaction.",
+        "description": "What DELETE /members/:id would do to Selected audiences: which current member would be added only where the audience would otherwise become empty, and per-resource-kind counts for all affected and reassigned audiences. Same authorization as the removal itself. Advisory only: nothing is locked, and the removal re-derives the replacement inside the transaction.",
         "parameters": [
           {
             "name": "orgId",
@@ -39665,7 +39529,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "transferTo": {
+                    "replacement": {
                       "anyOf": [
                         {
                           "type": "object",
@@ -39749,17 +39613,12 @@
                               "skillSource"
                             ]
                           },
-                          "owned": {
+                          "selected": {
                             "type": "integer",
                             "minimum": -9007199254740991,
                             "maximum": 9007199254740991
                           },
-                          "restricted": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          },
-                          "recipientOnly": {
+                          "reassigned": {
                             "type": "integer",
                             "minimum": -9007199254740991,
                             "maximum": 9007199254740991
@@ -39767,16 +39626,15 @@
                         },
                         "required": [
                           "kind",
-                          "owned",
-                          "restricted",
-                          "recipientOnly"
+                          "selected",
+                          "reassigned"
                         ],
                         "additionalProperties": false
                       }
                     }
                   },
                   "required": [
-                    "transferTo",
+                    "replacement",
                     "resources"
                   ],
                   "additionalProperties": false
@@ -39847,7 +39705,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/invite-links": {
+    "/api/v1/orgs/{orgId}/invite-links": {
       "get": {
         "operationId": "getOrganizationInviteLink",
         "summary": "Get the organization invite link",
@@ -40224,7 +40082,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/invite-links/{id}": {
+    "/api/v1/orgs/{orgId}/invite-links/{id}": {
       "delete": {
         "operationId": "revokeOrganizationInviteLink",
         "summary": "Revoke the organization invite link",
@@ -40377,7 +40235,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/crons/{id}": {
+    "/api/v1/orgs/{orgId}/crons/{id}": {
       "put": {
         "operationId": "upsertCron",
         "summary": "Create or update a cron",
@@ -40573,16 +40431,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -40633,7 +40481,6 @@
                     "enabled",
                     "lastRunAt",
                     "createdBy",
-                    "ownerUserId",
                     "createdAt",
                     "lastModifiedBy",
                     "lastModifiedAt",
@@ -40889,16 +40736,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -40949,7 +40786,6 @@
                     "enabled",
                     "lastRunAt",
                     "createdBy",
-                    "ownerUserId",
                     "createdAt",
                     "lastModifiedBy",
                     "lastModifiedAt",
@@ -41117,7 +40953,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/crons": {
+    "/api/v1/orgs/{orgId}/crons": {
       "get": {
         "operationId": "listCrons",
         "summary": "List crons",
@@ -41232,16 +41068,6 @@
                           }
                         ]
                       },
-                      "ownerUserId": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
                       "createdAt": {
                         "type": "string"
                       },
@@ -41292,7 +41118,6 @@
                       "enabled",
                       "lastRunAt",
                       "createdBy",
-                      "ownerUserId",
                       "createdAt",
                       "lastModifiedBy",
                       "lastModifiedAt",
@@ -41310,7 +41135,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/crons/{id}/runs": {
+    "/api/v1/orgs/{orgId}/crons/{id}/runs": {
       "get": {
         "operationId": "listCronRuns",
         "summary": "List cron runs",
@@ -41440,7 +41265,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/crons/{id}/run": {
+    "/api/v1/orgs/{orgId}/crons/{id}/run": {
       "post": {
         "operationId": "triggerCronRun",
         "summary": "Trigger a cron run",
@@ -41623,14 +41448,14 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/crons/{id}/sharing": {
+    "/api/v1/orgs/{orgId}/crons/{id}/sharing": {
       "put": {
         "operationId": "setCronSharing",
         "summary": "Set cron sharing",
         "tags": [
           "Crons"
         ],
-        "description": "Set an owned cron’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
+        "description": "Set a schedule’s visibility (Everyone vs Selected) and complete Selected audience. Requires edit rights; Selected must retain at least one current organization member, and sharedWith is intersected with current membership.",
         "requestBody": {
           "required": true,
           "content": {
@@ -41774,16 +41599,6 @@
                         }
                       ]
                     },
-                    "ownerUserId": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -41834,7 +41649,6 @@
                     "enabled",
                     "lastRunAt",
                     "createdBy",
-                    "ownerUserId",
                     "createdAt",
                     "lastModifiedBy",
                     "lastModifiedAt",
@@ -41941,7 +41755,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/hooks": {
+    "/api/v1/orgs/{orgId}/hooks": {
       "post": {
         "operationId": "createHook",
         "summary": "Create a hook",
@@ -42543,7 +42357,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/hooks": {
+    "/api/v1/orgs/{orgId}/agents/{agentId}/hooks": {
       "get": {
         "operationId": "listAgentHooks",
         "summary": "List an agent’s hooks",
@@ -42836,7 +42650,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/hooks/{id}": {
+    "/api/v1/orgs/{orgId}/hooks/{id}": {
       "get": {
         "operationId": "getHook",
         "summary": "Get a hook",
@@ -43833,7 +43647,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/hooks/{id}/runs": {
+    "/api/v1/orgs/{orgId}/hooks/{id}/runs": {
       "get": {
         "operationId": "listHookRuns",
         "summary": "List hook runs",
@@ -43995,7 +43809,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/session-access/slack": {
+    "/api/v1/orgs/{orgId}/session-access/slack": {
       "get": {
         "operationId": "getSlackSessionAccess",
         "summary": "Get Slack session access sync",
@@ -44244,7 +44058,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/session-access/github": {
+    "/api/v1/orgs/{orgId}/session-access/github": {
       "get": {
         "operationId": "getGitHubSessionAccess",
         "summary": "Get GitHub session access sync",
@@ -44493,7 +44307,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/session-access/feishu": {
+    "/api/v1/orgs/{orgId}/session-access/feishu": {
       "get": {
         "operationId": "getFeishuLarkSessionAccess",
         "summary": "Get Feishu/Lark session access sync",
@@ -44742,7 +44556,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/sessions/facets": {
+    "/api/v1/orgs/{orgId}/sessions/facets": {
       "get": {
         "operationId": "listSessionFacets",
         "summary": "List session filter facets",
@@ -44975,7 +44789,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/sessions": {
+    "/api/v1/orgs/{orgId}/sessions": {
       "get": {
         "operationId": "listSessions",
         "summary": "List sessions",
@@ -45352,6 +45166,20 @@
                               }
                             ]
                           },
+                          "workspaceIsolation": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "shared",
+                                  "session"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "visibility": {
                             "type": "string",
                             "enum": [
@@ -45384,6 +45212,16 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "contentPurgedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
                           }
                         },
                         "required": [
@@ -45406,9 +45244,11 @@
                           "permissionMode",
                           "outputMode",
                           "daemonId",
+                          "workspaceIsolation",
                           "visibility",
                           "externalProvider",
-                          "externalResolution"
+                          "externalResolution",
+                          "contentPurgedAt"
                         ],
                         "additionalProperties": false
                       }
@@ -45688,6 +45528,20 @@
                                     }
                                   ]
                                 },
+                                "workspaceIsolation": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "shared",
+                                        "session"
+                                      ]
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
                                 "visibility": {
                                   "type": "string",
                                   "enum": [
@@ -45720,6 +45574,16 @@
                                       "type": "null"
                                     }
                                   ]
+                                },
+                                "contentPurgedAt": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
                                 }
                               },
                               "required": [
@@ -45742,9 +45606,11 @@
                                 "permissionMode",
                                 "outputMode",
                                 "daemonId",
+                                "workspaceIsolation",
                                 "visibility",
                                 "externalProvider",
-                                "externalResolution"
+                                "externalResolution",
+                                "contentPurgedAt"
                               ],
                               "additionalProperties": false
                             }
@@ -45838,7 +45704,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/sessions/{id}": {
+    "/api/v1/orgs/{orgId}/sessions/{id}": {
       "get": {
         "operationId": "getSession",
         "summary": "Get session metadata",
@@ -46226,6 +46092,20 @@
                         }
                       ]
                     },
+                    "workspaceIsolation": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "shared",
+                            "session"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "activityState": {
                       "type": "string"
                     },
@@ -46336,6 +46216,26 @@
                         }
                       ]
                     },
+                    "contentPurgedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "contentPurgedReason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "startedAt": {
                       "type": "string"
                     },
@@ -46378,6 +46278,7 @@
                     "permissionMode",
                     "outputMode",
                     "daemonId",
+                    "workspaceIsolation",
                     "activityState",
                     "visibility",
                     "externalProvider",
@@ -46388,6 +46289,8 @@
                     "accessSyncDegraded",
                     "participants",
                     "tenantScope",
+                    "contentPurgedAt",
+                    "contentPurgedReason",
                     "startedAt",
                     "endedAt"
                   ],
@@ -46429,7 +46332,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/sessions/{id}/messages": {
+    "/api/v1/orgs/{orgId}/sessions/{id}/messages": {
       "get": {
         "operationId": "getSessionMessages",
         "summary": "Get session messages",
@@ -46691,7 +46594,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/sessions/{id}/tool-body": {
+    "/api/v1/orgs/{orgId}/sessions/{id}/tool-body": {
       "get": {
         "operationId": "getSessionToolBody",
         "summary": "Get a tool-call body",
@@ -46841,7 +46744,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/sessions/{id}/visibility": {
+    "/api/v1/orgs/{orgId}/sessions/{id}/visibility": {
       "put": {
         "operationId": "setSessionVisibility",
         "summary": "Set session visibility",
@@ -47003,7 +46906,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/usage": {
+    "/api/v1/orgs/{orgId}/usage": {
       "get": {
         "operationId": "getUsage",
         "summary": "Get token usage",
@@ -47196,7 +47099,7 @@
         }
       }
     },
-    "/v1\\ngh/orgs/{orgId}/stream": {
+    "/api/v1/orgs/{orgId}/stream": {
       "get": {
         "operationId": "streamSessionEvents",
         "summary": "Live session event stream",
@@ -47222,11 +47125,6 @@
       }
     }
   },
-  "servers": [
-    {
-      "url": "https://api.agentconnect.md\\ngh"
-    }
-  ],
   "security": [
     {
       "bearerAuth": []

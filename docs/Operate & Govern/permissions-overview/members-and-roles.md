@@ -32,13 +32,15 @@ An organization must always have at least one Owner, so its last Owner cannot be
 | Uninstall a GitHub App installation                                               | ✓         | —                | —          |
 | Manage members, roles, and organization settings                                  | ✓         | —                | —          |
 
-Roles do not override a resource's audience. An organization Owner who is neither the resource owner nor explicitly selected cannot see a restricted team resource. Owners can manage membership and organization settings without receiving an automatic read override; removing a member transfers that member's owned resources through the membership workflow instead of exposing every restricted resource to every Owner.
+Roles do not override a resource's audience. An organization Owner who is not explicitly selected cannot see a restricted team resource. Owners can manage membership and organization settings without receiving an automatic read override.
+
+When a member leaves or is removed, AgentConnect removes them from every Selected audience. Existing selected members keep access. Only an audience that would otherwise become empty receives a deterministic current organization Owner; the resource stays Selected and its creator history does not change.
 
 A [private session](/docs/session-visibility) likewise has no organization Owner override. Its transcript is visible only to its matched owner.
 
 Collaborators can change the audience of any resource they are allowed to edit. This includes sharing it with more members or switching it back to **Everyone**. Share sensitive resources only with collaborators you trust to manage that audience.
 
-Viewers are read-only for team resources. One ownership-based exception is intentional: a Viewer may still change the visibility of a session they own.
+Viewers are read-only for team resources. One session-specific exception is intentional: a Viewer may still change the visibility of a session whose owner identity matches them.
 
 ## Your profile
 
