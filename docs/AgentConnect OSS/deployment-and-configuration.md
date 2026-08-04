@@ -92,6 +92,80 @@ Run the command separately for each secret. Rotating `AGENTCONNECT_API_KEY_PEPPE
 
 PostgreSQL 18 data lives in the `agentconnect_postgres-data` Docker volume. `docker compose down` preserves it; `docker compose down --volumes` permanently deletes it. Back up the database before any non-throwaway use.
 
+## Secret storage
+
+Secrets saved in AgentConnect are write-only in the console, but storage encryption is a separate deployment choice. The default `SECRET_CIPHER=none` stores their values as plaintext in PostgreSQL. For a production or network-exposed deployment, use HashiCorp Vault Transit so the Control Plane stores ciphertext instead.
+
+The configured cipher covers organization and agent secrets together with integration credentials and other tenant secrets held by the Control Plane.
+
+### Configure Vault Transit
+
+Enable the Transit engine, create a key, and grant the Control Plane permission to encrypt and decrypt with that key:
+
+```bash
+vault secrets enable transit
+vault write -f transit/keys/agentconnect-cp
+```
+
+```hcl
+path "transit/encrypt/agentconnect-cp" {
+  capabilities = ["update"]
+}
+
+path "transit/decrypt/agentconnect-cp" {
+  capabilities = ["update"]
+}
+```
+
+Attach that policy to a dedicated Vault token or workload identity. Do not use a Vault root token.
+
+Use a small Compose override to pass the Vault settings into the Control Plane. Add `compose.vault.yaml` next to `compose.yaml`:
+
+```yaml
+services:
+  control-plane:
+    environment:
+      SECRET_CIPHER: vault-transit
+      VAULT_ADDR: ${VAULT_ADDR}
+      VAULT_TRANSIT_KEY: ${VAULT_TRANSIT_KEY:-agentconnect-cp}
+      VAULT_TRANSIT_MOUNT: ${VAULT_TRANSIT_MOUNT:-transit}
+      VAULT_TOKEN: ${VAULT_TOKEN}
+```
+
+Set the address and a policy-scoped token in `compose.env` or inject them through your deployment secret manager:
+
+```dotenv
+VAULT_ADDR=https://vault.example.com
+VAULT_TOKEN=<vault-token>
+```
+
+Then recreate the Control Plane with both Compose files:
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml up -d --force-recreate control-plane
+```
+
+For workload identity, replace the `VAULT_TOKEN` line in the override with:
+
+```yaml
+      VAULT_JWT_ROLE: ${VAULT_JWT_ROLE}
+      VAULT_JWT_PATH: ${VAULT_JWT_PATH:-/var/run/secrets/kubernetes.io/serviceaccount/token}
+      VAULT_AUTH_MOUNT: ${VAULT_AUTH_MOUNT:-kubernetes}
+```
+
+Set `VAULT_JWT_ROLE` in `compose.env` and mount the workload JWT at the configured path. Configure exactly one of token or JWT authentication. Vault Enterprise users can also add `VAULT_NAMESPACE: ${VAULT_NAMESPACE}` to the override.
+
+### Encrypt existing values
+
+Switching to Vault Transit is online: new and updated values are encrypted immediately, while existing plaintext values remain readable. After taking a database backup, encrypt all existing values with the bundled rewrap command:
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml exec control-plane \
+  node dist/secrets/rewrap-cli.js
+```
+
+The command is safe to resume. Run it again after rotating the Transit key to move stored values to the newest key version.
+
 ## Preset agent provisioning
 
 By default, the Control Plane creates an `agentconnect` preset agent for every new organization and backfills it for existing organizations at startup. To disable future provisioning and backfills:

@@ -53,6 +53,8 @@ Organization names are unique across variables and secrets. Names and types cann
 
 Secret values are write-only. After saving, AgentConnect shows the name and a mask; editing offers **Replace value** instead of reading the current value. Variable values remain visible to people who can view the assigned agent, so do not store credentials as variables.
 
+For AgentConnect OSS, write-only controls what users can retrieve through the product. Configure [secret storage encryption](/docs/deployment-and-configuration#secret-storage) separately to protect values at rest.
+
 Secrets are available to the agent runtime and its tools. AgentConnect attempts to mask known literal secret values if they appear in agent output, but masking is not a security boundary. Give each agent only the secrets it needs and use appropriate [permissions](/docs/permissions-overview) and [sandboxing](/docs/sandboxing).
 
 Variables and secrets are injected only into the runtime environment. They do not expand placeholders in agent descriptions, schedules, integration settings, or other configuration.
