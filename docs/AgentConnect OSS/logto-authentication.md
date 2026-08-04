@@ -98,7 +98,9 @@ Three callback types are involved:
 | Social provider | The callback shown by its Logto connector |
 | Social provider | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback` |
 
-The final callback is required for linking another sign-in method from **Your profile**. Keep it alongside the normal Logto connector callback. For GitHub, use a GitHub App because it supports multiple callback URLs; a GitHub OAuth App supports only one. See [GitHub App permissions and callbacks](/docs/deployment-and-configuration#optional-github-app).
+The final callback is required for linking another sign-in method from **Your profile**. Keep it alongside the normal Logto connector callback. For GitHub, register the connector as a [GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app) rather than an OAuth App: a GitHub App accepts multiple callback URLs and an OAuth App accepts only one, so an OAuth App cannot serve both callbacks above.
+
+This is a separate app from the [AgentConnect GitHub App](/docs/deployment-and-configuration#optional-github-app), which handles repositories and events. One is a sign-in connector, the other is a repository integration; do not reuse a single registration for both.
 
 ## 4. Enable social account linking
 
@@ -162,7 +164,7 @@ LOGTO_MGMT_RESOURCE=https://<tenant-id>.logto.app/api
 
 Keep these relationships exact:
 
-- `OIDC_ISSUER` is the Logto endpoint followed by `/oidc`.
+- `OIDC_ISSUER` is the Logto endpoint's origin plus `/oidc`, with no doubled slash — for the endpoint above that is `https://login.example.com/oidc`.
 - `LOGTO_API_RESOURCE` and `OIDC_AUDIENCE` are the same API identifier.
 - The SPA and M2M applications belong to the same Logto tenant.
 - `SOCIAL_PROVIDERS` matches the tenant's connector targets.
@@ -186,7 +188,13 @@ LARK_PLATFORM_APP_ID=<app-id>
 LARK_PLATFORM_APP_SECRET=<app-secret>
 ```
 
-When using Docker Compose, pass these four values to the `control-plane` service through an override before enabling **Follow Feishu / Lark access**.
+Add the values to `compose.env`, then recreate the Control Plane:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane
+```
+
+**Follow Feishu / Lark access** stays unavailable until at least one regional pair is configured.
 
 ## Verify the setup
 
