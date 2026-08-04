@@ -61,4 +61,4 @@ AgentConnect OSS does not enable social sign-in by default. To offer linked acco
 
 The operator must also enable Logto Account API social-identity editing, configure the Management API integration used for identity reads and safe unlinking, provide a verified-email flow, and register the account-link callback with each provider. Local no-auth mode does not infer a linked provider identity.
 
-See [Enable social account linking](/docs/deployment-and-configuration#enable-social-account-linking) for the complete setup.
+See [Logto authentication](/docs/logto-authentication#4-enable-social-account-linking) for the complete setup.
