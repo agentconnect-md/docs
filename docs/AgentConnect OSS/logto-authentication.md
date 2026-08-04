@@ -123,7 +123,6 @@ Email delivery is not required for every provider:
 | --- | --- |
 | GitHub | No |
 | Google | No |
-| Feishu with Logto's built-in connector | No |
 | Slack | Yes |
 | Feishu / Lark with Standard OAuth | Depends; configure if **Send code** appears |
 
@@ -201,7 +200,7 @@ One regional permission app can check sessions created by multiple AgentConnect 
 For each region you want to synchronize:
 
 1. Create a dedicated Lark or Feishu app. Enable its **Bot** capability and grant `im:chat:readonly` or `im:chat.members:read`; the platform requires Bot capability for its [membership-check API](https://open.feishu.cn/document/server-docs/group/chat-member/is_in_chat).
-2. Configure a Logto connector with target `lark` or `feishu` that can store and return the provider's access and refresh tokens. Enable [third-party token storage](https://docs.logto.io/secret-vault/federated-token-set).
+2. Configure Logto's [Standard OAuth 2.0 connector](https://docs.logto.io/integrations/oauth2) with target `lark` or `feishu`. Enable [third-party token storage](https://docs.logto.io/secret-vault/federated-token-set) so AgentConnect can retrieve the provider's access and refresh tokens.
 3. Use that permission app's credentials below. These are not the credentials of every AgentConnect bot:
 
 ```dotenv
@@ -217,15 +216,13 @@ Add the values to `compose.env`, then recreate the Control Plane:
 docker compose --env-file compose.env up -d --force-recreate control-plane
 ```
 
-Logto's built-in Feishu connector supports sign-in and profile linking, but it is not currently one of Logto's token-storage-capable social connectors. By itself, it cannot power **Follow Feishu / Lark access**. Use Logto's [Standard OAuth 2.0 connector](https://docs.logto.io/integrations/oauth2) or another compatible connector when you need permission sync.
-
 The setting stays unavailable until at least one regional permission app is configured. Access checks fail closed if Logto cannot return a valid provider token.
 
 ## Verify the setup
 
 1. Open the console in a private browser window and sign in through one configured provider.
 2. Open **Your profile → Sign-in methods** and confirm the configured providers appear.
-3. Confirm GitHub, Google, or Logto's built-in Feishu connector proceeds without an ownership code.
+3. Confirm GitHub or Google profile linking proceeds without an ownership code.
 4. If you offer Slack or another connector that asks for a code, confirm the `UserPermissionValidation` email arrives and completes the link.
 5. Unlink the second provider again; the final sign-in method remains protected.
 6. If you enabled Lark or Feishu permission sync, confirm the linked profile can open an allowed chat session created through a different bot App ID.

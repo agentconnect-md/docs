@@ -10,7 +10,7 @@ Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
 ## Link an account
 
-Choose **Link** beside a provider and complete its authorization flow. GitHub, Google, and Logto's built-in Feishu connector do not require an ownership code. Slack can first ask for a code sent to the current profile's verified primary email. Standard OAuth and other custom connectors may differ; on a self-hosted deployment, ask the operator whether email verification is configured.
+Choose **Link** beside a provider and complete its authorization flow. GitHub and Google do not require an ownership code. Slack and Standard OAuth connectors can first ask for a code sent to the current profile's verified primary email; on a self-hosted deployment, ask the operator whether email verification is configured.
 
 After linking, you can sign in through any linked provider and reach the same AgentConnect profile, organizations, memberships, and personal settings.
 
@@ -45,7 +45,7 @@ For a public channel, an active full member of the installing workspace does not
 
 A linked Lark or Feishu identity can directly match private-message ownership when the identity and bot come from the same app. That app-scoped match is not permission sync.
 
-When the organization enables **Follow Feishu / Lark access**, AgentConnect instead checks current membership in the source chat. One regional permission app can evaluate chats from multiple bot apps; their App IDs do not need to match. This requires a Logto connector that stores the provider user token. Logto's built-in Feishu connector supports sign-in and linking, but cannot enable permission sync by itself.
+When the organization enables **Follow Feishu / Lark access**, AgentConnect instead checks current membership in the source chat. One regional permission app can evaluate chats from multiple bot apps; their App IDs do not need to match. This requires a Standard OAuth connector that stores the provider user token.
 
 ### GitHub
 
