@@ -20,7 +20,7 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 
 **The Control Plane** manages authentication, organizations, permissions, registry, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed-skill revisions](/docs/knowledge). Its daemon WebSocket is used primarily for registration, heartbeats, configuration, orchestration commands, and telemetry. It also carries scoped request and response frames for authorized, on-demand console reads.
 
-**The console** is the configuration and observation surface. When you open a transcript, tool body, memory view, or workspace file, the BFF requests a bounded live read from the owning daemon. The Control Plane proxies that response without persisting the body.
+**The console** is the configuration and observation surface. When you open a transcript, tool body, memory view, or workspace file, the console asks the Control Plane for a bounded live read from the owning daemon. The Control Plane proxies that response without persisting the body.
 
 ## What lives where
 

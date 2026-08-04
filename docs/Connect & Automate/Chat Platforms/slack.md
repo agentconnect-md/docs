@@ -33,7 +33,7 @@ On the built-in agent, choose **Use a custom bot identity instead** when it need
 
 ### Configuration-token install
 
-This is the recommended custom-app path. If you have not saved a Slack configuration token yet, AgentConnect links to [Slack's configuration-token page](https://api.slack.com/authentication/config-tokens). Paste the access token (`xoxe.xoxp-…`) and its refresh token (`xoxe-…`) so AgentConnect can rotate it; an access token saved alone expires after roughly 12 hours. Slack scopes the pair to one user and workspace. AgentConnect saves it for that signed-in user, who can replace or clear it under **Your profile → Slack config token**.
+This is the recommended custom-app path. If you have not saved a Slack configuration token yet, AgentConnect links to [Slack's configuration-token page](https://api.slack.com/authentication/config-tokens). Paste the access token (`xoxe.xoxp-…`). The refresh token (`xoxe-…`) is optional but recommended: without it AgentConnect cannot rotate the pair, and an access token saved alone expires after roughly 12 hours. Slack scopes the pair to one user and workspace. AgentConnect saves it for that signed-in user, who can replace or clear it under **Your profile → Slack config token**.
 
 Name the App, click **Create & install**, and approve it in Slack. With **HTTP (Events API)** delivery, AgentConnect captures the bot token and signing secret and finishes without credential copy-and-paste. With **Socket Mode**, Slack still requires you to generate one App-Level token with `connections:write` and paste the resulting `xapp-…` token.
 

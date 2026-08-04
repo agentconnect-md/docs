@@ -37,7 +37,7 @@ An accepted Knowledge suggestion appears in the Knowledge library. An accepted m
 
 ## Manage external memory connections
 
-Open **Knowledge → External memory** to register and manage approved memory services for the organization. An Owner reviews the plugin installation, endpoint or operator-provided command reference, credential contract, and stated network boundary before creating a connection. Secret values are write-only after saving. After the daemon probes the connection, its card shows the downstream hosts reported by the plugin.
+Open the **External memory** card on the Knowledge page to register and manage approved memory services for the organization. An Owner reviews the plugin installation, endpoint or operator-provided command reference, credential contract, and stated network boundary before creating a connection. Secret values are write-only after saving. After the daemon probes the connection, its card shows the downstream hosts reported by the plugin.
 
 Creating a connection does not change any agent automatically. Open an agent's **Memory** tab, choose **External**, select the connection, and configure its recall and capture policies. The connection supplies the trusted service and credentials; the agent binding supplies the agent-scoped identity and policy.
 

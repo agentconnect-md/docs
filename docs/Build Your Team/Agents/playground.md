@@ -28,6 +28,6 @@ Opening Playground starts with an empty, temporary view. Your first message save
 
 ## Tips
 
-- Test **permission modes** here before using an agent in a shared channel — try *Plan* or *Ask for approval* first, watch what it wants to do, then relax.
+- Test **permission modes** here before using an agent in a shared channel. Start with the most cautious mode the runtime offers (Claude Code has *Plan*, Codex has *Read Only*), watch what the agent wants to do, then relax it.
 - The Playground respects the agent's workspace. For a new single-agent conversation backed by GitHub, choose whether its first turn uses an isolated worktree without changing the agent's saved default.
 - If the composer reports an agent as unreachable, check its daemon is online — Playground sessions run on the participating daemons, not in the cloud.

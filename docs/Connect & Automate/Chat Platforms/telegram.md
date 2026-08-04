@@ -14,7 +14,7 @@ Telegram is the quickest chat integration: one token, no app review, no public U
 
 ## Connect it
 
-On your agent, open **Integrations → Add integration → Telegram** and paste the token. AgentConnect automatically validates it and checks Group Privacy Mode. If privacy is still enabled, the dialog keeps checking while you change the setting in @BotFather; **Connect** becomes available when Telegram reports that it is off.
+On your agent, open **Integrations → Add integration → Telegram** and paste the token. AgentConnect automatically validates it and checks Group Privacy Mode. If privacy is still enabled, the dialog keeps checking while you change the setting in @BotFather; **Connect & authorize** becomes available when Telegram reports that it is off.
 
 AgentConnect automates the check, not the setting itself: Telegram's Bot API does not provide a way for AgentConnect to disable Group Privacy Mode.
 

@@ -18,7 +18,7 @@ To pick repositories from a list, install the **AgentConnect GitHub app**:
 
 1. In **Add agent → From GitHub**, click **Install GitHub app** (or go to **Settings → GitHub → Install on GitHub**).
 2. On GitHub, choose the account and which repositories to grant.
-3. Back in the dialog, pick the **repository** and **branch**, set the **agent directory** if the agent should live in a subfolder, and choose **push access**:
+3. Back in the dialog, pick the **repository** and **branch**, set the **Working subdirectory** if the agent should live in a subfolder, and choose **push access**:
    - **Read only** — the agent can pull but not push.
    - **Read & write** — the agent can push to the repo.
 
@@ -42,7 +42,7 @@ The agent's **Workspace** tab reads files directly from its daemon. Authorized u
 
 ## Change the workspace source
 
-Use **Edit workspace** on the Workspace card to switch between Scratch and GitHub, select another repository or branch, change the working directory, or change read/write access.
+Use the edit control on the Workspace card (its tooltip reads **Edit workspace**) to switch between Scratch and GitHub, select another repository or branch, change the working directory, or change read/write access.
 
 Changing the source type, repository, or branch **replaces all daemon-local workspace files**. Commit, push, copy or otherwise back up anything you need before confirming. A GitHub target is cloned before the old workspace is replaced; if cloning or authorization fails, the existing workspace is left intact.
 

@@ -26,5 +26,5 @@ Mention the bot in a server channel it can see and it answers; longer conversati
 ## Notes
 
 - If automatic Message Content setup was rejected, enable the intent manually in the Developer Portal and connect again.
-- If the bot cannot reply or create a thread, use **Settings → Bots → Discord → Add to Discord** to reinstall it with the current scopes and permissions.
+- If the bot cannot reply or create a thread, open **Settings → Bots → Discord** and use the invite link on the bot's row (its tooltip reads "Add this bot to a Discord server") to reinstall it with the current scopes and permissions.
 - One Discord bot binds to one agent; deleting the integration frees the bot for reuse.

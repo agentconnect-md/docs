@@ -12,15 +12,16 @@ The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access*
 
 **Output mode** controls what reaches connected chat platforms; the full transcript remains available in [Sessions](/docs/sessions):
 
-- **Minimal** — one live-updating reply that settles on the final answer; intermediate steps stay in the status.
-- **Low** — replies only.
-- **Medium** — replies plus tool activity and plans.
+- **Minimal** — one live-updating reply that settles on the final answer; interstitial steps stay in the status.
+- **Low** — replies only; activity stays in the temporary status.
+- **Medium** — Low plus tool activity and plans.
 - **High** — Medium plus reasoning and tool outputs.
-- **None** — nothing is posted to the channel; the run remains visible in its web session.
+- **None** — nothing reaches the channel; replies are recorded to the web session only.
 
 Other runtime behavior settings include:
 
 - **Allow change in chat** — when on, chat users can change session runtime settings (via the [in-conversation commands](/docs/integrations-overview#in-conversation-commands)) and answer approval requests. When off, only people who can edit the agent can do so.
+- **Show status bar** — keep a live status line in the conversation while the agent works.
 - **Show footer** — add the agent, runtime, model and session links to replies.
 - **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
 - **Run in sandbox** — place the runtime inside AgentConnect's Linux OS sandbox. The control is **Unavailable** when the selected daemon cannot enforce it and **Required** when the daemon operator has locked it on. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/docs/sandboxing).
@@ -51,7 +52,7 @@ Organization Owners can define a value once under **Settings → Variables & sec
 
 ## Agent visibility (sub-agent calls)
 
-Agents can call each other as sub-agents. The **Agent visibility** card controls both sides of that relationship:
+Agents can call each other as sub-agents. The **Agent visibility** section of the Configuration tab's **Access** card controls both sides of that relationship:
 
 - **Inbound: Which agents can call this agent?**
 - **Outbound: Which agents can this agent call?**

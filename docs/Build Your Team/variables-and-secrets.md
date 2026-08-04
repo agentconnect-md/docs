@@ -1,5 +1,5 @@
 ---
-title: 🔑 Variables & secrets
+title: 🎛️ Variables & secrets
 excerpt: Set runtime environment values once for an organization or directly on one agent.
 hidden: false
 ---
@@ -18,8 +18,8 @@ Use variables for ordinary configuration such as endpoints and feature flags. Us
 Only organization Owners can manage the organization registry:
 
 1. Open **Settings** and find **Variables & secrets**.
-2. Select **Add**, then choose **Variable** or **Secret**.
-3. Enter a standard environment-variable name such as `SERVICE_URL` or `SERVICE_API_KEY` and its value.
+2. Select **Add** and give the entry a **Name**.
+3. Choose **Variable** or **Secret**, then enter the value. Use a standard environment-variable name such as `SERVICE_URL` or `SERVICE_API_KEY`.
 4. Choose **All agents** or **Selected agents**.
 5. Save the entry.
 
@@ -53,7 +53,7 @@ Organization names are unique across variables and secrets. Names and types cann
 
 ## Secret handling
 
-Secret values are write-only. After saving, AgentConnect shows the name and a mask; editing offers **Replace value** instead of reading the current value. Variable values remain visible to people who can view the assigned agent, so do not store credentials as variables.
+Secret values are write-only. After saving, AgentConnect shows the name and a mask; editing offers to replace the value instead of revealing it — a **Replace value** button in Settings, an edit control on the agent-local card. Variable values remain visible to people who can view the assigned agent, so do not store credentials as variables.
 
 Write-only controls what people can retrieve through the product, not how the value is stored everywhere. For AgentConnect OSS, configure [secret storage encryption](/docs/deployment-and-configuration#secret-storage) to protect values at rest in the Control Plane database. The daemon that runs the agent keeps its own copy of the resolved value in the agent's local configuration file, readable by the operating-system user that runs the daemon. Treat every machine you connect as trusted with the secrets of the agents placed on it.
 

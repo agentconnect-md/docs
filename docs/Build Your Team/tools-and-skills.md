@@ -20,10 +20,10 @@ Adding something to the organization library does not automatically give it to e
 
 Open **Tools & Skills** and use **Connectors & MCP servers** to register an upstream capability:
 
-- **Add connectors** browses the available OpenConnector providers and walks through their authorization.
+- **Add connectors** browses the available OpenConnector providers and walks through their authorization. It appears only when your deployment has connectors configured.
 - **Custom MCP provider** connects an HTTP MCP endpoint by URL, with optional upstream headers.
 
-Choose **Everyone** or **Selected** team visibility when you add the provider. Header values are write-only after saving. AgentConnect gives enabled agents a managed proxy grant rather than the upstream URL or credential, and the Relay makes the upstream call.
+Choose **Everyone** or **Selected** under **Visibility** when you add the provider. Header values are write-only after saving. AgentConnect gives enabled agents a managed proxy grant rather than the upstream URL or credential, and the Relay makes the upstream call.
 
 A provider appears as eligible for an agent only when the agent's daemon and selected runtime support its transport. Registering the provider makes it available to choose; it does not turn it on for any agent.
 
@@ -40,13 +40,13 @@ The Skills library contains two source types with different lifecycles:
 
 Managed skills and Git sources remain clearly labeled even though they share one library. Adding a skill to the library never enables it automatically.
 
-### Install from skills.sh
+### Search skills.sh
 
 Use the public [skills.sh](https://skills.sh) registry when you know the capability you want but not its repository:
 
-1. Open **Tools & Skills → Skills library** and choose **Install from skills.sh**.
+1. Open **Tools & Skills → Skills library** and choose **Search skills.sh**.
 2. Search by skill name and select a result.
-3. Optionally change its library name, choose its team visibility, and select **Install**.
+3. Optionally change its library **Name**, choose its **Visibility**, and select **Install**.
 
 Each result registers exactly that skill from its `owner/repo` source. It becomes an ordinary Git skill source in the organization library and remains disabled until you enable it for an agent. If the registry cannot be reached, retry later or use **Import from GitHub** with a repository you already know.
 
@@ -54,8 +54,8 @@ Each result registers exactly that skill from its `owner/repo` source. It become
 
 1. Open **Tools & Skills → Skills library** and choose **Import from GitHub**.
 2. Enter `owner/repo` or a GitHub repository URL. The repository should contain each skill in a folder with a `SKILL.md` file.
-3. Optionally set a display name, branch/tag/commit **Ref**, **Subdir**, or a list of specific **Skills**. Leave Skills blank to include all discovered skills.
-4. Choose its team visibility and select **Import**.
+3. Optionally set the source **Name**, a branch/tag/commit **Ref**, **Subdir**, or a list of specific **Skills**. Leave Skills blank to include all discovered skills. The name is not a display label — agents bind to it, and it cannot be changed later; recreate the source to rename it.
+4. Choose its **Visibility** and select **Import**.
 
 Both registry installation and direct import support only public skill repositories today. If you set **Subdir**, provide a **Ref** unless AgentConnect can resolve the repository's default branch through the organization's GitHub App.
 
@@ -75,7 +75,7 @@ Under **Skills**:
 
 If AgentConnect cannot list the individual skills in a Git source, you can still enable the whole source. An archived managed skill cannot be enabled. A previously enabled provider or source that is no longer available may remain visible only so an editor can switch it off.
 
-### Loaded from the workspace
+### Loaded from workspace
 
 The agent's **Tools & Skills** tab also shows the skills its prepared workspace can actually load. Each row identifies its origin as **Dream**, **Managed**, **Git source**, or **Repo**, so you can distinguish organization-managed capabilities from skills committed directly with the project. This live list appears after the workspace has been prepared and is unavailable while the owning daemon is offline.
 
