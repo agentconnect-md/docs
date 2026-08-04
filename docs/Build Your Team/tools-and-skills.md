@@ -77,7 +77,7 @@ If AgentConnect cannot list the individual skills in a Git source, you can still
 
 ## Visibility and roles
 
-MCP providers and Git skill sources have independent [team visibility](/docs/visibility-and-sharing): **Everyone** or **Selected**. Owners can always recover restricted team resources. Collaborators can create and edit resources they are allowed to access, while Viewers are read-only.
+MCP providers and Git skill sources have independent [team visibility](/docs/visibility-and-sharing): **Everyone** or **Selected**. Selected includes the current resource owner and the current organization members explicitly chosen for that resource; the organization Owner role does not add access. Collaborators can create and edit resources they are allowed to access, while Viewers are read-only.
 
 Managed-skill approval, revision governance, and archive or restore actions require an organization Owner.
 

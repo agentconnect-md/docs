@@ -11,9 +11,11 @@ Team visibility controls the audience for a resource. New resources are visible 
 Supported create and edit surfaces have a **Visibility** or **Team visibility** field:
 
 - **Everyone** means every organization member may see the resource.
-- **Selected** means the creator, the selected members, and every organization Owner may see it.
+- **Selected** means the current resource owner and the current organization members you select may see it.
 
-The creator cannot be removed from the audience. Owners retain a governance override so they can audit and recover restricted resources. A member's [role](/docs/members-and-roles) still decides whether access is read-only or editable.
+Selected must always retain at least one current organization member. The resource owner is included and cannot be removed from the sharing control, so selecting no additional members means owner-only, not nobody. AgentConnect rejects a change to Selected when the resource has no owner who is still an organization member.
+
+The creator shown in a resource's history is audit information and may differ from its current owner; being the creator does not grant access by itself. The organization Owner role also does not bypass Selected visibility. A member's [role](/docs/members-and-roles) still decides whether allowed access is read-only or editable.
 
 Anyone who can edit a resource can also change its audience. A selected Collaborator may therefore share it onward; a selected Viewer remains read-only.
 

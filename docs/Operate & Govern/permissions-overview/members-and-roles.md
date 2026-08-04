@@ -31,9 +31,10 @@ An organization must always have at least one Owner, so its last Owner cannot be
 | Install or sync the GitHub App and manage organization bots                       | ✓         | ✓                | —          |
 | Uninstall a GitHub App installation                                               | ✓         | —                | —          |
 | Manage members, roles, and organization settings                                  | ✓         | —                | —          |
-| See and recover every restricted team resource                                    | ✓         | —                | —          |
 
-Owners have a governance override for restricted team resources, but not for [private sessions](/docs/session-visibility). A private transcript is visible only to its matched owner, regardless of organization role.
+Roles do not override a resource's audience. An organization Owner who is neither the resource owner nor explicitly selected cannot see a restricted team resource. Owners can manage membership and organization settings without receiving an automatic read override; removing a member transfers that member's owned resources through the membership workflow instead of exposing every restricted resource to every Owner.
+
+A [private session](/docs/session-visibility) likewise has no organization Owner override. Its transcript is visible only to its matched owner.
 
 Collaborators can change the audience of any resource they are allowed to edit. This includes sharing it with more members or switching it back to **Everyone**. Share sensitive resources only with collaborators you trust to manage that audience.
 
