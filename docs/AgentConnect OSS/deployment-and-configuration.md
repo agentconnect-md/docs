@@ -274,7 +274,7 @@ docker compose --env-file compose.env up -d --force-recreate control-plane relay
 
 Then open **Settings → GitHub** in AgentConnect, choose **Install on GitHub**, select the account and repositories, and return to the console. If GitHub says a permission update is pending, approve it as the installation owner and choose **Sync** in AgentConnect.
 
-The `LOGTO_MGMT_*` variables below are not required to enable the GitHub App. They add per-user GitHub authorization checks when Logto-backed sign-in is enabled; without them, repository authorization follows the AgentConnect organization and installation boundary.
+The `LOGTO_MGMT_*` variables in [Logto authentication](/docs/logto-authentication) are not required to enable the GitHub App. They add per-user GitHub authorization checks when Logto-backed sign-in is enabled; without them, repository authorization follows the AgentConnect organization and installation boundary.
 
 ## Optional deployment-wide Add to Slack app
 
@@ -325,6 +325,8 @@ The local setup has two operator-managed pieces:
 ### 1. Start Mem0 OSS
 
 Follow Mem0's [self-hosted setup](https://docs.mem0.ai/open-source/setup). Its reference Docker Compose stack exposes the API on `http://localhost:8888` and the dashboard on `http://localhost:3000`.
+
+> Mem0's dashboard port clashes with the AgentConnect console, which also defaults to `3000`. If you run both on one host, remap one of them — change `AGENTCONNECT_WEB_PORT` or Mem0's dashboard port before starting the second stack.
 
 For example:
 

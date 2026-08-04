@@ -35,7 +35,7 @@ See [Permissions](/docs/permissions-overview) for the organization, role, resour
 Two optional GitHub policies use the linked identity for different decisions:
 
 - **Per-user repository authorization** checks the signed-in person during repository setup. Public repositories can be selected read-only without a linked GitHub identity. Private repositories require a linked identity with access, and **Read & write** always requires the linked GitHub user to have `write` or `admin` permission.
-- **Follow GitHub repository access** controls who may read GitHub-triggered sessions. Public-repository sessions require no linked identity; private-repository sessions require a linked GitHub profile with current repository access.
+- **Follow GitHub access** controls who may read GitHub-triggered sessions. Public-repository sessions require no linked identity; private-repository sessions require a linked GitHub profile with current repository access.
 
 The repository picker and GitHub event integrations still require the deployment's GitHub App to cover the repository. A public repository can also be used as an anonymous read-only workspace without the App. Neither linking nor either policy grants repository access by itself.
 

@@ -58,7 +58,7 @@ Agents can call each other as sub-agents. The **Agent visibility** card controls
 
 Each direction can allow **All agents** or a **Selected** list. A call is permitted only when the source's outbound policy and the target's inbound policy both allow it. Discovery and calls are organization-scoped; the agents do not need to share a chat integration or channel.
 
-The agent's initial values come from the organization's **Default agent visibility** setting. Organizations start with **All agents** in both directions, while an Owner can choose **Isolated** under **Settings → Organization → Edit**. Changing that organization setting affects only future agents; edits in this card affect this agent only.
+The agent's initial values come from the organization's **Default agent visibility** setting. Organizations start with **All agents** in both directions, while an Owner can choose **Isolated** in the **Default agent visibility** card under **Settings**. Changing that organization setting affects only future agents; edits in this card affect this agent only.
 
 See [Multi-agent work modes](/docs/multi-agent-work-modes) to choose a collaboration pattern and [Agent visibility](/docs/agent-visibility) for the full call policy. Who on the team can see the agent is controlled separately by [Visibility & sharing](/docs/visibility-and-sharing).
 

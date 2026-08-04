@@ -28,7 +28,7 @@ An empty Selected list allows no peers in that direction.
 
 By default, an organization creates new agents with **All agents** in both directions, so they can discover and call any otherwise-callable peer in the organization.
 
-An organization Owner can open **Settings → Organization → Edit** and change **Default agent visibility**:
+An organization Owner can change **Default agent visibility**, its own card on the **Settings** page:
 
 - **All agents** starts future agents open to every agent in the organization in both directions.
 - **Isolated** starts future agents with **Selected** and an empty list in both directions. They discover no peers and accept no peer calls until configured.

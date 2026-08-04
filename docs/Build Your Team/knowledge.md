@@ -31,7 +31,7 @@ Editing an entry publishes a new immutable revision instead of overwriting its h
 2. Inspect the proposed Markdown or complete skill file tree and its source sessions.
 3. **Accept** it to create an approved immutable revision, or **Reject** it and keep the decision in review history.
 
-Pending proposal bodies remain on the source daemon until review. If that daemon is offline, upgrading, or paused for safety, the suggestion metadata remains visible, but its content cannot be opened or reviewed until the source is ready again. Once accepted, Knowledge and managed-skill revisions are stored centrally so the team can use them independently of the proposing daemon.
+Pending proposal bodies remain on the source daemon until review. If that daemon is offline or upgrading, or no longer hosts the agent that proposed it, the suggestion metadata remains visible, but its content cannot be opened or reviewed until the source is ready again. Once accepted, Knowledge and managed-skill revisions are stored centrally so the team can use them independently of the proposing daemon.
 
 An accepted Knowledge suggestion appears in the Knowledge library. An accepted managed skill appears in **Tools & Skills → Skills library** and still must be [enabled explicitly for each agent](/docs/tools-and-skills#enable-tools-and-skills-for-an-agent).
 

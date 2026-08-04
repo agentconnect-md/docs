@@ -36,7 +36,7 @@ Use this mode when the roles serve different teams or workflows and their output
 
 ## Shared conversation
 
-**Use this for direct collaboration.** Bring several agents into the same Playground or IM conversation and watch their work together. Supported chat platforms are Slack, Telegram, Discord, Lark, and Feishu.
+**Use this for direct collaboration.** Bring several agents into the same Playground or IM conversation and watch their work together. Supported chat platforms are Slack, Telegram, Discord, and Lark / Feishu.
 
 ```mermaid
 flowchart LR

@@ -14,7 +14,9 @@ Use the session list to find work by agent or source and follow scheduled runs b
 
 ## Review a run
 
-Each session records its source, agent, participants, daemon, runtime and model, along with duration, token usage, estimated cost (the runtime's own report where available, otherwise derived from token usage and public list prices), and tool activity. Where the provider supplies it, the session links back to the original conversation.
+Each session records its source, agent, participants, daemon, runtime and model, along with duration, token usage, estimated cost, and tool activity. Where the provider supplies it, the session links back to the original conversation.
+
+Cost comes from the runtime's own report. When a Codex run does not report one, AgentConnect estimates it from the token counts and OpenAI's public list prices for that exact model. Other runtimes that report no cost simply show none.
 
 Sessions snapshot their execution config: the header reflects what the run _actually used_, even if you've reconfigured the agent since.
 
@@ -42,7 +44,9 @@ After the retention period, the daemon deletes the transcript, tool details and 
 
 Active sessions are not removed. A session worktree is also retained when it contains uncommitted files or commits that have not reached any remote. Because retention is configured per daemon, a conversation involving agents on different daemons can retain only part of its history.
 
-For a directly managed session, the header shows **Everyone / Private** when its matched owner may change the audience. A provider-bound session instead shows read-only **Slack members**, **Feishu / Lark members**, or **GitHub access** after its organization enables the corresponding setting under **Settings → Session access**. A session created while that setting is disabled remains **Everyone** until provider access is synchronized. Making a session private hides the transcript immediately and can also change future memory capture; review the [session visibility and memory caveats](/docs/session-visibility) before tightening it.
+A GitHub session's worktree is often reclaimed sooner than that. Merging its pull request, or closing its issue, tells the daemon the thread is finished and the checkout can go. Closing a pull request **without** merging does not, since it may still be reopened. The transcript itself still follows the retention setting above.
+
+For a directly managed session, the header shows **Everyone / Private** when its matched owner may change the audience. A provider-bound session instead shows read-only **Slack members**, **Feishu / Lark members**, or **GitHub members** after its organization enables the corresponding setting under **Settings → Session access**. A session created while that setting is disabled remains **Everyone** until provider access is synchronized. Making a session private hides the transcript immediately and can also change future memory capture; review the [session visibility and memory caveats](/docs/session-visibility) before tightening it.
 
 ## Cross-platform handoffs stay separate
 

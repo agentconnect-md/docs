@@ -27,6 +27,8 @@ Names may contain letters, digits, and underscores, and cannot start with a digi
 
 **All agents** assigns the entry to every agent you can manage and automatically applies it to agents you configure later. **Selected agents** applies it only to the agents you choose. The picker lists only agents you can manage; editing that selection does not remove existing assignments to other private agents.
 
+An agent running on a daemon too old to accept organization entries is skipped rather than blocking the save; it picks the entry up on its next configuration change once that daemon is upgraded. Assigning an entry to such an agent explicitly, or rotating a value one has already received, does fail with an error until you upgrade the daemon.
+
 An assigned entry appears on the agent's Variables or Secrets card with an **Organization** label. It is read-only there. Owners edit or rotate it from **Settings**; other agent editors can still manage that agent's local entries.
 
 ## Set a value on one agent
@@ -68,9 +70,11 @@ Two names are delivered as files instead, because the tools that need them expec
 | `KUBECONFIG_DATA` | `KUBECONFIG`, pointing at the written kubeconfig file |
 | `DOCKER_CONFIG_DATA` (or the older `DOCKER_AUTH_CONFIG`) | `DOCKER_CONFIG`, pointing at the written config directory |
 
-Put the file's full contents in the `…_DATA` secret. AgentConnect writes it into the agent's own directory with owner-only permissions and removes the original name from the environment, so `kubectl` and `docker` work without any extra setup — but a script that reads `KUBECONFIG_DATA` directly will find nothing.
+Put the file's full contents in the `…_DATA` secret. AgentConnect writes it into the agent's own directory with owner-only permissions and removes the original name from the environment, so `kubectl` and `docker` work without any extra setup — but a script that reads `KUBECONFIG_DATA` directly will not find it there.
 
 These files exist only while the agent is working. AgentConnect writes them before each turn and deletes them about a minute after the agent goes quiet, and again when its runtime stops or the daemon restarts.
+
+Setting the pointer variable yourself wins. If the agent already has a `KUBECONFIG` or `DOCKER_CONFIG` value of its own, AgentConnect leaves it alone, skips writing the file, and passes the `…_DATA` value through as an ordinary environment value. Set one or the other, not both.
 
 ## Updates and removal
 

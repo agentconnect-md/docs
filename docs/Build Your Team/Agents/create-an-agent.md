@@ -24,12 +24,13 @@ Open **Agents → Add agent**:
 
 These appear when the selected daemon and runtime advertise support. Exact choices and descriptions can change with the runtime version:
 
-- **Effort** (Claude Code) — **Low / Medium / High / Extra / Max / Ultracode**, controlling how much thinking the agent puts in. On Codex the field is **Reasoning**: **Light / Medium / High / Extra High**.
+- **Effort** (Claude Code) or **Reasoning** (Codex) — how much thinking the agent puts in. The levels come from the runtime itself, so read them off the picker rather than from a list here; they change as the runtime does.
 - **Fast mode** — **On / Off**; the runtime's faster-output mode where available.
 - **Permission mode** — how much the runtime may do without asking. Available modes, including **Auto**, are runtime-defined and can vary by runtime and version. Use the picker descriptions as the source of truth, and start conservative for agents on shared channels; you can change the mode later per agent or Playground session.
 - **Run in sandbox** — place the runtime inside AgentConnect's Linux OS sandbox when the selected daemon supports it. This outer OS boundary is separate from the runtime's permission mode. See [Sandboxing](/docs/sandboxing).
 - **Memory** — **Managed** (an AgentConnect-managed directory), **Native** (the runtime's own isolated memory), **External** (a configured provider such as Mem0), or **Off**. See [the guide to using Mem0 OSS as external memory](/docs/external-memory) for setup.
-- **MCP servers** — attach any MCP servers configured on the daemon; the agent gets their tools in every session.
+
+MCP servers are not part of this dialog. Create the agent first, then enable them from its **Tools & Skills** tab — the only place MCP access is granted. See [Tools & Skills](/docs/tools-and-skills).
 
 ## Workspace
 
