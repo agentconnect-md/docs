@@ -15173,6 +15173,156 @@
         }
       }
     },
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/skills/local": {
+      "get": {
+        "operationId": "listAgentLocalSkills",
+        "summary": "List an agent’s local skills",
+        "tags": [
+          "Skill sources"
+        ],
+        "description": "Proxy the skills the agent’s materialized workspace can load live from the owning daemon, each tagged by origin (dream-accepted, managed, git-source, or repo-committed). `materialized:false` means the workspace has not been prepared yet, so the empty list is \"unknown\", not \"no skills\". 503 when unplaced or the daemon is offline.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "materialized": {
+                      "type": "boolean"
+                    },
+                    "skills": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "origin": {
+                            "type": "string",
+                            "enum": [
+                              "dream-accepted",
+                              "managed",
+                              "git-source",
+                              "repo"
+                            ]
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "description",
+                          "origin",
+                          "path"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "materialized",
+                    "skills"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/file": {
       "get": {
         "operationId": "readAgentWorkspaceFile",
@@ -35084,7 +35234,7 @@
         "tags": [
           "Organization variables & secrets"
         ],
-        "description": "Defines one organization-owned entry and targets it at all agents or a selected set. A secret value is write-only: it is accepted here and never returned. `all` enrolls every agent the caller may edit and auto-enrolls agents on later authorized configuration writes; it never reaches an agent the caller cannot manage. `key` and `kind` are immutable afterwards.",
+        "description": "Defines one organization-owned entry and targets it at all agents or a selected set. A secret value is write-only: it is accepted here and never returned. `all` enrolls every agent the caller may edit and auto-enrolls agents on later authorized configuration writes; it never reaches an agent the caller cannot manage, and it skips an agent placed on a daemon that does not yet support organization environment entries (that agent enrolls on a later configuration write once its daemon is upgraded). `key` and `kind` are immutable afterwards.",
         "requestBody": {
           "required": true,
           "content": {
@@ -35315,7 +35465,7 @@
         "tags": [
           "Organization variables & secrets"
         ],
-        "description": "Replaces the value and/or changes the audience under `expectedVersion`. An omitted value leaves it unchanged, which is how the Console keeps an existing secret while editing other fields. Switching to `all` enrolls every agent the caller may edit and keeps existing delegated bindings; switching to `selected` stops automatic enrollment without revoking bindings to private agents the caller cannot see. `key` and `kind` cannot change — rename or convert by deleting and recreating.",
+        "description": "Replaces the value and/or changes the audience under `expectedVersion`. An omitted value leaves it unchanged, which is how the Console keeps an existing secret while editing other fields. Switching to `all` enrolls every agent the caller may edit (skipping agents on daemons that do not yet support organization environment entries) and keeps existing delegated bindings; switching to `selected` stops automatic enrollment without revoking bindings to private agents the caller cannot see. `key` and `kind` cannot change — rename or convert by deleting and recreating.",
         "requestBody": {
           "required": true,
           "content": {
