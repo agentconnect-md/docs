@@ -34,6 +34,14 @@ The Control Plane stores session metadata such as title, status, timestamps, and
 
 When an authorized person opens a transcript, the console requests a bounded live read through the Control Plane BFF. The response is proxied from the daemon and is not persisted by the Control Plane. That is why metadata can remain visible while a daemon is offline, but its transcript cannot load.
 
+## Retention and cleanup
+
+Each daemon keeps finished session content for **7 days** by default. When adding or editing a daemon, set **Expire sessions** to 7, 30 or 90 days, or **Never**.
+
+After the retention period, the daemon deletes the transcript, tool details and any Git worktree created for that session. Session metadata remains in the Control Plane, so the session stays in the list and clearly shows that its content was deleted by the retention policy.
+
+Active sessions are not removed. A session worktree is also retained when it contains uncommitted files or commits that have not reached any remote. Because retention is configured per daemon, a conversation involving agents on different daemons can retain only part of its history.
+
 For a directly managed session, the header shows **Everyone / Private** when its matched owner may change the audience. A provider-bound session instead shows read-only **Slack members**, **Feishu / Lark members**, or **GitHub access** after its organization enables the corresponding setting under **Settings → Session access**. A session created while that setting is disabled remains **Everyone** until provider access is synchronized. Making a session private hides the transcript immediately and can also change future memory capture; review the [session visibility and memory caveats](/docs/session-visibility) before tightening it.
 
 ## Cross-platform handoffs stay separate

@@ -75,6 +75,10 @@ Under **Skills**:
 
 If AgentConnect cannot list the individual skills in a Git source, you can still enable the whole source. An archived managed skill cannot be enabled. A previously enabled provider or source that is no longer available may remain visible only so an editor can switch it off.
 
+### Loaded from the workspace
+
+The agent's **Tools & Skills** tab also shows the skills its prepared workspace can actually load. Each row identifies its origin as **Dream**, **Managed**, **Git source**, or **Repo**, so you can distinguish organization-managed capabilities from skills committed directly with the project. This live list appears after the workspace has been prepared and is unavailable while the owning daemon is offline.
+
 ## Visibility and roles
 
 MCP providers and Git skill sources have independent [team visibility](/docs/visibility-and-sharing): **Everyone** or **Selected**. Selected means exactly the current organization members chosen for that resource; at least one member must remain selected, and the organization Owner role does not add access. The current user starts selected when creating one and may replace themselves after selecting someone else. Collaborators can create and edit resources they are allowed to access, while Viewers are read-only.

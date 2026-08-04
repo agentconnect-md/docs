@@ -10,7 +10,7 @@ By the end of this guide you'll have an agent running on your own machine that y
 
 You need:
 
-- A machine to run agents on — your laptop is fine. **macOS or Linux with Node.js 24+** installed.
+- A machine to run agents on — your laptop is fine. **macOS or Linux with Node.js 24.12+** installed.
 - An AI coding agent installed and authenticated on that machine — e.g. [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`claude`) or OpenAI Codex CLI (`codex`). AgentConnect drives the tools you already have; it doesn't ship API keys of its own.
 
 ## 1. Sign in

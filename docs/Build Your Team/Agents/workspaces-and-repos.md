@@ -1,6 +1,6 @@
 ---
 title: 📁 Workspaces & repositories
-excerpt: Scratch vs GitHub workspaces, the GitHub app, credential-free git, and granting an agent extra repositories.
+excerpt: Scratch and GitHub workspaces, isolated session worktrees, and repository access.
 hidden: false
 ---
 
@@ -24,13 +24,21 @@ To pick repositories from a list, install the **AgentConnect GitHub app**:
 
 On AgentConnect OSS, the deployment operator must [configure the GitHub App first](/docs/deployment-and-configuration#optional-github-app). Public repositories can still be cloned read-only without the App.
 
+### Worktrees for concurrent sessions
+
+New GitHub agents enable **Worktree** by default. Each session receives its own stable checkout, so concurrent sessions do not share branch or file state. Later turns in the same session return to that worktree. Turn Worktree off when every session should deliberately use the primary checkout instead.
+
+The **Workspace** tab can switch between the primary checkout and worktrees belonging to sessions you are allowed to read. Session worktrees are browse-only in the console and follow the daemon's [session retention policy](/docs/sessions#retention-and-cleanup).
+
 ### Credential-free git
 
-With an app-installed repository the daemon never stores a git credential. Each git or `gh` operation gets a **short-lived, single-repo token minted on demand** through the AgentConnect GitHub app — scoped to exactly that repository and the access tier you chose. Tokens never touch disk, and revoking is instant (uninstall the app or drop the grant).
+With an app-installed repository the daemon never stores a git credential. Each git or `gh` operation gets a **short-lived, single-repo token minted on demand** through the AgentConnect GitHub app — scoped to exactly that repository and the access tier you chose. Tokens never touch disk.
+
+Uninstalling the GitHub App invalidates its installation access. Removing one AgentConnect repository grant stops new tokens from being issued, while a token already issued for that grant can remain valid until its one-hour expiry.
 
 ## The Workspace tab
 
-The agent's **Workspace** tab reads the working tree directly from its daemon. Authorized users can inspect any workspace, edit files in a scratch workspace, or pull updates for a GitHub workspace. The view is unavailable while that daemon is offline because the files exist only on that machine.
+The agent's **Workspace** tab reads files directly from its daemon. Authorized users can inspect the primary workspace and visible session worktrees, edit files in a scratch workspace, or pull updates for a primary GitHub workspace. The view is unavailable while that daemon is offline because the files exist only on that machine.
 
 ## Change the workspace source
 
@@ -42,9 +50,9 @@ Changing only the working directory or access level preserves the checkout. Ever
 
 ## Additional authorized repositories
 
-Sometimes one repo isn't enough — a reviewer agent may need to read a shared library, or comment on a sibling repo. On the agent's **Workspace** tab, the Workspace card lists **Authorized repos**:
+Sometimes one repo isn't enough — a reviewer agent may need to read a shared library or work in a sibling repo. On the agent's **Workspace** tab, the Workspace card lists **Authorized repos**:
 
-- **Authorize repository** adds a grant with a tier: **read** (clone/fetch), **comment** (read + issue/PR comments), or **write** (push).
+- **Authorize repository** adds either **Read only** access or **Read & write** access.
 - Grants are per-agent and revocable with one click.
 - The same on-demand token minting applies — the agent's credentials stop at exactly the repos you listed.
 

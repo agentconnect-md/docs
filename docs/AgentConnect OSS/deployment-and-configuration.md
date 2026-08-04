@@ -182,7 +182,7 @@ Configure an instance-level GitHub App when you want to:
 
 - select private repositories for agent workspaces;
 - give daemons short-lived, repository-scoped Git credentials; or
-- trigger agents from GitHub issues, pull requests, comments, and pushes.
+- trigger agents from GitHub issues, pull requests, and comments.
 
 Public repositories can still be cloned read-only without a GitHub App. GitHub event integrations require the Relay because GitHub delivers them as signed webhooks.
 
@@ -228,14 +228,13 @@ Under **Subscribe to events**, select:
 - `issues`;
 - `pull_request`;
 - `issue_comment`;
-- `pull_request_review_comment`;
-- `push`.
+- `pull_request_review_comment`.
 
 GitHub sends `installation` and `installation_repositories` events to GitHub Apps automatically; they are not manual subscription options.
 
 When the App has **Checks: Read and write**, GitHub also subscribes it to `check_run` and `check_suite` automatically. AgentConnect handles check reruns and the **Request review** action from those events, so you do not need to add either event manually.
 
-The App declaration is the maximum permission set. Each installation owner chooses the repositories and approves that set. AgentConnect then mints a short-lived token narrowed to one authorized repository and the agent's `read`, `comment`, or `write` tier. Existing installation owners must approve permission increases before AgentConnect can use them.
+The App declaration is the maximum permission set. Each installation owner chooses the repositories and approves that set. AgentConnect then mints a short-lived token narrowed to one authorized repository and the agent's **Read only** or **Read & write** grant. Existing installation owners must approve permission increases before AgentConnect can use them.
 
 See GitHub's [permission selection guide](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app) and [webhook event reference](https://docs.github.com/en/webhooks/webhook-events-and-payloads).
 

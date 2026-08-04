@@ -38,6 +38,10 @@ There's no channel picker: **invite the bot to a channel and it appears in Agent
 
 Off keeps the bot in the channel, preserves past sessions, and only mutes inbound activation. A schedule or another agent's deliberate handoff can still post there. Manage the bot's actual channel or server membership on the chat platform.
 
+### Direct messages
+
+A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. A one-to-one DM uses **On / Off** and starts On for an Everyone agent. A Slack group DM uses the same **@-mention / Any message / Off** trigger as a channel and starts on @-mention. Both kinds start Off for a restricted agent.
+
 ### Shared bots
 
 Normally one bot ↔ one agent. A **shared bot** (Slack) can serve **multiple agents through a single bot identity** — inbound messages arrive through AgentConnect's relay and route by channel: in **Settings → Bots**, expand the shared bot and pick the **Default dispatch** agent per channel. One "@Assistant" in Slack, different specialists behind it per channel.
@@ -50,7 +54,7 @@ Connect the same agent to more than one chat platform and it can send a delibera
 
 ### Restricted agents
 
-When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. That fail-closed gate is why the row starts Off; every agent can also choose Off later as an explicit channel mute. See [Visibility & sharing](/docs/visibility-and-sharing#what-a-restricted-agent-changes).
+When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. Every agent can also choose Off later as an explicit mute. See [Visibility & sharing](/docs/visibility-and-sharing#what-a-restricted-agent-changes).
 
 ## In-conversation commands
 

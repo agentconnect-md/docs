@@ -45,7 +45,7 @@ A restricted agent disappears from lists, pickers, usage, session metadata, and 
 
 Its chat integrations are also conversation-gated. Newly discovered channels and direct messages start **Off**. An editor must enable each conversation from the agent's integration card before the agent responds there. Enabling a channel trusts that channel's current and future membership; it is not a per-person allowlist.
 
-Existing conversations keep their configured trigger when an agent is changed from Everyone to Selected, so review the integration card after tightening visibility.
+Existing channels keep their configured trigger when an agent is changed from Everyone to Selected. Known direct messages switch Off, so review the integration card after tightening visibility.
 
 ## What visibility does not control
 

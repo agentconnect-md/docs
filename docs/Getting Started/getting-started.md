@@ -45,7 +45,7 @@ Create a roster of agents for the work your team already does, then connect each
 ## The basics
 
 <Cards>
-  <Card kind="tile" title="Install the daemon" href="/docs/install-the-daemon" icon="fa-duotone fa-server">Run agents on any macOS or Linux machine with Node 24+</Card>
+  <Card kind="tile" title="Install the daemon" href="/docs/install-the-daemon" icon="fa-duotone fa-server">Run agents on any macOS or Linux machine with Node 24.12+</Card>
 
 <Card kind="tile" title="Create agents" href="/docs/create-an-agent" icon="fa-duotone fa-robot">Choose roles, runtimes, models, and workspaces</Card>
 

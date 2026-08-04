@@ -9,7 +9,7 @@ The daemon is the machine-side half of AgentConnect: it hosts your agents, drive
 ## Requirements
 
 - **macOS or Linux** (launchd and systemd are supported for background service mode).
-- **Node.js 24 or newer** — use [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli), the stable entry point that installs, launches and upgrades the daemon for you.
+- **Node.js 24.12 or newer** — use [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli), the stable entry point that installs, launches and upgrades the daemon for you.
 - At least one agent runtime installed and authenticated on the machine — e.g. Claude Code (`claude`) or Codex (`codex`). The daemon **detects runtimes automatically** (from the machine's installed launchers, via the [ACP registry](https://agentclientprotocol.com)) and reports what it finds — runtimes, versions, models — to the console.
 - **Outbound network only.** The daemon dials out to your configured Control Plane and to the chat platforms. It never listens on a public port, so it runs fine on a laptop behind NAT.
 - **Optional Linux sandboxing** requires `bubblewrap`, `ripgrep`, `socat`, and unprivileged user namespaces. The daemon runs a live capability probe at startup; macOS currently runs agents without this OS sandbox. See [Sandboxing](/docs/sandboxing).
