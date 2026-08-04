@@ -42,7 +42,7 @@ You can change the workspace source later from the agent's **Workspace** tab. Ch
 
 ## Access
 
-- **Team visibility** — **Everyone** lets all organization members see the agent. **Selected** limits it to the people you pick; you and organization Owners always keep access. See [Visibility & sharing](/docs/visibility-and-sharing).
+- **Team visibility** — **Everyone** lets all organization members see the agent. **Selected** limits it to the resource owner (you at creation) and the current organization members you pick. Picking no additional members makes it owner-only; the organization Owner role does not add access. See [Visibility & sharing](/docs/visibility-and-sharing).
 - **Agent visibility** — independently choose which agents may call this agent and which agents it may call. New agents inherit the organization's creation default in both directions. That setting starts as **All agents**, while an Owner may choose **Isolated** for future agents. You can override either direction here before creating this agent. See [Agent visibility](/docs/agent-visibility).
 
 ---
