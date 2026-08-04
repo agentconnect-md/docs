@@ -286,7 +286,7 @@ The app uses Slack's Events API and therefore requires:
 - a running Relay connected to the Control Plane; and
 - a Slack App configured from AgentConnect's current **HTTP** manifest.
 
-You can obtain the current manifest from the ordinary Slack integration flow: choose **HTTP callbacks**, then use **Copy manifest JSON**. Create a dedicated Slack App from that manifest and verify these public URLs in its settings:
+You can obtain the current manifest from the ordinary Slack integration flow on any agent. Start **Integrations → Add integration → Slack**, switch from the automatic quick install to the manual option that copies a manifest, set the delivery mode to **HTTP (Events API)**, then choose **Copy manifest & open Slack** — one click both copies the manifest and opens Slack's app-creation page. Create a dedicated Slack App from that manifest and verify these public URLs in its settings:
 
 | Slack App setting         | URL                                                                    |
 | ------------------------- | ---------------------------------------------------------------------- |

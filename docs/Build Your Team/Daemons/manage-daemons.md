@@ -17,20 +17,24 @@ hidden: false
 
 Transcripts owned by an offline daemon cannot be fetched until it reconnects.
 
-An Owner-triggered restart or upgrade appears as a temporary **Restarting** or **Upgrading** operation. AgentConnect considers it successful only after the daemon re-registers; a timeout or failed health check is reported as failed rather than being inferred from a lost connection.
+A restart or upgrade appears as a temporary **Restarting** or **Upgrading** operation, and the daemon's placed agents show that state too. AgentConnect considers it successful only after the daemon re-registers; a timeout or failed health check is reported as failed rather than being inferred from a lost connection.
 
 ## Actions
 
-- **Restart** (online daemons, Owners) — drains work and asks the service supervisor to relaunch the same version.
-- **Upgrade** (online daemons, Owners) — installs a selected release, drains and relaunches, then health-checks the result. A failed upgrade rolls back when possible.
+Restart and upgrade use the ordinary daemon edit permission: any Owner or Collaborator who can see the daemon may run them. Viewers cannot.
+
+- **Restart** (online daemons) — drains work and asks the service supervisor to relaunch the same version.
+- **Upgrade** (online daemons) — installs a selected release, drains and relaunches, then health-checks the result. A failed upgrade rolls back when possible. The entry point is the **Update to \<version\>** badge on an outdated daemon.
 - **Reconnect** (offline daemons) — mints a fresh one-time token and shows a command to run on that host. Its identity and agent placements are preserved.
-- **Delete** (offline daemons) — removes the daemon, revokes its keys and automatically leaves its agents unplaced. The local process and files remain on the machine until you stop or remove them there.
+- **Delete** (offline daemons) — removes the daemon and revokes its keys. Its agents are left unplaced and inactive, so they stop responding until you place them on another daemon. The local process and files remain on the machine until you stop or remove them there.
 
 ## Placement
 
 Every placed agent runs on one daemon — that machine owns its workspace, runtime processes and transcripts. You can move an agent from its **Configuration** tab when both daemons are online, ready and compatible with its runtime, model and MCP servers.
 
 A move cold-reprovisions the saved agent definition; it does not migrate daemon-local workspace, memory or transcript bytes. Commit or back up local work first, and expect GitHub workspaces to be cloned again on the target.
+
+When the source daemon is gone for good, **Force reassign** is the recovery path — see [Move an agent](/docs/configure-an-agent#move-an-agent).
 
 ## Session retention
 

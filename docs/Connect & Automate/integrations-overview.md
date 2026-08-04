@@ -62,13 +62,19 @@ In any channel conversation, a few commands are handled by the daemon itself (ne
 
 | Command              | On Slack           | Effect                                              |
 | -------------------- | ------------------ | --------------------------------------------------- |
-| `/stop` or `/cancel` | `!stop`            | Interrupt the agent's current turn                  |
+| `/stop`              | `!stop`            | Stop the agent **and mute this thread** until you @-mention it again |
+| `/cancel`            | `!cancel`          | Cancel the turn in flight; the session stays live and follow-ups still run |
+| `/resume`            | `!resume`          | Unmute the conversation and reset loop protection    |
 | `/queue <message>`   | `!queue <message>` | Hold a message; deliver it when the agent goes idle |
 | `/status`            | `!status`          | Show the session's model, context, and token usage  |
-| `/model`, `/effort`, `/permission` | `!model`, … | List or switch the session's model, reasoning effort, or permission mode |
+| `/models`, `/effort`, `/permission` | `!models`, … | List or switch the session's model, reasoning effort, or permission mode |
 | `/fast on` / `/fast off` | `!fast on` / `!fast off` | Toggle the session's fast mode                |
 
-Slack reserves `/…` for its own slash commands, hence the `!` alias there. The runtime-setting commands (`/model`, `/effort`, `/permission`, `/fast`) work only when the agent's **Allow change in chat** setting is on.
+Slack reserves `/…` for its own slash commands, hence the `!` alias there.
+
+`/stop` and `/cancel` are deliberately different. **`/stop` is a stand-down:** besides interrupting any turn in flight, it mutes the thread, so thread affinity and *any message* triggers stop waking the agent there until someone @-mentions it again — or runs `/resume`. **`/cancel` only interrupts the current turn** and leaves the conversation live.
+
+The runtime-setting commands (`/models`, `/effort`, `/permission`, `/fast`) work only when the agent's **Allow change in chat** setting is on. On Telegram and Discord these commands appear in the native command menu, where the registered name is `/models` rather than `/model` (both are accepted when typed).
 
 ## How chatty should an agent be?
 
