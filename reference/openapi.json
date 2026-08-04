@@ -4769,7 +4769,7 @@
         "tags": [
           "Daemons"
         ],
-        "description": "Set an owned daemon’s visibility (org-wide vs restricted) and share set. Requires edit rights on the daemon; ownerless daemons stay org-visible, and sharedWith is intersected with current org members.",
+        "description": "Set an owned daemon’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -13267,7 +13267,7 @@
         "tags": [
           "Agents"
         ],
-        "description": "Set an owned agent’s visibility (org-wide vs restricted) and share set. Requires edit rights on the agent; ownerless agents stay org-visible, and sharedWith is intersected with current org members.",
+        "description": "Set an owned agent’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -29855,7 +29855,7 @@
         "tags": [
           "MCP providers"
         ],
-        "description": "Set an owned provider’s visibility (org-wide vs restricted) and share set. Requires edit rights; ownerless providers stay org-visible, and sharedWith is intersected with current org members.",
+        "description": "Set an owned provider’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -31530,7 +31530,7 @@
         "tags": [
           "Skill sources"
         ],
-        "description": "Set an owned source’s visibility (org-wide vs restricted) and share set. Requires edit rights; ownerless sources stay org-visible, and sharedWith is intersected with current org members.",
+        "description": "Set an owned source’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
         "requestBody": {
           "required": true,
           "content": {
@@ -41630,7 +41630,7 @@
         "tags": [
           "Crons"
         ],
-        "description": "Set an owned cron’s visibility (org-wide vs restricted) and share set. Requires edit rights on the cron; ownerless crons stay org-visible, and sharedWith is intersected with current org members.",
+        "description": "Set an owned cron’s visibility (Everyone vs Selected) and share set. Requires edit rights; Selected always includes a current-member owner, and sharedWith is intersected with current organization members.",
         "requestBody": {
           "required": true,
           "content": {
