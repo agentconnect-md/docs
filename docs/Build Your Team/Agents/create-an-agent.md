@@ -1,6 +1,6 @@
 ---
 title: ✨ Create an agent
-excerpt: Every field in the Add agent dialog — runtimes, models, effort, permission modes, memory, MCP servers and workspace.
+excerpt: Create an agent with the right runtime, workspace, access, memory, tools, variables, and secrets.
 hidden: false
 ---
 
@@ -44,6 +44,10 @@ You can change the workspace source later from the agent's **Workspace** tab. Ch
 
 - **Team visibility** — **Everyone** lets all organization members see the agent. **Selected** limits it to exactly the current organization members you pick. You are selected initially for convenience, but you may replace yourself after selecting someone else. At least one member must remain selected, and the organization Owner role does not add access. See [Visibility & sharing](/docs/visibility-and-sharing).
 - **Agent visibility** — independently choose which agents may call this agent and which agents it may call. New agents inherit the organization's creation default in both directions. That setting starts as **All agents**, while an Owner may choose **Isolated** for future agents. You can override either direction here before creating this agent. See [Agent visibility](/docs/agent-visibility).
+
+## Variables and secrets
+
+The final **Variables and Secrets** step adds environment values owned by this agent. Organization entries configured for **All agents** also apply when the agent is created and normally take precedence over same-name local values. See [Variables & secrets](/docs/variables-and-secrets) for organization sharing, precedence, and secret handling.
 
 ---
 
