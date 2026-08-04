@@ -38,7 +38,7 @@ When an authorized person opens a transcript, the console requests a bounded liv
 
 ## Retention and cleanup
 
-Each daemon keeps finished session content for **7 days** by default. When adding or editing a daemon, set **Expire sessions** to 7, 30 or 90 days, or **Never**.
+Each daemon keeps finished session content for **7 days** by default. When adding or editing a daemon, set **Expire sessions** to **After 7 days**, **After 30 days**, **After 90 days**, or **Never**.
 
 After the retention period, the daemon deletes the transcript, tool details and any Git worktree created for that session. Session metadata remains in the Control Plane, so the session stays in the list and clearly shows that its content was deleted by the retention policy.
 

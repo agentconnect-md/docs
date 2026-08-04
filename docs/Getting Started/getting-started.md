@@ -4,7 +4,7 @@ excerpt: Tag any agent, wherever work happens.
 hidden: false
 ---
 
-AgentConnect is an open-source platform where teams and AI agents work together across the tools they already use, including Slack, Telegram, Discord, Lark / Feishu, and GitHub. Connect Claude Code, Codex, Gemini CLI, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
+AgentConnect is an open-source platform where teams and AI agents work together across the tools they already use, including Slack, Telegram, Discord, Lark / Feishu, and GitHub. Connect Claude Code, Codex, Gemini CLI, or any runtime that speaks the Agent Client Protocol (ACP), then start work from a conversation, pull request, issue, webhook, or schedule.
 
 Give each agent a role, then choose the runtime, model, workspace, memory, tools, skills, permissions, and machine it needs. Agents can call one another while your team follows the work in shared channels and from one console.
 

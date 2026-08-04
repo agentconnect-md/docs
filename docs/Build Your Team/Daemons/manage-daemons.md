@@ -38,7 +38,7 @@ When the source daemon is gone for good, **Force reassign** is the recovery path
 
 ## Session retention
 
-Each daemon has an **Expire sessions** setting: 7 days by default, 30 days, 90 days, or Never. It controls how long that daemon keeps finished transcripts and session worktrees. The Control Plane keeps the session metadata after the content expires. See [Session retention and cleanup](/docs/sessions#retention-and-cleanup) for the cleanup safeguards and what remains visible.
+Each daemon has an **Expire sessions** setting: **After 7 days** (the default), **After 30 days**, **After 90 days**, or **Never**. It controls how long that daemon keeps finished transcripts and session worktrees. The Control Plane keeps the session metadata after the content expires. See [Session retention and cleanup](/docs/sessions#retention-and-cleanup) for the cleanup safeguards and what remains visible.
 
 ## Troubleshooting
 
