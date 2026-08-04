@@ -29,8 +29,8 @@ See [Permissions](/docs/permissions-overview) for the organization, role, resour
 | **GitHub** | Sign-in and a GitHub identity for setup and session checks | App installation or repository access |
 | **Google** | Sign-in | Provider-specific authorization |
 | **Slack** | Sign-in and one workspace identity for session checks | Bot installation or cross-workspace identity |
-| **Lark** | Sign-in and one app-scoped identity for session checks | Bot installation or Feishu identity |
-| **Feishu** | Sign-in and one app-scoped identity for session checks | Bot installation or Lark identity |
+| **Lark** | Sign-in and a regional identity for supported session checks | Bot installation or Feishu identity |
+| **Feishu** | Sign-in and a regional identity for supported session checks | Bot installation or Lark identity |
 
 Two optional GitHub policies use the linked identity for different decisions:
 
@@ -47,8 +47,9 @@ GitHub webhook authorization is separate again: AgentConnect checks the current 
 | --- | --- |
 | GitHub setup or a private-repository session | Linked GitHub profile |
 | Slack direct message or shared conversation | Linked Slack workspace profile |
-| Lark direct message or shared conversation | Linked Lark profile for the same app |
-| Feishu direct message or shared conversation | Linked Feishu profile for the same app |
+| Lark private message with sync off | Linked Lark profile for the same bot app |
+| Feishu private message with sync off | Linked Feishu profile for the same bot app |
+| Lark or Feishu conversation with sync on | Linked regional profile with current chat membership |
 
 Linking several methods lets one AgentConnect profile satisfy several independent checks. It does not let one provider substitute for another. Public GitHub sessions remain available to anyone who can see the agent.
 
@@ -71,5 +72,5 @@ AgentConnect does not create a broader permission union across providers or prov
 
 - one social account can prove ownership of another provider's session;
 - one provider can satisfy another provider's repository or conversation gate;
-- one Slack, Lark, or Feishu identity represents the same user in every workspace or app; or
+- one Slack identity represents the same user in every workspace, or one app-scoped Lark or Feishu identity directly matches every bot app; or
 - linking any provider widens organization access or resource visibility.

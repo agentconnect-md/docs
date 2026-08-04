@@ -10,7 +10,7 @@ Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
 ## Link an account
 
-Choose **Link** beside a provider and complete its authorization flow. GitHub, Google, and the official Logto Feishu connector do not require an ownership code. Slack can first ask for a code sent to the current profile's verified primary email. Lark and custom connectors may differ; on a self-hosted deployment, ask the operator whether email verification is configured.
+Choose **Link** beside a provider and complete its authorization flow. GitHub, Google, and Logto's built-in Feishu connector do not require an ownership code. Slack can first ask for a code sent to the current profile's verified primary email. Standard OAuth and other custom connectors may differ; on a self-hosted deployment, ask the operator whether email verification is configured.
 
 After linking, you can sign in through any linked provider and reach the same AgentConnect profile, organizations, memberships, and personal settings.
 
@@ -43,9 +43,9 @@ For a public channel, an active full member of the installing workspace does not
 
 ### Lark and Feishu on self-hosted deployments
 
-A linked Lark or Feishu identity can match private direct-message ownership. When the organization enables **Follow Feishu / Lark access**, it can also prove current membership in a group chat.
+A linked Lark or Feishu identity can directly match private-message ownership when the identity and bot come from the same app. That app-scoped match is not permission sync.
 
-This check applies only when the messaging integration and the Logto connector use the same regional platform app. Lark and Feishu identities are separate, and a custom bot created with another App ID keeps the ordinary organization visibility model.
+When the organization enables **Follow Feishu / Lark access**, AgentConnect instead checks current membership in the source chat. One regional permission app can evaluate chats from multiple bot apps; their App IDs do not need to match. This requires a Logto connector that stores the provider user token. Logto's built-in Feishu connector supports sign-in and linking, but cannot enable permission sync by itself.
 
 ### GitHub
 
