@@ -16,17 +16,15 @@ The daemon is the machine-side half of AgentConnect: it hosts your agents, drive
 
 ## Connect a machine
 
-In the console, open **Daemons → Add daemon**. The modal mints a one-time key and shows the exact command to run on the target machine:
+In a new organization, onboarding shows the connection command inline. If you skipped onboarding, open **Daemons → Add daemon**. Both paths mint a one-time key and show the exact command to run on the target machine:
 
 ```bash
 npx -y @agentconnect.md/cli run --api-url <your-control-plane-ws-url> --api-key <one-time-key>
 ```
 
-Copy it from the console (the key is **shown only once**), run it, and watch the modal flip to **Daemon connected**. The **Run** command starts the daemon in the foreground using the supplied credentials. The CLI downloads the appropriate daemon release on first use, then registers it and starts heartbeating.
+Copy it from the console (the key is **shown only once**) and run it. The page continues when the daemon comes online. The **Run** command starts the daemon in the foreground using the supplied credentials. The CLI downloads the appropriate daemon release on first use, then registers it and starts heartbeating.
 
-![Add daemon — copy the one-command install, the console waits for the daemon to appear](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png)
-
-If you close the modal without ever connecting, use **Cancel** — it discards the unclaimed daemon and its key.
+![Connect your daemon — example values replace the real URL, key, and daemon ID](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png)
 
 ## Run it permanently
 
