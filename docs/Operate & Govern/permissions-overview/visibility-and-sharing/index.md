@@ -37,11 +37,13 @@ The following resources have independent visibility:
 
 Agent and daemon visibility are independent. A member may be allowed to see an agent without being allowed to see its hosting daemon. They cannot place or move an agent onto a daemon they cannot see.
 
-Other resources derive access from a parent. Integrations, webhooks, workspace operations, Analytics, session metadata, and transcript reads are gated by their agent; [session visibility](/docs/session-visibility) can narrow a transcript further. Schedule configuration and run history follow the schedule. Daemon keys follow the daemon. Bots are organization-wide infrastructure and do not have their own Selected audience.
+Other resources derive access from a parent. Integrations, webhooks, and workspace operations follow their Agent; schedule configuration and run history follow the schedule; daemon keys follow the daemon. Analytics intersects the Agent and Session boundaries. [Sessions have their own audience](/docs/session-visibility): metadata, transcripts, tool details, relationships, and live updates can remain readable even when the owning Agent is hidden. Bots are organization-wide infrastructure and do not have their own Selected audience.
 
 ## What a restricted agent changes
 
-A restricted agent disappears from lists, pickers, Analytics, session metadata, and live session events for members outside its audience.
+A restricted Agent disappears from Agent lists and pickers, its detail and configuration surfaces, workspace operations, invocation controls, and Analytics for members outside its audience.
+
+Sessions produced by that Agent do not disappear solely because the Agent is restricted. A member who passes a session's audience can still read its metadata, transcript, tool details, relationships, and live updates. The console may show the Agent's name as a plain session label or filter, but never as a link; that context grants no access to the Agent itself.
 
 Its chat integrations are also conversation-gated. Newly discovered channels and direct messages start **Off**. An editor must enable each conversation from the agent's integration card before the agent responds there. Enabling a channel trusts that channel's current and future membership; it is not a per-person allowlist.
 

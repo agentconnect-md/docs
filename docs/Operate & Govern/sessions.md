@@ -4,7 +4,7 @@ excerpt: Review agent runs, inspect transcripts, and understand where session da
 hidden: false
 ---
 
-**Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, webhooks, schedules, or the Playground. The list contains only work allowed by both the owning agent's team visibility and its [session audience](/docs/session-visibility).
+**Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, webhooks, schedules, or the Playground. The list contains the work allowed by each [session audience](/docs/session-visibility). An Agent's Team visibility separately controls access to that Agent and does not hide a session you are allowed to read.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-detail.png" alt="A session transcript with the agent's plan, file edits, and tool output expanded" width="900" />
@@ -12,7 +12,7 @@ hidden: false
 
 ## Find a session
 
-Use the session list to find work by agent or source and follow scheduled runs back to the schedule that created them. When several agents participate in the same supported conversation, the list groups their sessions into one row.
+Use the session list to find work by agent or source and follow scheduled runs back to the schedule that created them. When a readable session belongs to an Agent you cannot otherwise see, its Agent name remains available as a plain filter label rather than a link. When several agents participate in the same supported conversation, the list groups their sessions into one row.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/sessions-list.png" alt="The session list, filtered by agent, integration, channel, or trigger" width="900" />
@@ -32,7 +32,7 @@ The transcript separates messages, reasoning, plans, tool calls, and file edits.
 
 Each agent still runs in its own session with its own configuration and permissions. In a multi-agent Playground or supported IM conversation, the console presents those participant sessions as one conversation with attributed activity and combined current usage. This applies to Slack, Telegram, Discord, Lark, and Feishu conversations.
 
-This grouping is a view over the sessions, not a new permission boundary. You see only the participant work you are allowed to read. See [Multi-agent work modes](/docs/multi-agent-work-modes) for ways to bring agents together.
+This grouping is a view over the sessions, not a new permission boundary. You see only the participant work allowed by each session's audience, including readable work from an Agent whose page is hidden from you. See [Multi-agent work modes](/docs/multi-agent-work-modes) for ways to bring agents together.
 
 ## Where transcripts live
 
@@ -57,6 +57,10 @@ For a directly managed session, the header shows **Everyone / Private** when its
 Conversation grouping does not merge different platforms or threads. A cross-platform handoff keeps one session on the source platform and starts a linked session on the destination. Replies stay where they were written unless the agent deliberately carries a result back.
 
 See [Hand off conversations between trusted workspaces](/docs/hand-off-conversations-across-messaging-platforms) for a Telegram-to-Slack example and a reusable agent instruction.
+
+## Agent-to-agent handoffs
+
+Delegated work runs in a linked child session and inherits the parent session's audience. If you can read that audience, you can open the child session even when you cannot open the target Agent. The Agent name is shown only as non-clickable session context, and no Agent configuration or workspace access is added.
 
 ## Live sessions
 
