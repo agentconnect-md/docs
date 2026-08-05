@@ -12816,7 +12816,7 @@
         "tags": [
           "Agents"
         ],
-        "description": "Cold-reprovision an agent on another READY daemon. The active turn is drained for a safe move; force is an explicit disaster-recovery option when the source is unavailable. Daemon-local workspace, memory, and transcript data are not migrated.",
+        "description": "Hard-cut an agent over to another READY daemon. Active source turns are cancelled without a final reply, and subsequent messages start fresh on the target; force is an explicit disaster-recovery option when the source is unavailable. Daemon-local workspace, memory, and transcript data are not migrated or replayed.",
         "requestBody": {
           "required": true,
           "content": {
@@ -45504,6 +45504,7 @@
                             "type": "string",
                             "enum": [
                               "authorization",
+                              "quota",
                               "unavailable"
                             ]
                           }
@@ -46054,6 +46055,7 @@
                             "type": "string",
                             "enum": [
                               "authorization",
+                              "quota",
                               "unavailable"
                             ]
                           }
@@ -46884,6 +46886,7 @@
                             "type": "string",
                             "enum": [
                               "authorization",
+                              "quota",
                               "unavailable"
                             ]
                           }
