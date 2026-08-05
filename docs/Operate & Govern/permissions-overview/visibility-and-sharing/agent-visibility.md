@@ -61,4 +61,8 @@ Team visibility for people is a separate boundary. Hiding an agent from some org
 
 Set both policies under an agent's **Access → Agent visibility** section when creating or editing the agent. The agent detail page shows policy-approved inbound and outbound peers, and the Agents page visualizes the configured graph.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-topology.png" alt="The topology view on the Agents page, showing the configured call graph" width="900" />
+</p>
+
 See [Multi-agent work modes](/docs/multi-agent-work-modes#agent-to-agent-delegation) for delegation in context with routing, layered specialists, and fan-out.

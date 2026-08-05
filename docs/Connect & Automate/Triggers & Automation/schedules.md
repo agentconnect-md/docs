@@ -26,6 +26,10 @@ hidden: false
 
 Use **Run now** to test a schedule without waiting for its next firing. Each run is recorded with its outcome and a link to the corresponding session. You can also pause a schedule without deleting its configuration.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/schedules-list.png" alt="Scheduled jobs with their cron, last run, next run, and on/off toggle" width="900" />
+</p>
+
 ## Notes
 
 - Schedules fire on the agent's daemon; if the daemon is offline at the scheduled moment, that firing is skipped (the runs list is your audit trail).

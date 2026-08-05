@@ -14,6 +14,10 @@ Open an agent from **Agents** to manage its integrations, runtime, workspace, ac
 
 The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. **Edit** lets you change the display name, daemon, runtime, model, effort/reasoning, fast mode, permission mode and sandbox setting. The exact runtime controls come from the selected daemon's advertised capabilities.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-configuration.png" alt="The Configuration tab: basics, runtime behavior, description, access, variables, and secrets" width="820" />
+</p>
+
 **Output mode** controls what reaches connected chat platforms; the full transcript remains available in [Sessions](/docs/sessions):
 
 - **Minimal** — one live-updating reply that settles on the final answer; intermediate steps stay in the status.

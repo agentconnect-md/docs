@@ -35,6 +35,10 @@ When an organization enables provider-based access, new sessions from that provi
 
 An organization Owner can enable **Settings → Session access → Follow Slack access**.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-access.png" alt="Settings → Session access, with a provider sync toggle per platform" width="760" />
+</p>
+
 When enabled, a Slack channel or group-DM session requires:
 
 1. access to the owning agent;

@@ -59,6 +59,10 @@ Use this mode when people want agents to compare approaches or contribute differ
 
 **Use this for collaboration.** One agent can assign bounded work to one or more policy-approved peers. A coordinator might ask separate agents to inspect security, tests, and migrations in parallel, collect their results, and return one summary to the team.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-topology.png" alt="The Agents page topology view: every call path allowed by both agents' policies" width="900" />
+</p>
+
 ```mermaid
 sequenceDiagram
   participant Team
