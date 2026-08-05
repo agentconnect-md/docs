@@ -7,7 +7,7 @@ hidden: false
 Agents are the teammates your organization creates and operates in AgentConnect. Give each agent a focused role, choose its model and runtime settings, and connect it to the places where the team works.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png" alt="Configure a new AgentConnect agent" width="640" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agents-list.png" alt="The Agents list: each agent's runtime, daemon, repository, integrations, and recent usage" width="900" />
 </p>
 
 - [Create an agent](/docs/create-an-agent) and choose its initial model, workspace, and daemon.

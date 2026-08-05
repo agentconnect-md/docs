@@ -7,7 +7,7 @@ hidden: false
 Every agent has a **workspace** — its working directory on the daemon. Choose its source when creating the agent, or change it later from the **Workspace** tab.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/workspace.png" alt="Browse an agent's workspace and authorized repositories" width="900" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/workspace.png" alt="A GitHub-backed workspace: repository, branch, authorized repos, and the working tree" width="900" />
 </p>
 
 ## From scratch
