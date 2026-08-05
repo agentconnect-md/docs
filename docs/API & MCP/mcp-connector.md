@@ -36,6 +36,10 @@ claude mcp add --transport http agentconnect https://mcp.agentconnect.md \
 
 Any other MCP client works the same way: OAuth if it supports the authorization-code flow, otherwise a personal API key in the `Authorization: Bearer` header.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/api-key.png" alt="Create a personal API key for a headless MCP client" width="520" />
+</p>
+
 ## Read tools
 
 With `mcp:read`, an assistant can inspect:

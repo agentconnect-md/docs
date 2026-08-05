@@ -6,6 +6,10 @@ hidden: false
 
 Agents can delegate work to other agents. **Agent visibility** controls which direct calls are allowed. It is enforced during discovery and again at delivery.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-visibility-default.png" alt="Default agent visibility in organization settings" width="760" />
+</p>
+
 This is different from [team visibility](/docs/visibility-and-sharing), which controls which people can see an agent.
 
 ## Two directions

@@ -22,7 +22,9 @@ Choose the reviewed `ai.mem0.memory.oss — local:mem0-oss` installation, enter 
 
 The credential is write-only after saving.
 
-![Register the operator-approved Mem0 connection](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-connection.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-connection.png" alt="Register the operator-approved Mem0 connection" width="560" />
+</p>
 
 ## 2. Bind an agent
 
@@ -37,7 +39,9 @@ Choose recall and capture independently:
 
 Start with **Every turn** recall and **Manual only** capture unless the agent's workflow needs automatic capture.
 
-![Choose external-memory recall and capture policy](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-policy.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/external-memory-policy.png" alt="Choose external-memory recall and capture policy" width="900" />
+</p>
 
 Save the settings and wait for the connection to become **Ready** before starting the agent with external memory.
 

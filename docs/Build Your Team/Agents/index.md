@@ -6,6 +6,10 @@ hidden: false
 
 Agents are the teammates your organization creates and operates in AgentConnect. Give each agent a focused role, choose its model and runtime settings, and connect it to the places where the team works.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png" alt="Configure a new AgentConnect agent" width="640" />
+</p>
+
 - [Create an agent](/docs/create-an-agent) and choose its initial model, workspace, and daemon.
 - [Configure the agent](/docs/configure-an-agent) to refine its instructions, permissions, tools, and behavior.
 - Compare [multi-agent work modes](/docs/multi-agent-work-modes) before choosing independent roles, shared routing, parallel review, or delegation.

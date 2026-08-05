@@ -6,6 +6,10 @@ hidden: false
 
 Telegram is the quickest chat integration: one token, no app review, no public URL — the daemon connects outbound to Telegram's API.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/telegram-integration.png" alt="Connect a Telegram bot" width="640" />
+</p>
+
 ## Create the bot
 
 1. In Telegram, message [@BotFather](https://t.me/botfather), send `/newbot`, and follow the prompts (bot name, then a username ending in `bot`).

@@ -17,7 +17,9 @@ Selected must always retain at least one current organization member. The organi
 
 Anyone who can edit a resource can also change its audience. A selected Collaborator may therefore share it onward; a selected Viewer remains read-only.
 
-![Everyone and Selected team visibility](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-access.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-access.png" alt="Everyone and Selected team visibility" width="640" />
+</p>
 
 ## When a member leaves
 

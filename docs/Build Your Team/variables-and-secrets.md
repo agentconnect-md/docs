@@ -6,6 +6,10 @@ hidden: false
 
 Variables and secrets become environment variables in an agent's runtime. Define a shared value once at the organization level, or keep it local to one agent.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/variables-secrets-form.png" alt="Create an organization variable or write-only secret" width="520" />
+</p>
+
 | Scope | Manage from | Applies to |
 | --- | --- | --- |
 | Organization | **Settings → Variables & secrets** | All or selected agents |

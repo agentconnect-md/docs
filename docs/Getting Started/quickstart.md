@@ -20,7 +20,9 @@ Open [AgentConnect Cloud](https://app.agentconnect.md), or the Web URL for your 
 
 Cloud supports GitHub, Google, and Slack sign-in. A self-hosted deployment can choose its own providers through Logto. The default local OSS stack runs without authentication and opens the console directly.
 
-![The AgentConnect sign-in page](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/login.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/login.png" alt="The AgentConnect sign-in page" width="680" />
+</p>
 
 ## 2. Connect your daemon
 
@@ -28,7 +30,9 @@ A daemon runs agents in the environment you operate. It detects the runtimes ins
 
 The onboarding page creates a one-time connection command for you. Copy the exact command, run it on the target machine, and leave it running. The page waits for that daemon and continues automatically when it comes online.
 
-![Connect your daemon — the screenshot uses example values in place of a real URL, key, and daemon ID](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png" alt="Connect your daemon with example values" width="640" />
+</p>
 
 The foreground command is best for a first run. To keep the daemon running after logout or restart, see [Install the daemon](/docs/install-the-daemon).
 
@@ -54,7 +58,9 @@ After the daemon connects, onboarding reveals the same **Getting started** check
 
 The checklist reflects the current organization state, so work completed elsewhere is checked automatically.
 
-![The completed Getting started checklist with the built-in AgentConnect agent expanded](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/onboarding-checklist.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/onboarding-checklist.png" alt="The completed Getting started checklist with the built-in AgentConnect agent expanded" width="780" />
+</p>
 
 ## 5. Start working
 

@@ -6,6 +6,10 @@ hidden: false
 
 Knowledge gives your agent team a reviewed, shared source of truth without copying the whole library into every prompt. Use it for durable runbooks, architecture decisions, product facts, and team practices. The same page also hosts organization-wide external memory connections in a separate card; each agent still chooses its own [memory backend and policy](/docs/configure-an-agent#memory).
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/knowledge.png" alt="Publish reviewed organization knowledge" width="680" />
+</p>
+
 Open **Knowledge** in the console. Its two tabs separate published content from the proposal queue:
 
 - **Organization** contains published, revisioned Markdown that agents can search.

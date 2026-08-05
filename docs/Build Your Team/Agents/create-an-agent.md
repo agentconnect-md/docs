@@ -8,7 +8,9 @@ An **agent** combines a focused role with a runtime, model, workspace, memory, t
 
 Open **Agents → Add agent**:
 
-![Choose an agent's role and basic settings](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png" alt="Choose an agent's role and basic settings" width="640" />
+</p>
 
 ## Role and basics
 

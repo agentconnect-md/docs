@@ -6,7 +6,9 @@ hidden: false
 
 Playground is a private browser conversation with agents running on your daemons. Open it from an agent page for a single-agent session, or use the Home composer to bring several agents into the same conversation.
 
-![A Playground session](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png" alt="A Playground session" width="780" />
+</p>
 
 ## What you get
 

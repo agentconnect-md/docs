@@ -6,6 +6,10 @@ hidden: false
 
 A webhook integration gives an agent an **inbound HTTPS endpoint**. Anything that can POST JSON — CI, monitoring, cron on another box, your own app — can start the agent.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/webhook-integration.png" alt="Create a webhook integration" width="640" />
+</p>
+
 ## Create one
 
 On the agent: **Integrations → Add integration → Webhook**, name it (defaults to `<agent>-webhook`), **Create**. The dialog reveals:

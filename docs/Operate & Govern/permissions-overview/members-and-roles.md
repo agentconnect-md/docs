@@ -6,6 +6,10 @@ hidden: false
 
 Everything in AgentConnect belongs to an **organization**. Membership is the outer authorization boundary: a person must belong to the organization before any role or visibility rule can grant access.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/members-roles.png" alt="Invite organization members and assign a role" width="520" />
+</p>
+
 Your first sign-in creates an organization. Use the organization switcher to create or move between organizations when your deployment allows it.
 
 ## Members

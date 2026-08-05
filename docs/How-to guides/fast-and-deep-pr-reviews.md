@@ -6,6 +6,10 @@ hidden: false
 
 Use two agents to create a layered review workflow: a fast reviewer covers every pull-request revision, while a more capable model stays idle until a maintainer explicitly asks for a deeper review.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/github-integration.png" alt="Configure a pull-request reviewer and its trigger" width="640" />
+</p>
+
 Both agents watch the same repository through one AgentConnect GitHub App. Each has its own runtime, model, instructions, session, and review settings.
 
 This is the layered-specialist pattern from [Multi-agent work modes](/docs/multi-agent-work-modes#layered-or-on-demand-specialists). Compare it with trigger fan-out and direct delegation before configuring the reviewers.

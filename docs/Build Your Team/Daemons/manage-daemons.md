@@ -6,7 +6,9 @@ hidden: false
 
 **Daemons** lists the machines connected to your organization. Open one to inspect its health, available runtimes, resources, hosted agents, capabilities, and visibility.
 
-![The Daemons list](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png" alt="The Daemons list" width="900" />
+</p>
 
 ## Status
 

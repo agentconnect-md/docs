@@ -6,6 +6,10 @@ hidden: false
 
 **Tools & Skills** is the organization library for capabilities your agents may use. Register an MCP provider, connector, or Git skill source once, then explicitly choose which agents receive it. New agents start with an empty tool and skill allowlist.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/tools-skills.png" alt="Organization connectors, MCP servers, and skills" width="900" />
+</p>
+
 AgentConnect keeps organization management separate from agent enablement:
 
 | Capability | Add or manage it | Enable it for an agent |
@@ -22,6 +26,10 @@ Open **Tools & Skills** and use **Connectors & MCP servers** to register an upst
 
 - **Add connectors** browses the available OpenConnector providers and walks through their authorization.
 - **Custom MCP provider** connects an HTTP MCP endpoint by URL, with optional upstream headers.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/mcp-server.png" alt="Register a custom MCP server" width="520" />
+</p>
 
 Choose **Everyone** or **Selected** team visibility when you add the provider. Header values are write-only after saving, and agents receive access without seeing the stored credential.
 
@@ -52,7 +60,9 @@ Each result registers exactly that skill from its `owner/repo` source. It become
 
 ### Import from GitHub
 
-![Import a Git repository as a skill source](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/skills-import.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/skills-import.png" alt="Import a Git repository as a skill source" width="560" />
+</p>
 
 1. Open **Tools & Skills → Skills library** and choose **Import from GitHub**.
 2. Enter `owner/repo` or a GitHub repository URL. The repository should contain each skill in a folder with a `SKILL.md` file.

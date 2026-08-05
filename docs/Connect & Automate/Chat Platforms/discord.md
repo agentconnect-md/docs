@@ -6,6 +6,10 @@ hidden: false
 
 The daemon connects to Discord's gateway outbound — no public endpoint required.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/discord-integration.png" alt="Connect a Discord bot" width="640" />
+</p>
+
 ## Create the bot
 
 1. Open the [Discord Developer Portal](https://discord.com/developers/applications) → **New Application**, name it.

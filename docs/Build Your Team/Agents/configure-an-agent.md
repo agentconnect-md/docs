@@ -6,6 +6,10 @@ hidden: false
 
 Open an agent from **Agents** to manage its integrations, runtime, workspace, access, memory, tools, and skills.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-runtime.png" alt="Agent runtime and sandbox settings" width="560" />
+</p>
+
 ## Configuration
 
 The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. **Edit** lets you change the display name, daemon, runtime, model, effort/reasoning, fast mode, permission mode and sandbox setting. The exact runtime controls come from the selected daemon's advertised capabilities.
