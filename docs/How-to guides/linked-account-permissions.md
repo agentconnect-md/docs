@@ -47,8 +47,7 @@ GitHub webhook authorization is separate again: AgentConnect checks the current 
 | --- | --- |
 | GitHub setup or a private-repository session | Linked GitHub profile |
 | Slack direct message or shared conversation | Linked Slack workspace profile |
-| Lark or Feishu private message | Linked regional profile; same-app identity or live membership |
-| Lark or Feishu chat with Follow access | Linked regional profile with current chat membership |
+| Lark or Feishu conversation | Linked regional profile; current membership when Follow access is on |
 
 Linking several methods lets one AgentConnect profile satisfy several independent checks. It does not let one provider substitute for another. Public GitHub sessions remain available to anyone who can see the agent.
 
@@ -63,7 +62,7 @@ Unlinking removes only that sign-in method and its provider-specific identity:
 
 The final linked sign-in method cannot be removed. See [Social account linking](/docs/social-account-linking) for the link and unlink workflow.
 
-## Current behavior, not a permission union
+## Provider identities stay separate
 
 Linked Slack, Lark, and Feishu identities can participate in their matching session checks. A linked GitHub identity proves private-repository and write access during setup, and private-repository access when reading synchronized sessions. See [Session visibility](/docs/session-visibility) for the audience model.
 

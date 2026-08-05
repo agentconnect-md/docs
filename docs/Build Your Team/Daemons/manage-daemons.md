@@ -17,7 +17,7 @@ hidden: false
 
 Transcripts owned by an offline daemon cannot be fetched until it reconnects.
 
-A restart or upgrade appears as a temporary **Restarting** or **Upgrading** operation, and the daemon's placed agents show that state too. AgentConnect considers it successful only after the daemon re-registers; a timeout or failed health check is reported as failed rather than being inferred from a lost connection.
+A restart or upgrade appears as **Restarting** or **Upgrading** until the daemon is ready again.
 
 ## Actions
 
@@ -34,11 +34,9 @@ Every placed agent runs on one daemon — that machine owns its workspace, runti
 
 A move cold-reprovisions the saved agent definition; it does not migrate daemon-local workspace, memory or transcript bytes. Commit or back up local work first, and expect GitHub workspaces to be cloned again on the target.
 
-When the source daemon is gone for good, **Force reassign** is the recovery path — see [Move an agent](/docs/configure-an-agent#move-an-agent).
-
 ## Session retention
 
-Each daemon has an **Expire sessions** setting: 7 days by default, 30 days, 90 days, or Never. It controls how long that daemon keeps finished transcripts and session worktrees. The Control Plane keeps the session metadata after the content expires. See [Session retention and cleanup](/docs/sessions#retention-and-cleanup) for the cleanup safeguards and what remains visible.
+Each daemon has an **Expire sessions** setting: choose a common window, enter a custom number of days, or keep sessions indefinitely. It controls how long that daemon keeps finished transcripts and session worktrees. The Control Plane keeps session metadata after the content expires. See [Session retention and cleanup](/docs/sessions#retention-and-cleanup) for what remains visible.
 
 ## Troubleshooting
 

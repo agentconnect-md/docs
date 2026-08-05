@@ -23,7 +23,7 @@ AgentConnect automates the check, not the setting itself: Telegram's Bot API doe
 - **DM the bot** — open `t.me/<your_bot_username>` and just talk.
 - **Groups** — add the bot to a group. With Group Privacy Mode off, its AgentConnect trigger can use **@-mention** or **any message**. If a group added the bot before you changed privacy mode and ordinary messages still do not arrive, remove and re-add it once.
 
-`/stop` interrupts the agent's current turn; `/queue <message>` holds a message until it finishes (handled by the daemon, works even offline from the control plane).
+See [In-conversation commands](/docs/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing supported session settings.
 
 ## Notes
 

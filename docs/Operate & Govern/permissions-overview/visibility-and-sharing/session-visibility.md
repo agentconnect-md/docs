@@ -6,117 +6,76 @@ hidden: false
 
 Every session has its own audience in addition to the visibility of its agent:
 
-- **Everyone** makes the session available to everyone in the organization who can see the agent.
-- **Private** makes the session available only to its matched owner.
-- **Slack members** means access follows the source Slack conversation and the viewer's current Slack access.
-- **Feishu / Lark members** means access follows the source chat and the viewer's current membership.
-- **GitHub members** means access follows the current visibility and permissions of the source GitHub repository.
+- **Everyone** — every organization member who can see the agent.
+- **Private** — only the person matched as the session owner.
+- **Slack members** — people whose linked Slack identity has access to the source conversation.
+- **Feishu / Lark members** — people whose linked regional identity belongs to the source chat.
+- **GitHub members** — people with access to the source repository.
 
-Session visibility can only narrow access. It never reveals a session to someone who cannot see the owning agent, even when that person has access to the source conversation or repository.
+Session visibility can only narrow access. It never reveals a session to someone who cannot see the owning agent.
 
-## Default visibility
+![A session audience control](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-visibility.png)
 
-AgentConnect classifies a new session from where it started:
+## Default audience
 
-| Session origin                           | Default                                                              |
-| ---------------------------------------- | -------------------------------------------------------------------- |
-| Playground, webchat, or Web API launch   | Private                                                              |
-| One-to-one IM direct message             | Private — except a Lark or Feishu DM once chat access is enabled      |
-| Slack channel or group direct message    | Everyone, or Slack members when Slack access is enabled               |
-| Lark or Feishu chat, including one-to-one | Everyone, or Feishu / Lark members when chat access is enabled       |
-| GitHub issue, pull request, or comment   | Everyone, or GitHub members when repository access is enabled          |
-| Telegram or Discord shared conversation  | Everyone                                                              |
-| Schedule, webhook, or other automation   | Everyone, or the destination audience for Slack, Lark, or Feishu                    |
-| Agent-to-agent child session             | Inherits its parent's audience                                       |
+| Session origin | Default |
+| --- | --- |
+| Playground, webchat, or Web API | Private |
+| One-to-one direct message | Private |
+| Shared chat conversation | Everyone |
+| GitHub issue or pull request | Everyone |
+| Schedule, webhook, or other automation | Everyone |
+| Delegated agent work | Inherits the source session |
+
+When an organization enables provider-based access, new sessions from that provider use the matching read-only provider audience instead of Everyone. Lark and Feishu access sync also covers one-to-one chats.
 
 ## Follow Slack access
 
-An organization Owner can open **Settings → Session access** and enable **Follow Slack access**. It is disabled by default.
+An organization Owner can enable **Settings → Session access → Follow Slack access**.
 
-When enabled, sessions from a Slack channel or group direct message are visible only to people who:
+When enabled, a Slack channel or group-DM session requires:
 
-1. can see the owning agent;
-2. have linked the matching verified Slack workspace identity to their AgentConnect profile; and
-3. currently have the required Slack access:
-   - an active full member of the installing workspace may read a public-channel session without joining that channel;
-   - a private channel or group direct message requires current conversation membership; and
-   - guests and Slack Connect users require current conversation membership even when the channel is public to full workspace members.
+1. access to the owning agent;
+2. a linked identity from the same Slack workspace; and
+3. current Slack access to the source conversation.
 
-One-to-one Slack DMs remain Private and use their matched owner instead of this setting. AgentConnect asks Slack for current access when a shared session is evaluated. It stores the immutable workspace and conversation reference with the session, but does not copy Slack's member list into its database. Organization roles, including Owner, do not override the Slack audience.
+An active full member can read a public-channel session without joining that channel. Private channels and group DMs require current membership. Guests and Slack Connect users also require current conversation membership. One-to-one Slack DMs remain Private.
 
-Missing identity data, a Slack lookup failure, or a historical session without a trusted source scope fails closed: the session stays hidden rather than falling back to Everyone. Settings reports unresolved historical sessions and a degraded provider state.
+## Follow Lark / Feishu access
 
-Turning the setting off makes **new** shared Slack sessions visible to Everyone who can see the agent. Sessions that were already synchronized keep following Slack; disabling the setting does not widen them retroactively.
+Lark and Feishu bot integrations are available on AgentConnect Cloud. Social sign-in and **Follow Feishu / Lark access** currently require a self-hosted deployment with a matching regional permission app.
 
-## Follow Feishu / Lark access
+When enabled, the session audience follows current membership in the source chat, including one-to-one chats. One regional permission app can check chats served by multiple AgentConnect bot apps; those bot App IDs do not need to match.
 
-The Lark and Feishu bot integrations are available on Cloud, but this audience currently requires a self-hosted deployment with the matching regional social sign-in configured. AgentConnect Cloud does not offer Lark / Feishu permission sync or sign-in yet.
-
-An organization Owner can enable **Settings → Session access → Follow Feishu / Lark access**. Sessions then require a linked profile with current membership in the source chat.
-
-Even while Follow access is off, a configured regional permission app can use live membership to prove the owner of a Private one-to-one session created by another bot app. This fallback remains owner-only; it does not synchronize or widen shared chats.
-
-Unlike Slack, this covers one-to-one chats as well. A Lark or Feishu DM session that was **Private** moves to the **Feishu members** / **Lark members** audience when you enable the setting: the gate becomes live chat membership rather than the stored owner identity, and the participant can no longer switch it back themselves. In practice the audience is still just that chat's members, but the label and the mechanism change.
-
-A self-hosted deployment can use one regional permission app to check chats served by multiple bot apps; their App IDs do not need to match. The Logto connector must support storing the linked person's provider token. See [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission-sync) for setup and connector requirements.
-
-Turning the setting off affects new sessions only; sessions already synchronized keep following their source chat.
+See [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission-sync) for the self-hosted setup.
 
 ## Follow GitHub access
 
-An organization Owner can also enable **Settings → Session access → Follow GitHub access**. It is disabled by default.
+An organization Owner can enable **Settings → Session access → Follow GitHub access**.
 
-When enabled, a GitHub-triggered session remains gated by its owning agent and follows the source repository:
+- A public-repository session remains available to everyone who can see the agent.
+- A private-repository session requires a linked GitHub profile with current access to that repository.
 
-- A session from a public repository is available to everyone who can see the agent; no linked GitHub profile is required.
-- A session from a private repository requires a linked GitHub profile that currently has access to that repository.
+Linking GitHub does not install the GitHub App or grant repository access. It only supplies the identity used for the check.
 
-AgentConnect stores the repository's numeric ID and asks GitHub for its current visibility and, for a private repository, the viewer's current permission. It does not copy repository collaborators into its database. Organization roles, including Owner, do not override this check.
+## Private sessions
 
-A provider failure or historical session without a trusted repository scope fails closed. Turning the setting off makes **new** GitHub sessions visible to Everyone who can see the agent; sessions already synchronized to GitHub access do not widen retroactively.
+A Private session is visible only to its matched owner. There is no organization Owner override.
 
-## Who can see a private session
+For directly managed sessions, that owner may switch between **Everyone** and **Private** in the session header. A Viewer may change a session they own; an Owner cannot change someone else's session audience. Making a source session Private also tightens any delegated work started from it.
 
-A private session is visible only when its stored owner identity matches one of the signed-in person's recognized identities. There is deliberately no Owner override for private transcripts.
-
-Organization roles do not bypass either boundary. A restricted team resource uses its complete explicit Selected audience, while a Private session uses a matched owner identity. Resource creators receive no implicit access, and neither boundary grants visibility merely because someone is an organization Owner. A private session is treated like a direct-message transcript, not an organization asset.
+Provider-bound sessions show a read-only audience. Change the organization's provider access setting rather than trying to reclassify one participant's copy.
 
 Sessions do not currently support a Selected member list or a public share link.
 
-## Changing visibility
+## Memory caveat
 
-For directly managed sessions, the matched owner may switch between **Everyone** and **Private** in the session header:
+For AgentConnect-managed or supported external memory, making an Everyone session Private stops future shared-memory capture after the daemon applies the change. It does not remove information already captured while the session was visible to Everyone.
 
-- The owner may publish their session to the organization or make it private.
-- Ownership, rather than organization role, controls this choice. A Viewer can change a session they own; an Owner cannot change someone else's session visibility.
-- Making a parent session private also tightens its agent-to-agent descendants. Widening it later does not automatically widen those child sessions.
+Provider-scoped sessions are excluded from shared-memory capture and recall. Runtime-native memory has no per-session AgentConnect gate, so a private transcript can still influence what that runtime recalls later.
 
-A session bound to a Slack, Lark, or Feishu conversation or a GitHub repository keeps that source binding whether provider access sync is enabled or disabled. While the corresponding setting is disabled, a new session shows **Everyone**, but an individual participant cannot reclassify it. Once synchronized, it shows the provider's read-only audience label and follows its source audience.
+## Linked identities and AgentConnect OSS
 
-### Memory caveat
+Provider audiences depend on a matching [linked social account](/docs/social-account-linking). Organization membership, the Owner role, a personal API key, or a different provider identity does not substitute for it.
 
-For AgentConnect-managed or supported external memory, making an Everyone session private stops future shared-memory capture after the daemon acknowledges the change. It does not remove information already captured while the session audience was Everyone.
-
-Sessions tied to a provider-scoped conversation or GitHub repository are always excluded from AgentConnect-managed and supported external shared-memory capture and recall, even while the corresponding provider access setting is disabled. This prevents provider-scoped content from entering a broader organization memory namespace.
-
-Runtime-native memory has no per-session AgentConnect gate. A private or provider-scoped transcript can therefore still influence what that runtime recalls in another session.
-
-## Matching linked provider identities
-
-Slack direct-message sessions store a workspace-scoped owner identity: the Slack workspace ID plus the Slack user ID. A linked, verified Slack identity lets AgentConnect match that private DM owner and evaluate current access for Slack-scoped shared sessions.
-
-A private GitHub repository session is not owned by one GitHub user. Instead, AgentConnect uses the viewer's linked GitHub profile to check that repository's current access. Public repository sessions do not require a linked GitHub profile.
-
-Lark and Feishu direct messages first use their app-scoped owner identity. A configured permission app can fall back to live membership for a Private direct message from another bot app. When the organization enables the corresponding access setting, direct messages and group sessions use live chat membership as their synchronized audience.
-
-Linking can make existing matching provider sessions available without rewriting them. Unlinking removes that provider match immediately. A Google identity does not satisfy these checks, and identities from one provider never substitute for another.
-
-A personal API key or console identity does not stand in for a linked provider profile. See [Social account linking](/docs/social-account-linking).
-
-For the effect of linking several providers, see [Permissions with linked accounts](/docs/linked-account-permissions).
-
-## AgentConnect OSS requirements
-
-Provider-based session access requires optional OIDC sign-in, linked identities, and working Logto identity lookup. Slack access also needs conversation checks; Lark and Feishu need a token-storing regional connector, a permission app, and chat-membership checks; GitHub needs repository checks. Local no-auth mode does not infer a linked provider profile.
-
-See [Logto authentication](/docs/logto-authentication) for sign-in, account linking, and regional provider setup.
+AgentConnect OSS requires optional OIDC sign-in and provider identity lookup for these checks. Slack additionally needs workspace and conversation access checks; Lark and Feishu need a token-storing regional connector plus a permission app; GitHub needs repository checks. See [Logto authentication](/docs/logto-authentication).

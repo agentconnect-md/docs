@@ -27,5 +27,4 @@ Use **Run now** to test a schedule without waiting for its next firing. Each run
 ## Notes
 
 - Schedules fire on the agent's daemon; if the daemon is offline at the scheduled moment, that firing is skipped (the runs list is your audit trail).
-- API clients should send an explicit IANA `timezone` so a schedule does not depend on the control-plane host's default timezone.
 - Because each run is a fresh session, the prompt must be self-contained — use the agent's [memory](/docs/configure-an-agent) for standing context.

@@ -30,11 +30,9 @@ New GitHub agents enable **Worktree** by default. Each session receives its own 
 
 The **Workspace** tab can switch between the primary checkout and worktrees belonging to sessions you are allowed to read. Session worktrees are browse-only in the console and follow the daemon's [session retention policy](/docs/sessions#retention-and-cleanup).
 
-### Credential-free git
+### Repository credentials
 
-With an app-installed repository the daemon never stores a git credential. Each git or `gh` operation gets a **short-lived, single-repo token minted on demand** through the AgentConnect GitHub app — scoped to exactly that repository and the access tier you chose. Tokens never touch disk.
-
-Uninstalling the GitHub App invalidates its installation access. Removing one AgentConnect repository grant stops new tokens from being issued, while a token already issued for that grant can remain valid until its one-hour expiry.
+For an app-installed repository, AgentConnect supplies short-lived credentials scoped to that repository and the access level you chose. The daemon does not save a long-lived Git credential to disk. Removing the repository grant or uninstalling the GitHub App stops future access.
 
 ## The Workspace tab
 
@@ -44,9 +42,7 @@ The agent's **Workspace** tab reads files directly from its daemon. Authorized u
 
 Use **Edit workspace** on the Workspace card to switch between Scratch and GitHub, select another repository or branch, change the working directory, or change read/write access.
 
-Changing the source type, repository, or branch **replaces all daemon-local workspace files**. Commit, push, copy or otherwise back up anything you need before confirming. A GitHub target is cloned before the old workspace is replaced; if cloning or authorization fails, the existing workspace is left intact.
-
-Changing only the working directory or access level preserves the checkout. Every workspace edit still drains active work, restarts the agent against the resulting directory, and clears cached repository credentials. An enabled GitHub review or Check can block a change that removes the write access it requires.
+Changing the source type, repository, or branch **replaces all daemon-local workspace files**. Commit, push, copy, or otherwise back up anything you need before confirming. Changing only the working directory or access level preserves the checkout.
 
 ## Additional authorized repositories
 
@@ -54,6 +50,6 @@ Sometimes one repo isn't enough — a reviewer agent may need to read a shared l
 
 - **Authorize repository** adds either **Read only** access or **Read & write** access.
 - Grants are per-agent and revocable with one click.
-- The same on-demand token minting applies — the agent's credentials stop at exactly the repos you listed.
+- Credentials remain limited to the repositories you list.
 
 By default an agent's GitHub credentials stop at its own workspace repository.

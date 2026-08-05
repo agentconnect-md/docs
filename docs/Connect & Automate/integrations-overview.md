@@ -26,7 +26,7 @@ For the chat platforms, the thing that lives in your Slack workspace, Telegram g
 - Deleting an integration **frees the bot** rather than destroying it — reuse it for another agent from the **Use an existing bot** picker.
 - Bots are managed org-wide under **Settings → Bots**: see [Bots](/docs/bots).
 
-Platform tiles are enabled based on what your agent's daemon supports. On AgentConnect Cloud, the built-in Slack app hides the callback setup behind **Add to Slack**. Direct transports such as Slack Socket Mode, Telegram, Discord, and the Lark / Feishu long connection connect outbound from the daemon. Callback transports such as Slack and Lark / Feishu HTTP events, GitHub, generic webhooks, and webchat enter through the AgentConnect Relay and are forwarded to the daemon without passing through the Control Plane message path.
+Platform tiles are enabled based on what the agent's daemon supports. On AgentConnect Cloud, Slack and Lark / Feishu offer guided setup, while Telegram and Discord begin with a bot token. Self-hosted operators can choose direct connections or Relay-backed callbacks in the platform-specific setup.
 
 ## Binding channels
 
@@ -40,13 +40,13 @@ Off keeps the bot in the channel, preserves past sessions, and only mutes inboun
 
 ### Direct messages
 
-A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. A one-to-one DM uses **On / Off** and starts On for an Everyone agent. A Slack group DM uses the same **@-mention / Any message / Off** trigger as a channel and starts on @-mention. Both kinds start Off for a restricted agent.
+A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. One-to-one DMs use **On / Off**. Group conversations use the same trigger choices as channels. Conversations for a restricted agent start Off until an allowed editor enables them.
 
 ### Shared bots
 
-Normally one bot ↔ one agent. A **shared bot** (Slack) can serve **multiple agents through a single bot identity** — inbound messages arrive through AgentConnect's relay and route by channel: in **Settings → Bots**, expand the shared bot and pick the **Default dispatch** agent per channel. One "@Assistant" in Slack, different specialists behind it per channel.
+Normally one bot ↔ one agent. A **shared Slack bot** can serve multiple agents through a single identity. In **Settings → Bots**, expand the bot and pick the **Default dispatch** agent for each channel: one "@Assistant" in Slack, with different specialists behind it by channel.
 
-For a shared bot, the trigger belongs to the bot and channel rather than to one member agent. AgentConnect shows the same effective trigger on every connected agent's row. Switching it Off mutes all inbound routing through that shared bot in the channel, including fallback to a sibling or default agent.
+The channel trigger applies to the shared bot. Switching it **Off** stops routing through that bot in the channel.
 
 ### Cross-platform handoffs
 
@@ -58,21 +58,18 @@ When an agent's team visibility is **Selected**, its chat conversations are gate
 
 ## In-conversation commands
 
-In any channel conversation, a few commands are handled by the daemon itself (never sent to the agent) — they work even if the control plane is down:
+Use these commands to control the current conversation without asking the model to do it. Slack uses `!` because Slack reserves `/` commands for apps.
 
-| Command              | On Slack           | Effect                                              |
-| -------------------- | ------------------ | --------------------------------------------------- |
-| `/stop`              | `!stop`            | Stop the agent **and mute this thread** until you @-mention it again |
-| `/cancel`            | `!cancel`          | Cancel the turn in flight; the session stays live and follow-ups still run |
-| `/resume`            | `!resume`          | Unmute the conversation and reset loop protection    |
-| `/queue <message>`   | `!queue <message>` | Hold a message; deliver it when the agent goes idle |
-| `/status`            | `!status`          | Show the session's model, context, and token usage  |
-| `/models`, `/effort`, `/permission` | `!models`, … | List or switch the session's model, reasoning effort, or permission mode |
-| `/fast on` / `/fast off` | `!fast on` / `!fast off` | Toggle the session's fast mode                |
+| Action | Other platforms | Slack |
+| --- | --- | --- |
+| Stop and mute | `/stop` | `!stop` |
+| Cancel the current turn | `/cancel` | `!cancel` |
+| Resume | `/resume` | `!resume` |
+| Queue a message | `/queue <message>` | `!queue <message>` |
+| Show session status | `/status` | `!status` |
+| Change runtime settings | `/models`, `/effort`, `/permission`, `/fast` | The same commands with `!` |
 
-Slack reserves `/…` for its own slash commands, hence the `!` alias there.
-
-`/stop` and `/cancel` are deliberately different. **`/stop` is a stand-down:** besides interrupting any turn in flight, it mutes the thread, so thread affinity and *any message* triggers stop waking the agent there until someone @-mentions it again — or runs `/resume`. **`/cancel` only interrupts the current turn** and leaves the conversation live.
+**Stop** also mutes the conversation until someone mentions the agent again or uses **resume**. **Cancel** interrupts only the current turn.
 
 The runtime-setting commands (`/models`, `/effort`, `/permission`, `/fast`) work only when the agent's **Allow change in chat** setting is on. On Telegram and Discord these commands appear in the native command menu, where the registered name is `/models` rather than `/model` (both are accepted when typed).
 

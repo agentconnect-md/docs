@@ -47,7 +47,7 @@ With `mcp:read`, an assistant can inspect:
 | Daemons | `listDaemons` |
 | Schedules | `listCrons`, `getCron`, `listCronRuns` |
 | Sessions | `listSessions`, `getSession` |
-| Usage | `getUsage` |
+| Analytics | `getUsage` |
 | Integrations | `listIntegrations`, `listBots`, `listAgentHooks`, `listHookRuns` |
 | Members | `listMembers` |
 
@@ -73,5 +73,4 @@ The write catalog is deliberately narrower than the console and REST API. It doe
 - A connection acts **as you, in one organization** — the one you picked at consent (or the org your API key is bound to). Connect again to use another org.
 - OAuth access is scope-confined: `mcp:read` exposes only read tools, while `mcp:write` is required for write tools. A personal API key is not scope-limited and therefore carries the access allowed by your account.
 - Your **role and per-resource visibility apply unchanged**: the tools call the same REST surface as the console, so a Viewer's connector can't see or change more than that Viewer can in the console, and [restricted resources](/docs/visibility-and-sharing) stay hidden.
-- Every admitted tool call is recorded in the organization's **audit trail**. A call refused by rate limiting does no work and is deliberately not appended, so one noisy client cannot flood the trail.
-- Access tokens expire after **1 hour** and refresh automatically while the connector is in use; the refresh grant expires after 30 days of inactivity. Revoking the OAuth grant immediately invalidates its access tokens.
+- Revoke the OAuth connection or personal API key when a client should no longer act as you.

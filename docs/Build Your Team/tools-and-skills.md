@@ -23,11 +23,11 @@ Open **Tools & Skills** and use **Connectors & MCP servers** to register an upst
 - **Add connectors** browses the available OpenConnector providers and walks through their authorization.
 - **Custom MCP provider** connects an HTTP MCP endpoint by URL, with optional upstream headers.
 
-Choose **Everyone** or **Selected** team visibility when you add the provider. Header values are write-only after saving. AgentConnect gives enabled agents a managed proxy grant rather than the upstream URL or credential, and the Relay makes the upstream call.
+Choose **Everyone** or **Selected** team visibility when you add the provider. Header values are write-only after saving, and agents receive access without seeing the stored credential.
 
 A provider appears as eligible for an agent only when the agent's daemon and selected runtime support its transport. Registering the provider makes it available to choose; it does not turn it on for any agent.
 
-Before deleting a provider, switch it off for every agent that enables it. AgentConnect rejects the deletion while an agent still references the provider name.
+Before deleting a provider, switch it off for every agent that enables it.
 
 ## Skills library
 
@@ -52,6 +52,8 @@ Each result registers exactly that skill from its `owner/repo` source. It become
 
 ### Import from GitHub
 
+![Import a Git repository as a skill source](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/skills-import.png)
+
 1. Open **Tools & Skills → Skills library** and choose **Import from GitHub**.
 2. Enter `owner/repo` or a GitHub repository URL. The repository should contain each skill in a folder with a `SKILL.md` file.
 3. Optionally set a display name, branch/tag/commit **Ref**, **Subdir**, or a list of specific **Skills**. Leave Skills blank to include all discovered skills.
@@ -73,7 +75,7 @@ Under **Skills**:
 - enable a whole Git source; or
 - expand a Git source and select individual discovered skills.
 
-If AgentConnect cannot list the individual skills in a Git source, you can still enable the whole source. An archived managed skill cannot be enabled. A previously enabled provider or source that is no longer available may remain visible only so an editor can switch it off.
+An archived managed skill cannot be enabled.
 
 ### Loaded from the workspace
 

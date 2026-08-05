@@ -27,8 +27,6 @@ Names may contain letters, digits, and underscores, and cannot start with a digi
 
 **All agents** assigns the entry to every agent you can manage and automatically applies it to agents you configure later. **Selected agents** applies it only to the agents you choose. The picker lists only agents you can manage; editing that selection does not remove existing assignments to other private agents.
 
-An agent running on a daemon too old to accept organization entries is skipped rather than blocking the save; it picks the entry up on its next configuration change once that daemon is upgraded. Assigning an entry to such an agent explicitly, or rotating a value one has already received, does fail with an error until you upgrade the daemon.
-
 An assigned entry appears on the agent's Variables or Secrets card with an **Organization** label. It is read-only there. Owners edit or rotate it from **Settings**; other agent editors can still manage that agent's local entries.
 
 ## Set a value on one agent
@@ -70,14 +68,10 @@ Two names are delivered as files instead, because the tools that need them expec
 | `KUBECONFIG_DATA` | `KUBECONFIG`, pointing at the written kubeconfig file |
 | `DOCKER_CONFIG_DATA` (or the older `DOCKER_AUTH_CONFIG`) | `DOCKER_CONFIG`, pointing at the written config directory |
 
-Put the file's full contents in the `…_DATA` secret. AgentConnect writes it into the agent's own directory with owner-only permissions and removes the original name from the environment, so `kubectl` and `docker` work without any extra setup — but a script that reads `KUBECONFIG_DATA` directly will not find it there.
-
-These files exist only while the agent is working. AgentConnect writes them before each turn and deletes them about a minute after the agent goes quiet, and again when its runtime stops or the daemon restarts.
-
-Setting the pointer variable yourself wins. If the agent already has a `KUBECONFIG` or `DOCKER_CONFIG` value of its own, AgentConnect leaves it alone, skips writing the file, and passes the `…_DATA` value through as an ordinary environment value. Set one or the other, not both.
+Put the file's full contents in the `…_DATA` secret. AgentConnect materializes it as an owner-only file while the agent is working and points `kubectl` or `docker` at that file. Set either the `…_DATA` secret or the corresponding pointer variable yourself, not both.
 
 ## Updates and removal
 
-Rotating, retargeting, or deleting an organization entry updates the affected agents. Because the value is part of what defines the runtime process, an affected agent is restarted to pick it up: a turn in flight is interrupted rather than allowed to finish. Rotate during a quiet moment if that matters for the work in progress.
+Rotating, retargeting, or deleting an organization entry updates the affected agents and restarts them so future work uses the new environment. Rotate during a quiet moment if an active turn matters.
 
 Removing an assignment restores a same-name agent-local fallback. If there is no fallback, the value disappears from future runtime processes.
