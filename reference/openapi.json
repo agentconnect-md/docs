@@ -16,7 +16,7 @@
     "schemas": {}
   },
   "paths": {
-    "/api/v1/orgs": {
+    "/v1\\ngh/orgs": {
       "get": {
         "operationId": "listOrganizations",
         "summary": "List your organizations",
@@ -474,7 +474,7 @@
         }
       }
     },
-    "/api/v1/me": {
+    "/v1\\ngh/me": {
       "get": {
         "operationId": "getMyProfile",
         "summary": "Get your profile",
@@ -727,7 +727,7 @@
         }
       }
     },
-    "/api/v1/me/social-identities/refresh": {
+    "/v1\\ngh/me/social-identities/refresh": {
       "post": {
         "operationId": "refreshMySocialIdentities",
         "summary": "Refresh your cached sign-in methods",
@@ -772,7 +772,677 @@
         }
       }
     },
-    "/api/v1/me/social-identities/connectors/{target}": {
+    "/v1\\ngh/me/social-identities/authorization-uri": {
+      "post": {
+        "operationId": "createMySocialIdentityAuthorization",
+        "summary": "Start linking a social sign-in method",
+        "tags": [
+          "Profile"
+        ],
+        "description": "Resolve the provider and report how it must be linked. `direct` returns an authorization URI Logto built, and the link completes server-side. `verified` means the connector cannot be driven without a session, so the browser drives it against the Account API and Logto requires an ownership proof.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[a-z0-9_-]+$"
+                  },
+                  "state": {
+                    "type": "string",
+                    "minLength": 32,
+                    "maxLength": 256
+                  }
+                },
+                "required": [
+                  "target",
+                  "state"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "direct"
+                          ]
+                        },
+                        "connectorId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128
+                        },
+                        "authorizationUri": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      },
+                      "required": [
+                        "mode",
+                        "connectorId",
+                        "authorizationUri"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "verified"
+                          ]
+                        },
+                        "connectorId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128
+                        }
+                      },
+                      "required": [
+                        "mode",
+                        "connectorId"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/me/social-identities": {
+      "post": {
+        "operationId": "linkMySocialIdentity",
+        "summary": "Link a social sign-in method",
+        "tags": [
+          "Profile"
+        ],
+        "description": "Link the identity the provider just authenticated to the signed-in user. Only for providers that reported `direct`; existing accounts are not merged.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "connectorId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "connectorData": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "maxLength": 64
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 4096
+                    }
+                  }
+                },
+                "required": [
+                  "connectorId",
+                  "connectorData"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "linked": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "linked"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getMySocialIdentities",
+        "summary": "Get your sign-in methods",
+        "tags": [
+          "Profile"
+        ],
+        "description": "The social accounts linked to your profile, narrowed to what the console renders, plus whether Logto will require you to re-verify before they can change.",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "identities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "target": {
+                            "type": "string"
+                          },
+                          "userId": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "avatar": {
+                            "type": "string"
+                          },
+                          "profileUrl": {
+                            "type": "string"
+                          },
+                          "workspace": {
+                            "type": "object",
+                            "properties": {
+                              "teamId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "url": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "teamId"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "target",
+                          "userId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "hasSecurityVerificationMethod": {
+                      "type": "boolean"
+                    },
+                    "primaryEmail": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "identities",
+                    "hasSecurityVerificationMethod"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1\\ngh/me/social-identities/connectors/{target}": {
       "get": {
         "operationId": "getMySocialConnectorId",
         "summary": "Resolve a social connector id",
@@ -968,7 +1638,7 @@
         }
       }
     },
-    "/api/v1/me/social-identities/{target}": {
+    "/v1\\ngh/me/social-identities/{target}": {
       "delete": {
         "operationId": "unlinkMySocialIdentity",
         "summary": "Unlink a social sign-in method",
@@ -1175,184 +1845,7 @@
         }
       }
     },
-    "/api/v1/me/social-identities": {
-      "get": {
-        "operationId": "getMySocialIdentities",
-        "summary": "Get your sign-in methods",
-        "tags": [
-          "Profile"
-        ],
-        "description": "The social accounts linked to your profile, narrowed to what the console renders, plus whether Logto will require you to re-verify before they can change.",
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "identities": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "target": {
-                            "type": "string"
-                          },
-                          "userId": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "email": {
-                            "type": "string"
-                          },
-                          "avatar": {
-                            "type": "string"
-                          },
-                          "profileUrl": {
-                            "type": "string"
-                          },
-                          "workspace": {
-                            "type": "object",
-                            "properties": {
-                              "teamId": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "domain": {
-                                "type": "string"
-                              },
-                              "url": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "teamId"
-                            ],
-                            "additionalProperties": false
-                          }
-                        },
-                        "required": [
-                          "target",
-                          "userId"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "hasSecurityVerificationMethod": {
-                      "type": "boolean"
-                    },
-                    "primaryEmail": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "identities",
-                    "hasSecurityVerificationMethod"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/me/social-identities/slack": {
+    "/v1\\ngh/me/social-identities/slack": {
       "get": {
         "operationId": "getMySlackIdentity",
         "summary": "Get your Slack workspace identity",
@@ -1509,7 +2002,7 @@
         }
       }
     },
-    "/api/v1/me/keys": {
+    "/v1\\ngh/me/keys": {
       "get": {
         "operationId": "listMyApiKeys",
         "summary": "List your API keys",
@@ -1748,7 +2241,7 @@
         }
       }
     },
-    "/api/v1/me/keys/{id}": {
+    "/v1\\ngh/me/keys/{id}": {
       "delete": {
         "operationId": "revokeMyApiKey",
         "summary": "Revoke an API key",
@@ -1890,7 +2383,7 @@
         }
       }
     },
-    "/api/v1/me/access": {
+    "/v1\\ngh/me/access": {
       "get": {
         "operationId": "getMyAccess",
         "summary": "Get your app-admission state",
@@ -1982,7 +2475,7 @@
         }
       }
     },
-    "/api/v1/waitlist": {
+    "/v1\\ngh/waitlist": {
       "post": {
         "operationId": "joinWaitlist",
         "summary": "Join the waitlist",
@@ -2009,14 +2502,15 @@
                   },
                   "platform": {
                     "minItems": 1,
-                    "maxItems": 3,
+                    "maxItems": 4,
                     "type": "array",
                     "items": {
                       "type": "string",
                       "enum": [
                         "slack",
                         "telegram",
-                        "discord"
+                        "discord",
+                        "feishu"
                       ]
                     }
                   },
@@ -2188,7 +2682,7 @@
         }
       }
     },
-    "/api/v1/waitlist/redeem": {
+    "/v1\\ngh/waitlist/redeem": {
       "post": {
         "operationId": "redeemWaitlistLink",
         "summary": "Redeem a waitlist activation link",
@@ -2397,7 +2891,7 @@
         }
       }
     },
-    "/api/v1/invite-links/accept": {
+    "/v1\\ngh/invite-links/accept": {
       "post": {
         "operationId": "acceptOrganizationInviteLink",
         "summary": "Accept an organization invite link",
@@ -2571,7 +3065,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/": {
+    "/v1\\ngh/orgs/{orgId}/": {
       "get": {
         "operationId": "getOrganization",
         "summary": "Get the organization",
@@ -3268,7 +3762,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/selection": {
+    "/v1\\ngh/orgs/{orgId}/selection": {
       "put": {
         "operationId": "selectOrganization",
         "summary": "Select the organization",
@@ -3323,7 +3817,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons": {
+    "/v1\\ngh/orgs/{orgId}/daemons": {
       "get": {
         "operationId": "listDaemons",
         "summary": "List daemons",
@@ -3811,6 +4305,10 @@
                           }
                         ]
                       },
+                      "sessionRetention": {
+                        "type": "string",
+                        "pattern": "^(?:never|[1-9]\\d{0,3}d)$"
+                      },
                       "visibility": {
                         "type": "string",
                         "enum": [
@@ -3857,6 +4355,7 @@
                       "createdBy",
                       "lastModifiedAt",
                       "lastModifiedBy",
+                      "sessionRetention",
                       "visibility",
                       "sharedWith",
                       "canEdit",
@@ -3872,14 +4371,14 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}": {
       "patch": {
         "operationId": "updateDaemon",
-        "summary": "Rename a daemon",
+        "summary": "Update a daemon",
         "tags": [
           "Daemons"
         ],
-        "description": "Assign a human-friendly console display name to a daemon.",
+        "description": "Update console daemon settings: the human-friendly display name and/or the finished-session retention window (\"Expire sessions\"). A retention change is hot-pushed to a connected daemon and re-issued in the register/ok snapshot on reconnect.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3891,11 +4390,12 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
+                  },
+                  "sessionRetention": {
+                    "type": "string",
+                    "pattern": "^(?:never|[1-9]\\d{0,3}d)$"
                   }
-                },
-                "required": [
-                  "name"
-                ]
+                }
               }
             }
           }
@@ -4386,6 +4886,10 @@
                         }
                       ]
                     },
+                    "sessionRetention": {
+                      "type": "string",
+                      "pattern": "^(?:never|[1-9]\\d{0,3}d)$"
+                    },
                     "visibility": {
                       "type": "string",
                       "enum": [
@@ -4432,6 +4936,7 @@
                     "createdBy",
                     "lastModifiedAt",
                     "lastModifiedBy",
+                    "sessionRetention",
                     "visibility",
                     "sharedWith",
                     "canEdit",
@@ -4627,7 +5132,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/token": {
+    "/v1\\ngh/orgs/{orgId}/daemons/token": {
       "post": {
         "operationId": "createDaemonToken",
         "summary": "Issue a daemon enrollment token",
@@ -4740,7 +5245,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/sharing": {
       "put": {
         "operationId": "setDaemonSharing",
         "summary": "Set daemon sharing",
@@ -5264,6 +5769,10 @@
                         }
                       ]
                     },
+                    "sessionRetention": {
+                      "type": "string",
+                      "pattern": "^(?:never|[1-9]\\d{0,3}d)$"
+                    },
                     "visibility": {
                       "type": "string",
                       "enum": [
@@ -5310,6 +5819,7 @@
                     "createdBy",
                     "lastModifiedAt",
                     "lastModifiedBy",
+                    "sessionRetention",
                     "visibility",
                     "sharedWith",
                     "canEdit",
@@ -5414,7 +5924,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/upgrade": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/upgrade": {
       "post": {
         "operationId": "upgradeDaemon",
         "summary": "Upgrade a daemon",
@@ -5673,7 +6183,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/restart": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/restart": {
       "post": {
         "operationId": "restartDaemon",
         "summary": "Restart a daemon",
@@ -5911,7 +6421,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/lifecycle/{opId}": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/lifecycle/{opId}": {
       "get": {
         "operationId": "getDaemonLifecycleOp",
         "summary": "Get a daemon lifecycle op",
@@ -6067,7 +6577,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/keys": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/keys": {
       "get": {
         "operationId": "listDaemonKeys",
         "summary": "List a daemon’s keys",
@@ -6320,7 +6830,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
+    "/v1\\ngh/orgs/{orgId}/daemons/{id}/keys/{keyId}": {
       "delete": {
         "operationId": "revokeDaemonKey",
         "summary": "Revoke a daemon key",
@@ -6489,7 +6999,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents": {
+    "/v1\\ngh/orgs/{orgId}/agents": {
       "post": {
         "operationId": "createAgent",
         "summary": "Create an agent",
@@ -8568,7 +9078,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}": {
       "get": {
         "operationId": "getAgent",
         "summary": "Get an agent",
@@ -10792,7 +11302,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/skill-sources": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/skill-sources": {
       "get": {
         "operationId": "listAgentSkillSources",
         "summary": "List an agent’s enabled skill sources",
@@ -10911,7 +11421,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/permission-requests": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/permission-requests": {
       "get": {
         "operationId": "listAgentPermissionRequests",
         "summary": "List agent approval requests",
@@ -11130,7 +11640,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/permission-requests/{requestId}/decision": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/permission-requests/{requestId}/decision": {
       "post": {
         "operationId": "decideAgentPermissionRequest",
         "summary": "Decide an agent approval request",
@@ -11337,7 +11847,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace": {
       "put": {
         "operationId": "setAgentWorkspace",
         "summary": "Edit an agent workspace",
@@ -12299,7 +12809,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/daemon": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/daemon": {
       "put": {
         "operationId": "moveAgentDaemon",
         "summary": "Move an agent to another daemon",
@@ -13161,7 +13671,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/sharing": {
       "put": {
         "operationId": "setAgentSharing",
         "summary": "Set agent sharing",
@@ -13999,7 +14509,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/call-policy": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/call-policy": {
       "put": {
         "operationId": "setAgentCallPolicy",
         "summary": "Set directional agent visibility",
@@ -14854,7 +15364,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/files": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/files": {
       "get": {
         "operationId": "listAgentWorkspaceFiles",
         "summary": "List workspace files",
@@ -15091,7 +15601,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/skills/local": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/skills/local": {
       "get": {
         "operationId": "listAgentLocalSkills",
         "summary": "List an agent’s local skills",
@@ -15241,7 +15751,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/file": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/file": {
       "get": {
         "operationId": "readAgentWorkspaceFile",
         "summary": "Read a workspace file",
@@ -15962,7 +16472,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory": {
       "get": {
         "operationId": "readAgentMemory",
         "summary": "Read the agent memory index",
@@ -16200,7 +16710,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/files": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/files": {
       "get": {
         "operationId": "listAgentMemoryFiles",
         "summary": "List agent memory files",
@@ -16363,7 +16873,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/file": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/file": {
       "get": {
         "operationId": "readAgentMemoryFile",
         "summary": "Read a memory file",
@@ -16837,7 +17347,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/history": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/history": {
       "get": {
         "operationId": "listAgentMemoryFileHistory",
         "summary": "List memory file history",
@@ -17113,7 +17623,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/surface": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/surface": {
       "get": {
         "operationId": "getAgentMemorySurface",
         "summary": "Get the agent memory administration surface",
@@ -17303,7 +17813,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/records/search": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/search": {
       "post": {
         "operationId": "searchAgentMemoryRecords",
         "summary": "Search external-memory records",
@@ -17600,7 +18110,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/records": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records": {
       "get": {
         "operationId": "listAgentMemoryRecords",
         "summary": "List external-memory records",
@@ -18196,7 +18706,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/records/{recordId}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/{recordId}": {
       "get": {
         "operationId": "getAgentMemoryRecord",
         "summary": "Get an external-memory record",
@@ -19024,7 +19534,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/records/{recordId}/history": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/records/{recordId}/history": {
       "get": {
         "operationId": "listAgentMemoryRecordHistory",
         "summary": "List external-memory record history",
@@ -19352,7 +19862,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams": {
       "post": {
         "operationId": "startAgentMemoryDream",
         "summary": "Start a memory dream",
@@ -20220,7 +20730,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}": {
       "get": {
         "operationId": "getAgentMemoryDream",
         "summary": "Get a memory dream",
@@ -20626,7 +21136,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/cancel": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/cancel": {
       "post": {
         "operationId": "cancelAgentMemoryDream",
         "summary": "Cancel a memory dream",
@@ -21062,7 +21572,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/adopt": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/adopt": {
       "post": {
         "operationId": "adoptAgentMemoryDream",
         "summary": "Adopt a memory dream",
@@ -21517,7 +22027,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/discard": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/discard": {
       "post": {
         "operationId": "discardAgentMemoryDream",
         "summary": "Discard a memory dream",
@@ -21953,7 +22463,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}": {
       "get": {
         "operationId": "readAgentMemoryDreamSkill",
         "summary": "Read a mined skill candidate",
@@ -22181,7 +22691,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/accept": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/accept": {
       "post": {
         "operationId": "acceptAgentMemoryDreamSkill",
         "summary": "Accept a mined skill",
@@ -22642,7 +23152,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/dismiss": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/skills/{name}/dismiss": {
       "post": {
         "operationId": "dismissAgentMemoryDreamSkill",
         "summary": "Dismiss a mined skill",
@@ -23087,7 +23597,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/files": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/files": {
       "get": {
         "operationId": "listAgentMemoryDreamFiles",
         "summary": "List a dream's staged files",
@@ -23295,7 +23805,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/file": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/memory/dreams/{dreamId}/file": {
       "get": {
         "operationId": "readAgentMemoryDreamFile",
         "summary": "Read a dream's staged file",
@@ -23575,7 +24085,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/gitstatus": {
       "get": {
         "operationId": "getAgentWorkspaceGitStatus",
         "summary": "Get workspace git status",
@@ -23864,7 +24374,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{id}/workspace/gitpull": {
+    "/v1\\ngh/orgs/{orgId}/agents/{id}/workspace/gitpull": {
       "post": {
         "operationId": "pullAgentWorkspace",
         "summary": "Pull the workspace",
@@ -24021,7 +24531,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{agentId}/repos": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/repos": {
       "get": {
         "operationId": "listAgentRepoAuthorizations",
         "summary": "List an agent’s repository authorizations",
@@ -24423,7 +24933,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{agentId}/repos/{repoAuthId}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/repos/{repoAuthId}": {
       "patch": {
         "operationId": "updateAgentRepoAuthorization",
         "summary": "Upgrade a repository authorization",
@@ -24845,7 +25355,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/token": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/token": {
       "post": {
         "operationId": "mintWebchatToken",
         "summary": "Mint a webchat token",
@@ -24981,7 +25491,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/webchat/conversations/token": {
+    "/v1\\ngh/orgs/{orgId}/webchat/conversations/token": {
       "post": {
         "operationId": "mintWebchatConversationToken",
         "summary": "Mint a conversation webchat token",
@@ -25147,7 +25657,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/webchat/conversations/{conversationId}/agents": {
+    "/v1\\ngh/orgs/{orgId}/webchat/conversations/{conversationId}/agents": {
       "post": {
         "operationId": "addWebchatConversationAgent",
         "summary": "Add an agent to a webchat conversation",
@@ -25293,7 +25803,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations": {
       "get": {
         "operationId": "listWebchatMcpOperations",
         "summary": "List pending webchat MCP operations",
@@ -25424,7 +25934,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}": {
       "get": {
         "operationId": "getWebchatMcpOperation",
         "summary": "Get a webchat MCP operation",
@@ -25562,7 +26072,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}/decision": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/webchat/{conversationId}/mcp-operations/{operationId}/decision": {
       "post": {
         "operationId": "decideWebchatMcpOperation",
         "summary": "Decide a webchat MCP operation",
@@ -25750,104 +26260,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations/telegram/check": {
-      "post": {
-        "operationId": "checkTelegramBot",
-        "summary": "Check a Telegram bot",
-        "tags": [
-          "Integrations"
-        ],
-        "description": "Validate a pasted Telegram bot token and report whether Group Privacy Mode is disabled, without storing the token.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "botToken": {
-                    "type": "string",
-                    "minLength": 1
-                  }
-                },
-                "required": [
-                  "botToken"
-                ],
-                "additionalProperties": false
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "path",
-            "name": "orgId",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "ready",
-                        "privacy_enabled",
-                        "invalid",
-                        "unreachable"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "status"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/orgs/{orgId}/integrations": {
+    "/v1\\ngh/orgs/{orgId}/integrations": {
       "post": {
         "operationId": "createIntegration",
         "summary": "Add an integration",
@@ -25869,9 +26282,9 @@
                   "platform": {
                     "type": "string",
                     "enum": [
-                      "slack",
                       "telegram",
                       "discord",
+                      "slack",
                       "feishu"
                     ]
                   },
@@ -25891,26 +26304,6 @@
                     "enum": [
                       "socket",
                       "http"
-                    ]
-                  },
-                  "slack": {
-                    "type": "object",
-                    "properties": {
-                      "botToken": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "appToken": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "signingSecret": {
-                        "type": "string",
-                        "minLength": 1
-                      }
-                    },
-                    "required": [
-                      "botToken"
                     ]
                   },
                   "telegram": {
@@ -25933,6 +26326,26 @@
                         "minLength": 1
                       },
                       "applicationId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "botToken"
+                    ]
+                  },
+                  "slack": {
+                    "type": "object",
+                    "properties": {
+                      "botToken": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "appToken": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "signingSecret": {
                         "type": "string",
                         "minLength": 1
                       }
@@ -26434,7 +26847,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
+    "/v1\\ngh/orgs/{orgId}/integrations/{id}/channels/{channelId}": {
       "patch": {
         "operationId": "updateIntegrationChannel",
         "summary": "Update a channel",
@@ -26862,7 +27275,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations/{id}/leave": {
+    "/v1\\ngh/orgs/{orgId}/integrations/{id}/leave": {
       "post": {
         "operationId": "leaveIntegrationConversation",
         "summary": "Leave a conversation",
@@ -27102,7 +27515,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations/{id}": {
+    "/v1\\ngh/orgs/{orgId}/integrations/{id}": {
       "delete": {
         "operationId": "deleteIntegration",
         "summary": "Remove an integration",
@@ -27225,416 +27638,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/integrations/feishu/app": {
-      "post": {
-        "operationId": "startFeishuAppRegistration",
-        "summary": "Start Lark / Feishu app registration",
-        "tags": [
-          "Integrations"
-        ],
-        "description": "Create an AgentConnect-ready Lark/Feishu self-built app through the official device authorization flow. Returns only the authorization deeplink; credentials are installed server-side after approval.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "agentId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "name": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "region": {
-                    "default": "lark",
-                    "type": "string",
-                    "enum": [
-                      "feishu",
-                      "lark"
-                    ]
-                  },
-                  "transport": {
-                    "default": "socket",
-                    "type": "string",
-                    "enum": [
-                      "socket",
-                      "http"
-                    ]
-                  }
-                },
-                "required": [
-                  "agentId"
-                ]
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "path",
-            "name": "orgId",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "authorizationUrl": {
-                      "type": "string",
-                      "format": "uri"
-                    },
-                    "expiresAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                    },
-                    "transport": {
-                      "type": "string",
-                      "enum": [
-                        "socket",
-                        "http"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "authorizationUrl",
-                    "expiresAt",
-                    "transport"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/orgs/{orgId}/integrations/feishu/app/{id}": {
-      "get": {
-        "operationId": "getFeishuAppRegistration",
-        "summary": "Poll Lark / Feishu app registration",
-        "tags": [
-          "Integrations"
-        ],
-        "description": "Read one Lark/Feishu device-registration session until it completes or fails. Credentials are never returned.",
-        "parameters": [
-          {
-            "name": "orgId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "pending",
-                        "completed",
-                        "failed"
-                      ]
-                    },
-                    "failureReason": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "denied",
-                            "expired",
-                            "agent_unavailable",
-                            "invalid_credentials",
-                            "setup_failed"
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "integrationId": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "expiresAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "status",
-                    "failureReason",
-                    "integrationId",
-                    "expiresAt"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/orgs/{orgId}/bots": {
+    "/v1\\ngh/orgs/{orgId}/bots": {
       "get": {
         "operationId": "listBots",
         "summary": "List bots",
@@ -27849,7 +27853,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/bots/{id}": {
+    "/v1\\ngh/orgs/{orgId}/bots/{id}": {
       "get": {
         "operationId": "getBot",
         "summary": "Get a bot",
@@ -28225,7 +28229,7 @@
         "tags": [
           "Bots"
         ],
-        "description": "Allow or disallow this HTTP bot from serving multiple agents. Relay ingress is unchanged.",
+        "description": "Allow or disallow this HTTP bot from serving multiple agents. Allowing requires a platform that supports multi-agent bots (Slack today); relay ingress is unchanged either way.",
         "requestBody": {
           "required": true,
           "content": {
@@ -28546,185 +28550,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/bots/{id}/slack/refresh": {
-      "post": {
-        "operationId": "refreshSlackBot",
-        "summary": "Refresh a Slack app",
-        "tags": [
-          "Bots"
-        ],
-        "description": "Sync AgentConnect's required configuration into an existing Slack app without deleting user-owned manifest fields, then check the workspace installation's granted bot scopes. Returns Slack settings links when manual permission updates or workspace reinstallation are required.",
-        "parameters": [
-          {
-            "name": "orgId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "manifest": {
-                      "type": "string",
-                      "enum": [
-                        "synced",
-                        "manual_update_required",
-                        "unknown"
-                      ]
-                    },
-                    "authorization": {
-                      "type": "string",
-                      "enum": [
-                        "current",
-                        "reinstall_required",
-                        "invalid",
-                        "app_mismatch",
-                        "unknown"
-                      ]
-                    },
-                    "missingScopes": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "settingsUrl": {
-                      "type": "string"
-                    },
-                    "manifestUrl": {
-                      "type": "string"
-                    },
-                    "permissionsUrl": {
-                      "type": "string"
-                    },
-                    "reinstallUrl": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "manifest",
-                    "authorization",
-                    "missingScopes",
-                    "settingsUrl",
-                    "manifestUrl",
-                    "permissionsUrl",
-                    "reinstallUrl"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/orgs/{orgId}/mcp-providers": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers": {
       "get": {
         "operationId": "listMcpProviders",
         "summary": "List MCP providers",
@@ -29120,7 +28946,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/mcp-providers/{id}": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}": {
       "get": {
         "operationId": "getMcpProvider",
         "summary": "Get an MCP provider",
@@ -29616,7 +29442,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/mcp-providers/{id}/grant/rotate": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}/grant/rotate": {
       "post": {
         "operationId": "rotateMcpProviderGrant",
         "summary": "Rotate an MCP provider grant key",
@@ -29789,7 +29615,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/mcp-providers/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/mcp-providers/{id}/sharing": {
       "put": {
         "operationId": "setMcpProviderSharing",
         "summary": "Set MCP provider sharing",
@@ -30018,7 +29844,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/skill-sources": {
+    "/v1\\ngh/orgs/{orgId}/skill-sources": {
       "get": {
         "operationId": "listSkillSources",
         "summary": "List skill sources",
@@ -30449,7 +30275,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/skill-sources/registry/search": {
+    "/v1\\ngh/orgs/{orgId}/skill-sources/registry/search": {
       "get": {
         "operationId": "searchSkillRegistry",
         "summary": "Search the skills.sh registry",
@@ -30585,7 +30411,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/skill-sources/{id}": {
+    "/v1\\ngh/orgs/{orgId}/skill-sources/{id}": {
       "get": {
         "operationId": "getSkillSource",
         "summary": "Get a skill source",
@@ -31147,7 +30973,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/skill-sources/{id}/skills": {
+    "/v1\\ngh/orgs/{orgId}/skill-sources/{id}/skills": {
       "get": {
         "operationId": "listSkillSourceSkills",
         "summary": "List a skill source’s skills",
@@ -31246,7 +31072,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/skill-sources/preview": {
+    "/v1\\ngh/orgs/{orgId}/skill-sources/preview": {
       "post": {
         "operationId": "previewSkillSource",
         "summary": "Preview a GitHub skill source",
@@ -31409,7 +31235,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/skill-sources/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/skill-sources/{id}/sharing": {
       "put": {
         "operationId": "setSkillSourceSharing",
         "summary": "Set skill source sharing",
@@ -31660,7 +31486,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/knowledge": {
+    "/v1\\ngh/orgs/{orgId}/knowledge": {
       "get": {
         "operationId": "listOrganizationKnowledge",
         "summary": "List accepted organization knowledge",
@@ -32130,7 +31956,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/knowledge/{id}": {
+    "/v1\\ngh/orgs/{orgId}/knowledge/{id}": {
       "get": {
         "operationId": "getOrganizationKnowledge",
         "summary": "Get organization knowledge",
@@ -32701,7 +32527,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/knowledge/{id}/revisions": {
+    "/v1\\ngh/orgs/{orgId}/knowledge/{id}/revisions": {
       "get": {
         "operationId": "listOrganizationKnowledgeRevisions",
         "summary": "List immutable organization knowledge revisions",
@@ -32910,7 +32736,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/knowledge/{id}/archive": {
+    "/v1\\ngh/orgs/{orgId}/knowledge/{id}/archive": {
       "post": {
         "operationId": "archiveOrganizationKnowledge",
         "summary": "Archive or restore organization knowledge",
@@ -33192,7 +33018,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/managed-skills": {
+    "/v1\\ngh/orgs/{orgId}/managed-skills": {
       "get": {
         "operationId": "listManagedSkills",
         "summary": "List accepted managed Agent Skills bundles",
@@ -33343,7 +33169,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/managed-skills/{id}": {
+    "/v1\\ngh/orgs/{orgId}/managed-skills/{id}": {
       "get": {
         "operationId": "getManagedSkill",
         "summary": "Get a managed Agent Skills bundle",
@@ -33521,7 +33347,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/managed-skills/{id}/revisions": {
+    "/v1\\ngh/orgs/{orgId}/managed-skills/{id}/revisions": {
       "get": {
         "operationId": "listManagedSkillRevisions",
         "summary": "List immutable managed skill revisions",
@@ -33734,7 +33560,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/managed-skills/{id}/archive": {
+    "/v1\\ngh/orgs/{orgId}/managed-skills/{id}/archive": {
       "post": {
         "operationId": "archiveManagedSkill",
         "summary": "Archive or restore a managed Agent Skills bundle",
@@ -33961,7 +33787,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/knowledge-suggestions": {
+    "/v1\\ngh/orgs/{orgId}/knowledge-suggestions": {
       "get": {
         "operationId": "listOrganizationKnowledgeSuggestions",
         "summary": "List retained Dream suggestions",
@@ -34285,7 +34111,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/knowledge-suggestions/{id}/content": {
+    "/v1\\ngh/orgs/{orgId}/knowledge-suggestions/{id}/content": {
       "get": {
         "operationId": "readOrganizationKnowledgeSuggestion",
         "summary": "Read one daemon-local suggestion body",
@@ -34544,7 +34370,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/knowledge-suggestions/{id}/review": {
+    "/v1\\ngh/orgs/{orgId}/knowledge-suggestions/{id}/review": {
       "post": {
         "operationId": "reviewOrganizationKnowledgeSuggestion",
         "summary": "Accept or reject one Dream suggestion",
@@ -34979,7 +34805,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/environment": {
+    "/v1\\ngh/orgs/{orgId}/environment": {
       "get": {
         "operationId": "listOrganizationEnvironment",
         "summary": "List organization variables and secrets",
@@ -35333,7 +35159,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/environment/{entryId}": {
+    "/v1\\ngh/orgs/{orgId}/environment/{entryId}": {
       "patch": {
         "operationId": "updateOrganizationEnvironmentEntry",
         "summary": "Replace a value or retarget an organization entry",
@@ -35649,7 +35475,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/environment/{entryId}/agents/{agentId}": {
+    "/v1\\ngh/orgs/{orgId}/environment/{entryId}/agents/{agentId}": {
       "put": {
         "operationId": "assignOrganizationEnvironmentEntry",
         "summary": "Assign an organization entry to one agent",
@@ -36051,7 +35877,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/connectors/config": {
+    "/v1\\ngh/orgs/{orgId}/connectors/config": {
       "get": {
         "operationId": "getConnectorsConfig",
         "summary": "Connectors feature status",
@@ -36092,7 +35918,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/connectors/catalog": {
+    "/v1\\ngh/orgs/{orgId}/connectors/catalog": {
       "get": {
         "operationId": "listConnectorProviders",
         "summary": "Browse connector providers",
@@ -36237,7 +36063,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/connectors/connections": {
+    "/v1\\ngh/orgs/{orgId}/connectors/connections": {
       "post": {
         "operationId": "createConnectorConnection",
         "summary": "Create a connector connection",
@@ -36554,7 +36380,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/connectors/connections/{id}/reconnect": {
+    "/v1\\ngh/orgs/{orgId}/connectors/connections/{id}/reconnect": {
       "post": {
         "operationId": "reconnectConnectorConnection",
         "summary": "Reconnect a connector connection",
@@ -36754,7 +36580,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/memory-plugin-installations": {
+    "/v1\\ngh/orgs/{orgId}/memory-plugin-installations": {
       "get": {
         "operationId": "listMemoryPluginInstallations",
         "summary": "List memory plugin installations",
@@ -37219,7 +37045,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/memory-plugin-installations/{id}": {
+    "/v1\\ngh/orgs/{orgId}/memory-plugin-installations/{id}": {
       "delete": {
         "operationId": "deleteMemoryPluginInstallation",
         "summary": "Delete a memory plugin installation",
@@ -37342,7 +37168,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/external-memory-connections": {
+    "/v1\\ngh/orgs/{orgId}/external-memory-connections": {
       "get": {
         "operationId": "listExternalMemoryConnections",
         "summary": "List external-memory connections",
@@ -37870,7 +37696,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/external-memory-connections/{id}": {
+    "/v1\\ngh/orgs/{orgId}/external-memory-connections/{id}": {
       "get": {
         "operationId": "getExternalMemoryConnection",
         "summary": "Get an external-memory connection",
@@ -38552,7 +38378,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/external-memory-connections/{id}/grant/rotate": {
+    "/v1\\ngh/orgs/{orgId}/external-memory-connections/{id}/grant/rotate": {
       "post": {
         "operationId": "rotateExternalMemoryConnectionGrant",
         "summary": "Rotate an external-memory relay grant",
@@ -38892,7 +38718,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/members": {
+    "/v1\\ngh/orgs/{orgId}/members": {
       "get": {
         "operationId": "listMembers",
         "summary": "List members",
@@ -39162,7 +38988,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/members/{id}": {
+    "/v1\\ngh/orgs/{orgId}/members/{id}": {
       "patch": {
         "operationId": "updateMember",
         "summary": "Change a member’s role",
@@ -39495,7 +39321,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/members/{id}/removal-preview": {
+    "/v1\\ngh/orgs/{orgId}/members/{id}/removal-preview": {
       "get": {
         "operationId": "previewMemberRemoval",
         "summary": "Preview a leave or removal",
@@ -39705,7 +39531,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/invite-links": {
+    "/v1\\ngh/orgs/{orgId}/invite-links": {
       "get": {
         "operationId": "getOrganizationInviteLink",
         "summary": "Get the organization invite link",
@@ -40082,7 +39908,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/invite-links/{id}": {
+    "/v1\\ngh/orgs/{orgId}/invite-links/{id}": {
       "delete": {
         "operationId": "revokeOrganizationInviteLink",
         "summary": "Revoke the organization invite link",
@@ -40235,7 +40061,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons/{id}": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}": {
       "put": {
         "operationId": "upsertCron",
         "summary": "Create or update a cron",
@@ -40953,7 +40779,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons": {
+    "/v1\\ngh/orgs/{orgId}/crons": {
       "get": {
         "operationId": "listCrons",
         "summary": "List crons",
@@ -41135,7 +40961,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons/{id}/runs": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}/runs": {
       "get": {
         "operationId": "listCronRuns",
         "summary": "List cron runs",
@@ -41265,7 +41091,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons/{id}/run": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}/run": {
       "post": {
         "operationId": "triggerCronRun",
         "summary": "Trigger a cron run",
@@ -41448,7 +41274,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/crons/{id}/sharing": {
+    "/v1\\ngh/orgs/{orgId}/crons/{id}/sharing": {
       "put": {
         "operationId": "setCronSharing",
         "summary": "Set cron sharing",
@@ -41755,7 +41581,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/hooks": {
+    "/v1\\ngh/orgs/{orgId}/hooks": {
       "post": {
         "operationId": "createHook",
         "summary": "Create a hook",
@@ -42357,7 +42183,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/agents/{agentId}/hooks": {
+    "/v1\\ngh/orgs/{orgId}/agents/{agentId}/hooks": {
       "get": {
         "operationId": "listAgentHooks",
         "summary": "List an agent’s hooks",
@@ -42650,7 +42476,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/hooks/{id}": {
+    "/v1\\ngh/orgs/{orgId}/hooks/{id}": {
       "get": {
         "operationId": "getHook",
         "summary": "Get a hook",
@@ -43647,7 +43473,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/hooks/{id}/runs": {
+    "/v1\\ngh/orgs/{orgId}/hooks/{id}/runs": {
       "get": {
         "operationId": "listHookRuns",
         "summary": "List hook runs",
@@ -43809,7 +43635,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/session-access/slack": {
+    "/v1\\ngh/orgs/{orgId}/session-access/slack": {
       "get": {
         "operationId": "getSlackSessionAccess",
         "summary": "Get Slack session access sync",
@@ -44058,7 +43884,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/session-access/github": {
+    "/v1\\ngh/orgs/{orgId}/session-access/github": {
       "get": {
         "operationId": "getGitHubSessionAccess",
         "summary": "Get GitHub session access sync",
@@ -44307,7 +44133,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/session-access/feishu": {
+    "/v1\\ngh/orgs/{orgId}/session-access/feishu": {
       "get": {
         "operationId": "getFeishuLarkSessionAccess",
         "summary": "Get Feishu/Lark session access sync",
@@ -44556,7 +44382,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions/facets": {
+    "/v1\\ngh/orgs/{orgId}/sessions/facets": {
       "get": {
         "operationId": "listSessionFacets",
         "summary": "List session filter facets",
@@ -44789,7 +44615,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions": {
+    "/v1\\ngh/orgs/{orgId}/sessions": {
       "get": {
         "operationId": "listSessions",
         "summary": "List sessions",
@@ -45660,6 +45486,34 @@
                     },
                     "accessSyncDegraded": {
                       "type": "boolean"
+                    },
+                    "accessIssues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "region": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "reason": {
+                            "type": "string",
+                            "enum": [
+                              "authorization",
+                              "unavailable"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "provider",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
                     }
                   },
                   "required": [
@@ -45704,7 +45558,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions/{id}": {
+    "/v1\\ngh/orgs/{orgId}/sessions/{id}": {
       "get": {
         "operationId": "getSession",
         "summary": "Get session metadata",
@@ -45992,6 +45846,20 @@
                         }
                       ]
                     },
+                    "hookKind": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "webhook",
+                            "github"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "channelName": {
                       "anyOf": [
                         {
@@ -46169,6 +46037,34 @@
                     "accessSyncDegraded": {
                       "type": "boolean"
                     },
+                    "accessIssues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "region": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "reason": {
+                            "type": "string",
+                            "enum": [
+                              "authorization",
+                              "unavailable"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "provider",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
                     "participants": {
                       "anyOf": [
                         {
@@ -46268,6 +46164,7 @@
                     "lastActivityAt",
                     "usage",
                     "triggeredBy",
+                    "hookKind",
                     "channelName",
                     "triggeredByName",
                     "threadUrl",
@@ -46332,7 +46229,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions/{id}/messages": {
+    "/v1\\ngh/orgs/{orgId}/sessions/{id}/messages": {
       "get": {
         "operationId": "getSessionMessages",
         "summary": "Get session messages",
@@ -46594,7 +46491,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions/{id}/tool-body": {
+    "/v1\\ngh/orgs/{orgId}/sessions/{id}/tool-body": {
       "get": {
         "operationId": "getSessionToolBody",
         "summary": "Get a tool-call body",
@@ -46744,7 +46641,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/sessions/{id}/visibility": {
+    "/v1\\ngh/orgs/{orgId}/sessions/{id}/visibility": {
       "put": {
         "operationId": "setSessionVisibility",
         "summary": "Set session visibility",
@@ -46906,14 +46803,14 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/usage": {
+    "/v1\\ngh/orgs/{orgId}/usage": {
       "get": {
         "operationId": "getUsage",
         "summary": "Get token usage",
         "tags": [
           "Usage"
         ],
-        "description": "Sums the persisted per-session token usage over the selected time window, grouped by agent, plus workspace totals.",
+        "description": "Sums persisted per-session token usage over the selected time window, with agent and effective-model breakdowns plus workspace totals.",
         "parameters": [
           {
             "schema": {
@@ -46969,6 +46866,34 @@
                     },
                     "accessSyncDegraded": {
                       "type": "boolean"
+                    },
+                    "accessIssues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "region": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "reason": {
+                            "type": "string",
+                            "enum": [
+                              "authorization",
+                              "unavailable"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "provider",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
                     },
                     "totals": {
                       "type": "object",
@@ -47048,6 +46973,60 @@
                         "additionalProperties": false
                       }
                     },
+                    "models": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sessions": {
+                            "type": "number"
+                          },
+                          "totalTokens": {
+                            "type": "number"
+                          },
+                          "inputTokens": {
+                            "type": "number"
+                          },
+                          "outputTokens": {
+                            "type": "number"
+                          },
+                          "thoughtTokens": {
+                            "type": "number"
+                          },
+                          "cachedReadTokens": {
+                            "type": "number"
+                          },
+                          "cachedWriteTokens": {
+                            "type": "number"
+                          },
+                          "costAmount": {
+                            "type": "number"
+                          },
+                          "model": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "sessions",
+                          "totalTokens",
+                          "inputTokens",
+                          "outputTokens",
+                          "thoughtTokens",
+                          "cachedReadTokens",
+                          "cachedWriteTokens",
+                          "costAmount",
+                          "model"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
                     "series": {
                       "type": "object",
                       "properties": {
@@ -47089,6 +47068,7 @@
                     "range",
                     "totals",
                     "agents",
+                    "models",
                     "series"
                   ],
                   "additionalProperties": false
@@ -47099,7 +47079,7 @@
         }
       }
     },
-    "/api/v1/orgs/{orgId}/stream": {
+    "/v1\\ngh/orgs/{orgId}/stream": {
       "get": {
         "operationId": "streamSessionEvents",
         "summary": "Live session event stream",
@@ -47125,6 +47105,11 @@
       }
     }
   },
+  "servers": [
+    {
+      "url": "https://api.agentconnect.md\\ngh"
+    }
+  ],
   "security": [
     {
       "bearerAuth": []

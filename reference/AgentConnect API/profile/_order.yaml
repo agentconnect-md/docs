@@ -8,3 +8,5 @@
 - unlinkmysocialidentity
 - getmysocialidentities
 - getmyslackidentity
+- createmysocialidentityauthorization
+- linkmysocialidentity

@@ -1,6 +1,6 @@
 ---
 api:
   file: openapi.json
-  operationId: checkTelegramBot
+  operationId: linkMySocialIdentity
 hidden: false
 ---
