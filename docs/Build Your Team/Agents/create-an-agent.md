@@ -4,15 +4,17 @@ excerpt: Create an agent with the right runtime, workspace, access, memory, tool
 hidden: false
 ---
 
-An **agent** is a named, configured instance of an AI coding runtime — *"Claude Code, on my build box, in this repo, allowed to edit files"* — that you can then wire into channels, schedules and webhooks.
+An **agent** combines a focused role with a runtime, model, workspace, memory, tools, permissions, and machine. You can then connect it to conversations, repositories, schedules, and webhooks.
 
 Open **Agents → Add agent**:
 
-## Identity
+![Choose an agent's role and basic settings](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-agent.png)
 
+## Role and basics
+
+- **Description** — the agent's persona and standing responsibilities. AgentConnect includes it in the agent's system context for every session and also shows it on the agent page.
 - **Name** — a slug (`deploy-bot`); lowercase letters, digits and dashes. It's the stable identifier.
 - **Display name** — optional pretty name ("Deploy Bot") shown across the console.
-- **Description** — the agent's persona and standing responsibilities. AgentConnect includes it in the agent's system context for every session and also shows it on the agent page.
 
 ## Placement & runtime
 

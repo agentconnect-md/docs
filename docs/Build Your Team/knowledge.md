@@ -31,13 +31,13 @@ Editing an entry publishes a new immutable revision instead of overwriting its h
 2. Inspect the proposed Markdown or complete skill file tree and its source sessions.
 3. **Accept** it to create an approved immutable revision, or **Reject** it and keep the decision in review history.
 
-Pending proposal bodies remain on the source daemon until review. If that daemon is offline or upgrading, or no longer hosts the agent that proposed it, the suggestion metadata remains visible, but its content cannot be opened or reviewed until the source is ready again. Once accepted, Knowledge and managed-skill revisions are stored centrally so the team can use them independently of the proposing daemon.
+If the source daemon is offline, a suggestion can remain listed while its content is temporarily unavailable. Once accepted, the published Knowledge or managed skill becomes available to the organization.
 
 An accepted Knowledge suggestion appears in the Knowledge library. An accepted managed skill appears in **Tools & Skills → Skills library** and still must be [enabled explicitly for each agent](/docs/tools-and-skills#enable-tools-and-skills-for-an-agent).
 
 ## Manage external memory connections
 
-Open **Knowledge → External memory** to register and manage approved memory services for the organization. An Owner reviews the plugin installation, endpoint or operator-provided command reference, credential contract, and stated network boundary before creating a connection. Secret values are write-only after saving. After the daemon probes the connection, its card shows the downstream hosts reported by the plugin.
+Open **Knowledge → External memory** to register and manage approved memory services for the organization. An Owner chooses a reviewed plugin installation, supplies the required credentials and configuration, and creates the connection. Secret values are write-only after saving.
 
 Creating a connection does not change any agent automatically. Open an agent's **Memory** tab, choose **External**, select the connection, and configure its recall and capture policies. The connection supplies the trusted service and credentials; the agent binding supplies the agent-scoped identity and policy.
 
@@ -45,12 +45,8 @@ Follow [the guide to using Mem0 OSS as external memory](/docs/external-memory) f
 
 ## How agents use Knowledge
 
-Agents receive a read-only `findKnowledge` tool. They can search by text and tags when a task calls for shared context. AgentConnect does not inject the full library into every session, so unrelated content does not consume the standing context window.
-
-If the Control Plane is temporarily unavailable, `findKnowledge` returns a tool error without failing the rest of the agent turn. Agents cannot publish or approve Knowledge through this tool.
+Agents search published Knowledge by text and tags when a task calls for shared context. AgentConnect does not inject the full library into every session, and agents cannot publish or approve entries themselves.
 
 ## Dreaming
 
-Dreaming is configured with **Managed** memory. Open an agent's **Memory** tab to run a Dream, change its schedule, choose whether completed memory results wait for review or are adopted automatically, and optionally enable **Also mine reusable skills from repeated procedures**. Review is the default.
-
-Dreams also stage proposed changes to the agent's own memory and agent-local skills. Those stay distinct from shared suggestions: accepting or discarding an agent-memory result never auto-accepts a Knowledge or managed-skill proposal, and organization Owners still review every shared proposal under **Knowledge → Suggestions**.
+Dreaming is configured with **Managed** memory. Open an agent's **Memory** tab to run a Dream, change its schedule, review completed memory results, or optionally mine reusable skills from repeated procedures. Organization Owners still review every shared Knowledge or managed-skill proposal under **Knowledge → Suggestions**.

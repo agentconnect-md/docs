@@ -31,17 +31,9 @@ The Description card is edited separately. It is not just display copy: AgentCon
 
 ## Move an agent
 
-Choose another daemon in **Edit** to cold-move the agent. Save the move separately from other configuration changes. A normal move needs both source and target online, ready and supporting agent moves; the target must also support the selected runtime, model and MCP servers.
+Choose another daemon in **Edit** to move the agent. The target must be online and support the selected runtime, model, tools, and skills.
 
-AgentConnect drains the active turn and reprovisions the control-plane-owned definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcript data. The source archive remains on the old machine, GitHub workspaces are cloned again, and old session bodies cannot be loaded from the console after the move.
-
-### Force reassign an agent off a dead daemon
-
-A normal move waits for the source daemon to confirm that it stopped the old copy, so it cannot rescue an agent from a machine that will never come back. Pick an online, compatible target while the source is offline and a **Force reassign** button appears.
-
-Force reassign is disaster recovery, not a second move mode. It skips only the source's confirmation — target readiness, capacity, runtime, model, MCP and managed-skill compatibility are still enforced, and AgentConnect refuses it while the source is ready or merely reconnecting. Before it proceeds you must tick a confirmation that the source machine is permanently stopped and cannot reconnect.
-
-That confirmation matters: if the old machine does come back, two copies of the agent can process the same messages until placement reconciliation tells the stale one to detach.
+AgentConnect waits for active work to stop and reprovisions the saved definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcripts. Commit or back up local work first; GitHub workspaces are cloned again on the new machine.
 
 ## Variables and secrets
 
@@ -70,7 +62,7 @@ For a complete external-backend walkthrough, including recall/capture policies a
 
 ### Dreaming
 
-With **Managed** memory, Dreaming can periodically consolidate recent memory and session history. Its default policy schedules a run every day at 04:00 in the daemon's timezone and leaves completed memory results for review. You can turn Dreaming off, remove the schedule for manual-only runs, explicitly opt in to automatic adoption, and optionally mine reusable skills. A Dream may also propose [Knowledge or managed skills](/docs/knowledge), but an organization Owner must review each shared proposal before it is published.
+With **Managed** memory, Dreaming can periodically consolidate recent memory and session history. Its default policy schedules a run every day at 04:00 in the daemon's timezone and leaves completed memory results for review. A scheduled Dream considers sessions updated since the last successful run and skips when there is nothing new. You can turn Dreaming off, remove the schedule for manual-only runs, explicitly opt in to automatic adoption, and optionally mine reusable skills. A Dream may also propose [Knowledge or managed skills](/docs/knowledge), but an organization Owner must review each shared proposal before it is published.
 
 ## Tools & Skills
 
@@ -78,4 +70,4 @@ Shows the MCP tools available to this agent and the skills it has enabled. Organ
 
 ## Delete
 
-**Delete** (⋯ menu) removes the agent and its triggers from the organization. Its integrations are released so their bots can be reused, and AgentConnect tells the owning daemon to remove the agent's local directory. That daemon-side cleanup is best-effort if the machine is unreachable.
+**Delete** (⋯ menu) removes the agent and its triggers from the organization. Its integrations are released so their bots can be reused.

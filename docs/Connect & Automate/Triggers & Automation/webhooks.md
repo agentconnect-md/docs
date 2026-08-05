@@ -16,7 +16,7 @@ On the agent: **Integrations → Add integration → Webhook**, name it (default
 
 ## Send a message
 
-The request body **is** the message the agent receives (`application/json`). A body over **128 KiB** is rejected outright, and the agent sees at most the first **64 KiB** of what you send — anything beyond that is truncated from the trigger, so put what matters at the top:
+The JSON request body becomes the message the agent receives. Keep it focused, and put the instructions before large logs or diagnostic payloads:
 
 ```bash
 BODY='{"message":"Deploy of api-server v2.31 failed on step migrate — investigate and summarize."}'

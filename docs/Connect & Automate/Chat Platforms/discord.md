@@ -21,7 +21,7 @@ When you connect, AgentConnect validates the token and enables the limited **Mes
 
 ## Use it
 
-Mention the bot in a server channel it can see and it answers; longer conversations continue in threads. You can also send it a direct message. AgentConnect registers its control commands as native Discord slash commands, including `/stop` and `/queue <message>`.
+Mention the bot in a server channel it can see and it answers; longer conversations continue in threads. You can also send it a direct message. AgentConnect registers its [in-conversation commands](/docs/integrations-overview#in-conversation-commands) as native Discord slash commands.
 
 ## Notes
 

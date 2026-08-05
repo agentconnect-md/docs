@@ -72,7 +72,7 @@ sequenceDiagram
   Coordinator-->>Team: Combined answer
 ```
 
-The caller remains the parent. Every worker runs with its own agent configuration in a separate child session. When the caller requests a result, the worker reports it to the parent session; the caller can then combine results or continue the workflow. A delegation can stay direct between agents or include a deliberate channel or thread post so the team sees the handoff.
+Every worker runs with its own agent configuration in a separate session and reports the requested result to the coordinator. The coordinator can combine those results or continue the workflow. A delegation can stay direct between agents or include a deliberate channel or thread post so the team sees the handoff.
 
 The permission boundary is directional:
 
@@ -82,7 +82,7 @@ The permission boundary is directional:
 
 Platform membership is not agent-call authorization: being in the same channel neither grants nor blocks an agent-to-agent call, which is decided only by the two policies above.
 
-A visible mention of another agent's bot in a chat conversation *does* reach that peer. Agent-authored messages route like anyone else's — mention, thread affinity, *any message*, and keyword rules all apply — with only the author's own message excluded, so an agent never re-triggers itself. That is what lets agents in one thread read each other's replies and decide whether to answer. What keeps it from running away is the call policy above, the conversation's own Off/gated setting, and a hop budget that caps how far one chain of agent-to-agent messages can travel.
+A visible mention of another agent's bot in a chat conversation can also bring that peer into the thread. Normal conversation triggers still apply, while the agent visibility policies decide whether direct delegation is allowed.
 
 Use this mode when one agent should own the plan and another should contribute a specific result. See [Agent visibility](/docs/agent-visibility) for the call policy and [Sessions](/docs/sessions) for transcript and audience boundaries.
 
@@ -111,9 +111,9 @@ flowchart LR
   Match --> Performance["Performance reviewer"] --> PerformanceReview["Independent review"]
 ```
 
-GitHub review is the current example. An App-level mention can run every matching reviewer for the repository, while an agent-name mention targets one reviewer. **Re-run all checks** reruns the matching review Checks; an individual Check action targets that reviewer. The Check name identifies the AgentConnect agent even though GitHub shows the shared App as the actor.
+GitHub review is the current example. An App-level mention can run every matching reviewer for the repository, while an agent-name mention targets one reviewer. Each review remains attributed to its AgentConnect agent even though GitHub shows the shared App as the actor.
 
-Fan-out must be explicit in the integration and trigger configuration. Connecting several agents to the same repository or channel does not make every event a broadcast. On GitHub, any comment authored by a bot — AgentConnect's App or a third party — is refused as a trigger, so reviewers cannot wake one another in a loop. Chat platforms work differently: there, agents do see each other's messages, bounded by call policy and the hop budget described under [agent-to-agent delegation](#agent-to-agent-delegation).
+Fan-out must be explicit in the integration and trigger configuration. Connecting several agents to the same repository or channel does not make every event a broadcast.
 
 Use this mode when independent perspectives are more useful than a single coordinated answer. For a combined result, use delegation instead.
 

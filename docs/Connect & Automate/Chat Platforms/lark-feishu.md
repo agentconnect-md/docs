@@ -49,6 +49,6 @@ The manual checklist remains visible in the integration dialog so you can verify
 
 - In a group, add the bot and **@-mention** it to start. The channel then appears on the agent's Integrations card, where you can choose **@-mention**, **any message**, or **Off**.
 - In a one-to-one chat, message the bot directly.
-- `/stop` interrupts the current turn; `/queue <message>` waits until the agent becomes idle.
+- Use the [in-conversation commands](/docs/integrations-overview#in-conversation-commands) to stop, cancel, queue, or inspect a session.
 
 One Lark or Feishu bot binds to one agent at a time. Deleting its integration frees the stored bot identity for **Use an existing bot**; it does not delete the app from the platform developer console. Organization-wide management lives under the matching **Settings → Bots → Lark** or **Feishu** tab, where **Configure** opens the correct regional developer console.

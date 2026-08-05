@@ -81,14 +81,10 @@ Useful CLI and daemon-run flags:
 | `--max-agents <n>` | Cap how many agents this daemon will host |
 | `--log-level <level>` | `trace` `debug` `info` `warn` `error` |
 | `--require-sandbox` | Fail startup unless every agent can be sandboxed |
-| `--no-cp` | Run fully local without a control plane (advanced) |
-| `--dry-run` | Validate config, print the reconcile plan, exit |
-
-One daemon per root: a lock file prevents a second copy from starting against the same root (two daemons sharing one Slack connection would silently split events).
 
 ## Good to know
 
 - **Updates:** the CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure.
 - **Sandboxing:** a supported Linux daemon can confine selected agents, or require the boundary for every agent and fail closed. See [Sandboxing](/docs/sandboxing) before using it as a production guarantee.
-- **Offline control plane ≠ dead agents.** Established sessions and platform connections keep working while the control plane is unreachable; the daemon reconnects with backoff and re-registers.
+- **A temporary Control Plane outage does not stop established work.** Existing sessions and platform connections continue until the daemon reconnects.
 - **Multiple machines:** add as many daemons as you like — a beefy workstation for heavy agents, a laptop for experiments. You can later move an agent between compatible online daemons; see [Manage daemons](/docs/manage-daemons).

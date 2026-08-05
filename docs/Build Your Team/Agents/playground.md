@@ -14,6 +14,10 @@ Playground creates a real session on the agent's daemon, using the same runtime,
 
 You can change supported runtime settings for the next turn without altering the agent's saved configuration, and interrupt a turn when needed.
 
+### Ask the built-in AgentConnect agent
+
+In a private Home conversation with the built-in **AgentConnect** agent, you can also ask about your current setup or request supported configuration changes. The agent acts with your current organization permissions, and the console asks you to approve a change before it is applied.
+
 ## Work with several agents
 
 Add agents before the first message from the Home composer, or add them to an existing Playground conversation.

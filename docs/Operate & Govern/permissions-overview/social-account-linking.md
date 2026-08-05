@@ -4,9 +4,11 @@ excerpt: Use several social sign-in methods with one AgentConnect profile.
 hidden: false
 ---
 
-One AgentConnect profile can use multiple social sign-in methods. AgentConnect Cloud currently offers **GitHub**, **Google**, and **Slack**. A self-hosted deployment can additionally enable **Lark** and **Feishu** through its own Logto tenant.
+One AgentConnect profile can use multiple social sign-in methods. AgentConnect Cloud currently offers **GitHub**, **Google**, and **Slack**. A self-hosted deployment can additionally enable **Lark** and **Feishu** with the regional identity setup described in [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission-sync).
 
 Open the avatar menu → **Your profile** and find **Sign-in methods**.
+
+![Link another sign-in method from your profile](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/social-sign-in-methods.png)
 
 ## Link an account
 
@@ -34,24 +36,17 @@ For a provider-by-provider comparison, including profiles with several linked me
 
 ### Slack
 
-A linked, verified Slack identity participates in two session checks:
-
-- it matches the owner of private Slack direct-message sessions by workspace ID plus user ID; and
-- when the organization enables **Follow Slack access**, it identifies the viewer whose current workspace or conversation access Slack must confirm.
-
-For a public channel, an active full member of the installing workspace does not need to have joined that channel. Private channels and group DMs require current conversation membership; guests and Slack Connect users also require current conversation membership. Linking the matching Slack account can make existing sessions visible without rewriting their records. Unlinking removes that recognized identity, so private Slack DMs and Slack-scoped shared sessions that depended on it are no longer visible.
+A linked Slack identity can match the owner of a private Slack direct-message session. When the organization enables **Follow Slack access**, it is also used to check the viewer's current workspace or conversation access. Linking the matching account can make existing sessions visible; unlinking removes that provider match.
 
 ### Lark and Feishu on self-hosted deployments
 
-A linked Lark or Feishu identity can directly match a Private direct-message session from the same app. With a regional permission app configured, a live membership check also covers a direct message created by another bot app and remains owner-only even before Follow access is enabled.
-
-When the organization enables **Follow Feishu / Lark access**, AgentConnect applies that live membership check as the audience for synchronized chats. One regional permission app can evaluate chats from multiple bot apps; their App IDs do not need to match. This requires a Standard OAuth connector that stores the provider user token.
+A linked Lark or Feishu identity can match a private direct-message session. When **Follow Feishu / Lark access** is enabled, AgentConnect checks current chat membership for synchronized sessions. One regional permission app can evaluate chats served by multiple bot apps.
 
 ### GitHub
 
 When the organization enables **Follow GitHub access**, sessions from a public repository remain available to everyone who can see the agent. A private-repository session requires a linked GitHub profile with current repository access.
 
-Linking GitHub can therefore make an existing private-repository session available without rewriting it. Unlinking GitHub removes that match immediately but does not uninstall the GitHub App or change repository grants. If someone follows a protected session link from GitHub without a linked profile, the not-found screen can offer **Link GitHub profile**; that hint does not reveal whether the session exists or bypass its access check.
+Linking GitHub can therefore make an existing private-repository session available. Unlinking GitHub removes that match but does not uninstall the GitHub App or change repository grants.
 
 Where a provider identity is required, organization membership or the Owner role does not substitute for it. GitHub, Slack, Lark, and Feishu identities affect only their own provider checks, while Google remains a sign-in method with no provider-specific authorization. A personal API key or console identity does not stand in for a linked provider identity. See [Session visibility](/docs/session-visibility).
 
@@ -59,6 +54,6 @@ Where a provider identity is required, organization membership or the Owner role
 
 AgentConnect OSS does not enable social sign-in by default. To offer linked accounts, configure optional Logto-backed OIDC sign-in, choose the displayed providers with `SOCIAL_PROVIDERS`, and create the matching Logto connectors. The Profile card appears only after OIDC sign-in is enabled.
 
-The operator must also enable Logto Account API social-identity editing, configure the Management API integration used for identity reads and safe unlinking, provide working email delivery for profiles that require an ownership code, and register the account-link callback with each provider. Local no-auth mode does not infer a linked provider identity.
+The operator must also enable Logto account linking, configure provider identity lookup, and provide email delivery for providers that require an ownership code. Local no-auth mode does not infer a linked provider identity.
 
 See [Logto authentication](/docs/logto-authentication#4-enable-social-account-linking) for the complete setup.

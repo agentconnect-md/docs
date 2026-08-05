@@ -18,27 +18,27 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 
 **The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub and generic webhooks, and webchat (the browser transport behind the [Playground](/docs/playground)), then forwards the request to the owning daemon. It does not durably store message content.
 
-**The Control Plane** manages authentication, organizations, permissions, registry, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed-skill revisions](/docs/knowledge). Its daemon WebSocket is used primarily for registration, heartbeats, configuration, orchestration commands, and telemetry. It also carries scoped request and response frames for authorized, on-demand console reads.
+**The Control Plane** manages authentication, organizations, permissions, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed skills](/docs/knowledge) and coordinates the daemon fleet.
 
-**The console** is the configuration and observation surface. When you open a transcript, tool body, memory view, or workspace file, the BFF requests a bounded live read from the owning daemon. The Control Plane proxies that response without persisting the body.
+**The console** is the configuration and observation surface. When you open a transcript, tool result, memory view, or workspace file, it reads that content from the owning daemon without persisting the body in the Control Plane.
 
 ## What lives where
 
 | Data | Stored by |
 | --- | --- |
-| Live messages and ACP updates | Daemon; Relay forwards callbacks |
-| Transcripts and tool bodies | Owning daemon |
+| Live messages and agent activity | Daemon; Relay forwards callbacks |
+| Transcripts and tool results | Owning daemon |
 | Workspaces and git checkouts | Owning daemon |
 | Runtime credentials | Daemon machine |
 | Bot tokens and tenant secrets | Control Plane secret store |
 | Control metadata | Control Plane |
 | Approved Knowledge and skills | Control Plane |
 
-Authorized transcript, tool-body, and workspace reads are bounded and proxied from the owning daemon on demand; the Control Plane does not persist the response. Pending [Dreaming](/docs/configure-an-agent#dreaming) proposal bodies also stay on their source daemon. Secret protection at rest depends on the deployment's secret-cipher configuration.
+Authorized transcript, tool-result, memory, and workspace reads come from the owning daemon on demand. The Control Plane does not persist those responses. Secret protection at rest depends on the deployment's secret-storage configuration.
 
 ## Built to degrade gracefully
 
-Because the daemon owns execution and local session state, established sessions and daemon-local schedules can continue during a temporary Control Plane outage. Direct platform connections continue, and Relay-backed routes use their last applied routing state. New assignments, configuration changes, and console reads resume after reconnection.
+Because the daemon owns execution and local session state, established sessions and local schedules can continue during a temporary Control Plane outage. New assignments, configuration changes, and console reads resume after reconnection.
 
 If a daemon is offline, its agents are offline. The Control Plane can still show stored session metadata, but transcripts and workspace content owned by that daemon cannot be fetched until it returns.
 

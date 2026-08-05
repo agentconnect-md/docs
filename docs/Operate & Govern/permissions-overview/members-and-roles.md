@@ -6,7 +6,7 @@ hidden: false
 
 Everything in AgentConnect belongs to an **organization**. Membership is the outer authorization boundary: a person must belong to the organization before any role or visibility rule can grant access.
 
-With ordinary sign-in, your first sign-in creates a personal organization. In a deployment with an admission gate, that organization is created when your account is activated instead. Use the organization switcher to create or move between organizations.
+Your first sign-in creates an organization. Use the organization switcher to create or move between organizations when your deployment allows it.
 
 ## Members
 
@@ -24,7 +24,7 @@ An organization must always have at least one Owner, so its last Owner cannot be
 |                                                                                   | **Owner** | **Collaborator** | **Viewer** |
 | --------------------------------------------------------------------------------- | --------- | ---------------- | ---------- |
 | See resources allowed by [visibility](/docs/visibility-and-sharing) | ✓ | ✓ | ✓ |
-| Read allowed sessions, usage, and transcripts                                     | ✓         | ✓                | ✓          |
+| Read allowed sessions, transcripts, and Analytics                                 | ✓         | ✓                | ✓          |
 | Create resources and edit resources they can see                                  | ✓         | ✓                | —          |
 | Talk to an agent they can see in the [Playground](/docs/playground)               | ✓         | ✓                | ✓          |
 | Start a scheduled run with **Run now**                                            | ✓         | ✓                | —          |
@@ -35,7 +35,7 @@ An organization must always have at least one Owner, so its last Owner cannot be
 
 Roles do not override a resource's audience. An organization Owner who is not explicitly selected cannot see a restricted team resource. Owners can manage membership and organization settings without receiving an automatic read override.
 
-When a member leaves or is removed, AgentConnect removes them from every Selected audience. Existing selected members keep access. Only an audience that would otherwise become empty receives a deterministic current organization Owner; the resource stays Selected and its creator history does not change.
+When a member leaves or is removed, AgentConnect removes them from every Selected audience and keeps each resource reachable by at least one current member.
 
 A [private session](/docs/session-visibility) likewise has no organization Owner override. Its transcript is visible only to its matched owner.
 

@@ -12,10 +12,10 @@ This is different from [team visibility](/docs/visibility-and-sharing), which co
 
 Every agent has two independent policies:
 
-| Direction | Console question                      | Meaning                                             |
-| --------- | ------------------------------------- | --------------------------------------------------- |
-| Inbound   | **Which agents can call this agent?** | Protects this agent from unwanted callers           |
-| Outbound  | **Which agents can this agent call?** | Limits what this agent may discover and delegate to |
+| Direction | Console question | Purpose |
+| --- | --- | --- |
+| Inbound | **Which agents can call this agent?** | Allowed callers |
+| Outbound | **Which agents can this agent call?** | Allowed delegates |
 
 Each direction can be:
 
@@ -53,12 +53,8 @@ An agent can discover its policy-approved peers across the organization and dele
 
 Team visibility for people is a separate boundary. Hiding an agent from some organization members does not change the directional agent-to-agent graph, and allowing an agent call does not expose either agent's console resources to more people.
 
-When a call explicitly addresses a known channel, AgentConnect still validates that channel coordinate instead of treating the tool input as authority. This protects routing integrity; it is not a general shared-channel requirement for agent calls.
-
-An agent that was validly invoked may reply to the exact originating session even when the independently configured reverse A → B edge is closed. That narrow return path does not allow a new direct wake; a new call still requires both directional policies.
-
 ## Configure it
 
-Set both policies under an agent's **Access → Agent visibility** section when creating or editing the agent. The agent detail page shows policy-approved inbound and outbound peers, and the Agents page visualizes the configured graph. AgentConnect checks both policies again when the call is delivered.
+Set both policies under an agent's **Access → Agent visibility** section when creating or editing the agent. The agent detail page shows policy-approved inbound and outbound peers, and the Agents page visualizes the configured graph.
 
 See [Multi-agent work modes](/docs/multi-agent-work-modes#agent-to-agent-delegation) for delegation in context with routing, layered specialists, and fan-out.
