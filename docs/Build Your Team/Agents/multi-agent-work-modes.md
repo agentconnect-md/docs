@@ -7,7 +7,7 @@ hidden: false
 AgentConnect is designed for teams of specialized agents. For most teams, the best starting point is several focused agents, each connected to its own bot or integration. Bring several into one conversation when people want to work with them together, and add agent-to-agent delegation when one agent should coordinate the work.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png" alt="Several agents collaborating in one Playground session" width="780" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/playground.png" alt="Home composer with several agents selected for one Playground conversation" width="780" />
 </p>
 
 Layered specialists are a common next step, especially for pull-request review. Trigger fan-out and shared-bot routing are useful when a workflow specifically needs parallel opinions or one consolidated platform identity.
