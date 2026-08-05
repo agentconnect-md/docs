@@ -10,7 +10,9 @@ A GitHub integration makes an agent **watch a repository**: new issues, pull req
 
 On the agent: **Integrations → Add integration → GitHub**.
 
-![Choose a repository and GitHub trigger](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/github-integration.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/github-integration.png" alt="Choose a repository and GitHub trigger" width="640" />
+</p>
 
 1. **Repository** — pick from repositories covered by the GitHub App that the signed-in person may use. Public repositories remain available for read-only setup; private repositories require a linked GitHub identity with access. Picking a repo the agent isn't authorized for opens the authorize step right there.
 2. **Listen for** — pull requests, issues, or both.

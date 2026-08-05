@@ -58,7 +58,9 @@ When adding or editing an agent, select a compatible Linux daemon and turn on **
 | **Unavailable** | The selected daemon cannot enforce it |
 | **Required** | The daemon requires it for every agent |
 
-![The sandbox control in agent runtime settings](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-runtime.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-runtime.png" alt="The sandbox control in agent runtime settings" width="560" />
+</p>
 
 ## Require it for every agent
 

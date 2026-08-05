@@ -8,6 +8,10 @@ Everything the console does rides a REST API at `https://api.agentconnect.md` �
 
 ## Create a key
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/api-key.png" alt="Create a personal API key" width="520" />
+</p>
+
 **Profile → API keys → New key**:
 
 - **Organization** — the org this key is bound to.

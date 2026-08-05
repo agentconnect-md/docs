@@ -6,6 +6,10 @@ hidden: false
 
 Use this pattern only when the source and destination are **two messaging workspaces you trust**. You should control or explicitly approve both environments, know who can read the destination, and accept its security and retention rules.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-integration.png" alt="Connect an agent to approved messaging platforms" width="640" />
+</p>
+
 > **Trust boundary:** Connecting an agent to two platforms gives it the ability to move content between them. It does not make an external customer, partner, or community workspace trusted. If either side is not approved for the information, use a one-time, reviewed, and redacted message instead.
 
 Here, _workspace_ means a Slack workspace, Discord server, Lark / Feishu tenant, or known Telegram group or chat — not the agent's code workspace.

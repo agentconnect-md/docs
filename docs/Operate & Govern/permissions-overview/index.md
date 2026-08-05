@@ -6,6 +6,10 @@ hidden: false
 
 AgentConnect applies permissions in layers. A broad permission never bypasses a narrower one.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-visibility-default.png" alt="Choose the default agent-to-agent visibility policy" width="760" />
+</p>
+
 For a person using the console, API, or Playground, access is evaluated in this order:
 
 1. **Organization membership** establishes the outer boundary.

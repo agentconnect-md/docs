@@ -8,7 +8,9 @@ One AgentConnect profile can use multiple social sign-in methods. AgentConnect C
 
 Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
-![Link another sign-in method from your profile](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/social-sign-in-methods.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/social-sign-in-methods.png" alt="Link another sign-in method from your profile" width="760" />
+</p>
 
 ## Link an account
 

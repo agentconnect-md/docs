@@ -14,7 +14,9 @@ Every session has its own audience in addition to the visibility of its agent:
 
 Session visibility can only narrow access. It never reveals a session to someone who cannot see the owning agent.
 
-![A session audience control](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-visibility.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-visibility.png" alt="A session audience control" width="420" />
+</p>
 
 ## Default audience
 

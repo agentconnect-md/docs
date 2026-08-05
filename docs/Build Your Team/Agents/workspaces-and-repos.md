@@ -6,6 +6,10 @@ hidden: false
 
 Every agent has a **workspace** — its working directory on the daemon. Choose its source when creating the agent, or change it later from the **Workspace** tab.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/workspace.png" alt="Browse an agent's workspace and authorized repositories" width="900" />
+</p>
+
 ## From scratch
 
 A fresh directory on the daemon. Files the agent creates live only on that machine and aren't version-controlled. Good for reporting agents, chat-ops, and anything that doesn't start from existing code.

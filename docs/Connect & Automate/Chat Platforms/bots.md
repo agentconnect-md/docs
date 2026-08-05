@@ -6,6 +6,10 @@ hidden: false
 
 A **bot** is the durable identity that lives in your chat platform: a Slack or Lark / Feishu app, Telegram bot, or Discord application. Integrations bind bots to agents; the bots themselves are managed in **Settings → Bots**, one card per platform.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/slack-integration.png" alt="Create or reuse a bot identity for an agent" width="640" />
+</p>
+
 ## The roster
 
 The roster shows the bot identities registered with the organization and the agents currently using them. Deleting an integration frees its bot for reuse without uninstalling it from the chat platform.

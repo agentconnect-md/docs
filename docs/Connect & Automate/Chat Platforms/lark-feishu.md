@@ -6,6 +6,10 @@ hidden: false
 
 AgentConnect Cloud and self-hosted deployments support international **Lark** and China-region **Feishu** as separate regional choices in the same setup flow.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/lark-feishu-integration.png" alt="Create a Feishu or Lark bot with the one-click setup" width="640" />
+</p>
+
 Cloud supports both bot integrations. Lark / Feishu social sign-in and **Follow Feishu / Lark access** currently require a self-hosted deployment.
 
 Each agent bot may use its own platform App ID. Optional permission sync uses a separate regional permission app and does not require those bot App IDs to match.

@@ -24,7 +24,9 @@ npx -y @agentconnect.md/cli run --api-url <your-control-plane-ws-url> --api-key 
 
 Copy it from the console (the key is **shown only once**) and run it. The page continues when the daemon comes online. The **Run** command starts the daemon in the foreground using the supplied credentials. The CLI downloads the appropriate daemon release on first use, then registers it and starts heartbeating.
 
-![Connect your daemon — example values replace the real URL, key, and daemon ID](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-daemon.png" alt="Connect your daemon with example values" width="640" />
+</p>
 
 ## Run it permanently
 

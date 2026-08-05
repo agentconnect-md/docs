@@ -6,6 +6,10 @@ hidden: false
 
 On **AgentConnect Cloud**, the recommended path is the built-in **Add to Slack** app. You approve the workspace installation; AgentConnect completes the OAuth flow and connects it without asking for an App manifest, token, signing secret, or callback URL.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/add-integration.png" alt="Install the built-in AgentConnect Slack app" width="640" />
+</p>
+
 ## Add AgentConnect to Slack on Cloud
 
 The built-in Slack app belongs to the built-in `agentconnect` agent — the preset agent AgentConnect creates for every organization. Place that agent on a daemon and choose its runtime and model first, then use either entry point:
@@ -28,6 +32,10 @@ Mention it to start a conversation; unmentioned follow-ups stay in the thread th
 Each discovered channel appears on the agent's Integrations card. Choose **@-mention** (the default), **any message**, or **Off** for inbound activation. Off does not uninstall the app or block scheduled and delegated outbound posts. See [In-conversation commands](/docs/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing session settings from Slack.
 
 ## Give an agent a custom Slack identity
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/slack-integration.png" alt="Connect a custom Slack bot identity" width="640" />
+</p>
 
 On the built-in agent, choose **Use a custom bot identity instead** when it needs a dedicated Slack App. Other agents open the custom-identity flow directly. This is also the normal path when a self-hosted deployment does not publish a built-in app.
 

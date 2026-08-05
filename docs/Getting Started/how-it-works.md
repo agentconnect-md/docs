@@ -6,7 +6,9 @@ hidden: false
 
 AgentConnect is built around one architectural rule: **the Control Plane is not on the live message path.** Agent execution happens inside a daemon in the environment you operate. Platform ingress reaches that daemon directly or through the optional Relay.
 
-![AgentConnect channels and events reach agents running on a daemon, while the Control Plane coordinates over a separate control path](https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/how-agentconnect-works.svg)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/how-agentconnect-works.svg" alt="AgentConnect channels and events reach agents running on a daemon, while the Control Plane coordinates over a separate control path" width="920" />
+</p>
 
 ## The four pieces
 
