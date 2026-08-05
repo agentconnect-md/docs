@@ -67,7 +67,8 @@ Use these commands to control the current conversation without asking the model 
 | Resume | `/resume` | `!resume` |
 | Queue a message | `/queue <message>` | `!queue <message>` |
 | Show session status | `/status` | `!status` |
-| Change runtime settings | `/models`, `/effort`, `/permission`, `/fast` | The same commands with `!` |
+| Change model, effort, or permission | `/models`, `/effort`, `/permission` | The same commands with `!` |
+| Toggle fast mode | `/fast on`, `/fast off` | `!fast on`, `!fast off` |
 
 **Stop** also mutes the conversation until someone mentions the agent again or uses **resume**. **Cancel** interrupts only the current turn.
 

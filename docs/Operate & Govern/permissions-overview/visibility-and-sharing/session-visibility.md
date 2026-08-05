@@ -27,7 +27,7 @@ Session visibility can only narrow access. It never reveals a session to someone
 | Schedule, webhook, or other automation | Everyone |
 | Delegated agent work | Inherits the source session |
 
-When an organization enables provider-based access, new sessions from that provider use the matching read-only provider audience instead of Everyone. Lark and Feishu access sync also covers one-to-one chats.
+When an organization enables provider-based access, new sessions from that provider override the normal default with the matching read-only provider audience. Lark and Feishu access sync also covers one-to-one chats.
 
 ## Follow Slack access
 
