@@ -4,15 +4,15 @@ excerpt: Control whether a transcript is available to Everyone, its owner, or pe
 hidden: false
 ---
 
-Every session has its own audience in addition to the visibility of its agent:
+Every session has its own audience, evaluated independently from the **Team visibility** of the Agent that ran it:
 
-- **Everyone** — every organization member who can see the agent.
+- **Everyone** — every organization member.
 - **Private** — only the person matched as the session owner.
 - **Slack members** — people whose linked Slack identity has access to the source conversation.
 - **Feishu / Lark members** — people whose linked regional identity belongs to the source chat.
 - **GitHub members** — people with access to the source repository.
 
-Session visibility can only narrow access. It never reveals a session to someone who cannot see the owning agent.
+Passing the session audience grants access only to that session's metadata, transcript, tool details, relationships, and live updates. It does not grant access to the owning Agent's page, configuration, workspace, or invocation controls. When a readable session belongs to an Agent outside your Team visibility, the console shows the Agent name as plain session context and a filter label, not as a link.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-visibility.png" alt="A session audience control" width="420" />
@@ -39,13 +39,11 @@ An organization Owner can enable **Settings → Session access → Follow Slack 
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-access.png" alt="Settings → Session access, with a provider sync toggle per platform" width="760" />
 </p>
 
-When enabled, a Slack channel or group-DM session requires:
-
-1. access to the owning agent;
-2. a linked identity from the same Slack workspace; and
-3. current Slack access to the source conversation.
+When enabled, a Slack channel or group-DM session requires a linked identity from the same Slack workspace and current Slack access to the source conversation. The owning Agent's Team visibility is not part of this session check.
 
 An active full member can read a public-channel session without joining that channel. Private channels and group DMs require current membership. Guests and Slack Connect users also require current conversation membership. One-to-one Slack DMs remain Private.
+
+If your linked Slack identity passes those conversation rules, you can open the synchronized session even when the Agent itself is outside your Team visibility.
 
 ## Follow Lark / Feishu access
 
@@ -59,7 +57,7 @@ See [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission
 
 An organization Owner can enable **Settings → Session access → Follow GitHub access**.
 
-- A public-repository session remains available to everyone who can see the agent.
+- A public-repository session remains available to every organization member.
 - A private-repository session requires a linked GitHub profile with current access to that repository.
 
 Linking GitHub does not install the GitHub App or grant repository access. It only supplies the identity used for the check.
@@ -73,6 +71,16 @@ For directly managed sessions, that owner may switch between **Everyone** and **
 Provider-bound sessions show a read-only audience. Change the organization's provider access setting rather than trying to reclassify one participant's copy.
 
 Sessions do not currently support a Selected member list or a public share link.
+
+## Delegated and handoff sessions
+
+An agent-to-agent child session inherits its parent session's audience because the handoff can carry source context into the child's transcript. Anyone who passes that inherited audience can follow the child session even when the target Agent is outside their Team visibility. The target Agent's name remains plain context; the Agent itself, its workspace, and its controls stay unavailable.
+
+Tightening a source session to Private also tightens its descendants. Widening a source session does not automatically publish a child that was already narrowed.
+
+## When a session link is unavailable
+
+AgentConnect uses the same unavailable response when a session does not exist, was removed, or falls outside your session audience, so the response does not reveal protected session existence. For a provider audience, confirm that the matching social account is linked and still has access to the source conversation or repository. A hidden owning Agent by itself does not make an otherwise readable session unavailable.
 
 ## Memory caveat
 

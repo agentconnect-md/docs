@@ -4,18 +4,20 @@ excerpt: How organization roles, resource visibility, session visibility, and ag
 hidden: false
 ---
 
-AgentConnect applies permissions in layers. A broad permission never bypasses a narrower one.
+AgentConnect evaluates the boundary that owns each requested resource. Organization membership remains the outer boundary, while Agent Team visibility and Session audience protect different things.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-visibility-default.png" alt="Choose the default agent-to-agent visibility policy" width="760" />
 </p>
 
-For a person using the console, API, or Playground, access is evaluated in this order:
+For a person using the console, API, or Playground:
 
 1. **Organization membership** establishes the outer boundary.
 2. A member's **role** decides what kind of actions they may take.
-3. **Resource visibility** decides which agents, daemons, schedules, [tools, and skill sources](/docs/tools-and-skills) they can see.
-4. **Session visibility** can narrow an individual transcript further.
+3. **Resource visibility** decides which agents, daemons, schedules, [tools, and skill sources](/docs/tools-and-skills) they can see and manage.
+4. **Session visibility** independently decides which sessions, transcripts, and session-scoped updates they can read.
+
+Session access is not inherited from the owning Agent. Passing a session's audience can reveal that session and the Agent's display name as plain context, but it does not reveal the Agent page, configuration, workspace, or invocation controls.
 
 Agent-to-agent calls use a separate, directional policy. A call from agent A to agent B is allowed only when both agents belong to the same organization, A may call B, and B accepts calls from A. Human team visibility and chat-channel membership do not grant or block that agent-to-agent edge.
 
@@ -47,4 +49,4 @@ These controls compose with the layers above. For example, seeing an agent in th
 
 ## A useful rule of thumb
 
-Use organization roles for broad responsibility, resource visibility for team audience, session visibility for transcript privacy, and agent visibility for the collaboration graph between agents.
+Use organization roles for broad responsibility, resource visibility for direct access to team resources, session visibility for transcript privacy, and agent visibility for the collaboration graph between agents. Treat the Agent and its sessions as separate authorization targets.

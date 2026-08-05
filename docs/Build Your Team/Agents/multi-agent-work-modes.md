@@ -90,6 +90,8 @@ The permission boundary is directional:
 
 Platform membership is not agent-call authorization: being in the same channel neither grants nor blocks an agent-to-agent call, which is decided only by the two policies above.
 
+The delegated child session inherits the parent session's audience. A member who can read that audience can follow the child even when the worker Agent is outside their Team visibility. This exposes only the child session and a plain Agent-name label; it does not expose the worker's Agent page, configuration, workspace, or controls.
+
 A visible mention of another agent's bot in a chat conversation can also bring that peer into the thread. Normal conversation triggers still apply, while the agent visibility policies decide whether direct delegation is allowed.
 
 Use this mode when one agent should own the plan and another should contribute a specific result. See [Agent visibility](/docs/agent-visibility) for the call policy and [Sessions](/docs/sessions) for transcript and audience boundaries.

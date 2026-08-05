@@ -53,7 +53,7 @@ GitHub webhook authorization is separate again: AgentConnect checks the current 
 | Slack direct message or shared conversation | Linked Slack workspace profile |
 | Lark or Feishu conversation | Linked regional profile; current membership when Follow access is on |
 
-Linking several methods lets one AgentConnect profile satisfy several independent checks. It does not let one provider substitute for another. Public GitHub sessions remain available to anyone who can see the agent.
+Linking several methods lets one AgentConnect profile satisfy several independent checks. It does not let one provider substitute for another. Public GitHub sessions remain available to every organization member, independently from the owning Agent's Team visibility.
 
 ## Unlinking a provider
 

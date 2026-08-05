@@ -46,7 +46,7 @@ A linked Lark or Feishu identity can match a private direct-message session. Whe
 
 ### GitHub
 
-When the organization enables **Follow GitHub access**, sessions from a public repository remain available to everyone who can see the agent. A private-repository session requires a linked GitHub profile with current repository access.
+When the organization enables **Follow GitHub access**, sessions from a public repository remain available to every organization member. A private-repository session requires a linked GitHub profile with current repository access. The owning Agent's Team visibility is separate from both checks.
 
 Linking GitHub can therefore make an existing private-repository session available. Unlinking GitHub removes that match but does not uninstall the GitHub App or change repository grants.
 
