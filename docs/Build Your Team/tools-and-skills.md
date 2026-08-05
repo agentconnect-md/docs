@@ -77,6 +77,10 @@ AgentConnect installs enabled skills on the owning daemon. Pin a tag or commit w
 
 Open the agent and select its **Tools & Skills** tab.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-tools-skills.png" alt="An agent's Tools & Skills tab: MCP servers and skill sources switched on per agent" width="820" />
+</p>
+
 Under **Tools**, turn on the MCP providers that agent should receive. The list combines providers registered by the organization with servers reported by the agent's daemon, then filters them by the selected runtime's capabilities.
 
 Under **Skills**:

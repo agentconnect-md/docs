@@ -14,6 +14,10 @@ hidden: false
 
 Use the session list to find work by agent or source and follow scheduled runs back to the schedule that created them. When several agents participate in the same supported conversation, the list groups their sessions into one row.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/sessions-list.png" alt="The session list, filtered by agent, integration, channel, or trigger" width="900" />
+</p>
+
 ## Review a run
 
 Each session records its source, agent, participants, daemon, runtime and model, along with duration, token usage, cost when available, and tool activity. Where the provider supplies it, the session links back to the original conversation.
