@@ -7,7 +7,7 @@ hidden: false
 **Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, webhooks, schedules, or the Playground. The list contains only work allowed by both the owning agent's team visibility and its [session audience](/docs/session-visibility).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-detail.png" alt="A session transcript" width="900" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-detail.png" alt="A session transcript with the agent's plan, file edits, and tool output expanded" width="900" />
 </p>
 
 ## Find a session
