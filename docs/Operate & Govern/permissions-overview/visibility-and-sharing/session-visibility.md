@@ -86,7 +86,7 @@ AgentConnect uses the same unavailable response when a session does not exist, w
 
 For AgentConnect-managed or supported external memory, making an Everyone session Private stops future shared-memory capture after the daemon applies the change. It does not remove information already captured while the session was visible to Everyone.
 
-Provider-scoped sessions are excluded from shared-memory capture and recall. Runtime-native memory has no per-session AgentConnect gate, so a private transcript can still influence what that runtime recalls later.
+Provider scope alone does not exclude a session from shared-memory capture or recall. A Private session can still recall existing agent-scoped memory. Runtime-native memory has no per-session AgentConnect gate, so a private transcript can still influence what that runtime recalls later.
 
 ## Linked identities and AgentConnect OSS
 
