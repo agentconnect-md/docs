@@ -46236,7 +46236,7 @@
         "tags": [
           "Sessions"
         ],
-        "description": "Proxies a page of the session's chat history live from the owning daemon (resolved via the row's agentId); 503 if the agent is unplaced or its daemon is offline.",
+        "description": "Proxies a page of the session's chat history live from the daemon recorded on the session; 503 if that daemon is unknown or offline.",
         "parameters": [
           {
             "name": "orgId",
@@ -46498,7 +46498,7 @@
         "tags": [
           "Sessions"
         ],
-        "description": "Proxies one byte slice of a tool call's untruncated ToolBody JSON live from the owning daemon; the console pages by offset until nextOffset is null. 503 if the agent is unplaced or its daemon is offline.",
+        "description": "Proxies one byte slice of a tool call's untruncated ToolBody JSON live from the daemon recorded on the session; the console pages by offset until nextOffset is null. 503 if that daemon is unknown or offline.",
         "parameters": [
           {
             "name": "orgId",
@@ -47047,11 +47047,31 @@
                               },
                               "costAmount": {
                                 "type": "number"
+                              },
+                              "byAgent": {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {
+                                  "type": "number"
+                                }
+                              },
+                              "byModel": {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {
+                                  "type": "number"
+                                }
                               }
                             },
                             "required": [
                               "start",
-                              "costAmount"
+                              "costAmount",
+                              "byAgent",
+                              "byModel"
                             ],
                             "additionalProperties": false
                           }
