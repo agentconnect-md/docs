@@ -4,17 +4,17 @@ excerpt: Configure AgentConnect OSS topology, secrets, authentication, provider 
 hidden: false
 ---
 
-The default Docker Compose stack needs no configuration and stays on loopback. Use `compose.env` only for deployment topology and bootstrap secrets, then use Tenant Admin for authentication, provider apps, and deployment options.
+The default Docker Compose stack needs no configuration and stays on loopback. Use `compose.env` only for deployment topology and bootstrap secrets, then use Setup Server for authentication, provider apps, and deployment options.
 
 ## What is configured where
 
 | Surface | Owns |
 | --- | --- |
 | `compose.env` | Images, ports, public URLs, database secrets, Vault, and Logto endpoints |
-| Tenant Admin | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
+| Setup Server | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
 | AgentConnect console | Organizations, agents, integrations, environments, tools, and skills |
 
-Tenant Admin is the supported configuration surface for browser authentication, provider apps, displayed sign-in methods, and preset-agent behavior. It saves deployment settings and write-only provider secrets in PostgreSQL.
+Setup Server is the supported configuration surface for browser authentication, provider apps, displayed sign-in methods, and preset-agent behavior. It saves deployment settings and write-only provider secrets in PostgreSQL.
 
 ## Compose environment
 
@@ -56,11 +56,11 @@ Published application and migration images currently target `linux/amd64`.
 | Control Plane | `AGENTCONNECT_CP_PORT` | `8080` |
 | Relay | `AGENTCONNECT_RELAY_PORT` | `8090` |
 | PostgreSQL | `AGENTCONNECT_POSTGRES_PORT` | `5432` |
-| Tenant Admin | Fixed, loopback only | `8091` |
+| Setup Server | Fixed, loopback only | `8091` |
 | Logto sign-in | Optional overlay | `3001` |
 | Logto Console | Optional overlay | `3002` |
 
-`AGENTCONNECT_BIND_ADDRESS` defaults to `127.0.0.1` for Web, Control Plane, and Relay. PostgreSQL, Tenant Admin, and the local Logto overlay remain loopback-only in the supplied Compose files.
+`AGENTCONNECT_BIND_ADDRESS` defaults to `127.0.0.1` for Web, Control Plane, and Relay. PostgreSQL, Setup Server, and the local Logto overlay remain loopback-only in the supplied Compose files.
 
 ## Network and public URLs
 
@@ -77,10 +77,10 @@ Do not add a trailing slash.
 
 For a remote daemon or network deployment, replace these defaults with reachable origins. Use HTTPS for browser and callback origins, and `wss://` for the daemon-facing Relay URL. A reverse proxy must preserve WebSocket upgrades for both Control Plane and Relay connections.
 
-Set the final public URLs before creating GitHub or Slack Apps. Tenant Admin derives their callback manifests from these values. If the URLs change later, recreate Tenant Admin with the same environment and Compose overrides before updating the provider Apps. For the base stack:
+Set the final public URLs before creating GitHub or Slack Apps. Setup derives their callback manifests from these values. If the URLs change later, recreate Setup Server with the same environment and Compose overrides before updating the provider Apps. For the base stack:
 
 ```bash
-docker compose --env-file compose.env up -d --force-recreate tenant-admin
+docker compose --env-file compose.env up -d --force-recreate setup-server
 ```
 
 After updating the provider Apps, recreate the runtime services with the same environment and Compose overrides:
@@ -91,9 +91,9 @@ docker compose --env-file compose.env up -d --force-recreate control-plane relay
 
 > Do not publish a no-auth stack or its default secrets. Compose is a single-host topology, not an HA deployment.
 
-## Tenant Admin
+## Setup Server
 
-Tenant Admin is the browser-based deployment configuration surface at [http://localhost:8091](http://localhost:8091). It is included in the base stack and always binds to loopback.
+Setup Server provides the browser-based AgentConnect Setup surface at [http://localhost:8091](http://localhost:8091). It is included in the base stack and always binds to loopback.
 
 Use it to:
 
@@ -108,7 +108,7 @@ Saved changes are loaded when services start. Apply them with:
 docker compose restart control-plane relay web
 ```
 
-If Compose runs on another host, forward Tenant Admin instead of exposing it publicly:
+If Compose runs on another host, forward Setup Server instead of exposing it publicly:
 
 ```bash
 ssh -L 8091:127.0.0.1:8091 operator@host.example
@@ -120,7 +120,7 @@ For the initial administrator and Logto Cloud or external Logto OSS setup, conti
 
 ### Preset agent
 
-New organizations receive a built-in `agentconnect` agent by default. In Tenant Admin, open **Options**, clear **Enable preset Agents**, and save. This prevents future provisioning and backfills; it does not delete agents that already exist.
+New organizations receive a built-in `agentconnect` agent by default. In Setup, open **Options**, clear **Enable preset Agents**, and save. This prevents future provisioning and backfills; it does not delete agents that already exist.
 
 ## Database and bootstrap secrets
 
@@ -144,7 +144,7 @@ Rotating `AGENTCONNECT_API_KEY_PEPPER` invalidates existing daemon and personal 
 
 ## Secret storage
 
-Secrets shown as write-only in AgentConnect or Tenant Admin still need encryption at rest. The default `SECRET_CIPHER=none` stores them as plaintext in PostgreSQL. Use HashiCorp Vault Transit for a production or network-exposed deployment.
+Secrets shown as write-only in AgentConnect or Setup still need encryption at rest. The default `SECRET_CIPHER=none` stores them as plaintext in PostgreSQL. Use HashiCorp Vault Transit for a production or network-exposed deployment.
 
 Create a Transit key and a policy that can encrypt and decrypt with it:
 
@@ -163,7 +163,7 @@ path "transit/decrypt/agentconnect-cp" {
 }
 ```
 
-Pass the Vault settings to both Control Plane and Tenant Admin so they use the same cipher root:
+Pass the Vault settings to both Control Plane and Setup Server so they use the same cipher root:
 
 ```yaml
 # compose.vault.yaml
@@ -175,7 +175,7 @@ services:
       VAULT_TRANSIT_KEY: ${VAULT_TRANSIT_KEY:-agentconnect-cp}
       VAULT_TRANSIT_MOUNT: ${VAULT_TRANSIT_MOUNT:-transit}
       VAULT_TOKEN: ${VAULT_TOKEN}
-  tenant-admin:
+  setup-server:
     environment: *vault
 ```
 
@@ -183,7 +183,7 @@ Use a policy-scoped token rather than a Vault root token, then recreate both ser
 
 ```bash
 docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
-  up -d --force-recreate control-plane tenant-admin
+  up -d --force-recreate control-plane setup-server
 ```
 
 After taking a database backup, encrypt values that were previously stored as plaintext:
@@ -200,7 +200,7 @@ The command is resumable and can also be rerun after rotating the Transit key. V
 Configure the deployment GitHub App when agents need private repositories, repository-scoped Git credentials, or GitHub issue and pull-request triggers.
 
 1. Set the final Web, Control Plane, and Relay public URLs.
-2. In Tenant Admin, open **GitHub** and choose **Create GitHub App**. The manifest flow fills the current callbacks, events, and permissions.
+2. In Setup, open **GitHub** and choose **Create GitHub App**. The manifest flow fills the current callbacks, events, and permissions.
 3. If you use an existing App, save its identity and secrets, then choose **Check match**.
 4. Restart Control Plane and Relay.
 5. In AgentConnect, open **Settings → GitHub**, install the App, and select its repositories.
@@ -214,30 +214,30 @@ The generated App requests:
 
 AgentConnect narrows each installation token to one authorized repository and the agent's repository grant. Installation owners still choose which repositories are available.
 
-GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Tenant Admin can create the App for sign-in and repository installation but leaves webhook delivery disabled until you provide HTTPS ingress.
+GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Setup can create the App for sign-in and repository installation but leaves webhook delivery disabled until you provide HTTPS ingress.
 
 See [GitHub](/docs/github) for triggers, reviews, and repository behavior.
 
 ## Slack deployment App
 
-Tenant Admin can create one deployment Slack App for the built-in `agentconnect` agent and optional Slack sign-in. This does not replace the recommended per-agent bot integrations described in [Slack](/docs/slack).
+Setup can create one deployment Slack App for the built-in `agentconnect` agent and optional Slack sign-in. This does not replace the recommended per-agent bot integrations described in [Slack](/docs/slack).
 
 1. Configure reachable HTTPS Logto, Web, Control Plane, and Relay origins.
-2. Create a temporary Slack App configuration token when Tenant Admin prompts for one.
-3. Open **Slack** in Tenant Admin and choose **Create Slack App**.
+2. Create a temporary Slack App configuration token when Setup prompts for one.
+3. Open **Slack** in Setup and choose **Create Slack App**.
 4. Restart Control Plane and Relay.
 
-Tenant Admin builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google for the local bootstrap.
+Setup builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google for the local bootstrap.
 
 ## Google sign-in
 
 Google is the simplest provider for local sign-in. The bundled topology uses bare `localhost`, which Google accepts for local Web OAuth clients.
 
-1. Choose Google during Tenant Admin bootstrap, or open its **Google** card later.
-2. Create a Web OAuth client in Google Auth Platform using the exact origins and redirect URIs shown by Tenant Admin.
+1. Choose Google during Setup bootstrap, or open its **Google** card later.
+2. Create a Web OAuth client in Google Auth Platform using the exact origins and redirect URIs shown by Setup.
 3. Save the client ID and secret, then restart Control Plane and Web.
 
-Tenant Admin creates or updates the matching Logto connector and can verify it. Compare the displayed Google origins and redirect URIs manually.
+Setup creates or updates the matching Logto connector and can verify it. Compare the displayed Google origins and redirect URIs manually.
 
 ## Lark and Feishu tenant Apps
 
@@ -299,4 +299,4 @@ Continue with [Use Mem0 OSS as external memory](/docs/external-memory) to create
 - Put Web, Control Plane, Relay, and Logto behind HTTPS.
 - Preserve WebSocket upgrades.
 - Back up PostgreSQL and test restores.
-- Keep Tenant Admin and PostgreSQL off the public network.
+- Keep Setup Server and PostgreSQL off the public network.
