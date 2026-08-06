@@ -26,9 +26,9 @@ docker compose -f compose.yaml -f compose.logto.yaml up -d
 
 Open:
 
-- Logto Console: [http://admin.agentconnect.localhost:3002](http://admin.agentconnect.localhost:3002)
+- Logto Console: [http://localhost:3002](http://localhost:3002)
 - Tenant Admin: [http://localhost:8091](http://localhost:8091)
-- AgentConnect: [http://app.agentconnect.localhost:3000](http://app.agentconnect.localhost:3000)
+- AgentConnect: [http://localhost:3000](http://localhost:3000)
 
 Complete Logto's initial Console onboarding if this is a new database.
 
@@ -52,13 +52,11 @@ Tenant Admin creates or updates the AgentConnect SPA, its redirects, the selecte
 
 | Provider | Local bootstrap |
 | --- | --- |
-| Google | Works on localhost; create the Web OAuth client with the exact values shown |
+| Google | Recommended locally; create the Web OAuth client with the exact bare localhost values shown |
 | GitHub | Tenant Admin creates one App for repository integration and sign-in |
 | Slack | Requires HTTPS Logto, Web, Control Plane, and Relay origins |
 
-Google is the shortest local path. Paste its client ID and secret into Tenant Admin and choose **Save Google OAuth and configure Logto**.
-
-For GitHub, choose **Create GitHub App and configure Logto** and approve the manifest on GitHub. The local HTTP setup leaves webhook delivery disabled until you add reachable HTTPS ingress.
+Google is the shortest local path. Paste its client ID and secret into Tenant Admin and choose **Save Google OAuth and configure Logto**. The initial provider picker disables Slack until all required public origins use HTTPS.
 
 ### 4. Claim the first administrator
 
@@ -169,7 +167,7 @@ Without an API Resource, AgentConnect falls back to the SPA ID token. That is su
 Tenant Admin manages the Logto connectors for GitHub, Google, and Slack from the corresponding provider cards:
 
 - **GitHub:** one AgentConnect GitHub App can handle repository integration and sign-in.
-- **Google:** create the OAuth client manually with the exact callback values Tenant Admin shows.
+- **Google:** create the OAuth client manually with the exact origin and callback values Tenant Admin shows; the bundled local values use bare `localhost`.
 - **Slack:** one deployment App can handle workspace installation and a separate Slack OIDC sign-in flow; all public origins must use HTTPS.
 
 The Lark and Feishu cards configure regional tenant Apps for trusted-workspace bot admission. They do not automatically add Lark or Feishu as Logto sign-in methods. See [Lark and Feishu tenant Apps](/docs/deployment-and-configuration#lark-and-feishu-tenant-apps).

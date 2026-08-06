@@ -68,12 +68,12 @@ Containers use Docker service names internally. Browsers, daemons, provider call
 
 | Variable | Local default |
 | --- | --- |
-| `AGENTCONNECT_PUBLIC_WEB_URL` | `http://app.agentconnect.localhost:3000` |
-| `AGENTCONNECT_PUBLIC_CP_URL` | `http://api.agentconnect.localhost:8080` |
-| `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://relay.agentconnect.localhost:8090` |
+| `AGENTCONNECT_PUBLIC_WEB_URL` | `http://localhost:3000` |
+| `AGENTCONNECT_PUBLIC_CP_URL` | `http://localhost:8080` |
+| `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://localhost:8090` |
 | `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090` |
 
-The `.localhost` names resolve to loopback without DNS. Do not add a trailing slash.
+Do not add a trailing slash.
 
 For a remote daemon or network deployment, replace these defaults with reachable origins. Use HTTPS for browser and callback origins, and `wss://` for the daemon-facing Relay URL. A reverse proxy must preserve WebSocket upgrades for both Control Plane and Relay connections.
 
@@ -227,11 +227,11 @@ Tenant Admin can create one deployment Slack App for the built-in `agentconnect`
 3. Open **Slack** in Tenant Admin and choose **Create Slack App**.
 4. Restart Control Plane and Relay.
 
-Tenant Admin builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google or GitHub for the local bootstrap.
+Tenant Admin builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google for the local bootstrap.
 
 ## Google sign-in
 
-Google is the simplest provider for local sign-in:
+Google is the simplest provider for local sign-in. The bundled topology uses bare `localhost`, which Google accepts for local Web OAuth clients.
 
 1. Choose Google during Tenant Admin bootstrap, or open its **Google** card later.
 2. Create a Web OAuth client in Google Auth Platform using the exact origins and redirect URIs shown by Tenant Admin.
