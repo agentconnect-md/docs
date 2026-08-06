@@ -47,11 +47,11 @@ If your linked Slack identity passes those conversation rules, you can open the 
 
 ## Follow Lark / Feishu access
 
-Lark and Feishu bot integrations are available on AgentConnect Cloud. Social sign-in and **Follow Feishu / Lark access** currently require a self-hosted deployment with a matching regional permission app.
+Lark and Feishu bot integrations are available on AgentConnect Cloud. Social sign-in and **Follow Feishu / Lark access** currently require a self-hosted deployment with a matching regional Login App and a linked identity that exposes the provider's `union_id`.
 
-When enabled, the session audience follows current membership in the source chat, including one-to-one chats. One regional permission app can check chats served by multiple AgentConnect bot apps; those bot App IDs do not need to match.
+When enabled, the session audience follows current membership in the source chat, including one-to-one chats. AgentConnect checks membership with the installed bot App for that chat. The regional Login App limits admitted bot Apps to the same trusted workspace; their App IDs do not need to match.
 
-See [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission-sync) for the self-hosted setup.
+See [Logto authentication](/docs/logto-authentication#lark-and-feishu-identities) for the self-hosted setup.
 
 ## Follow GitHub access
 
@@ -92,4 +92,4 @@ Provider scope alone does not exclude a session from shared-memory capture or re
 
 Provider audiences depend on a matching [linked social account](/docs/social-account-linking). Organization membership, the Owner role, a personal API key, or a different provider identity does not substitute for it.
 
-AgentConnect OSS requires optional OIDC sign-in and provider identity lookup for these checks. Slack additionally needs workspace and conversation access checks; Lark and Feishu need a token-storing regional connector plus a permission app; GitHub needs repository checks. See [Logto authentication](/docs/logto-authentication).
+AgentConnect OSS requires optional OIDC sign-in and provider identity lookup for these checks. Slack additionally needs workspace and conversation access checks; Lark and Feishu need a regional Login App, `union_id` in the linked identity, and bot membership permissions; GitHub needs repository checks. See [Logto authentication](/docs/logto-authentication).

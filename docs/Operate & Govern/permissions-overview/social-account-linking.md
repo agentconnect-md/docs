@@ -4,7 +4,7 @@ excerpt: Use several social sign-in methods with one AgentConnect profile.
 hidden: false
 ---
 
-One AgentConnect profile can use multiple social sign-in methods. AgentConnect Cloud currently offers **GitHub**, **Google**, and **Slack**. A self-hosted deployment can additionally enable **Lark** and **Feishu** with the regional identity setup described in [Logto authentication](/docs/logto-authentication#lark-and-feishu-permission-sync).
+One AgentConnect profile can use multiple social sign-in methods. AgentConnect Cloud currently offers **GitHub**, **Google**, and **Slack**. A self-hosted deployment can additionally configure **Lark** and **Feishu** identities as described in [Logto authentication](/docs/logto-authentication#lark-and-feishu-identities).
 
 Open the avatar menu → **Your profile** and find **Sign-in methods**.
 
@@ -42,7 +42,7 @@ A linked Slack identity can match the owner of a private Slack direct-message se
 
 ### Lark and Feishu on self-hosted deployments
 
-A linked Lark or Feishu identity can match a private direct-message session. When **Follow Feishu / Lark access** is enabled, AgentConnect checks current chat membership for synchronized sessions. One regional permission app can evaluate chats served by multiple bot apps.
+A linked Lark or Feishu identity can match a private direct-message session when its Logto record contains the provider's cross-App `union_id`. When **Follow Feishu / Lark access** is enabled, AgentConnect uses each installed bot to check current membership in its source chat. The deployment's regional Login App keeps those bot Apps within one trusted workspace.
 
 ### GitHub
 
@@ -58,4 +58,4 @@ AgentConnect OSS does not enable social sign-in by default. To offer linked acco
 
 The operator must also enable Logto account linking, configure provider identity lookup, and provide email delivery for providers that require an ownership code. Local no-auth mode does not infer a linked provider identity.
 
-See [Logto authentication](/docs/logto-authentication#4-enable-social-account-linking) for the complete setup.
+See [Logto authentication](/docs/logto-authentication#link-additional-social-accounts) for the complete setup.

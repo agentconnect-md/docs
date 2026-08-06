@@ -12,7 +12,7 @@ AgentConnect Cloud and self-hosted deployments support international **Lark** an
 
 Cloud supports both bot integrations. Lark / Feishu social sign-in and **Follow Feishu / Lark access** currently require a self-hosted deployment.
 
-Each agent bot may use its own platform App ID. Optional permission sync uses a separate regional permission app and does not require those bot App IDs to match.
+Each agent bot may use its own platform App ID. The deployment keeps one regional Login App as a tenant anchor, so it can admit multiple bot Apps from the same trusted workspace without requiring their App IDs to match. When **Follow Feishu / Lark access** is enabled, AgentConnect checks a session's current chat membership through that session's installed bot App. See [Lark and Feishu identities](/docs/logto-authentication#lark-and-feishu-identities) for the self-hosted identity setup.
 
 The recommended setup creates a self-built app through the platform's official authorization flow and connects its permissions, event subscription, and credentials automatically.
 
