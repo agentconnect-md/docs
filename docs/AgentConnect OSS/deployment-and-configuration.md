@@ -77,7 +77,11 @@ The `.localhost` names resolve to loopback without DNS. Do not add a trailing sl
 
 For a remote daemon or network deployment, replace these defaults with reachable origins. Use HTTPS for browser and callback origins, and `wss://` for the daemon-facing Relay URL. A reverse proxy must preserve WebSocket upgrades for both Control Plane and Relay connections.
 
-Set the final public URLs before creating GitHub or Slack Apps. Tenant Admin derives their callback manifests from these values. If the URLs change later, restart Tenant Admin before updating the provider Apps.
+Set the final public URLs before creating GitHub or Slack Apps. Tenant Admin derives their callback manifests from these values. If the URLs change later, recreate Tenant Admin with the same environment and Compose overrides before updating the provider Apps. For the base stack:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate tenant-admin
+```
 
 > Do not publish a no-auth stack or its default secrets. Compose is a single-host topology, not an HA deployment.
 
@@ -244,9 +248,12 @@ Bot setup and delivery modes are documented in [Lark / Feishu](/docs/lark-feishu
 Mem0 is not part of the AgentConnect Compose stack. AgentConnect works without it. Deploy Mem0 only when agents should use durable external memory that you operate.
 
 1. Start [Mem0 OSS](https://docs.mem0.ai/open-source/setup) and make its API reachable from each participating daemon.
-2. Build the first-party wrapper from the matching AgentConnect release:
+2. On each participating daemon machine, check out the matching AgentConnect release and build the first-party wrapper. This example keeps the source at `/opt/agentconnect`, matching the configuration below:
 
 ```bash
+git clone https://github.com/agentconnect-md/agentconnect.git /opt/agentconnect
+cd /opt/agentconnect
+git checkout vX.Y.Z
 corepack enable
 pnpm install --frozen-lockfile
 pnpm --filter @agentconnect.md/memory-plugin-mem0 build
