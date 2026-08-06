@@ -174,7 +174,7 @@ Logto documents the identity-editing behavior in [Account settings by Account AP
 2. Confirm Tenant Admin opens only for a user with the `ADMIN` role.
 3. Open **Your profile → Sign-in methods** and link a second configured provider.
 4. Confirm AgentConnect continues calling the Control Plane after the original access token expires.
-5. In Tenant Admin, use **Check match** for Logto and each configured provider.
+5. In Tenant Admin, run each available provider check and manually compare any callbacks marked as unverifiable.
 
 An immediate `401` usually means the browser API resource and Control Plane audience do not match. A provider button that reaches a Logto error page usually means the connector is missing from the sign-in experience.
 

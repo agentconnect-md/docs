@@ -237,7 +237,7 @@ Google is the simplest provider for local sign-in:
 2. Create a Web OAuth client in Google Auth Platform using the exact origins and redirect URIs shown by Tenant Admin.
 3. Save the client ID and secret, then restart Control Plane and Web.
 
-Tenant Admin creates or updates the matching Logto connector and can check the saved callback settings.
+Tenant Admin creates or updates the matching Logto connector and can verify it. Compare the displayed Google origins and redirect URIs manually.
 
 ## Lark and Feishu tenant Apps
 
