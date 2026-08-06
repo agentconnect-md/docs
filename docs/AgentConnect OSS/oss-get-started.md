@@ -79,6 +79,8 @@ Continue with [Logto authentication](/docs/logto-authentication). The local over
 
 When you use the overlay, keep both `-f` arguments in later `up`, `pull`, and `down` commands.
 
+For hosted production sign-in, skip the overlay and connect a [Logto Cloud tenant](/docs/logto-authentication#logto-cloud) instead.
+
 ## Logs and updates
 
 Follow the stack:

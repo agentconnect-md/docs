@@ -1,6 +1,6 @@
 ---
 title: 🔐 Logto authentication
-excerpt: Add Logto-backed sign-in to AgentConnect OSS with the bundled local overlay or an external production tenant.
+excerpt: Add Logto-backed sign-in to AgentConnect OSS with Logto Cloud, external Logto OSS, or the bundled local overlay.
 hidden: false
 ---
 
@@ -11,7 +11,8 @@ The base Compose stack keeps authentication off for local evaluation. Choose one
 | Path | Use it for |
 | --- | --- |
 | Bundled Logto OSS overlay | Local evaluation without DNS or TLS |
-| External Logto OSS or Cloud tenant | Network and production deployments |
+| Logto Cloud | Hosted production sign-in |
+| External Logto OSS | Self-managed production sign-in |
 
 ## Local sign-in with the bundled overlay
 
@@ -76,23 +77,61 @@ docker compose restart control-plane relay web
 
 The bundled overlay is for local evaluation. It uses the SPA's ID token until you add an API Resource; use the production setup below before exposing AgentConnect to a network.
 
-## Production or external Logto
+## Production sign-in
 
-Run Logto OSS separately, or use a Logto Cloud plan that supports a custom API Resource. Configure only the final service origins and Logto endpoints in `compose.env` before opening Tenant Admin:
+A production browser session needs final HTTPS origins and one custom API Resource. Set the AgentConnect origins in `compose.env` before configuring provider Apps:
 
 ```dotenv
 AGENTCONNECT_PUBLIC_WEB_URL=https://app.agentconnect.example
 AGENTCONNECT_PUBLIC_CP_URL=https://api.agentconnect.example
 AGENTCONNECT_PUBLIC_RELAY_URL=https://relay.agentconnect.example
 AGENTCONNECT_RELAY_DAEMON_URL=wss://relay.agentconnect.example
+```
 
+Then choose Logto Cloud or an external Logto OSS deployment.
+
+### Logto Cloud
+
+Logto Cloud is the shortest hosted path:
+
+1. Create or select a tenant in [Logto Cloud](https://cloud.logto.io/).
+2. Use a plan that includes at least one custom API Resource. The Free plan does not currently include custom API Resources, so production AgentConnect sign-in requires Pro or higher. See [Logto pricing](https://logto.io/pricing).
+3. Copy the tenant's canonical `https://<tenant-id>.logto.app` endpoint.
+4. Add the Logto service locations to `compose.env`:
+
+```dotenv
+LOGTO_ENDPOINT=https://tenant-id.logto.app
+LOGTO_ADMIN_ENDPOINT=https://cloud.logto.io
+OIDC_ISSUER=https://tenant-id.logto.app/oidc
+LOGTO_MGMT_ENDPOINT=https://tenant-id.logto.app
+```
+
+If sign-in uses a custom domain, use it for `LOGTO_ENDPOINT` and `OIDC_ISSUER`. Keep `LOGTO_MGMT_ENDPOINT` on the canonical `logto.app` tenant because Logto Cloud does not accept Management API token requests through a custom domain.
+
+In Logto Console, create a **Machine-to-machine** application and assign the built-in **Logto Management API access** role. The Management API resource entered during Tenant Admin bootstrap must be:
+
+```text
+https://tenant-id.logto.app/api
+```
+
+### External Logto OSS
+
+Run Logto OSS behind its final HTTPS origins, then add them to `compose.env`:
+
+```dotenv
 LOGTO_ENDPOINT=https://login.agentconnect.example
 LOGTO_ADMIN_ENDPOINT=https://admin.agentconnect.example
 OIDC_ISSUER=https://login.agentconnect.example/oidc
 LOGTO_MGMT_ENDPOINT=https://login.agentconnect.example
 ```
 
-For Logto Cloud, use the tenant's canonical `logto.app` origin for `LOGTO_MGMT_ENDPOINT`, even when sign-in uses a custom domain.
+Create a **Machine-to-machine** application, assign **Logto Management API access**, and keep the default Management API resource:
+
+```text
+https://default.logto.app/api
+```
+
+### Connect Tenant Admin
 
 Start the base stack with the environment file:
 
@@ -100,9 +139,9 @@ Start the base stack with the environment file:
 docker compose --env-file compose.env up -d
 ```
 
-Create the Management API M2M application in that tenant, assign **Logto Management API access**, and enter its credentials in Tenant Admin. Tenant Admin will create or adopt the browser SPA and configure the supported social connectors.
+Open Tenant Admin, choose **Continue setup**, and enter the M2M App ID, App Secret, and the Management API resource for the selected Logto deployment. Tenant Admin verifies the credentials, creates or adopts the browser SPA, and configures the supported social connectors.
 
-Configure the browser application, API Resource, displayed sign-in methods, provider Apps, and their credentials in Tenant Admin.
+Choose the first sign-in provider, sign in, and sign in once more after Tenant Admin assigns the `ADMIN` role. Then configure the browser API Resource, displayed sign-in methods, provider Apps, and their credentials in Tenant Admin.
 
 ## Create the Control Plane API Resource
 
