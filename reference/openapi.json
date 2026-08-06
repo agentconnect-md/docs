@@ -16,6 +16,120 @@
     "schemas": {}
   },
   "paths": {
+    "/v1\\ngh/runtime-config": {
+      "get": {
+        "operationId": "getRuntimeConfig",
+        "summary": "Get public runtime configuration",
+        "tags": [
+          "Deployment"
+        ],
+        "description": "Returns the secret-free browser authentication configuration loaded for this process. A deployment change takes effect after restart.",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "schemaVersion": {
+                      "type": "string",
+                      "enum": [
+                        "1"
+                      ]
+                    },
+                    "revision": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "config": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "auth": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "endpoint": {
+                                      "type": "string",
+                                      "format": "uri"
+                                    },
+                                    "issuer": {
+                                      "type": "string",
+                                      "format": "uri"
+                                    },
+                                    "appId": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "apiResource": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "format": "uri"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "socialProviders": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "endpoint",
+                                    "issuer",
+                                    "appId",
+                                    "apiResource",
+                                    "socialProviders"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "auth"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "schemaVersion",
+                    "revision",
+                    "config"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1\\ngh/orgs": {
       "get": {
         "operationId": "listOrganizations",
@@ -44493,6 +44607,15 @@
                         "type": "string"
                       }
                     },
+                    "agentNames": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
                     "integrations": {
                       "type": "array",
                       "items": {
@@ -44603,6 +44726,7 @@
                   },
                   "required": [
                     "agents",
+                    "agentNames",
                     "integrations",
                     "channels",
                     "triggers"
@@ -44791,6 +44915,16 @@
                           },
                           "agentId": {
                             "type": "string"
+                          },
+                          "agentName": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
                           },
                           "title": {
                             "anyOf": [
@@ -45054,6 +45188,7 @@
                           "sessionId",
                           "sessionKey",
                           "agentId",
+                          "agentName",
                           "title",
                           "status",
                           "lastActivityAt",
@@ -45153,6 +45288,16 @@
                                 },
                                 "agentId": {
                                   "type": "string"
+                                },
+                                "agentName": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
                                 },
                                 "title": {
                                   "anyOf": [
@@ -45416,6 +45561,7 @@
                                 "sessionId",
                                 "sessionKey",
                                 "agentId",
+                                "agentName",
                                 "title",
                                 "status",
                                 "lastActivityAt",
@@ -45607,6 +45753,16 @@
                             "agentId": {
                               "type": "string"
                             },
+                            "agentName": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "platform": {
                               "type": "string"
                             },
@@ -45624,6 +45780,7 @@
                           "required": [
                             "id",
                             "agentId",
+                            "agentName",
                             "platform",
                             "title"
                           ],
@@ -45645,6 +45802,16 @@
                           "agentId": {
                             "type": "string"
                           },
+                          "agentName": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "platform": {
                             "type": "string"
                           },
@@ -45662,6 +45829,7 @@
                         "required": [
                           "id",
                           "agentId",
+                          "agentName",
                           "platform",
                           "title"
                         ],
@@ -45679,6 +45847,16 @@
                           "agentId": {
                             "type": "string"
                           },
+                          "agentName": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "platform": {
                             "type": "string"
                           },
@@ -45696,6 +45874,7 @@
                         "required": [
                           "id",
                           "agentId",
+                          "agentName",
                           "platform",
                           "title"
                         ],
@@ -45704,6 +45883,16 @@
                     },
                     "agentId": {
                       "type": "string"
+                    },
+                    "agentName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "launchId": {
                       "anyOf": [
@@ -46154,6 +46343,7 @@
                     "siblingSessions",
                     "childSessions",
                     "agentId",
+                    "agentName",
                     "launchId",
                     "platform",
                     "channel",
@@ -47139,6 +47329,10 @@
     }
   ],
   "tags": [
+    {
+      "name": "Deployment",
+      "description": "Secret-free runtime metadata for deployment clients."
+    },
     {
       "name": "Organizations",
       "description": "The caller’s organizations — list, create, rename, delete."
