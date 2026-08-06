@@ -38,9 +38,9 @@ docker compose ps --all
 
 ## 2. Open AgentConnect
 
-Open [http://app.agentconnect.localhost:3000](http://app.agentconnect.localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).
 
-The special-use `.localhost` name resolves to loopback without DNS. The default stack also binds its ports to `127.0.0.1`, and sign-in is disabled. Keep this mode local.
+The default stack binds its ports to `127.0.0.1`, and sign-in is disabled. Keep this mode local.
 
 You can check the service probes directly:
 
@@ -72,10 +72,10 @@ docker compose -f compose.yaml -f compose.logto.yaml up -d
 Then open:
 
 - Tenant Admin: [http://localhost:8091](http://localhost:8091)
-- Logto Console: [http://admin.agentconnect.localhost:3002](http://admin.agentconnect.localhost:3002)
-- AgentConnect: [http://app.agentconnect.localhost:3000](http://app.agentconnect.localhost:3000)
+- Logto Console: [http://localhost:3002](http://localhost:3002)
+- AgentConnect: [http://localhost:3000](http://localhost:3000)
 
-Continue with [Logto authentication](/docs/logto-authentication) and use GitHub for the first sign-in provider. The bundled HTTP `*.agentconnect.localhost` origins cannot be registered as this deployment's Google Web OAuth client. The local overlay uses a separate Logto database in the same PostgreSQL service and remains bound to loopback.
+Continue with [Logto authentication](/docs/logto-authentication) and use Google for the shortest local sign-in path. The local overlay uses a separate Logto database in the same PostgreSQL service and remains bound to loopback.
 
 When you use the overlay, keep both `-f` arguments in later `up`, `pull`, and `down` commands.
 
