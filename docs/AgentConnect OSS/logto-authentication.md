@@ -52,13 +52,11 @@ Tenant Admin creates or updates the AgentConnect SPA, its redirects, the selecte
 
 | Provider | Local bootstrap |
 | --- | --- |
-| Google | Works on localhost; create the Web OAuth client with the exact values shown |
-| GitHub | Tenant Admin creates one App for repository integration and sign-in |
+| Google | Requires HTTPS Logto and AgentConnect Web origins; unavailable on the bundled HTTP topology |
+| GitHub | Recommended locally; Tenant Admin creates one App for repository integration and sign-in |
 | Slack | Requires HTTPS Logto, Web, Control Plane, and Relay origins |
 
-Google is the shortest local path. Paste its client ID and secret into Tenant Admin and choose **Save Google OAuth and configure Logto**.
-
-For GitHub, choose **Create GitHub App and configure Logto** and approve the manifest on GitHub. The local HTTP setup leaves webhook delivery disabled until you add reachable HTTPS ingress.
+For the bundled local overlay, choose **Create GitHub App and configure Logto** and approve the manifest on GitHub. The local HTTP setup leaves webhook delivery disabled until you add reachable HTTPS ingress. The initial provider picker disables Google and Slack until their HTTPS requirements are met.
 
 ### 4. Claim the first administrator
 
@@ -169,7 +167,7 @@ Without an API Resource, AgentConnect falls back to the SPA ID token. That is su
 Tenant Admin manages the Logto connectors for GitHub, Google, and Slack from the corresponding provider cards:
 
 - **GitHub:** one AgentConnect GitHub App can handle repository integration and sign-in.
-- **Google:** create the OAuth client manually with the exact callback values Tenant Admin shows.
+- **Google:** requires HTTPS Logto and AgentConnect Web origins; create the OAuth client manually with the exact callback values Tenant Admin shows.
 - **Slack:** one deployment App can handle workspace installation and a separate Slack OIDC sign-in flow; all public origins must use HTTPS.
 
 The Lark and Feishu cards configure regional tenant Apps for trusted-workspace bot admission. They do not automatically add Lark or Feishu as Logto sign-in methods. See [Lark and Feishu tenant Apps](/docs/deployment-and-configuration#lark-and-feishu-tenant-apps).

@@ -75,7 +75,7 @@ Then open:
 - Logto Console: [http://admin.agentconnect.localhost:3002](http://admin.agentconnect.localhost:3002)
 - AgentConnect: [http://app.agentconnect.localhost:3000](http://app.agentconnect.localhost:3000)
 
-Continue with [Logto authentication](/docs/logto-authentication). The local overlay uses a separate Logto database in the same PostgreSQL service and remains bound to loopback.
+Continue with [Logto authentication](/docs/logto-authentication) and use GitHub for the first sign-in provider. The bundled HTTP `*.agentconnect.localhost` origins cannot be registered as this deployment's Google Web OAuth client. The local overlay uses a separate Logto database in the same PostgreSQL service and remains bound to loopback.
 
 When you use the overlay, keep both `-f` arguments in later `up`, `pull`, and `down` commands.
 

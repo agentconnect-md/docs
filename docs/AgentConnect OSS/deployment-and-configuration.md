@@ -227,15 +227,16 @@ Tenant Admin can create one deployment Slack App for the built-in `agentconnect`
 3. Open **Slack** in Tenant Admin and choose **Create Slack App**.
 4. Restart Control Plane and Relay.
 
-Tenant Admin builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google or GitHub for the local bootstrap.
+Tenant Admin builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use GitHub for the local bootstrap.
 
 ## Google sign-in
 
-Google is the simplest provider for local sign-in:
+Tenant Admin enables Google only when both the Logto and AgentConnect Web origins use HTTPS. The default HTTP `*.agentconnect.localhost` topology is not valid for the generated Google Web OAuth client settings.
 
-1. Choose Google during Tenant Admin bootstrap, or open its **Google** card later.
-2. Create a Web OAuth client in Google Auth Platform using the exact origins and redirect URIs shown by Tenant Admin.
-3. Save the client ID and secret, then restart Control Plane and Web.
+1. Configure the final HTTPS Logto and AgentConnect Web origins, then restart Tenant Admin.
+2. Choose Google during Tenant Admin bootstrap, or open its **Google** card later.
+3. Create a Web OAuth client in Google Auth Platform using the exact origins and redirect URIs shown by Tenant Admin.
+4. Save the client ID and secret, then restart Control Plane and Web.
 
 Tenant Admin creates or updates the matching Logto connector and can verify it. Compare the displayed Google origins and redirect URIs manually.
 
