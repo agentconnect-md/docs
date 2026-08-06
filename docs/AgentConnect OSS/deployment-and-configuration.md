@@ -116,7 +116,7 @@ ssh -L 8091:127.0.0.1:8091 operator@host.example
 
 Then open `http://localhost:8091` locally.
 
-For the initial administrator and external Logto setup, continue with [Logto authentication](/docs/logto-authentication).
+For the initial administrator and Logto Cloud or external Logto OSS setup, continue with [Logto authentication](/docs/logto-authentication).
 
 ### Preset agent
 
