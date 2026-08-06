@@ -1,233 +1,181 @@
 ---
 title: 🔐 Logto authentication
-excerpt: Configure production sign-in, renewable Control Plane tokens, social account linking, and provider-aware access for AgentConnect OSS.
+excerpt: Add Logto-backed sign-in to AgentConnect OSS with the bundled local overlay or an external production tenant.
 hidden: false
 ---
 
-AgentConnect OSS does not include or start Logto. The local Compose stack uses no-auth mode by default; connect a Logto tenant before exposing the Web console or Control Plane to a network.
+AgentConnect uses Logto for human sign-in, renewable browser tokens, and linked social identities. AgentConnect still owns organizations, roles, agent visibility, session visibility, and repository permissions.
 
-AgentConnect uses Logto to:
+The base Compose stack keeps authentication off for local evaluation. Choose one of these paths when you want real identities:
 
-- sign people in and give each person a stable OIDC identity;
-- issue a renewable JWT for the AgentConnect Control Plane;
-- let one profile link several social sign-in methods; and
-- read linked provider identities when AgentConnect evaluates provider-specific session access.
-
-AgentConnect does **not** use Logto Organizations or Logto RBAC for its own organizations, roles, visibility, or permissions. Those remain AgentConnect concepts.
-
-## Choose a Logto edition
-
-| Logto option | AgentConnect use |
+| Path | Use it for |
 | --- | --- |
-| [Logto OSS](https://docs.logto.io/logto-oss) | Full production setup without paid Logto features |
-| [Logto Cloud Pro](https://logto.io/pricing) | Managed production setup |
-| Logto Cloud Free | Short evaluation only |
+| Bundled Logto OSS overlay | Local evaluation without DNS or TLS |
+| External Logto OSS or Cloud tenant | Network and production deployments |
 
-A production deployment needs one custom **API Resource** for the Control Plane. Logto OSS includes this capability. Logto Cloud currently requires a paid plan to create custom API resources; check the [current Logto pricing](https://logto.io/pricing). The Cloud Free plan includes the Account API, one machine-to-machine application, and up to three social connectors, so the missing API Resource is the production blocker for AgentConnect.
+## Local sign-in with the bundled overlay
 
-AgentConnect needs the resource because the Web console calls a separately deployed Control Plane. It gives the browser a renewable JWT access token whose audience is that API. No Logto permissions need to be added to the resource because AgentConnect performs authorization itself.
+### 1. Start AgentConnect and Logto
 
-Without an API Resource, AgentConnect can fall back to the SPA's ID token. That token is intended for the client rather than the Control Plane and the current AgentConnect client does not renew it. Under the usual one-hour Logto token lifetime, longer sessions begin receiving `401` responses. Use this fallback only for local evaluation.
+From the AgentConnect repository:
 
-## What to create in Logto
-
-| Logto setup | Needed for |
-| --- | --- |
-| Single-page application | Browser sign-in |
-| API Resource | Production Control Plane auth |
-| Social connectors | Chosen sign-in providers |
-| Account API | Linking providers |
-| Machine-to-machine application | Linking and provider access |
-| Email connector | Ownership codes when required |
-
-## 1. Create the SPA application
-
-In **Logto Console → Applications**, create a **Single-page application (SPA)**. AgentConnect uses Authorization Code with PKCE, so this application has an App ID but no App Secret.
-
-Register these exact URLs, using your `AGENTCONNECT_PUBLIC_WEB_URL` as the origin:
-
-| Setting | URI |
-| --- | --- |
-| Redirect URI | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback` |
-| Post sign-out redirect URI | `<AGENTCONNECT_PUBLIC_WEB_URL>/login` |
-
-For the default local stack, the values are:
-
-```text
-http://localhost:3000/auth/callback
-http://localhost:3000/login
+```bash
+docker compose -f compose.yaml -f compose.logto.yaml up -d
 ```
 
-Copy the application's **App ID**. Do not create a Traditional Web application for the browser client.
+Open:
 
-## 2. Create the Control Plane API Resource
+- Logto Console: [http://admin.agentconnect.localhost:3002](http://admin.agentconnect.localhost:3002)
+- Tenant Admin: [http://localhost:8091](http://localhost:8091)
+- AgentConnect: [http://app.agentconnect.localhost:3000](http://app.agentconnect.localhost:3000)
 
-In **Logto Console → API resources**, create one [API Resource](https://docs.logto.io/authorization/global-api-resources) such as:
+Complete Logto's initial Console onboarding if this is a new database.
+
+### 2. Create the Management API application
+
+In **Logto Console → Applications**, create a **Machine-to-machine** application. Assign it the built-in **Logto Management API access** role, then copy its App ID and App Secret.
+
+Open Tenant Admin, choose **Continue setup**, and enter those credentials under **Connect Logto**. AgentConnect stores the secret as a write-only deployment secret.
+
+The expected Management API resource is:
+
+```text
+https://default.logto.app/api
+```
+
+See Logto's [Management API guide](https://docs.logto.io/integrate-logto/interact-with-management-api) for the application and role.
+
+### 3. Choose the first sign-in provider
+
+Tenant Admin creates or updates the AgentConnect SPA, its redirects, the selected social connector, the sign-in experience, and the `ADMIN` role.
+
+| Provider | Local bootstrap |
+| --- | --- |
+| Google | Works on localhost; create the Web OAuth client with the exact values shown |
+| GitHub | Tenant Admin creates one App for repository integration and sign-in |
+| Slack | Requires HTTPS Logto, Web, Control Plane, and Relay origins |
+
+Google is the shortest local path. Paste its client ID and secret into Tenant Admin and choose **Save Google OAuth and configure Logto**.
+
+For GitHub, choose **Create GitHub App and configure Logto** and approve the manifest on GitHub. The local HTTP setup leaves webhook delivery disabled until you add reachable HTTPS ingress.
+
+### 4. Claim the first administrator
+
+After Tenant Admin finishes the provider setup:
+
+1. Choose **Sign in with Logto**.
+2. Complete sign-in with the configured provider.
+3. Tenant Admin assigns that first user the `ADMIN` role.
+4. Sign in once more so the refreshed token contains the role.
+
+Tenant Admin then opens the complete deployment settings. Restart the consuming services after changes:
+
+```bash
+docker compose restart control-plane relay web
+```
+
+The bundled overlay is for local evaluation. It uses the SPA's ID token until you add an API Resource; use the production setup below before exposing AgentConnect to a network.
+
+## Production or external Logto
+
+Run Logto OSS separately, or use a Logto Cloud plan that supports a custom API Resource. Configure only the final service origins and Logto endpoints in `compose.env` before opening Tenant Admin:
+
+```dotenv
+AGENTCONNECT_PUBLIC_WEB_URL=https://app.agentconnect.example
+AGENTCONNECT_PUBLIC_CP_URL=https://api.agentconnect.example
+AGENTCONNECT_PUBLIC_RELAY_URL=https://relay.agentconnect.example
+AGENTCONNECT_RELAY_DAEMON_URL=wss://relay.agentconnect.example
+
+LOGTO_ENDPOINT=https://login.agentconnect.example
+LOGTO_ADMIN_ENDPOINT=https://admin.agentconnect.example
+OIDC_ISSUER=https://login.agentconnect.example/oidc
+LOGTO_MGMT_ENDPOINT=https://login.agentconnect.example
+```
+
+For Logto Cloud, use the tenant's canonical `logto.app` origin for `LOGTO_MGMT_ENDPOINT`, even when sign-in uses a custom domain.
+
+Start the base stack with the environment file:
+
+```bash
+docker compose --env-file compose.env up -d
+```
+
+Create the Management API M2M application in that tenant, assign **Logto Management API access**, and enter its credentials in Tenant Admin. Tenant Admin will create or adopt the browser SPA and configure the supported social connectors.
+
+Configure the browser application, API Resource, displayed sign-in methods, provider Apps, and their credentials in Tenant Admin.
+
+## Create the Control Plane API Resource
+
+A production browser session needs a renewable access token whose audience identifies the AgentConnect Control Plane. In **Logto Console → API resources**, create one custom API Resource:
 
 | Setting | Example |
 | --- | --- |
 | Name | `AgentConnect Control Plane` |
-| API identifier | `https://agentconnect.example/control-plane` |
+| API identifier | `https://api.agentconnect.example` |
 
-The identifier is an absolute URI used as the token audience; it does not need to resolve to a public endpoint. You do not need to add permissions or assign user roles to this resource.
+The identifier must be an absolute URI but does not need to resolve to the Control Plane. AgentConnect performs its own authorization, so this resource does not need Logto permissions or user roles.
 
-Use the exact identifier for both values:
+In Tenant Admin:
 
-```dotenv
-LOGTO_API_RESOURCE=https://agentconnect.example/control-plane
-OIDC_AUDIENCE=https://agentconnect.example/control-plane
-```
+1. Open **Logto → Edit**.
+2. Enter the identifier as **Browser API resource**.
+3. Save, choose **Apply expected settings**, and restart Control Plane and Web.
 
-For an evaluation-only Logto Cloud Free setup, omit `LOGTO_API_RESOURCE` and set `OIDC_AUDIENCE` to the SPA App ID. This selects the non-renewing ID-token fallback described above.
+The saved value becomes both the browser token resource and the Control Plane audience. Logto requires the requested resource to exactly match its registered API identifier; see [Protect global API resources](https://docs.logto.io/authorization/global-api-resources).
 
-## 3. Configure social connectors
+Without an API Resource, AgentConnect falls back to the SPA ID token. That is sufficient for the local overlay, but it is not the normal production session because the current browser flow does not renew that fallback token.
 
-Create the social connectors you want in Logto, then add them to the tenant's sign-in experience. AgentConnect recognizes these lowercase connector targets:
+## Social providers
 
-```dotenv
-SOCIAL_PROVIDERS=github,google,slack,lark,feishu
-```
+Tenant Admin manages the Logto connectors for GitHub, Google, and Slack from the corresponding provider cards:
 
-Set this list to match the connectors that actually exist. `SOCIAL_PROVIDERS` controls what AgentConnect displays; it does not create or discover connectors.
+- **GitHub:** one AgentConnect GitHub App can handle repository integration and sign-in.
+- **Google:** create the OAuth client manually with the exact callback values Tenant Admin shows.
+- **Slack:** one deployment App can handle workspace installation and a separate Slack OIDC sign-in flow; all public origins must use HTTPS.
 
-Three callback types are involved:
+The Lark and Feishu cards configure regional tenant Apps for trusted-workspace bot admission. They do not automatically add Lark or Feishu as Logto sign-in methods. See [Lark and Feishu tenant Apps](/docs/deployment-and-configuration#lark-and-feishu-tenant-apps).
 
-| Register with | Callback |
+## Lark and Feishu identities
+
+Lark and Feishu session access is an advanced self-hosted setup. It needs both:
+
+- a Logto social identity that preserves the provider's cross-App `union_id`; and
+- the matching regional Login App configured in Tenant Admin.
+
+The Login App and every admitted AgentConnect bot App must belong to the same provider workspace. AgentConnect uses `union_id` to recognize the same person across those Apps, then uses the installed bot's credentials to check current chat membership. It does not use a person's provider token or the Login App credential for that membership read.
+
+Tenant Admin does not create the Lark or Feishu Logto connector. If you enable either sign-in method, confirm that its Logto identity record includes `union_id`; an App-scoped `open_id` is not sufficient. See [Lark / Feishu](/docs/lark-feishu) for the bot permissions and installation flow.
+
+## Link additional social accounts
+
+To let people add or remove providers under **Your profile → Sign-in methods**:
+
+1. In **Logto Console → Sign-in & account → Account center**, enable the Account API.
+2. Set **Social identities** to **Edit**.
+3. Keep each provider's normal Logto callback and the AgentConnect callback shown by Tenant Admin.
+
+Logto may require an ownership code before changing a social identity:
+
+| Provider | Email verification for linking |
 | --- | --- |
-| Logto SPA | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/callback` |
-| Social provider | The callback shown by its Logto connector |
-| Social provider | `<AGENTCONNECT_PUBLIC_WEB_URL>/auth/social/callback` |
+| GitHub | Not normally required |
+| Google | Not normally required |
+| Slack | Required |
 
-The final callback is required for linking another sign-in method from **Your profile**. Keep it alongside the normal Logto connector callback. For GitHub, register the connector as a [GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app) rather than an OAuth App: a GitHub App accepts multiple callback URLs and an OAuth App accepts only one, so an OAuth App cannot serve both callbacks above.
+If the flow shows **Send code**, configure a Logto [email connector](https://docs.logto.io/connectors/email-connectors) that supports the `UserPermissionValidation` template. The user also needs a verified primary email; an address available only inside a social identity is not enough.
 
-This is a separate app from the [AgentConnect GitHub App](/docs/deployment-and-configuration#optional-github-app), which handles repositories and events. One is a sign-in connector, the other is a repository integration; do not reuse a single registration for both.
+The bundled Logto OSS deployment does not include an email delivery service. Connect SMTP, HTTP, or another supported email provider when you enable flows that send verification codes.
 
-## 4. Enable social account linking
-
-Complete all three parts when people should be able to link and unlink providers from **Your profile → Sign-in methods**.
-
-### Account API
-
-In **Logto Console → Sign-in & account → Account center**, configure the [Account API](https://docs.logto.io/end-user-flows/account-settings/by-account-api):
-
-1. Enable **Account API**.
-2. Set **Social identities** to `Edit`.
-
-AgentConnect requests the `email`, `profile`, and `identities` scopes needed by these flows.
-
-### Email verification
-
-Email delivery is not required for every provider:
-
-| Provider | Email connector needed for profile linking |
-| --- | --- |
-| GitHub | No |
-| Google | No |
-| Slack | Yes |
-| Feishu / Lark with Standard OAuth | Depends; configure if **Send code** appears |
-
-For Slack, Logto asks for an ownership code when the current profile has a password, primary email, or primary phone. Configure email delivery whenever you offer Slack profile linking, even if some social-only profiles can complete the flow without a code.
-
-If a profile sees **Send code**, it needs both a verified Logto `primaryEmail` and working email delivery. An email stored only inside a social identity is not sufficient. Configure a Logto [email connector](https://docs.logto.io/connectors/email-connectors):
-
-1. Open **Console → Connectors → Email and SMS connectors → Set up**.
-2. Choose an email provider. For Logto OSS, use SMTP, HTTP, or another supported provider connector.
-3. Ensure the connector handles the [`UserPermissionValidation` template](https://docs.logto.io/connectors/email-connectors/email-templates) and that the template includes the `{{code}}` placeholder.
-4. Send a test message, then choose **Save and Done**.
-
-Logto OSS does not include Logto Cloud's built-in email delivery service. Use SMTP, HTTP, or another supported email connector and account for any provider cost.
-
-### Management API application
-
-Create a **Machine-to-machine application** by following Logto's [Management API guide](https://docs.logto.io/integrate-logto/interact-with-management-api), then assign it the built-in **Logto Management API access** role. That role includes the Management API's `all` permission, which AgentConnect requests for connector lookup, identity metadata, and safe unlinking.
-
-Copy its App ID and App Secret, then configure:
-
-```dotenv
-LOGTO_MGMT_ENDPOINT=<canonical-logto-origin>
-LOGTO_MGMT_APP_ID=<m2m-app-id>
-LOGTO_MGMT_APP_SECRET=<m2m-app-secret>
-LOGTO_MGMT_RESOURCE=<management-api-identifier>
-```
-
-Use the Management API identifier for your Logto edition:
-
-| Logto edition | `LOGTO_MGMT_RESOURCE` |
-| --- | --- |
-| Logto Cloud | `https://<tenant-id>.logto.app/api` |
-| Logto OSS | `https://default.logto.app/api` |
-
-For Logto Cloud with a custom sign-in domain, `LOGTO_ENDPOINT` can use the custom domain, but `LOGTO_MGMT_ENDPOINT` and `LOGTO_MGMT_RESOURCE` must use the tenant's canonical `logto.app` origin. For Logto OSS, use the deployed Logto origin as `LOGTO_MGMT_ENDPOINT` and set the resource explicitly to `https://default.logto.app/api`.
-
-## 5. Configure AgentConnect
-
-Put the browser and Control Plane settings in `compose.env`:
-
-```dotenv
-LOGTO_ENDPOINT=https://login.example.com/
-LOGTO_APP_ID=<spa-app-id>
-LOGTO_API_RESOURCE=https://agentconnect.example/control-plane
-SOCIAL_PROVIDERS=github,google,slack
-
-OIDC_ISSUER=https://login.example.com/oidc
-OIDC_AUDIENCE=https://agentconnect.example/control-plane
-
-LOGTO_MGMT_ENDPOINT=https://<tenant-id>.logto.app
-LOGTO_MGMT_APP_ID=<m2m-app-id>
-LOGTO_MGMT_APP_SECRET=<m2m-app-secret>
-LOGTO_MGMT_RESOURCE=https://<tenant-id>.logto.app/api
-```
-
-Keep these relationships exact:
-
-- `OIDC_ISSUER` is the Logto endpoint's origin plus `/oidc`, with no doubled slash — for the endpoint above that is `https://login.example.com/oidc`.
-- `LOGTO_API_RESOURCE` and `OIDC_AUDIENCE` are the same API identifier.
-- The SPA and M2M applications belong to the same Logto tenant.
-- `SOCIAL_PROVIDERS` matches the tenant's connector targets.
-
-Restart the affected services:
-
-```bash
-docker compose --env-file compose.env up -d --force-recreate control-plane web
-```
-
-## Lark and Feishu permission sync
-
-Lark and Feishu social sign-in and account linking are self-hosted options. The permission setup is separate: it uses a linked person's provider token to check whether they currently belong to each source chat. This can prove the owner of a Private cross-bot direct message; enabling **Follow Feishu / Lark access** extends the same live check to synchronized chat audiences.
-
-One regional permission app can check sessions created by multiple AgentConnect bot apps. The permission app does not send or receive AgentConnect messages, and its App ID does not need to match the bot App IDs.
-
-For each region you want to synchronize:
-
-1. Create a dedicated Lark or Feishu app. Enable its **Bot** capability and grant `im:chat:readonly` or `im:chat.members:read`; the platform requires Bot capability for its [membership-check API](https://open.feishu.cn/document/server-docs/group/chat-member/is_in_chat).
-2. Configure Logto's [Standard OAuth 2.0 connector](https://docs.logto.io/integrations/oauth2) with target `lark` or `feishu`. Enable [third-party token storage](https://docs.logto.io/secret-vault/federated-token-set) so AgentConnect can retrieve the provider's access and refresh tokens.
-3. Use that permission app's credentials below. These are not the credentials of every AgentConnect bot:
-
-```dotenv
-FEISHU_PLATFORM_APP_ID=<app-id>
-FEISHU_PLATFORM_APP_SECRET=<app-secret>
-LARK_PLATFORM_APP_ID=<app-id>
-LARK_PLATFORM_APP_SECRET=<app-secret>
-```
-
-Add the values to `compose.env`, then recreate the Control Plane:
-
-```bash
-docker compose --env-file compose.env up -d --force-recreate control-plane
-```
-
-The setting stays unavailable until at least one regional permission app is configured. Access checks fail closed if Logto cannot return a valid provider token.
+Logto documents the identity-editing behavior in [Account settings by Account API](https://docs.logto.io/end-user-flows/account-settings/by-account-api).
 
 ## Verify the setup
 
-1. Open the console in a private browser window and sign in through one configured provider.
-2. Open **Your profile → Sign-in methods** and confirm the configured providers appear.
-3. Confirm GitHub or Google profile linking proceeds without an ownership code.
-4. If you offer Slack or another connector that asks for a code, confirm the `UserPermissionValidation` email arrives and completes the link.
-5. Unlink the second provider again; the final sign-in method remains protected.
-6. If you enabled Lark or Feishu permission sync, confirm the linked profile can open an allowed chat session created through a different bot App ID.
-7. Confirm the Web console can continue calling the Control Plane after the original access token expires.
+1. Sign in to AgentConnect in a private browser window.
+2. Confirm Tenant Admin opens only for a user with the `ADMIN` role.
+3. Open **Your profile → Sign-in methods** and link a second configured provider.
+4. Confirm AgentConnect continues calling the Control Plane after the original access token expires.
+5. In Tenant Admin, run each available provider check and manually compare any callbacks marked as unverifiable.
 
-An immediate `401` normally means the API identifier and `OIDC_AUDIENCE` do not match. A provider button that reaches a Logto error page normally means the connector target is absent or not enabled in the sign-in experience.
+An immediate `401` usually means the browser API resource and Control Plane audience do not match. A provider button that reaches a Logto error page usually means the connector is missing from the sign-in experience.
 
-Leaving all Logto and OIDC variables unset preserves local no-auth mode. In that mode the Control Plane admits every request as the fixed local owner, so keep it bound to localhost.
+Until Logto sign-in is bootstrapped in Tenant Admin, keep the local no-auth stack bound to loopback.

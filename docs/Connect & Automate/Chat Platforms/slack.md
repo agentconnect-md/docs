@@ -60,7 +60,7 @@ If Slack reports changed scopes, reinstall the App once before copying the Bot U
 - **HTTP (Events API)** is the Cloud default. Inbound callbacks enter through the AgentConnect Relay and go directly to the owning daemon. HTTP is required for a sharable bot.
 - **Socket Mode** is a daemon-owned outbound connection. It needs no Relay or public callback URL and is limited to one agent per bot.
 
-Self-hosted deployments show the built-in **Add to Slack** path only after the operator configures the [deployment-wide Slack App](/docs/deployment-and-configuration#optional-deployment-wide-add-to-slack-app). Otherwise, use a custom App. HTTP is available only when the deployment has a public, connected Relay; without one, use Socket Mode.
+Self-hosted deployments show the built-in **Add to Slack** path only after the operator configures the [deployment Slack App](/docs/deployment-and-configuration#slack-deployment-app). Otherwise, use a custom App. HTTP is available only when the deployment has a public, connected Relay; without one, use Socket Mode.
 
 ## Use one Slack app with multiple agents
 

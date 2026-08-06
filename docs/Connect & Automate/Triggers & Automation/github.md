@@ -75,4 +75,4 @@ The agent page groups its GitHub integration as one card — one row per watched
 
 - The **GitHub app** must be installed for your org (**Settings → GitHub → Install on GitHub**); the integration dialog offers the install button if it's missing, with an **I've installed it — sync** refresh.
 - An enabled watch can post its ordinary final reply with **Read only** access. Formal reviews, Checks, and repository changes require **Read & write**.
-- On AgentConnect OSS, the operator must first [configure the deployment GitHub App and its Relay webhook](/docs/deployment-and-configuration#optional-github-app).
+- On AgentConnect OSS, the operator must first [configure the deployment GitHub App and its Relay webhook](/docs/deployment-and-configuration#github-app).

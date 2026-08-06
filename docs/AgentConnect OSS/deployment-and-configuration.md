@@ -1,106 +1,152 @@
 ---
 title: 🏗️ Deployment and configuration
-excerpt: Configure AgentConnect OSS versions, ports, secrets, public URLs, GitHub and Slack Apps, optional Mem0, and Logto-backed sign-in.
+excerpt: Configure AgentConnect OSS topology, secrets, authentication, provider apps, and optional external memory.
 hidden: false
 ---
 
-The default AgentConnect OSS Compose stack requires no configuration. It uses current stable images, local-only credentials, fixed localhost ports, and no-auth mode.
+The default Docker Compose stack needs no configuration and stays on loopback. Use `compose.env` only for deployment topology and bootstrap secrets, then use Tenant Admin for authentication, provider apps, and deployment options.
 
-For overrides, copy the provided template:
+## What is configured where
+
+| Surface | Owns |
+| --- | --- |
+| `compose.env` | Images, ports, public URLs, database secrets, Vault, and Logto endpoints |
+| Tenant Admin | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
+| AgentConnect console | Organizations, agents, integrations, environments, tools, and skills |
+
+Tenant Admin is the supported configuration surface for browser authentication, provider apps, displayed sign-in methods, and preset-agent behavior. It saves deployment settings and write-only provider secrets in PostgreSQL.
+
+## Compose environment
+
+Copy the template only when you need overrides:
 
 ```bash
 cp compose.env.example compose.env
 ```
 
-Uncomment and edit only the values you need, then include the file in every command:
+Include it in every Compose command:
 
 ```bash
 docker compose --env-file compose.env up -d
 ```
 
-`compose.env` is gitignored. Keep it out of source control and backups that are not approved for secrets.
+`compose.env` is gitignored. Keep it out of source control and unapproved backups.
 
 ## Image versions
 
-| Variable                          | Default                   | Purpose                                              |
-| --------------------------------- | ------------------------- | ---------------------------------------------------- |
-| `AGENTCONNECT_VERSION`            | `latest`                  | Shared release tag for Web, Control Plane, and Relay |
-| `AGENTCONNECT_IMAGE_REGISTRY`     | `ghcr.io/agentconnect-md` | Image registry and namespace                         |
-| `AGENTCONNECT_PRISMA_CLI_VERSION` | `7.8.0-node24-r1`         | Version-matched migration runner toolchain           |
+| Variable | Default |
+| --- | --- |
+| `AGENTCONNECT_VERSION` | `latest` |
+| `AGENTCONNECT_IMAGE_REGISTRY` | `ghcr.io/agentconnect-md` |
+| `AGENTCONNECT_PRISMA_CLI_VERSION` | `7.8.0-node24-r1` |
 
-Published AgentConnect application and migration images currently target `linux/amd64`. The Compose file pins this platform; it is not a configurable stack option. Docker Desktop and OrbStack can run these images with emulation on Apple Silicon.
-
-For a reproducible setup, use an exact AgentConnect release tag:
+For reproducible deployments, pin an AgentConnect release:
 
 ```dotenv
 AGENTCONNECT_VERSION=vX.Y.Z
 ```
 
-Every application image is published under every release tag, even when that component did not change in the release.
+Published application and migration images currently target `linux/amd64`.
 
 ## Local ports
 
-| Variable                    | Default     |
-| --------------------------- | ----------- |
-| `AGENTCONNECT_BIND_ADDRESS` | `127.0.0.1` |
-| `AGENTCONNECT_WEB_PORT`     | `3000`      |
-| `AGENTCONNECT_CP_PORT`      | `8080`      |
-| `AGENTCONNECT_RELAY_PORT`   | `8090`      |
+| Service | Variable | Default |
+| --- | --- | --- |
+| Web | `AGENTCONNECT_WEB_PORT` | `3000` |
+| Control Plane | `AGENTCONNECT_CP_PORT` | `8080` |
+| Relay | `AGENTCONNECT_RELAY_PORT` | `8090` |
+| PostgreSQL | `AGENTCONNECT_POSTGRES_PORT` | `5432` |
+| Tenant Admin | Fixed, loopback only | `8091` |
+| Logto sign-in | Optional overlay | `3001` |
+| Logto Console | Optional overlay | `3002` |
 
-Changing a published port does not automatically change an explicitly configured public URL. Keep the values in the next section aligned.
+`AGENTCONNECT_BIND_ADDRESS` defaults to `127.0.0.1` for Web, Control Plane, and Relay. PostgreSQL, Tenant Admin, and the local Logto overlay remain loopback-only in the supplied Compose files.
 
 ## Network and public URLs
 
-AgentConnect uses separate internal and public addresses:
+Containers use Docker service names internally. Browsers, daemons, provider callbacks, and links use these public origins:
 
-- Relay-to-Control-Plane traffic uses Docker's private service network automatically.
-- Browsers and host daemons need addresses reachable from outside the containers.
-- The Relay's daemon address must use `ws://` or `wss://`; browser-facing Relay URLs use `http://` or `https://` and are upgraded to WebSockets by the client.
+| Variable | Local default |
+| --- | --- |
+| `AGENTCONNECT_PUBLIC_WEB_URL` | `http://app.agentconnect.localhost:3000` |
+| `AGENTCONNECT_PUBLIC_CP_URL` | `http://api.agentconnect.localhost:8080` |
+| `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://relay.agentconnect.localhost:8090` |
+| `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090` |
 
-| Variable                        | Local default           | Used by                                 |
-| ------------------------------- | ----------------------- | --------------------------------------- |
-| `AGENTCONNECT_PUBLIC_WEB_URL`   | `http://localhost:3000` | Session links and browser redirects     |
-| `AGENTCONNECT_PUBLIC_CP_URL`    | `http://localhost:8080` | Browser API calls and daemon onboarding |
-| `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://localhost:8090` | Webchat and public callback ingress     |
-| `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090`   | Daemon-to-Relay WebSocket               |
+The `.localhost` names resolve to loopback without DNS. Do not add a trailing slash.
 
-Do not add a trailing slash to these values.
+For a remote daemon or network deployment, replace these defaults with reachable origins. Use HTTPS for browser and callback origins, and `wss://` for the daemon-facing Relay URL. A reverse proxy must preserve WebSocket upgrades for both Control Plane and Relay connections.
 
-To connect a daemon from another machine, replace `localhost` with a hostname that machine can resolve and reach. If you put the services behind a reverse proxy, it must preserve WebSocket upgrades for the Control Plane daemon path and the Relay paths.
+Set the final public URLs before creating GitHub or Slack Apps. Tenant Admin derives their callback manifests from these values. If the URLs change later, recreate Tenant Admin with the same environment and Compose overrides before updating the provider Apps. For the base stack:
 
-> Do not set `AGENTCONNECT_BIND_ADDRESS=0.0.0.0` while no-auth mode or the bundled local-only secrets are active. Compose is a single-host evaluation topology, not an HA production deployment.
+```bash
+docker compose --env-file compose.env up -d --force-recreate tenant-admin
+```
 
-## Secrets and database
+After updating the provider Apps, recreate the runtime services with the same environment and Compose overrides:
 
-The default values are intentionally predictable because the stack listens only on loopback. Replace them before changing network exposure:
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane relay web
+```
+
+> Do not publish a no-auth stack or its default secrets. Compose is a single-host topology, not an HA deployment.
+
+## Tenant Admin
+
+Tenant Admin is the browser-based deployment configuration surface at [http://localhost:8091](http://localhost:8091). It is included in the base stack and always binds to loopback.
+
+Use it to:
+
+- bootstrap Logto sign-in;
+- create, adopt, check, or clear provider Apps;
+- store provider credentials without returning saved secret values; and
+- enable or disable the preset `agentconnect` agent.
+
+Saved changes are loaded when services start. Apply them with:
+
+```bash
+docker compose restart control-plane relay web
+```
+
+If Compose runs on another host, forward Tenant Admin instead of exposing it publicly:
+
+```bash
+ssh -L 8091:127.0.0.1:8091 operator@host.example
+```
+
+Then open `http://localhost:8091` locally.
+
+For the initial administrator and external Logto setup, continue with [Logto authentication](/docs/logto-authentication).
+
+### Preset agent
+
+New organizations receive a built-in `agentconnect` agent by default. In Tenant Admin, open **Options**, clear **Enable preset Agents**, and save. This prevents future provisioning and backfills; it does not delete agents that already exist.
+
+## Database and bootstrap secrets
+
+PostgreSQL 18 stores data in the `agentconnect_postgres-data` volume. `docker compose down` preserves it; `docker compose down --volumes` deletes it.
+
+Replace these defaults before any network exposure:
 
 | Variable | Requirement |
 | --- | --- |
 | `AGENTCONNECT_POSTGRES_PASSWORD` | URL-safe characters |
-| `AGENTCONNECT_API_KEY_PEPPER` | At least 32 characters; keep stable |
+| `AGENTCONNECT_API_KEY_PEPPER` | At least 32 characters and stable |
 | `AGENTCONNECT_RELAY_TOKEN` | At least 32 characters |
 
-The PostgreSQL password is embedded in a connection URL. The Relay token is shared only by the Control Plane and Relay.
-
-Generate independent values, for example:
+Generate a separate value for each secret:
 
 ```bash
 openssl rand -hex 32
 ```
 
-Run the command separately for each secret. Rotating `AGENTCONNECT_API_KEY_PEPPER` invalidates existing daemon and personal API keys.
-
-PostgreSQL 18 data lives in the `agentconnect_postgres-data` Docker volume. `docker compose down` preserves it; `docker compose down --volumes` permanently deletes it. Back up the database before any non-throwaway use.
+Rotating `AGENTCONNECT_API_KEY_PEPPER` invalidates existing daemon and personal API keys. Back up PostgreSQL before non-throwaway use.
 
 ## Secret storage
 
-Secrets saved in AgentConnect are write-only in the console, but storage encryption is a separate deployment choice. The default `SECRET_CIPHER=none` stores their values as plaintext in PostgreSQL. For a production or network-exposed deployment, use HashiCorp Vault Transit so the Control Plane stores ciphertext instead.
+Secrets shown as write-only in AgentConnect or Tenant Admin still need encryption at rest. The default `SECRET_CIPHER=none` stores them as plaintext in PostgreSQL. Use HashiCorp Vault Transit for a production or network-exposed deployment.
 
-The configured cipher covers organization and agent secrets together with integration credentials and other tenant secrets held by the Control Plane.
-
-### Configure Vault Transit
-
-Enable the Transit engine, create a key, and grant the Control Plane permission to encrypt and decrypt with that key:
+Create a Transit key and a policy that can encrypt and decrypt with it:
 
 ```bash
 vault secrets enable transit
@@ -117,254 +163,107 @@ path "transit/decrypt/agentconnect-cp" {
 }
 ```
 
-Attach that policy to a dedicated Vault token or workload identity. Do not use a Vault root token.
-
-Use a small Compose override to pass the Vault settings into the Control Plane. Add `compose.vault.yaml` next to `compose.yaml`:
+Pass the Vault settings to both Control Plane and Tenant Admin so they use the same cipher root:
 
 ```yaml
+# compose.vault.yaml
 services:
   control-plane:
-    environment:
+    environment: &vault
       SECRET_CIPHER: vault-transit
       VAULT_ADDR: ${VAULT_ADDR}
       VAULT_TRANSIT_KEY: ${VAULT_TRANSIT_KEY:-agentconnect-cp}
       VAULT_TRANSIT_MOUNT: ${VAULT_TRANSIT_MOUNT:-transit}
       VAULT_TOKEN: ${VAULT_TOKEN}
+  tenant-admin:
+    environment: *vault
 ```
 
-Set the address and a policy-scoped token in `compose.env` or inject them through your deployment secret manager:
-
-```dotenv
-VAULT_ADDR=https://vault.example.com
-VAULT_TOKEN=<vault-token>
-```
-
-Then recreate the Control Plane with both Compose files:
+Use a policy-scoped token rather than a Vault root token, then recreate both services:
 
 ```bash
-docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml up -d --force-recreate control-plane
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
+  up -d --force-recreate control-plane tenant-admin
 ```
 
-For workload identity, replace the `VAULT_TOKEN` line in the override with:
-
-```yaml
-      VAULT_JWT_ROLE: ${VAULT_JWT_ROLE}
-      VAULT_JWT_PATH: ${VAULT_JWT_PATH:-/var/run/secrets/kubernetes.io/serviceaccount/token}
-      VAULT_AUTH_MOUNT: ${VAULT_AUTH_MOUNT:-kubernetes}
-```
-
-Set `VAULT_JWT_ROLE` in `compose.env` and mount the workload JWT at the configured path. Configure exactly one of token or JWT authentication. Vault Enterprise users can also add `VAULT_NAMESPACE: ${VAULT_NAMESPACE}` to the override.
-
-### Encrypt existing values
-
-Switching to Vault Transit is online: new and updated values are encrypted immediately, while existing plaintext values remain readable. After taking a database backup, encrypt all existing values with the bundled rewrap command:
+After taking a database backup, encrypt values that were previously stored as plaintext:
 
 ```bash
-docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml exec control-plane \
-  node dist/secrets/rewrap-cli.js
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
+  exec control-plane node dist/secrets/rewrap-cli.js
 ```
 
-The command is safe to resume. Run it again after rotating the Transit key to move stored values to the newest key version.
+The command is resumable and can also be rerun after rotating the Transit key. Vault workload identity is supported through `VAULT_JWT_ROLE`, `VAULT_JWT_PATH`, and `VAULT_AUTH_MOUNT` instead of `VAULT_TOKEN`.
 
-## Preset agent provisioning
+## GitHub App
 
-By default, the Control Plane creates an `agentconnect` preset agent for every new organization and backfills it for existing organizations at startup. To disable future provisioning and backfills:
+Configure the deployment GitHub App when agents need private repositories, repository-scoped Git credentials, or GitHub issue and pull-request triggers.
 
-```dotenv
-PRESET_AGENTS_ENABLED=false
-```
+1. Set the final Web, Control Plane, and Relay public URLs.
+2. In Tenant Admin, open **GitHub** and choose **Create GitHub App**. The manifest flow fills the current callbacks, events, and permissions.
+3. If you use an existing App, save its identity and secrets, then choose **Check match**.
+4. Restart Control Plane and Relay.
+5. In AgentConnect, open **Settings → GitHub**, install the App, and select its repositories.
 
-The value must be the literal `true` or `false`. Turning provisioning off does not delete preset agents that already exist.
+The generated App requests:
 
-## Optional GitHub App
+| Scope | Access |
+| --- | --- |
+| Metadata and email addresses | Read |
+| Contents, issues, pull requests, Actions, Checks, and workflows | Read and write |
 
-Configure an instance-level GitHub App when you want to:
+AgentConnect narrows each installation token to one authorized repository and the agent's repository grant. Installation owners still choose which repositories are available.
 
-- select private repositories for agent workspaces;
-- give daemons short-lived, repository-scoped Git credentials; or
-- trigger agents from GitHub issues, pull requests, and comments.
+GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Tenant Admin can create the App for sign-in and repository installation but leaves webhook delivery disabled until you provide HTTPS ingress.
 
-Public repositories can still be cloned read-only without a GitHub App. GitHub event integrations require the Relay because GitHub delivers them as signed webhooks.
+See [GitHub](/docs/github) for triggers, reviews, and repository behavior.
 
-### 1. Register the GitHub App
+## Slack deployment App
 
-In GitHub, open **Settings → Developer settings → GitHub Apps → New GitHub App**. Configure:
+Tenant Admin can create one deployment Slack App for the built-in `agentconnect` agent and optional Slack sign-in. This does not replace the recommended per-agent bot integrations described in [Slack](/docs/slack).
 
-| GitHub App field | Value                                                                     |
-| ---------------- | ------------------------------------------------------------------------- |
-| Homepage URL     | Your `AGENTCONNECT_PUBLIC_WEB_URL`                                        |
-| Setup URL        | `<AGENTCONNECT_PUBLIC_CP_URL>/v1/github/setup/callback`                   |
-| Webhook URL      | `<AGENTCONNECT_PUBLIC_RELAY_URL>/webhooks/github`                         |
-| Webhook secret   | A new random secret that you will also set as `GITHUB_APP_WEBHOOK_SECRET` |
+1. Configure reachable HTTPS Logto, Web, Control Plane, and Relay origins.
+2. Create a temporary Slack App configuration token when Tenant Admin prompts for one.
+3. Open **Slack** in Tenant Admin and choose **Create Slack App**.
+4. Restart Control Plane and Relay.
 
-The Setup URL deliberately uses `/v1`, not `/api/v1`. Enable **Redirect on update** so returning from an installation or permission update refreshes the AgentConnect installation state.
+Tenant Admin builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google or GitHub for the local bootstrap.
 
-The Setup URL must be reachable by the installer's browser. The Webhook URL must be reachable from GitHub over HTTPS and your reverse proxy must preserve the request body and headers used for signature verification.
+## Google sign-in
 
-Do not expose the complete no-auth Control Plane merely to make the Setup URL reachable. Either enable OIDC before publishing the Web and Control Plane, or route only the exact `/v1/github/setup/callback` path to the Control Plane while keeping its other routes private. The Relay webhook can be exposed separately.
+Google is the simplest provider for local sign-in:
 
-GitHub documents these fields in [Registering a GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app).
+1. Choose Google during Tenant Admin bootstrap, or open its **Google** card later.
+2. Create a Web OAuth client in Google Auth Platform using the exact origins and redirect URIs shown by Tenant Admin.
+3. Save the client ID and secret, then restart Control Plane and Web.
 
-### 2. Choose permissions and events
+Tenant Admin creates or updates the matching Logto connector and can verify it. Compare the displayed Google origins and redirect URIs manually.
 
-The following repository permissions enable all GitHub features currently implemented by AgentConnect:
+## Lark and Feishu tenant Apps
 
-| Permission | Access | Used for |
-| --- | --- | --- |
-| Metadata | Read-only | Installation and repository identity |
-| Contents | Read and write | Clone, inspect, and push |
-| Issues | Read and write | Issue events and replies |
-| Pull requests | Read and write | PR events, replies, and reviews |
-| Actions | Read and write | Inspect and run Actions |
-| Workflows | Read and write | Write `.github/workflows` |
-| Checks | Read and write | PR review Checks |
+The **Lark** and **Feishu** cards configure one regional Login App as the deployment's tenant anchor. AgentConnect uses it to accept multiple bot Apps only when they belong to the same trusted workspace; the Login App is not an AgentConnect chat bot.
 
-GitHub grants **Metadata** automatically.
+Choose **Create Lark App** / **Create Feishu App**, or save existing credentials. For an existing App, enable and publish the provider permission named **Obtain tenant information** (`tenant:tenant:readonly`). Restart Control Plane after saving.
 
-For repository selection and read-only cloning only, keep **Contents** read-only and omit the other optional permissions. Event subscriptions without write-back need read-only **Issues** or **Pull requests**; replies and formal reviews need write access. The AgentConnect `write` tier requires **Contents**, **Actions**, and **Workflows** at read and write. **Checks** is optional when you do not publish PR review Checks. AgentConnect cannot expand an installation beyond the permissions declared by the App.
-
-Under **Subscribe to events**, select:
-
-- `issues`;
-- `pull_request`;
-- `issue_comment`;
-- `pull_request_review_comment`.
-
-GitHub sends `installation` and `installation_repositories` events to GitHub Apps automatically; they are not manual subscription options.
-
-When the App has **Checks: Read and write**, GitHub also subscribes it to `check_run` and `check_suite` automatically. AgentConnect handles check reruns and the **Request review** action from those events, so you do not need to add either event manually.
-
-The App declaration is the maximum permission set. Each installation owner chooses the repositories and approves that set. AgentConnect then mints a short-lived token narrowed to one authorized repository and the agent's **Read only** or **Read & write** grant. Existing installation owners must approve permission increases before AgentConnect can use them.
-
-See GitHub's [permission selection guide](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app) and [webhook event reference](https://docs.github.com/en/webhooks/webhook-events-and-payloads).
-
-### 3. Configure Compose
-
-Generate a private key in the GitHub App settings. Convert the downloaded PEM to the single-line base64 value expected by the Control Plane:
-
-```bash
-base64 < github-app.private-key.pem | tr -d '\n'
-```
-
-Generate an independent webhook secret:
-
-```bash
-openssl rand -hex 32
-```
-
-Add the App identity and webhook secret to `compose.env`:
-
-```dotenv
-GITHUB_APP_ID=<app-id>
-GITHUB_APP_PRIVATE_KEY_B64=<single-line-base64-pem>
-GITHUB_APP_SLUG=<app-slug>
-GITHUB_APP_CLIENT_ID=<client-id>
-GITHUB_APP_WEBHOOK_SECRET=<webhook-secret>
-```
-
-`GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY_B64`, and `GITHUB_APP_SLUG` are a required group: set all three to enable the feature, or omit all three to disable it. `GITHUB_APP_CLIENT_ID` is optional; when omitted, AgentConnect uses the numeric App ID as the App JWT issuer. `GITHUB_APP_WEBHOOK_SECRET` is required for GitHub event ingress.
-
-The private key is read only by the Control Plane. The webhook secret is read only by the Relay and must exactly match the value in GitHub.
-
-Recreate the affected services:
-
-```bash
-docker compose --env-file compose.env up -d --force-recreate control-plane relay
-```
-
-Then open **Settings → GitHub** in AgentConnect, choose **Install on GitHub**, select the account and repositories, and return to the console. If GitHub says a permission update is pending, approve it as the installation owner and choose **Sync** in AgentConnect.
-
-The `LOGTO_MGMT_*` variables in [Logto authentication](/docs/logto-authentication) are not required to enable the GitHub App. They add per-user GitHub authorization checks when Logto-backed sign-in is enabled; without them, repository authorization follows the AgentConnect organization and installation boundary.
-
-## Optional deployment-wide Add to Slack app
-
-A deployment-wide Slack App gives the built-in `agentconnect` agent an **Add to Slack** flow without asking each organization to create its own app. This is a chat bot integration and is separate from the `slack` social-login connector configured in Logto.
-
-The app uses Slack's Events API and therefore requires:
-
-- reachable HTTPS values for `AGENTCONNECT_PUBLIC_CP_URL` and `AGENTCONNECT_PUBLIC_RELAY_URL`;
-- a running Relay connected to the Control Plane; and
-- a Slack App configured from AgentConnect's current **HTTP** manifest.
-
-You can obtain the current manifest from the ordinary Slack integration flow on any agent. Start **Integrations → Add integration → Slack**, switch from the automatic quick install to the manual option that copies a manifest, set the delivery mode to **HTTP (Events API)**, then choose **Copy manifest & open Slack** — one click both copies the manifest and opens Slack's app-creation page. Create a dedicated Slack App from that manifest and verify these public URLs in its settings:
-
-| Slack App setting         | URL                                                                    |
-| ------------------------- | ---------------------------------------------------------------------- |
-| OAuth redirect URL        | `<AGENTCONNECT_PUBLIC_CP_URL>/v1/integrations/slack/platform/callback` |
-| Event Subscriptions URL   | `<AGENTCONNECT_PUBLIC_RELAY_URL>/slack/events`                         |
-| Interactivity request URL | `<AGENTCONNECT_PUBLIC_RELAY_URL>/slack/interactions`                   |
-
-The OAuth redirect deliberately uses `/v1`, not `/api/v1`. Enable distribution if people will install the App into workspaces other than the one that owns it.
-
-Copy the App ID, Client ID, Client Secret, and Signing Secret from Slack into `compose.env`:
-
-```dotenv
-SLACK_PLATFORM_APP_ID=<app-id>
-SLACK_PLATFORM_CLIENT_ID=<client-id>
-SLACK_PLATFORM_CLIENT_SECRET=<client-secret>
-SLACK_PLATFORM_SIGNING_SECRET=<signing-secret>
-```
-
-Set all four values or omit all four. Recreate the Control Plane after a change:
-
-```bash
-docker compose --env-file compose.env up -d --force-recreate control-plane
-```
-
-When this integration is disabled, AgentConnect keeps the per-app quick-install and manifest flows available.
+Bot setup and delivery modes are documented in [Lark / Feishu](/docs/lark-feishu).
 
 ## Optional Mem0
 
-Mem0 is not part of the default AgentConnect Compose stack. AgentConnect works without external memory; deploy Mem0 only when agents should recall and capture durable records in a backend you operate.
+Mem0 is not part of the AgentConnect Compose stack. AgentConnect works without it. Deploy Mem0 only when agents should use durable external memory that you operate.
 
-The local setup has two operator-managed pieces:
-
-- **Mem0 OSS**, which stores and searches records; and
-- the **AgentConnect Mem0 wrapper**, which runs on each participating daemon and translates AgentConnect's memory profile to Mem0 OSS calls.
-
-### 1. Start Mem0 OSS
-
-Follow Mem0's [self-hosted setup](https://docs.mem0.ai/open-source/setup). Its reference Docker Compose stack exposes the API on `http://localhost:8888` and the dashboard on `http://localhost:3000`.
-
-> Mem0's dashboard port clashes with the AgentConnect console, which also defaults to `3000`. If you run both on one host, remap one of them — change `AGENTCONNECT_WEB_PORT` or Mem0's dashboard port before starting the second stack.
-
-For example:
-
-```bash
-git clone https://github.com/mem0ai/mem0.git
-cd mem0/server
-
-# Configure server/.env first, including an LLM/embedder credential and JWT_SECRET.
-make bootstrap
-```
-
-`make bootstrap` starts the stack, creates the first admin, and issues an API key. You can also start with `docker compose up -d` and finish setup in the dashboard. Mem0 shows a newly created API key only once, so put it in your secret manager before continuing.
-
-Confirm the REST API is reachable from every daemon that will use it. The OpenAPI explorer is at `http://localhost:8888/docs`; the OSS routes do not use a `/v1` prefix. See Mem0's [REST API server guide](https://docs.mem0.ai/open-source/features/rest-api) for other deployment and authentication options.
-
-> If a daemon runs in a container, `127.0.0.1` means that container. Use the Mem0 service DNS name or another address reachable from the daemon instead.
-
-### 2. Build the AgentConnect Mem0 wrapper
-
-On each participating daemon machine, build the first-party wrapper from a current AgentConnect checkout. Replace `/opt/agentconnect` if you install it elsewhere:
+1. Start [Mem0 OSS](https://docs.mem0.ai/open-source/setup) and make its API reachable from each participating daemon.
+2. On each participating daemon machine, check out the matching AgentConnect release and build the first-party wrapper. This example keeps the source at `/opt/agentconnect`, matching the configuration below:
 
 ```bash
 git clone https://github.com/agentconnect-md/agentconnect.git /opt/agentconnect
 cd /opt/agentconnect
+git checkout vX.Y.Z
 corepack enable
 pnpm install --frozen-lockfile
 pnpm --filter @agentconnect.md/memory-plugin-mem0 build
 ```
 
-If the repository already exists, pull the current release and rebuild that package. The stdio entry point is:
-
-```text
-/opt/agentconnect/packages/memory-plugin-mem0/dist/cli.js
-```
-
-### 3. Allowlist the wrapper on the daemon
-
-Add a `memoryPlugins` entry to the daemon's `~/.agentconnect/config.json`. Preserve the rest of the existing file:
+3. Allowlist the wrapper in each daemon's `~/.agentconnect/config.json`:
 
 ```json
 {
@@ -384,32 +283,20 @@ Add a `memoryPlugins` entry to the daemon's `~/.agentconnect/config.json`. Prese
 }
 ```
 
-The distinction matters:
-
-- `mem0-oss` is an opaque **command reference** that an organization owner may select in the console.
-- `command`, `args`, and `MEM0_OSS_BASE_URL` are controlled only by the daemon operator.
-- `secretEnv` maps the connection's logical `apiKey` to the wrapper's `MEM0_API_KEY` environment variable. It does not contain the key itself.
-
-Restart the daemon so the new allowlist is active:
+Adjust the wrapper path and Mem0 address for your deployment, then restart the daemon:
 
 ```bash
 npx -y @agentconnect.md/cli restart
 ```
 
-Run `npx -y @agentconnect.md/cli status` if you need the service state or log path. If the daemon runs in the foreground, stop and rerun it instead. If it uses a non-default `--root`, edit that root's `config.json`.
+Continue with [Use Mem0 OSS as external memory](/docs/external-memory) to create the organization connection and bind it to agents.
 
-### Remote-wrapper alternative
+## Production checklist
 
-Use **Remote · Streamable HTTP** when the wrapper should run as a service rather than as a daemon child. Run the same package with `MEM0_DIALECT=oss`, `MEM0_OSS_BASE_URL=<your-mem0-api>`, and `MCP_TRANSPORT=http`, expose its `/mcp` endpoint behind HTTPS, then register that URL with the same plugin id and credential contract.
-
-The remote Relay enforces the reviewed wrapper endpoint and injects the write-only credential as `X-Mem0-Api-Key`; the wrapper translates it to Mem0 OSS's `X-API-Key`. The Mem0 upstream URL still comes only from the wrapper deployment, never from organization connection JSON.
-
-After the backend and wrapper are ready, continue with [the guide to using Mem0 OSS as external memory](/docs/external-memory) to create the organization connection, bind an agent, choose recall and capture policies, and test cross-session recall.
-
-## Optional Logto authentication
-
-AgentConnect does not include or start Logto. The default local stack keeps authentication off, but any network-exposed deployment should configure a Logto tenant for real user identities and renewable Control Plane tokens.
-
-Self-hosted Logto OSS provides every Logto feature required by AgentConnect without a paid license. Logto Cloud requires a plan that includes a custom API Resource for normal production sessions; its Free plan is suitable only for short evaluation with AgentConnect's current ID-token fallback.
-
-Follow [Logto authentication](/docs/logto-authentication) to create the SPA and machine-to-machine applications, Control Plane API Resource, social connectors, Account API access, email verification, callbacks, and regional identity settings.
+- Pin release images.
+- Configure OIDC sign-in and an API Resource.
+- Replace every default secret and enable encrypted secret storage.
+- Put Web, Control Plane, Relay, and Logto behind HTTPS.
+- Preserve WebSocket upgrades.
+- Back up PostgreSQL and test restores.
+- Keep Tenant Admin and PostgreSQL off the public network.
