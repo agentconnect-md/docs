@@ -83,6 +83,12 @@ Set the final public URLs before creating GitHub or Slack Apps. Tenant Admin der
 docker compose --env-file compose.env up -d --force-recreate tenant-admin
 ```
 
+After updating the provider Apps, recreate the runtime services with the same environment and Compose overrides:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane relay web
+```
+
 > Do not publish a no-auth stack or its default secrets. Compose is a single-host topology, not an HA deployment.
 
 ## Tenant Admin
