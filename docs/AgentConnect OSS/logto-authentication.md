@@ -78,7 +78,7 @@ The bundled overlay is for local evaluation. It uses the SPA's ID token until yo
 
 ## Production or external Logto
 
-Run Logto OSS separately, or use a Logto Cloud plan that supports a custom API Resource. Configure the final public origins and Logto endpoints in `compose.env` before opening Tenant Admin:
+Run Logto OSS separately, or use a Logto Cloud plan that supports a custom API Resource. Configure only the final service origins and Logto endpoints in `compose.env` before opening Tenant Admin:
 
 ```dotenv
 AGENTCONNECT_PUBLIC_WEB_URL=https://app.agentconnect.example
@@ -101,6 +101,8 @@ docker compose --env-file compose.env up -d
 ```
 
 Create the Management API M2M application in that tenant, assign **Logto Management API access**, and enter its credentials in Tenant Admin. Tenant Admin will create or adopt the browser SPA and configure the supported social connectors.
+
+Configure the browser application, API Resource, displayed sign-in methods, provider Apps, and their credentials in Tenant Admin.
 
 ## Create the Control Plane API Resource
 
@@ -176,4 +178,4 @@ Logto documents the identity-editing behavior in [Account settings by Account AP
 
 An immediate `401` usually means the browser API resource and Control Plane audience do not match. A provider button that reaches a Logto error page usually means the connector is missing from the sign-in experience.
 
-Leaving Logto and OIDC endpoints unset preserves the local no-auth mode. Keep that mode bound to loopback.
+Until Logto sign-in is bootstrapped in Tenant Admin, keep the local no-auth stack bound to loopback.

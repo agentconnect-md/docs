@@ -4,7 +4,7 @@ excerpt: Configure AgentConnect OSS topology, secrets, authentication, provider 
 hidden: false
 ---
 
-The default Docker Compose stack needs no configuration and stays on loopback. Use `compose.env` for deployment topology and bootstrap secrets, then use Tenant Admin for authentication and provider apps.
+The default Docker Compose stack needs no configuration and stays on loopback. Use `compose.env` only for deployment topology and bootstrap secrets, then use Tenant Admin for authentication, provider apps, and deployment options.
 
 ## What is configured where
 
@@ -14,7 +14,7 @@ The default Docker Compose stack needs no configuration and stays on loopback. U
 | Tenant Admin | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
 | AgentConnect console | Organizations, agents, integrations, environments, tools, and skills |
 
-Tenant Admin saves deployment settings and write-only provider secrets in PostgreSQL. Once a deployment configuration exists, its managed values take precedence over legacy provider environment variables.
+Tenant Admin is the supported configuration surface for browser authentication, provider apps, displayed sign-in methods, and preset-agent behavior. It saves deployment settings and write-only provider secrets in PostgreSQL.
 
 ## Compose environment
 
@@ -121,8 +121,6 @@ For the initial administrator and external Logto setup, continue with [Logto aut
 ### Preset agent
 
 New organizations receive a built-in `agentconnect` agent by default. In Tenant Admin, open **Options**, clear **Enable preset Agents**, and save. This prevents future provisioning and backfills; it does not delete agents that already exist.
-
-Before Tenant Admin has initialized a deployment configuration, `PRESET_AGENTS_ENABLED=false` remains available as a bootstrap environment override.
 
 ## Database and bootstrap secrets
 
