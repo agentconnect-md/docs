@@ -54,7 +54,7 @@ Where a provider identity is required, organization membership or the Owner role
 
 ## AgentConnect OSS setup
 
-AgentConnect OSS does not enable social sign-in by default. To offer linked accounts, bootstrap Logto-backed sign-in in Tenant Admin, enable the displayed sign-in methods there, and create the matching Logto connectors. The Profile card appears after OIDC sign-in is enabled.
+AgentConnect OSS does not enable social sign-in by default. To offer linked accounts, bootstrap Logto-backed sign-in in Setup, enable the displayed sign-in methods there, and create the matching Logto connectors. The Profile card appears after OIDC sign-in is enabled.
 
 The operator must also enable Logto account linking, configure provider identity lookup, and provide email delivery for providers that require an ownership code. Local no-auth mode does not infer a linked provider identity.
 

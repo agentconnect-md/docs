@@ -4,7 +4,7 @@ excerpt: Start the open-source AgentConnect stack locally with Docker Compose, t
 hidden: false
 ---
 
-AgentConnect OSS is the open-source, self-hosted AgentConnect stack. Docker Compose starts the Web console, Control Plane, Relay, Tenant Admin, and PostgreSQL. Agent execution remains in daemons on the machines that own the workspaces and runtime credentials.
+AgentConnect OSS is the open-source, self-hosted AgentConnect stack. Docker Compose starts the Web console, Control Plane, Relay, Setup Server, and PostgreSQL. Agent execution remains in daemons on the machines that own the workspaces and runtime credentials.
 
 The source is available in the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect).
 
@@ -26,7 +26,7 @@ cd agentconnect
 docker compose up -d --pull always
 ```
 
-The first run starts PostgreSQL 18, applies the database migrations, initializes the local no-auth organization, and starts the application services. It adds no sample data. The built-in `agentconnect` agent is enabled by default and can be disabled in [Tenant Admin](/docs/deployment-and-configuration#tenant-admin).
+The first run starts PostgreSQL 18, applies the database migrations, initializes the local no-auth organization, and starts the application services. It adds no sample data. The built-in `agentconnect` agent is enabled by default and can be disabled in [Setup](/docs/deployment-and-configuration#setup-server).
 
 Check the stack:
 
@@ -34,7 +34,7 @@ Check the stack:
 docker compose ps --all
 ```
 
-`postgres`, `control-plane`, `relay`, `tenant-admin`, and `web` should be running. `migration-files` and `migrate` should show `Exited (0)`; they are successful one-shot jobs.
+`postgres`, `control-plane`, `relay`, `setup-server`, and `web` should be running. `migration-files` and `migrate` should show `Exited (0)`; they are successful one-shot jobs.
 
 ## 2. Open AgentConnect
 
@@ -71,7 +71,7 @@ docker compose -f compose.yaml -f compose.logto.yaml up -d
 
 Then open:
 
-- Tenant Admin: [http://localhost:8091](http://localhost:8091)
+- Setup: [http://localhost:8091](http://localhost:8091)
 - Logto Console: [http://localhost:3002](http://localhost:3002)
 - AgentConnect: [http://localhost:3000](http://localhost:3000)
 
@@ -112,7 +112,7 @@ Delete the database and return to an empty installation:
 docker compose down --volumes
 ```
 
-> This permanently deletes Control Plane and Tenant Admin data in the Compose database. Daemon-local workspaces and transcripts are outside this volume and are not deleted.
+> This permanently deletes Control Plane and Setup Server data in the Compose database. Daemon-local workspaces and transcripts are outside this volume and are not deleted.
 
 ## What the stack includes
 
@@ -121,7 +121,7 @@ docker compose down --volumes
 | Web console | Docker | Configure and follow work |
 | Control Plane | Docker | Auth and coordination data |
 | Relay | Docker | Public callback ingress |
-| Tenant Admin | Docker, loopback only | Configure deployment auth and providers |
+| Setup Server | Docker, loopback only | Configure deployment auth and providers |
 | PostgreSQL | Docker | Persist deployment and Control Plane data |
 | Logto OSS | Optional overlay | Local sign-in |
 | Daemon | Host or another machine | Run agents and hold local data |
