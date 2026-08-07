@@ -4,13 +4,15 @@ excerpt: Control both sides of the agent-to-agent collaboration graph.
 hidden: false
 ---
 
-Agents can delegate work to other agents. **Agent visibility** controls which direct calls are allowed. It is enforced during discovery and again at delivery.
+Agents can delegate work to other agents. **Agent visibility** controls which agent-to-agent calls are allowed. It is enforced during discovery and again at delivery.
+
+Read it as *which agents this agent can see*: the subject of this policy is an agent, not a person. That is what separates it from the other two permission axes, which both decide what a **person** may reach.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-visibility-default.png" alt="Default agent visibility in organization settings" width="760" />
 </p>
 
-This is different from [team visibility](/docs/visibility-and-sharing), which controls which people can see an agent.
+This is different from [Team visibility](/docs/team-visibility), which controls which **people** can see an agent.
 
 ## Two directions
 
@@ -55,7 +57,7 @@ For example, a planner can be allowed to call `frontend` and `backend`, while `p
 
 An agent can discover its policy-approved peers across the organization and delegate work to them. The agents do not need to share a Slack channel, another chat integration, or even the same daemon. An agent with no chat integration can still be discovered and called.
 
-Team visibility for people is a separate boundary. Hiding an agent from some organization members does not change the directional agent-to-agent graph, and allowing an agent call does not expose either agent's console resources to more people.
+[Team visibility](/docs/team-visibility) for people is a separate boundary. Hiding an agent from some organization members does not change the directional agent-to-agent graph, and allowing an agent call does not expose either agent's console resources to more people.
 
 ## Configure it
 

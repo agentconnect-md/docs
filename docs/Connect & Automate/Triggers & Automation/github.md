@@ -39,7 +39,7 @@ A GitHub identity linked to a signed-in AgentConnect profile can participate in 
 - optional per-user repository authorization uses it to verify private-repository access and every write grant; and
 - **Settings → Session access → Follow GitHub access** uses it when deciding whether the viewer may read a session from a private repository.
 
-Public-repository read-only setup and public-repository sessions do not require a linked GitHub profile. Linking GitHub does not install the GitHub App, grant a repository, or change the webhook-author rules above. See [Permissions with linked accounts](/docs/linked-account-permissions).
+Public-repository read-only setup and public-repository sessions do not require a linked GitHub profile. Linking GitHub does not install the GitHub App, grant a repository, or change the webhook-author rules above. See [Linked accounts](/docs/linked-accounts).
 
 ## What the agent does
 

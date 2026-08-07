@@ -48,7 +48,7 @@ If a daemon is offline, its agents are offline. The Control Plane can still show
 
 Everything belongs to an organization. Membership and role establish the outer boundary, then AgentConnect evaluates the target resource: Team visibility protects resources such as Agents, while each Session has an independent audience for its metadata and transcript. Agent-to-agent calls use separate inbound and outbound policies. Start with the [Permissions overview](/docs/permissions-overview).
 
-A person can [link several sign-in methods](/docs/social-account-linking) to one profile when those providers are available. AgentConnect Cloud currently offers GitHub, Google, and Slack. Self-hosted deployments can also add Lark and Feishu as sign-in methods. Their linked identities can then take part in the matching session access checks.
+A person can [link several sign-in methods](/docs/linked-accounts) to one profile when those providers are available. AgentConnect Cloud currently offers GitHub, Google, and Slack. Self-hosted deployments can also add Lark and Feishu as sign-in methods. Their linked identities can then take part in the matching session access checks.
 
 ## Hosting choices
 
