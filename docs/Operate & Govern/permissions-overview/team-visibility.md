@@ -1,10 +1,10 @@
 ---
-title: 👁️ Visibility & sharing
-excerpt: Choose who can discover and use an agent, daemon, schedule, MCP provider, or shared skill source.
+title: 👁️ Team visibility
+excerpt: Choose which people can discover and use an agent, daemon, schedule, MCP provider, or shared skill source.
 hidden: false
 ---
 
-Team visibility controls the audience for a resource. New resources are visible to the whole organization by default, but you can restrict sensitive or experimental resources to selected members.
+Team visibility controls which **people** may reach a resource. It is separate from [Agent visibility](/docs/agent-visibility), which controls which **agents** may call one another. New resources are visible to the whole organization by default, but you can restrict sensitive or experimental resources to selected members.
 
 ## Setting visibility
 
@@ -49,11 +49,11 @@ Its chat integrations are also conversation-gated. Newly discovered channels and
 
 Existing channels keep their configured trigger when an agent is changed from Everyone to Selected. Known direct messages switch Off, so review the integration card after tightening visibility.
 
-## What visibility does not control
+## What team visibility does not control
 
 Team visibility is separate from:
 
 - [Roles](/docs/members-and-roles), which decide what a person may do;
 - [Session visibility](/docs/session-visibility), which can make one transcript private;
-- [Agent visibility](/docs/agent-visibility), which controls agent-to-agent calls; and
+- [Agent visibility](/docs/agent-visibility), which controls the agent-to-agent collaboration graph; and
 - runtime permission mode, repository access, and provider app scopes.

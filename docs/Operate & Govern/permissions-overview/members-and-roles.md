@@ -27,7 +27,7 @@ An organization must always have at least one Owner, so its last Owner cannot be
 
 |                                                                                   | **Owner** | **Collaborator** | **Viewer** |
 | --------------------------------------------------------------------------------- | --------- | ---------------- | ---------- |
-| See resources allowed by [visibility](/docs/visibility-and-sharing) | ✓ | ✓ | ✓ |
+| See resources allowed by [team visibility](/docs/team-visibility) | ✓ | ✓ | ✓ |
 | Read allowed sessions, transcripts, and Analytics                                 | ✓         | ✓                | ✓          |
 | Create resources and edit resources they can see                                  | ✓         | ✓                | —          |
 | Talk to an agent they can see in the [Playground](/docs/playground)               | ✓         | ✓                | ✓          |
@@ -48,8 +48,8 @@ Collaborators can change the audience of any resource they are allowed to edit. 
 Viewers are read-only for *configuration*: they cannot create, edit, or delete team resources. Two exceptions are intentional, and both matter when you choose who to make a Viewer:
 
 - A Viewer may change the visibility of a session whose owner identity matches them.
-- **A Viewer can talk to any agent they can see, from the [Playground](/docs/playground).** That starts a real run on the daemon with the agent's full configuration behind it — its tools, MCP servers, repository access, and secrets. The Viewer cannot change how the agent is configured, but they can use it. Restrict a sensitive agent with [team visibility](/docs/visibility-and-sharing) rather than relying on the Viewer role to keep people away from it.
+- **A Viewer can talk to any agent they can see, from the [Playground](/docs/playground).** That starts a real run on the daemon with the agent's full configuration behind it — its tools, MCP servers, repository access, and secrets. The Viewer cannot change how the agent is configured, but they can use it. Restrict a sensitive agent with [team visibility](/docs/team-visibility) rather than relying on the Viewer role to keep people away from it.
 
 ## Your profile
 
-The avatar menu → **Your profile** shows your name, email, role, and membership date. You can edit your display name there. It also hosts [personal API keys](/docs/api-keys) and any [social sign-in methods](/docs/social-account-linking) available on your deployment.
+The avatar menu → **Your profile** shows your name, email, role, and membership date. You can edit your display name there. It also hosts [personal API keys](/docs/api-keys) and any [social sign-in methods](/docs/linked-accounts) available on your deployment.

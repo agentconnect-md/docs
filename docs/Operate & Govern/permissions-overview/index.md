@@ -1,39 +1,65 @@
 ---
 title: 🔐 Permissions
-excerpt: How organization roles, resource visibility, session visibility, and agent-to-agent policies work together.
+excerpt: Membership and role set the outer boundary. Three independent axes then decide who sees a resource, who reads a session, and which agents may call one another.
 hidden: false
 ---
 
-AgentConnect evaluates the boundary that owns each requested resource. Organization membership remains the outer boundary, while Agent Team visibility and Session audience protect different things.
+Everything in AgentConnect belongs to an **organization**. Membership is the outer boundary, and a member's [role](/docs/members-and-roles) decides what kind of actions they may take. Inside that boundary, three independent axes decide who reaches what:
+
+```mermaid
+flowchart LR
+  Person["Person"] -->|"Team visibility"| Resources["Agents, daemons, schedules, tools"]
+  Person -->|"Session visibility"| Sessions["Sessions and transcripts"]
+  AgentA["Agent"] -->|"Agent visibility"| AgentB["Another agent"]
+```
+
+All three are named *visibility*, so read them by their subject. Team visibility and Session visibility decide what a **person** may reach; Agent visibility decides which **agents** may call one another, and no person's access follows from it.
+
+No axis inherits from another. Someone allowed to see an Agent cannot automatically read its sessions. Someone allowed to read a session does not gain the Agent's page, configuration, workspace, or invocation controls — the console may show the Agent's name as plain session context, never as a link. Allowing one agent to call another gives neither agent access to a resource that a person restricted.
+
+## The three axes
+
+Each axis has the same shape: an organization-wide default, and a per-resource choice that overrides it.
+
+| Axis | Who reaches what | Organization default | Per-resource choice |
+| --- | --- | --- | --- |
+| [Team visibility](/docs/team-visibility) | A person → an agent, daemon, schedule, MCP provider, or skill source | Everyone | **Everyone** or **Selected** |
+| [Session visibility](/docs/session-visibility) | A person → one session and its transcript | **Session access**, off by default | **Everyone** or **Private**; a provider audience is read-only |
+| [Agent visibility](/docs/agent-visibility) | An agent → another agent | **Default agent visibility**, All agents by default | Inbound and outbound peer lists |
+
+A role never overrides an audience. An organization Owner who is not selected cannot see a restricted resource, and a Private session has no Owner override either.
+
+## Organization defaults
+
+Two cards on the **Settings** page decide what new agents and new sessions start with. Only an organization Owner can change them, and they are the fastest way to make a whole organization open or closed by default.
+
+### Default agent visibility
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-visibility-default.png" alt="Choose the default agent-to-agent visibility policy" width="760" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-visibility-default.png" alt="The Default agent visibility card in organization settings, offering All agents or Isolated" width="760" />
 </p>
 
-For a person using the console, API, or Playground:
+This card decides the agent-to-agent policy that new agents are created with:
 
-1. **Organization membership** establishes the outer boundary.
-2. A member's **role** decides what kind of actions they may take.
-3. **Resource visibility** decides which agents, daemons, schedules, [tools, and skill sources](/docs/tools-and-skills) they can see and manage.
-4. **Session visibility** independently decides which sessions, transcripts, and session-scoped updates they can read.
+- **All agents** — a new agent can discover and call every otherwise-callable peer, and accepts calls from all of them. Choose this when your agents work as one collaborative team.
+- **Isolated** — a new agent starts as **Selected** with an empty list in both directions. It discovers no peers and accepts no peer calls until someone configures it. Choose this when every delegation edge should be deliberate.
 
-Session access is not inherited from the owning Agent. Passing a session's audience can reveal that session and the Agent's display name as plain context, but it does not reveal the Agent page, configuration, workspace, or invocation controls.
+The setting applies only to agents created after the change. It never rewrites an existing agent's policies, and **Add agent → Access** can still override either direction before creation. See [Agent visibility](/docs/agent-visibility).
 
-Agent-to-agent calls use a separate, directional policy. A call from agent A to agent B is allowed only when both agents belong to the same organization, A may call B, and B accepts calls from A. Human team visibility and chat-channel membership do not grant or block that agent-to-agent edge.
+### Session access
 
-## The permission layers
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-access.png" alt="The Session access card in organization settings, with one follow-platform-access toggle per platform" width="760" />
+</p>
 
-| Layer | Limits | Choices |
-| --- | --- | --- |
-| [Members & roles](/docs/members-and-roles) | Actions across the organization | Owner, Collaborator, Viewer |
-| [Visibility & sharing](/docs/visibility-and-sharing) | Who sees a team resource | Everyone, Selected |
-| [Session visibility](/docs/session-visibility) | Who reads one session | Everyone, Private, provider |
-| [Agent visibility](/docs/agent-visibility) | Which agents may collaborate | All, Selected |
-| [Social account linking](/docs/social-account-linking) | Provider identity | GitHub, Google, Slack |
+This card decides whether sessions from a platform follow that platform's own access rules instead of the normal per-origin default:
 
-When one profile has several linked providers, [Permissions with linked accounts](/docs/linked-account-permissions) explains which provider-specific checks change and which AgentConnect permissions stay exactly the same.
+- **Off**, the default — each new session is **Everyone** or **Private** according to where it started. See the [default audience table](/docs/session-visibility#default-audience).
+- **Follow Slack access** — a Slack channel or group-DM session requires a linked Slack identity from the same workspace with current access to the source conversation.
+- **Follow GitHub access** — a private-repository session requires a linked GitHub profile with current access to that repository. Public-repository sessions stay available to every member.
+- **Follow Feishu / Lark access** — the audience follows current membership in the source chat, including one-to-one chats. This currently requires a self-hosted deployment.
 
-Self-hosted deployments can also enable Lark and Feishu sign-in.
+A provider audience is read-only on the session itself: change this organization setting rather than reclassifying one participant's copy. Every provider check needs a matching [linked account](/docs/linked-accounts); organization membership, the Owner role, and a personal API key do not substitute for it. See [Session visibility](/docs/session-visibility).
 
 ## Permissions that are separate
 
@@ -45,8 +71,8 @@ Several controls use similar words but protect different boundaries:
 - Platform app scopes control what a Slack, Discord, Telegram, Lark, or GitHub app may do at that provider.
 - Tool, skill, secret, and daemon configuration controls what capabilities reach the agent process.
 
-These controls compose with the layers above. For example, seeing an agent in the console does not grant write access to its repository, and allowing one agent to call another does not grant either agent access to a hidden team resource.
+These controls compose with the axes above. Seeing an agent in the console does not grant write access to its repository, and allowing one agent to call another does not grant either agent access to a restricted team resource.
 
 ## A useful rule of thumb
 
-Use organization roles for broad responsibility, resource visibility for direct access to team resources, session visibility for transcript privacy, and agent visibility for the collaboration graph between agents. Treat the Agent and its sessions as separate authorization targets.
+Use roles for broad responsibility, Team visibility for direct access to team resources, Session visibility for transcript privacy, and Agent visibility for the agent-to-agent collaboration graph. Treat an Agent and its sessions as two separate authorization targets.

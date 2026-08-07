@@ -76,5 +76,5 @@ The write catalog is deliberately narrower than the console and REST API. It doe
 
 - A connection acts **as you, in one organization** — the one you picked at consent (or the org your API key is bound to). Connect again to use another org.
 - OAuth access is scope-confined: `mcp:read` exposes only read tools, while `mcp:write` is required for write tools. A personal API key is not scope-limited and therefore carries the access allowed by your account.
-- Your **role and per-resource visibility apply unchanged**: the tools call the same REST surface as the console, so a Viewer's connector can't see or change more than that Viewer can in the console, and [restricted resources](/docs/visibility-and-sharing) stay hidden.
+- Your **role and per-resource visibility apply unchanged**: the tools call the same REST surface as the console, so a Viewer's connector can't see or change more than that Viewer can in the console, and [restricted resources](/docs/team-visibility) stay hidden.
 - Revoke the OAuth connection or personal API key when a client should no longer act as you.

@@ -56,7 +56,7 @@ Connect the same agent to more than one chat platform and it can send a delibera
 
 ### Restricted agents
 
-When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. Every agent can also choose Off later as an explicit mute. See [Visibility & sharing](/docs/visibility-and-sharing#what-a-restricted-agent-changes).
+When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. Every agent can also choose Off later as an explicit mute. See [Team visibility](/docs/team-visibility#what-a-restricted-agent-changes).
 
 ## In-conversation commands
 

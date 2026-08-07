@@ -20,7 +20,7 @@ hidden: false
 - **Timezone** — the IANA timezone used to evaluate the schedule, such as `America/New_York` or `Asia/Shanghai`. New schedules default to your browser's timezone, and the saved timezone continues to apply if the agent later moves to a daemon in another region.
 - **Prompt** — the task, written like you'd brief a person: *"Summarize last week's deploys and rollbacks, and post the report to #deploys."*
 - **Target integration** — optional. Pick one of the agent's integration channels and the run posts its output there, threading replies under it. Leave it on **None — session only** for a headless run you read in Sessions.
-- **Visibility** — who in the org sees the schedule ([details](/docs/visibility-and-sharing)).
+- **Visibility** — who in the org sees the schedule ([details](/docs/team-visibility)).
 
 ## Run and review schedules
 
