@@ -26,6 +26,8 @@ cd agentconnect
 docker compose up -d --pull always
 ```
 
+To build the images from the checkout instead of pulling the published ones, run `docker compose up -d --build`. Every service in `compose.yaml` carries a build definition, and the built images take the tags the stack already references. The build targets `linux/amd64` like the published images, so it is emulated and slow on Apple Silicon.
+
 The first run starts PostgreSQL 18, applies the database migrations, initializes the local no-auth organization, and starts the application services. It adds no sample data. The built-in `agentconnect` agent is enabled by default and can be disabled in [Setup](/docs/deployment-and-configuration#setup-server).
 
 Check the stack:
@@ -60,6 +62,12 @@ In the Web console:
 3. Run that exact command on the machine that should host the agents.
 
 The daemon connects to the Control Plane and Relay with outbound connections. If it runs on another machine, configure host-reachable URLs first; see [Network and public URLs](/docs/deployment-and-configuration#network-and-public-urls).
+
+## Guided setup
+
+Past the local stack — sign-in, public URLs, provider apps, and production hardening — a guided path helps. The repository ships a setup skill for Claude Code at `.claude/skills/agentconnect-setup`: open Claude Code in the checkout and ask it to set up AgentConnect, and it runs this page and the deployment pages as an interactive tutorial, verifying each checkpoint before continuing. It never asks you to paste secrets into chat.
+
+The sections below cover the same ground by hand, and stay the reference whether or not you use the skill.
 
 ## Optional: add local sign-in
 
