@@ -199,7 +199,7 @@ The command is resumable and can also be rerun after rotating the Transit key. V
 
 ## Connectors
 
-The stack includes a connector gateway that backs **Add connectors** in [Tools & Skills](/docs/tools-and-skills). It needs no configuration to browse and connect API-key providers. Because its own console and admin API are unauthenticated, it stays on loopback and is never published beyond the Docker host.
+The stack includes a connector gateway that backs **Add connectors** in [Tools & Skills](/docs/tools-and-skills). It needs no configuration to browse the catalog and connect any service that authorizes with an API key, a custom credential, or no credential at all. Because its own console and admin API are unauthenticated, it stays on loopback and is never published beyond the Docker host.
 
 Do not set `OOMOL_CONNECT_ADMIN_TOKEN`. AgentConnect calls the gateway without a bearer token, so setting one stops the connector catalog from loading.
 
@@ -223,7 +223,9 @@ Back up that volume alongside PostgreSQL. `docker compose down` preserves it; `d
 
 ### OAuth providers
 
-A default stack browses API-key and no-auth providers only. An OAuth provider is listed only once its client secret is configured in the gateway, and the provider's redirect has to reach the gateway from the browser.
+Filtering happens per authorization method, not per service. Until a service's OAuth client is configured in the gateway, only its OAuth method is withheld: a service that also accepts an API key, a custom credential, or no authentication stays in the catalog and offers those methods instead. Services that authorize solely through OAuth are the ones absent from a default stack.
+
+To offer OAuth, configure its client in the gateway and make the provider's redirect reach the gateway from the browser.
 
 1. Give the gateway a browser-reachable origin and point AgentConnect at it:
 

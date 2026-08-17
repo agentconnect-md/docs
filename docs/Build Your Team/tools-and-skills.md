@@ -49,7 +49,9 @@ The connection then behaves like any other entry in **Connectors & MCP servers**
 
 When a token expires or an upstream key rotates, open the connection and choose **Reconnect connector** or **Edit API key**. A connector's endpoint and headers are managed for you and cannot be edited by hand, so reconnecting is how you refresh its credential.
 
-If a service you expect is missing from the catalog, it is usually one of two cases. Services AgentConnect integrates directly, such as GitHub, Slack, Telegram, Discord, and Lark / Feishu, are kept out of the connector catalog by default in favor of their own integrations. OAuth services appear once an OAuth client is configured for them in the deployment — on a self-hosted stack, see [Deployment and configuration](/docs/deployment-and-configuration).
+If a service you expect is missing from the catalog, it is usually one of two cases. Services AgentConnect integrates directly, such as GitHub, Slack, Telegram, Discord, and Lark / Feishu, are kept out of the connector catalog by default in favor of their own integrations. Services that authorize solely through OAuth appear once an OAuth client is configured for them in the deployment — on a self-hosted stack, see [Deployment and configuration](/docs/deployment-and-configuration).
+
+A service that offers OAuth alongside another method stays listed either way. Only the OAuth choice is withheld until its client is configured, so you may see a service in the catalog with fewer authorization options than the provider actually supports.
 
 ## Skills library
 
