@@ -203,6 +203,8 @@ The stack includes a connector gateway that backs **Add connectors** in [Tools &
 
 Do not set `OOMOL_CONNECT_ADMIN_TOKEN`. AgentConnect calls the gateway without a bearer token, so setting one stops the connector catalog from loading.
 
+To require a bearer on the gateway's action API, set `OOMOL_CONNECT_RUNTIME_TOKEN`. One value configures both the gateway and the Relay that calls it, so runtime authentication is on at both ends or off at both. Restart the gateway and Relay after changing it.
+
 ### Encrypt stored connector credentials
 
 The gateway keeps connector credentials and OAuth client secrets in its own SQLite volume, `agentconnect_open-connector-data`. This is a second credential store: `SECRET_CIPHER` and Vault Transit do not reach it. Give it a key of its own before connecting anything real, and set the key before you create the first connection:
