@@ -203,7 +203,13 @@ The stack includes a connector gateway that backs **Add connectors** in [Tools &
 
 Do not set `OOMOL_CONNECT_ADMIN_TOKEN`. AgentConnect calls the gateway without a bearer token, so setting one stops the connector catalog from loading.
 
-To require a bearer on the gateway's action API, set `OOMOL_CONNECT_RUNTIME_TOKEN`. One value configures both the gateway and the Relay that calls it, so runtime authentication is on at both ends or off at both. Restart the gateway and Relay after changing it.
+To require a bearer on the gateway's action API, set `OOMOL_CONNECT_RUNTIME_TOKEN`. One value configures both the gateway and the Relay that calls it, so runtime authentication is on at both ends or off at both.
+
+These settings are Compose environment values, and `docker compose restart` reuses a container's existing environment. Recreate both services so the new value takes effect:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate open-connector relay
+```
 
 ### Encrypt stored connector credentials
 
@@ -217,6 +223,12 @@ Generate it like the other stack secrets:
 
 ```bash
 openssl rand -hex 32
+```
+
+Adding the key to a stack that is already running takes effect only once the gateway is recreated:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate open-connector
 ```
 
 Back up that volume alongside PostgreSQL. `docker compose down` preserves it; `docker compose down --volumes` deletes it with the database.
@@ -254,7 +266,11 @@ ssh -L 3100:127.0.0.1:3100 operator@host.example
 
 Both accept comma-separated service ids, and the blocklist is applied after the whitelist. The default blocklist keeps GitHub, Slack, Telegram, Discord, and Lark / Feishu out of the connector catalog because AgentConnect integrates them directly. Override it only when you deliberately want both paths available.
 
-Restart Control Plane and Relay after changing either value.
+Only Control Plane reads these two values, and it needs to be recreated rather than restarted to pick them up:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane
+```
 
 ## GitHub App
 
