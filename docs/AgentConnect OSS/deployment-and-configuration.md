@@ -245,9 +245,15 @@ To offer OAuth, configure its client in the gateway and make the provider's redi
    AGENTCONNECT_PUBLIC_OPEN_CONNECTOR_URL=https://connectors.example.test
    ```
 
-2. Route **only** `/oauth/callback` on that origin to the gateway. The provider redirects the browser there to complete authorization, and that is the only path that has to be public.
-3. Register the OAuth client with the provider using `<origin>/oauth/callback` as its redirect URI.
-4. Open the gateway console on its local port, [http://localhost:3100](http://localhost:3100), and save the client ID and secret for that service.
+2. Recreate the gateway so it builds redirect URIs from the new origin. A gateway left running keeps the old one, and its authorization requests will not match the callback you register next:
+
+   ```bash
+   docker compose --env-file compose.env up -d --force-recreate open-connector
+   ```
+
+3. Route **only** `/oauth/callback` on that origin to the gateway. The provider redirects the browser there to complete authorization, and that is the only path that has to be public.
+4. Register the OAuth client with the provider using `<origin>/oauth/callback` as its redirect URI.
+5. Open the gateway console on its local port, [http://localhost:3100](http://localhost:3100), and save the client ID and secret for that service.
 
 > The gateway console and its `/api` surface have no authentication. Never route them through a public origin — publishing them hands anyone your stored connector credentials.
 
