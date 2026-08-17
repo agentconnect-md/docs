@@ -10,7 +10,7 @@ The default Docker Compose stack needs no configuration and stays on loopback. U
 
 | Surface | Owns |
 | --- | --- |
-| `compose.env` | Images, ports, public URLs, database secrets, Vault, and Logto endpoints |
+| `compose.env` | Images, ports, public URLs, database secrets, Vault, connectors, and Logto endpoints |
 | Setup Server | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
 | AgentConnect console | Organizations, agents, integrations, environments, tools, and skills |
 
@@ -39,6 +39,7 @@ docker compose --env-file compose.env up -d
 | `AGENTCONNECT_VERSION` | `latest` |
 | `AGENTCONNECT_IMAGE_REGISTRY` | `ghcr.io/agentconnect-md` |
 | `AGENTCONNECT_PRISMA_CLI_VERSION` | `7.8.0-node24-r1` |
+| `AGENTCONNECT_OPEN_CONNECTOR_VERSION` | `latest` |
 
 For reproducible deployments, pin an AgentConnect release:
 
@@ -56,11 +57,12 @@ Published application and migration images currently target `linux/amd64`.
 | Control Plane | `AGENTCONNECT_CP_PORT` | `8080` |
 | Relay | `AGENTCONNECT_RELAY_PORT` | `8090` |
 | PostgreSQL | `AGENTCONNECT_POSTGRES_PORT` | `5432` |
+| Connector gateway | `AGENTCONNECT_OPEN_CONNECTOR_PORT` | `3100` |
 | Setup Server | Fixed, loopback only | `8091` |
 | Logto sign-in | Optional overlay | `3001` |
 | Logto Console | Optional overlay | `3002` |
 
-`AGENTCONNECT_BIND_ADDRESS` defaults to `127.0.0.1` for Web, Control Plane, and Relay. PostgreSQL, Setup Server, and the local Logto overlay remain loopback-only in the supplied Compose files.
+`AGENTCONNECT_BIND_ADDRESS` defaults to `127.0.0.1` for Web, Control Plane, and Relay. PostgreSQL, the connector gateway, Setup Server, and the local Logto overlay remain loopback-only in the supplied Compose files.
 
 ## Network and public URLs
 
@@ -195,6 +197,87 @@ docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
 
 The command is resumable and can also be rerun after rotating the Transit key. Vault workload identity is supported through `VAULT_JWT_ROLE`, `VAULT_JWT_PATH`, and `VAULT_AUTH_MOUNT` instead of `VAULT_TOKEN`.
 
+## Connectors
+
+The stack includes a connector gateway that backs **Add connectors** in [Tools & Skills](/docs/tools-and-skills). It needs no configuration to browse the catalog and connect any service that authorizes with an API key, a custom credential, or no credential at all. Because its own console and admin API are unauthenticated, it stays on loopback and is never published beyond the Docker host.
+
+Do not set `OOMOL_CONNECT_ADMIN_TOKEN`. AgentConnect calls the gateway without a bearer token, so setting one stops the connector catalog from loading.
+
+To require a bearer on the gateway's action API, set `OOMOL_CONNECT_RUNTIME_TOKEN`. One value configures both the gateway and the Relay that calls it, so runtime authentication is on at both ends or off at both.
+
+These settings are Compose environment values, and `docker compose restart` reuses a container's existing environment. Recreate both services so the new value takes effect:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate open-connector relay
+```
+
+### Encrypt stored connector credentials
+
+The gateway keeps connector credentials and OAuth client secrets in its own SQLite volume, `agentconnect_open-connector-data`. This is a second credential store: `SECRET_CIPHER` and Vault Transit do not reach it. Give it a key of its own before connecting anything real, and set the key before you create the first connection:
+
+```dotenv
+OOMOL_CONNECT_ENCRYPTION_KEY=replace-with-a-stable-random-32-char-secret
+```
+
+Generate it like the other stack secrets:
+
+```bash
+openssl rand -hex 32
+```
+
+Adding the key to a stack that is already running takes effect only once the gateway is recreated:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate open-connector
+```
+
+Back up that volume alongside PostgreSQL. `docker compose down` preserves it; `docker compose down --volumes` deletes it with the database.
+
+### OAuth providers
+
+Filtering happens per authorization method, not per service. Until a service's OAuth client is configured in the gateway, only its OAuth method is withheld: a service that also accepts an API key, a custom credential, or no authentication stays in the catalog and offers those methods instead. Services that authorize solely through OAuth are the ones absent from a default stack.
+
+To offer OAuth, configure its client in the gateway and make the provider's redirect reach the gateway from the browser.
+
+1. Give the gateway a browser-reachable origin and point AgentConnect at it:
+
+   ```dotenv
+   AGENTCONNECT_PUBLIC_OPEN_CONNECTOR_URL=https://connectors.example.test
+   ```
+
+2. Recreate the gateway so it builds redirect URIs from the new origin. A gateway left running keeps the old one, and its authorization requests will not match the callback you register next:
+
+   ```bash
+   docker compose --env-file compose.env up -d --force-recreate open-connector
+   ```
+
+3. Route **only** `/oauth/callback` on that origin to the gateway. The provider redirects the browser there to complete authorization, and that is the only path that has to be public.
+4. Register the OAuth client with the provider using `<origin>/oauth/callback` as its redirect URI.
+5. Open the gateway console on its local port, [http://localhost:3100](http://localhost:3100), and save the client ID and secret for that service.
+
+> The gateway console and its `/api` surface have no authentication. Never route them through a public origin — publishing them hands anyone your stored connector credentials.
+
+If the gateway runs on another host, forward the port instead of exposing it:
+
+```bash
+ssh -L 3100:127.0.0.1:3100 operator@host.example
+```
+
+### Narrow the catalog
+
+| Variable | Default |
+| --- | --- |
+| `OPEN_CONNECTOR_PROVIDER_WHITELIST` | Unset, meaning every service |
+| `OPEN_CONNECTOR_PROVIDER_BLOCKLIST` | The services that overlap AgentConnect's own integrations |
+
+Both accept comma-separated service ids, and the blocklist is applied after the whitelist. The default blocklist keeps GitHub, Slack, Telegram, Discord, and Lark / Feishu out of the connector catalog because AgentConnect integrates them directly. Override it only when you deliberately want both paths available.
+
+Only Control Plane reads these two values, and it needs to be recreated rather than restarted to pick them up:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane
+```
+
 ## GitHub App
 
 Configure the deployment GitHub App when agents need private repositories, repository-scoped Git credentials, or GitHub issue and pull-request triggers.
@@ -296,7 +379,8 @@ Continue with [Use Mem0 OSS as external memory](/docs/external-memory) to create
 - Pin release images.
 - Configure OIDC sign-in and an API Resource.
 - Replace every default secret and enable encrypted secret storage.
+- Set a connector encryption key if you use connectors, and back up its volume.
 - Put Web, Control Plane, Relay, and Logto behind HTTPS.
 - Preserve WebSocket upgrades.
 - Back up PostgreSQL and test restores.
-- Keep Setup Server and PostgreSQL off the public network.
+- Keep Setup Server, PostgreSQL, and the connector gateway off the public network.
