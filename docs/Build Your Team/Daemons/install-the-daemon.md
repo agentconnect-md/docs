@@ -46,6 +46,24 @@ npx -y @agentconnect.md/cli up                # start it
 
 Install and authenticate agent runtimes as the OS user who owns the service, then restart the daemon after changing that user's runtime installation or `PATH`.
 
+### What a runtime sign-in brings
+
+Signing a runtime in gives its agents access to that provider's models. For some runtimes it would also bring the tools attached to that cloud account — mail, chat, files, issue trackers that act as the person who signed in, on any machine that authenticates as them. AgentConnect turns those off when it starts a runtime, so an agent gets the MCP servers you gave it plus the runtime's own local configuration, and nothing extra from the sign-in. Model access is untouched.
+
+Each runtime is switched off with the narrow lever it publishes, and that lever exists only from a given release onwards — keep runtimes current, or an older build silently keeps its account tools. If a runtime inherits account tools with no safe switch, or AgentConnect does not recognize it, the daemon says so in its log.
+
+On a personal machine you can allow them. Set this in `config.json` and restart:
+
+```json
+{
+  "security": {
+    "isolateAccountApps": false
+  }
+}
+```
+
+It covers the whole daemon and every runtime on it, so each agent there may act with the account tools of whichever identity its runtime is signed in as. There is deliberately no per-agent version — this is the host owner's call, not something an agent's editor can switch on.
+
 Manage it with:
 
 | Command | What it does |

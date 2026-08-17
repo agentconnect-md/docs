@@ -100,6 +100,7 @@ The boundary hides AgentConnect's daemon state, other agents, the daemon user's 
 - A server started inside the isolated network namespace may not be reachable from the host.
 - This is not a complete read allowlist for every unrelated path on the machine.
 - Resources deliberately assigned to the agent remain available inside the boundary.
+- Tools attached to the cloud account a runtime is signed in as sit outside any OS boundary. AgentConnect disables them separately — see [What a runtime sign-in brings](/docs/install-the-daemon#what-a-runtime-sign-in-brings).
 
 Use narrowly scoped credentials and [permissions](/docs/permissions-overview) alongside sandboxing. Use separate OS users or machines when agents require stronger separation from one another or different model-provider accounts.
 
