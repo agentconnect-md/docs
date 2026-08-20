@@ -43,3 +43,6 @@
 - listwebchatmcpoperations
 - getwebchatmcpoperation
 - decidewebchatmcpoperation
+- wakeagent
+- listagentmemorychannels
+- listagentsessiontasks

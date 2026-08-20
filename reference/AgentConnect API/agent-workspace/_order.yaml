@@ -5,3 +5,10 @@
 - setagentworkspace
 - putagentworkspacefile
 - deleteagentworkspacefile
+- getagentworkspacegitdiff
+- listagentworkspacegitlog
+- stageagentworkspacepaths
+- unstageagentworkspacepaths
+- commitagentworkspace
+- pushagentworkspace
+- draftagentworkspacecommitmessage

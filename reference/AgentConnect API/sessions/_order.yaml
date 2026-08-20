@@ -10,3 +10,6 @@
 - setgithubsessionaccess
 - getfeishularksessionaccess
 - setfeishularksessionaccess
+- mintwebchatsessiontoken
+- getsessionpullrequest
+- setsessionpullrequestautomerge

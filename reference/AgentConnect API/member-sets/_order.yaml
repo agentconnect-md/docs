@@ -1,0 +1,6 @@
+- listmembersets
+- creatememberset
+- renamememberset
+- deletememberset
+- enrolldaemoninmemberset
+- withdrawdaemonfrommemberset
