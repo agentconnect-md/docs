@@ -17095,6 +17095,185 @@
         }
       }
     },
+    "/v1/orgs/{orgId}/agents/{id}/commands": {
+      "get": {
+        "operationId": "listAgentRuntimeCommands",
+        "summary": "List an agent’s runtime slash commands",
+        "tags": [
+          "Skill sources"
+        ],
+        "description": "Proxy the slash commands the agent’s ACP runtime last advertised (`available_commands_update`) live from the owning daemon — skills, plugin skills and the harness’s own built-ins in one list, each with the runtime’s description and optional argument hint. `reported:false` means no session has advertised a list yet, so the empty list is \"unknown\", not \"no commands\". 409 when the daemon predates this read, 503 when unplaced or offline.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reported": {
+                      "type": "boolean"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "commands": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "hint": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "skill": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "description",
+                          "hint"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "reported",
+                    "commands"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/orgs/{orgId}/agents/{id}/workspace/file": {
       "get": {
         "operationId": "readAgentWorkspaceFile",
@@ -51450,7 +51629,7 @@
         "tags": [
           "Sessions"
         ],
-        "description": "This session’s pull request: identity (repo, number, url, head/base) plus live state (checks, current reviews, unresolved review threads) proxied from GitHub in one GraphQL read. Identity comes from the owning hook run where one exists (`linkedBy: run`, which also carries the review facts a rate-limited answer falls back on); otherwise from the session worktree’s own head branch (`linkedBy: head-branch`, `linkBranch`), so a pull request the agent opened mid-conversation is linked too — `linkAmbiguous` says the branch has more than one open pull request and this is the first of them. GitHub being rate limited, denying the installation, or unreachable is data — `degraded` names which, identity survives, and the live lists are empty — because a panel that still names its PR beats an empty one. 404 when neither source names a pull request (no run and no pull request for the branch, a shared or purged workspace, an offline daemon) or when the deployment has no GitHub App configured; the console then draws its branch state and a create action instead. Review thread bodies are user content: proxied, never stored.",
+        "description": "This session’s pull request: identity (repo, number, url, head/base) plus live state (checks, current reviews, unresolved review threads) proxied from GitHub in one GraphQL read. Identity comes from the owning hook run where one exists (`linkedBy: run`, which also carries the review facts a rate-limited answer falls back on); otherwise from the head branch of the checkout this session works in (`linkedBy: head-branch`, `linkBranch`, `linkScope`), so a pull request the agent opened mid-conversation is linked too — `linkScope: shared` means the branch came from the agent’s primary checkout, which every session on a shared-workspace agent works in, so the pull request is real but not exclusively this session’s; `linkAmbiguous` says the branch has more than one open pull request and this is the first of them. GitHub being rate limited, denying the installation, or unreachable is data — `degraded` names which, identity survives, and the live lists are empty — because a panel that still names its PR beats an empty one. 404 when neither source names a pull request (no run and no pull request for that branch, a purged session, a workspace that is not a checkout, no daemon serving the agent) or when the deployment has no GitHub App configured; the console then draws its branch state and a create action instead. Review thread bodies are user content: proxied, never stored.",
         "parameters": [
           {
             "name": "orgId",
@@ -51770,6 +51949,20 @@
                         }
                       ]
                     },
+                    "linkScope": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "session",
+                            "shared"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "linkAmbiguous": {
                       "type": "boolean"
                     }
@@ -51799,6 +51992,7 @@
                     "agentReview",
                     "linkedBy",
                     "linkBranch",
+                    "linkScope",
                     "linkAmbiguous"
                   ],
                   "additionalProperties": false
