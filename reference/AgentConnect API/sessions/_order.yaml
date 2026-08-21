@@ -13,3 +13,4 @@
 - mintwebchatsessiontoken
 - getsessionpullrequest
 - setsessionpullrequestautomerge
+- mergesessionpullrequest
