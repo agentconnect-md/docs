@@ -76,10 +76,16 @@ The Control Plane and daemon pool may use the same PostgreSQL service. Keep thei
 
 ## 2. Create the values file
 
-Start with a small override file rather than copying the complete chart defaults. Save this as `agentconnect-values.yaml` and replace the example host, Gateway listener, and StorageClass:
+Start with a small override file rather than copying the complete chart defaults. Save this as `agentconnect-values.yaml` and replace the example hosts, Gateway listener, and StorageClass:
 
 ```yaml
 publicUrl: https://app.example.test
+
+# Configure this before the first install so Setup uses the intended issuer and Management API.
+logto:
+  endpoint: https://login.example.test
+  # Set this separately when a custom login domain does not serve the Management API.
+  mgmtEndpoint: https://tenant.example.test
 
 route:
   # Keep the deployment private until Logto sign-in is configured.
@@ -96,6 +102,11 @@ daemonPool:
     workspace:
       storageClass: standard
       size: 10Gi
+
+# The default-on connector gateway persists its own SQLite database in a separate PVC.
+openConnector:
+  persistence:
+    storageClass: standard
 ```
 
 `publicUrl` is the final browser origin. In the default same-origin topology, the console is served at `/`, the Control Plane at `/cp`, and Relay paths on the same host. The chart also supports dedicated `apiHost`, `mcpHost`, and `relay.host` values when you need separate public origins.
@@ -153,14 +164,7 @@ kubectl -n agentconnect port-forward deployment/agentconnect-setup-server 8091:8
 
 Open [http://localhost:8091](http://localhost:8091), connect Logto, configure the browser application and first social provider, and claim the initial administrator. Follow [Logto authentication](/docs/logto-authentication) for the application, API Resource, and provider steps.
 
-For Logto Cloud or an external Logto deployment, add its public endpoint to `agentconnect-values.yaml` before the install or upgrade:
-
-```yaml
-logto:
-  endpoint: https://login.example.test
-  # Set this separately when a custom login domain does not serve the Management API.
-  mgmtEndpoint: https://tenant.example.test
-```
+The initial values file already supplies Setup with the Logto endpoint. For Logto Cloud behind a custom login domain, keep `logto.endpoint` on that login origin and `logto.mgmtEndpoint` on the tenant's canonical Management API origin.
 
 After saving deployment settings in Setup, restart the services that load them at startup:
 
