@@ -4,6 +4,8 @@ excerpt: Configure AgentConnect OSS topology, secrets, authentication, provider 
 hidden: false
 ---
 
+This page covers the Docker Compose topology. For the official Helm chart, cluster daemon pool, agent sandboxes, Gateway API routing, and Kubernetes operations, use [Kubernetes deployment](/docs/kubernetes-deployment).
+
 The default Docker Compose stack needs no configuration and stays on loopback. Use `compose.env` only for deployment topology and bootstrap secrets, then use Setup Server for authentication, provider apps, and deployment options.
 
 ## What is configured where
