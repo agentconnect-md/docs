@@ -1,12 +1,14 @@
 ---
 title: 🏁 Get started
-excerpt: Start the open-source AgentConnect stack locally with Docker Compose, then connect daemons on the machines where agents run.
+excerpt: Choose Docker Compose for a local evaluation or Helm for a production-shaped Kubernetes deployment.
 hidden: false
 ---
 
-AgentConnect OSS is the open-source, self-hosted AgentConnect stack. Docker Compose starts the Web console, Control Plane, Relay, Setup Server, and PostgreSQL. Agent execution remains in daemons on the machines that own the workspaces and runtime credentials.
+AgentConnect OSS is the open-source, self-hosted AgentConnect stack. Choose Docker Compose for a local evaluation with daemons on your own machines, or the official Helm chart for a production-shaped deployment with agents running in isolated Kubernetes sandboxes.
 
 The source is available in the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect).
+
+This page follows the Docker Compose path. For a cluster deployment, go to [Kubernetes deployment](/docs/kubernetes-deployment).
 
 ## Before you start
 
@@ -144,6 +146,7 @@ Agent execution remains daemon-local. The Control Plane stores coordination data
 
 ## Next
 
+- [Deploy AgentConnect on Kubernetes](/docs/kubernetes-deployment)
 - [Deployment and configuration](/docs/deployment-and-configuration)
 - [Configure authentication with Logto](/docs/logto-authentication)
 - [Install the daemon as a service](/docs/install-the-daemon)

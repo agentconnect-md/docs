@@ -76,4 +76,4 @@ Open **Getting started** from the console to resume the same checklist. You can 
 - [Create agents](/docs/create-an-agent) — add specialists with different roles, runtimes, models, and workspaces.
 - [Permissions](/docs/permissions-overview) — control agent, session, repository, and agent-to-agent access.
 - [How it works](/docs/how-it-works) — understand the daemon, optional Relay, and Control Plane.
-- [AgentConnect OSS](/docs/oss-get-started) — run the open-source stack with Docker Compose.
+- [AgentConnect OSS](/docs/oss-get-started) — run the open-source stack with Docker Compose or Kubernetes.
