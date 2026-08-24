@@ -113,6 +113,26 @@ openConnector:
 
 The daemon pool defaults to three members and three pre-warmed runtime sandboxes. Each warm sandbox holds a running pod and a workspace PVC. Set `daemonPool.runtime.warmReplicas: 0` when you prefer lower standing cost over a faster first agent launch.
 
+### Run Logto in the cluster
+
+The chart does not deploy Logto. Whether you run [Logto Cloud](/docs/logto-authentication#logto-cloud) or your own Logto in the same cluster, the two `logto` values above are the only startup topology AgentConnect needs — everything else about sign-in is Setup Server's to own.
+
+For an in-cluster Logto, `endpoint` is the browser-facing origin and `mgmtEndpoint` is the in-cluster Service origin:
+
+```yaml
+logto:
+  endpoint: https://login.example.test
+  mgmtEndpoint: http://logto.agentconnect.svc.cluster.local
+```
+
+Three things decide whether that works:
+
+- **Front Logto's container port on a port-less Service origin.** Logto builds the URLs it advertises from the request that reached it, so an in-cluster address carrying an explicit port puts that port in what discovery returns. A Service on port 80 targeting the container keeps the management origin port-less and the advertised URLs matching your public origin.
+- **Give Logto `TRUST_PROXY_HEADER` and send it `X-Forwarded-Proto: https`.** Where TLS ends in front of your Gateway, the hop into the cluster is plain HTTP, and without that header Logto advertises an `http://` issuer and every OIDC discovery against it fails. Gateway API expresses it as a `RequestHeaderModifier` filter on the route.
+- **Do not route Logto's admin console.** Reach it the same way as Setup Server, with `kubectl port-forward`, and set its admin endpoint to that local origin.
+
+Whichever deployment you use, the Management API resource is the fixed indicator `https://default.logto.app/api` — it is not a URL your deployment serves.
+
 ### Encrypt stored application secrets
 
 By default, write-only provider and agent secrets are plaintext at rest in PostgreSQL. Before entering production credentials in Setup or the console, configure a Vault Transit key and a Kubernetes-auth role bound to the chart's `agentconnect-control-plane` ServiceAccount. Then add the cipher settings to the same values file:
@@ -127,6 +147,28 @@ controlPlane:
 ```
 
 Setup Server uses the same ServiceAccount and cipher configuration by default, so both processes seal and open the same values. See [Secret storage](/docs/deployment-and-configuration#secret-storage) for the Transit policy and migration behavior.
+
+### Model credentials for every agent
+
+Agents in the pool need a model provider credential. Per agent or per organization, that is a [variable or secret](/docs/variables-and-secrets) named for whatever the runtime reads — `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`. An install that pays for one key and wants every agent on it can set that key once, in a Secret the chart references by name:
+
+```bash
+kubectl -n agentconnect create secret generic agentconnect-model-credentials \
+  --from-literal=DEEPSEEK_MODEL_TOKEN='replace-me'
+```
+
+```yaml
+daemonPool:
+  modelCredentials:
+    existingSecret: agentconnect-model-credentials
+```
+
+The Secret's **entries are the variables**: `<PREFIX>MODEL_TOKEN` and `<PREFIX>MODEL_BASE_URL`, where the prefix is `ANTHROPIC_` for Claude, `OPENAI_` for Codex, `DEEPSEEK_`, or empty for the pair every runtime falls back to. A token with no base URL is a plain provider key on that provider's own endpoint, which needs nothing else from the cluster: the agents namespace already allows DNS and outbound 443. A base URL with no token aims a runtime at an endpoint that issues its own credential.
+
+Two rules make this predictable:
+
+- The Secret is the install's **only** source for those variables. Setting one of them in `daemonPool.extraEnv`, or letting `modelEgress.clients` render one, is refused when you install. A credential pair has to arrive whole — a Secret holding only a token, beside a base URL left by something else, would aim a real provider key at an endpoint that never issued it.
+- What the Secret carries **outranks an agent's own variable of the same name**, for the same reason. Leave `modelCredentials` unset when agents should carry their own keys.
 
 ## 3. Install AgentConnect
 
@@ -166,14 +208,18 @@ Open [http://localhost:8091](http://localhost:8091), connect Logto, configure th
 
 The initial values file already supplies Setup with the Logto endpoint. For Logto Cloud behind a custom login domain, keep `logto.endpoint` on that login origin and `logto.mgmtEndpoint` on the tenant's canonical Management API origin.
 
-After saving deployment settings in Setup, restart the services that load them at startup:
+After saving deployment settings in Setup, restart the services that load them at startup — the Control Plane first, and the others only once it is Ready:
 
 ```bash
+kubectl -n agentconnect rollout restart deployment/agentconnect-control-plane
+kubectl -n agentconnect rollout status deployment/agentconnect-control-plane
+
 kubectl -n agentconnect rollout restart \
-  deployment/agentconnect-control-plane \
   deployment/agentconnect-web \
   statefulset/agentconnect-relay
 ```
+
+The order matters once: the console reads its sign-in configuration from the Control Plane when it starts, so a console that restarts alongside a Control Plane still serving the previous configuration caches that one and shows no sign-in button. Restarting the console again fixes it, and starting it after the Control Plane avoids it.
 
 Wait for the rollout, change `route.enabled` to `true` in `agentconnect-values.yaml`, and apply the chart again:
 
@@ -200,7 +246,7 @@ If the parent Gateway is in another namespace, its listener must allow routes fr
 
 Open the final Web URL and sign in. The daemon pool registers itself as **Kubernetes cluster**, so you do not need to copy an **Add daemon** command or install the host CLI.
 
-Create an agent, choose **Kubernetes cluster**, and select one of the runtimes reported by the runtime-sandbox image. Add the model credential expected by that runtime as an agent or organization secret; see [Variables & secrets](/docs/variables-and-secrets). Then run a message in the Playground and confirm that the agent receives a sandbox and persistent workspace.
+Create an agent, choose **Kubernetes cluster**, and select one of the runtimes reported by the runtime-sandbox image. Give it the model credential that runtime expects — per agent or organization as a [variable or secret](/docs/variables-and-secrets), or once for the whole install as described in [Model credentials for every agent](#model-credentials-for-every-agent). Then run a message in the Playground and confirm that the agent receives a sandbox and persistent workspace.
 
 ## Operations
 
@@ -245,6 +291,8 @@ The `agent-sandbox` CRDs and controller are cluster-shared. A single AgentConnec
 - **Daemon pool members never become Ready:** inspect their logs and confirm the data-plane PostgreSQL URL, the `agent-sandbox` controller, and the runtime warm pool are healthy.
 - **Sandbox pods stay Pending:** verify the configured StorageClass, node architecture, capacity, node selectors, and tolerations.
 - **An HTTPRoute is not Accepted:** inspect its status and the Gateway listener's hostname, `sectionName`, and allowed route namespaces.
+- **The console shows no sign-in button after Setup:** its process caches the Control Plane's configuration snapshot at startup. Restart the console after the Control Plane is Ready.
+- **An agent reports that its runtime needs authentication:** no model credential reached it. Check the agent's and organization's variables, and `daemonPool.modelCredentials` if the install supplies one.
 - **The console returns `401` after sign-in:** verify that the Logto API Resource exactly matches the Control Plane audience; see [Logto authentication](/docs/logto-authentication#verify-the-setup).
 
 For the complete value reference and a control-plane-only installation example, see the chart's [README](https://github.com/agentconnect-md/agentconnect/tree/main/charts/agentconnect).
