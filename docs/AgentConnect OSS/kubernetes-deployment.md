@@ -170,6 +170,20 @@ Two rules make this predictable:
 - The Secret is the install's **only** source for those variables. Setting one of them in `daemonPool.extraEnv`, or letting `modelEgress.clients` render one, is refused when you install. A credential pair has to arrive whole — a Secret holding only a token, beside a base URL left by something else, would aim a real provider key at an endpoint that never issued it.
 - What the Secret carries **outranks an agent's own variable of the same name**, for the same reason. Leave `modelCredentials` unset when agents should carry their own keys.
 
+### Cloning from a self-managed code host
+
+Pool members serve a workspace only from an origin the operator allowed, and that list ships as GitHub and GitLab.com. A self-managed GitLab is refused until the deployment names it, with `git clone origin is not allowed by this daemon`:
+
+```yaml
+daemonPool:
+  workspaceGitAllowedOrigins:
+    - https://github.com
+    - ssh://github.com
+    - https://gitlab.example.test
+```
+
+Exact scheme, host, and port, no path. Naming any origin replaces the default list rather than adding to it, so an install that also uses the public hosts names them here too.
+
 ## 3. Install AgentConnect
 
 Install the version you verified:
