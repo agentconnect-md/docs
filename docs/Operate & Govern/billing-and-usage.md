@@ -22,7 +22,7 @@ The balance card is the number Cloud work draws down, with the state of the orga
 
 ### Add credits
 
-Owners see **Add credits**, which opens a Stripe checkout for the amount entered. Every member can read the balance and the ledger; only owners can top it up. When a purchase completes, its row in the ledger carries a **View receipt** link.
+Owners see **Add credits**, which opens a Stripe checkout for the amount entered. Every member can read the balance and the ledger; only owners can top it up. A completed purchase offers a **Receipt** link on its ledger row once the receipt is available, which can be a moment after the payment itself completes.
 
 If you leave the Stripe page without paying, nothing is charged. A payment that is still settling shows as pending rather than failed — it resolves on its own, and has its own banner separate from the balance state above.
 
@@ -43,7 +43,8 @@ Usage rows name the agents that spent the money, as chips with each one's share.
 Where the deployment runs a daemon pool, a **source** filter picks which ingress metered the session:
 
 - **All** — everything, billed or not.
-- **Cloud** (**Cluster** on a self-hosted deployment) — sessions metered by the pool. These are the ones that draw down credits.
+- **Cloud** — sessions metered by the managed pool. These are the ones that draw down credits.
+- **Cluster** — the same filter on a self-hosted deployment: sessions metered by the pool your own deployment runs, using its model access. Counted here, with no AgentConnect balance behind them.
 - **Daemons** — sessions metered by a daemon you connect. Counted here, never billed.
 
 Source is recorded when the session runs, so moving an agent between a daemon and the pool changes where its *future* usage lands without rewriting its history.
