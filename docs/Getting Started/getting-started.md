@@ -24,6 +24,8 @@ A small daemon runs the agents — on machines you operate, or on managed infras
 <Card title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">Understand daemons, the optional Relay, and the Control Plane</Card>
 
 <Card title="AgentConnect OSS" href="/docs/oss-get-started" icon="fa-duotone fa-box-open">Run the open-source stack with Docker Compose or Kubernetes</Card>
+
+<Card title="Star us on GitHub" href="https://github.com/agentconnect-md/agentconnect" icon="fa-brands fa-github">Browse the Apache-2.0 source, open an issue, or star the project</Card>
 </Cards>
 
 <br />
