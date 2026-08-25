@@ -19,13 +19,13 @@ A small daemon runs the agents — on machines you operate, or on managed infras
 />
 
 <Cards columns={2} cardWidth="0">
-  <Card title="Get started" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a daemon, configure an agent, and set up your team</Card>
+  <Card kind="tile" title="Get started" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a daemon, configure an agent, and set up your team</Card>
 
-<Card title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">Understand daemons, the optional Relay, and the Control Plane</Card>
+<Card kind="tile" title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">Understand daemons, the optional Relay, and the Control Plane</Card>
 
-<Card title="AgentConnect OSS" href="/docs/oss-get-started" icon="fa-duotone fa-box-open">Run the open-source stack with Docker Compose or Kubernetes</Card>
+<Card kind="tile" title="AgentConnect OSS" href="/docs/oss-get-started" icon="fa-duotone fa-box-open">Run the open-source stack with Docker Compose or Kubernetes</Card>
 
-<Card title="Star us on GitHub" href="https://github.com/agentconnect-md/agentconnect" target="_blank" icon="fa-duotone fa-star">Browse the Apache-2.0 source, open an issue, or star the project</Card>
+<Card kind="tile" title="Star us on GitHub" href="https://github.com/agentconnect-md/agentconnect" target="_blank" icon="fa-duotone fa-star">Browse the Apache-2.0 source, open an issue, or star the project</Card>
 </Cards>
 
 <br />
