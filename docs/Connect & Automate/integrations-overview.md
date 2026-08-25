@@ -4,7 +4,7 @@ excerpt: How agents meet channels — bots, integrations, shared bots, and the c
 hidden: false
 ---
 
-An **integration** binds one agent to one way of reaching it. Six kinds are supported:
+An **integration** binds one agent to one way of reaching it. The supported kinds:
 
 | Platform                           | The agent responds to                                | You provide                                      |
 | ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------ |

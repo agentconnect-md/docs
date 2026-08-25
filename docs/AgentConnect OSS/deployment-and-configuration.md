@@ -324,7 +324,7 @@ Until GitLab state exists you can change all of this freely, including **Clear c
 | **A trusted certificate** | There is no skip-verify option at any layer. A private authority is supported by installing its bundle where every process and sandbox can read it.                              |
 | **Reachable ingress**     | GitLab refuses to deliver webhooks to the local network by default; if your AgentConnect ingress resolves to a private address, the integration looks installed and stays quiet. |
 
-Creating each agent's service account needs authority no GitLab API reports, so it is checked the first time a project is set up, not in advance. On a self-managed instance, either is enough:
+Creating each agent's service account needs authority no GitLab API reports, so it is checked the first time a project is set up, not in advance. On GitLab.com that is a top-level-group **Owner**. On a self-managed instance, either is enough:
 
 - **Any tier, including Community Edition** — connect an **instance administrator**. On an instance with **Admin Mode** enabled, administrator API actions need a token scope AgentConnect does not request, so the delegation setting below is the only path there.
 - **Premium or Ultimate** — turn on **Allow top-level group Owners to create service accounts** under **Admin → Settings → General**, and connect a top-level group Owner.

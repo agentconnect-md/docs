@@ -12,13 +12,13 @@ Where the GitHub integration acts through one App installed on an organization, 
 
 An administrator connects the deployment once, in **Integrations → Code hosts → Connect GitLab**. The browser completes an OAuth authorization, and the connected account becomes the deployment's **administration identity**: AgentConnect uses it to discover projects, create the agents' service accounts, and manage project webhooks. It is not the identity agents act as.
 
-Connect an account with **Maintainer or Owner** access to the projects you intend to use. On AgentConnect OSS, the operator [configures the deployment's GitLab OAuth application](/docs/deployment-and-configuration#gitlab) first — and for a self-managed instance, that page also covers what the instance must provide and who may connect.
+On GitLab.com, connect an account that is an **Owner of the top-level group** holding your projects: creating each agent's service account requires it, and project-level Maintainer access is not enough. On AgentConnect OSS, the operator [configures the deployment's GitLab OAuth application](/docs/deployment-and-configuration#gitlab) first — and for a self-managed instance, that page also covers what the instance must provide and the two ways to hold the creation authority there.
 
 The connection is per organization, and one deployment addresses one instance. Once GitLab state exists, the instance address cannot be changed: connections, tokens and numeric project IDs carry no instance provenance, so retargeting would send one instance's credentials to another.
 
 ## Give an agent a project
 
-There is no separate "install on this project" step. A project is set up the moment you use it — when you pick it as an agent's [workspace](/docs/workspaces-and-repos), authorize it as an additional repository, or add a GitLab trigger. Setting it up does three things:
+There is no separate "install on this project" step. A project is set up the moment you first give it to an agent — as its [workspace](/docs/workspaces-and-repos), or as an authorized additional repository. Setting it up does three things:
 
 1. creates that agent's **service account** in the project's top-level group, if it does not have one yet;
 2. adds the account to the project as a **Developer**; and
@@ -28,11 +28,13 @@ The project must live in a **group**. A project in a personal namespace cannot b
 
 **Integrations → Code hosts** lists the projects that are set up, with two actions per project: **Repair** re-runs the provisioning above (use it after someone deletes the bot or the webhook by hand), and **Remove** deletes the webhook and the project's bots and stops agents answering there. Nothing in the project's code or history changes either way.
 
-On GitLab Free and Community Edition a top-level group may hold **100 service accounts**, and the population is agents-with-projects. A refused creation is reported as a quota failure and leaves existing accounts untouched.
+GitLab.com Free allows **100 service accounts per top-level group**; a self-managed Free or Community Edition instance allows 100 across the **entire instance**. The population is agents-with-projects, and a refused creation is reported as a quota failure that leaves existing accounts untouched.
 
 ## Watch a project
 
 On the agent: **Integrations → Add integration → GitLab**.
+
+A trigger rides an existing authorization and never creates one: the project must already be the agent's workspace or one of its authorized additional repositories, or adding the watch is refused.
 
 Choose the project, what to listen for — issues, merge requests, or both — and how eagerly the agent wakes up:
 
