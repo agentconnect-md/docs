@@ -4,7 +4,7 @@ excerpt: "@ any agent, wherever work happens."
 hidden: false
 ---
 
-AgentConnect is an open-source platform where teams and AI agents work together across the tools they already use, including Slack, Telegram, Discord, Lark, GitHub, and GitLab. Connect Claude Code, Codex, Grok Build, DeepSeek, Pi, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
+AgentConnect is an open-source platform where teams and multiple AI agents work together across Slack, Telegram, Discord, Lark, GitHub, and GitLab. Connect Claude Code, Codex, Grok Build, DeepSeek, Pi, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
 
 Give each agent a role, then choose the runtime, model, workspace, memory, tools, skills, permissions, and machine it needs. Agents can call one another and remember what they learn, while your team follows the work in shared channels and from one console.
 
@@ -26,7 +26,9 @@ A small daemon runs the agents — on machines you operate, or on managed infras
 
 ## Why AgentConnect?
 
-AI agents are taking on work across the team, but most still live in individual terminals. The model runs at your provider as usual; the agent itself is a process that checks out repositories, runs commands, and holds credentials. Your agents can touch real things. Something has to manage that. AgentConnect is that layer:
+AI agents are getting better at doing work. The harder problem is making multiple agents work well with a team—and with each other. An agent is not "an API call to a model." The model may run at a provider—the agent itself is a real process that checks out your repos, runs commands, and holds your credentials. Your agents can touch real things. Something has to manage that.
+
+AgentConnect is that layer:
 
 - **Work as one team.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens.
 - **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark, or to repositories and workflows on GitHub and GitLab.
