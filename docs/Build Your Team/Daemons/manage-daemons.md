@@ -1,6 +1,6 @@
 ---
 title: 🛠️ Manage daemons
-excerpt: Monitor daemon health, maintain services, and move agents safely between machines.
+excerpt: Monitor daemon health, maintain services, move agents safely between machines, and run agents on AgentConnect Cloud.
 hidden: false
 ---
 
@@ -35,6 +35,22 @@ Restart and upgrade use the ordinary daemon edit permission: any Owner or Collab
 Every placed agent runs on one daemon — that machine owns its workspace, runtime processes and transcripts. You can move an agent from its **Configuration** tab when both daemons are online, ready and compatible with its runtime, model and MCP servers.
 
 A move cold-reprovisions the saved agent definition; it does not migrate daemon-local workspace, memory or transcript bytes. Commit or back up local work first, and expect GitHub workspaces to be cloned again on the target.
+
+## AgentConnect Cloud
+
+On [AgentConnect Cloud](https://app.agentconnect.md), the daemon picker offers one entry that is not one of your machines: **AgentConnect Cloud**. Place an agent there and it runs on infrastructure managed by AgentConnect — no machine to prepare, no runtime to install or sign in, no provider API keys. Model access is included, with a curated set of runtimes and models, and each agent runs in its own isolated environment.
+
+On the **Daemons** page this appears as a single **Cloud** entry; open it to see the agents placed there and recent credit activity. Cloud placements and your own machines coexist in one organization, and moving an agent between them follows the same placement rules above.
+
+### Pricing
+
+Cloud is usage-based. Placing an agent there costs nothing by itself — you pay for the model usage of its sessions:
+
+- **Model usage is priced at the model provider's published API rates** — the same as calling the provider's API directly, with no markup. When a provider changes its published prices, Cloud rates change with them.
+- **Usage is deducted from your organization's prepaid credit balance.** Owners add credits on the **Billing** page; every top-up and usage charge appears in its transaction history, and the **Usage** page attributes tokens and cost per agent and session.
+- **Running out pauses Cloud work.** When the balance is exhausted, Cloud placements stop taking new model traffic until credits are added. There is no overage billing.
+
+Agents on daemons you connect yourself are never billed: they use the provider subscriptions or API keys on those machines, and their model traffic flows directly between your machine and your provider.
 
 ## Session retention
 
