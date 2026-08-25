@@ -14,3 +14,4 @@
 - getsessionpullrequest
 - setsessionpullrequestautomerge
 - mergesessionpullrequest
+- keepsessionsandboxalive

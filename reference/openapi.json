@@ -8350,6 +8350,41 @@
                           "mode",
                           "gitRepo"
                         ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "mode": {
+                            "type": "string",
+                            "enum": [
+                              "gitlab"
+                            ]
+                          },
+                          "worktree": {
+                            "type": "boolean"
+                          },
+                          "projectId": {
+                            "type": "string",
+                            "pattern": "^[1-9]\\d*$"
+                          },
+                          "gitBranch": {
+                            "type": "string"
+                          },
+                          "agentDir": {
+                            "type": "string"
+                          },
+                          "gitAccess": {
+                            "type": "string",
+                            "enum": [
+                              "read",
+                              "write"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "mode",
+                          "projectId"
+                        ]
                       }
                     ]
                   },
@@ -8987,6 +9022,45 @@
                             "gitRepo"
                           ],
                           "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "gitlab"
+                              ]
+                            },
+                            "worktree": {
+                              "type": "boolean"
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "projectId": {
+                              "type": "string"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "worktree",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
                     },
@@ -9095,7 +9169,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       }
                     },
@@ -9942,6 +10017,45 @@
                               "gitRepo"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "mode": {
+                                "type": "string",
+                                "enum": [
+                                  "gitlab"
+                                ]
+                              },
+                              "worktree": {
+                                "type": "boolean"
+                              },
+                              "gitRepo": {
+                                "type": "string"
+                              },
+                              "gitBranch": {
+                                "type": "string"
+                              },
+                              "agentDir": {
+                                "type": "string"
+                              },
+                              "projectId": {
+                                "type": "string"
+                              },
+                              "gitAccess": {
+                                "type": "string",
+                                "enum": [
+                                  "read",
+                                  "write"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "mode",
+                              "worktree",
+                              "gitRepo"
+                            ],
+                            "additionalProperties": false
                           }
                         ]
                       },
@@ -10050,7 +10164,8 @@
                           "type": "string",
                           "enum": [
                             "webhook",
-                            "github"
+                            "github",
+                            "gitlab"
                           ]
                         }
                       }
@@ -10702,6 +10817,45 @@
                             "gitRepo"
                           ],
                           "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "gitlab"
+                              ]
+                            },
+                            "worktree": {
+                              "type": "boolean"
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "projectId": {
+                              "type": "string"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "worktree",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
                     },
@@ -10810,7 +10964,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       }
                     }
@@ -11955,6 +12110,45 @@
                             "gitRepo"
                           ],
                           "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "gitlab"
+                              ]
+                            },
+                            "worktree": {
+                              "type": "boolean"
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "projectId": {
+                              "type": "string"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "worktree",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
                     },
@@ -12063,7 +12257,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       }
                     }
@@ -13043,6 +13238,44 @@
                       "repoFullName"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "gitlab"
+                        ]
+                      },
+                      "worktree": {
+                        "type": "boolean"
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "pattern": "^[1-9]\\d*$"
+                      },
+                      "gitBranch": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "agentDir": {
+                        "type": "string"
+                      },
+                      "gitAccess": {
+                        "default": "read",
+                        "type": "string",
+                        "enum": [
+                          "read",
+                          "write"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "mode",
+                      "projectId"
+                    ],
+                    "additionalProperties": false
                   }
                 ]
               }
@@ -13624,6 +13857,45 @@
                             "gitRepo"
                           ],
                           "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "gitlab"
+                              ]
+                            },
+                            "worktree": {
+                              "type": "boolean"
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "projectId": {
+                              "type": "string"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "worktree",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
                     },
@@ -13732,7 +14004,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       }
                     }
@@ -14597,6 +14870,45 @@
                             "gitRepo"
                           ],
                           "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "gitlab"
+                              ]
+                            },
+                            "worktree": {
+                              "type": "boolean"
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "projectId": {
+                              "type": "string"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "worktree",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
                     },
@@ -14705,7 +15017,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       }
                     }
@@ -15506,6 +15819,45 @@
                             "gitRepo"
                           ],
                           "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "gitlab"
+                              ]
+                            },
+                            "worktree": {
+                              "type": "boolean"
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "projectId": {
+                              "type": "string"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "worktree",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
                     },
@@ -15614,7 +15966,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       }
                     }
@@ -16402,6 +16755,45 @@
                             "gitRepo"
                           ],
                           "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "enum": [
+                                "gitlab"
+                              ]
+                            },
+                            "worktree": {
+                              "type": "boolean"
+                            },
+                            "gitRepo": {
+                              "type": "string"
+                            },
+                            "gitBranch": {
+                              "type": "string"
+                            },
+                            "agentDir": {
+                              "type": "string"
+                            },
+                            "projectId": {
+                              "type": "string"
+                            },
+                            "gitAccess": {
+                              "type": "string",
+                              "enum": [
+                                "read",
+                                "write"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "worktree",
+                            "gitRepo"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
                     },
@@ -16510,7 +16902,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       }
                     }
@@ -29016,6 +29409,13 @@
                       "id": {
                         "type": "string"
                       },
+                      "provider": {
+                        "type": "string",
+                        "enum": [
+                          "github",
+                          "gitlab"
+                        ]
+                      },
                       "repoId": {
                         "type": "string"
                       },
@@ -29046,6 +29446,7 @@
                     },
                     "required": [
                       "id",
+                      "provider",
                       "repoId",
                       "repoFullName",
                       "access",
@@ -29096,32 +29497,72 @@
         "tags": [
           "Agents"
         ],
-        "description": "Grant the agent access to a GitHub repository. App-backed workspaces may add repositories beyond their implicit workspace grant, scratch workspaces may add any covered repository, and a manual GitHub workspace may explicitly authorize only its own repository for control-plane review/check effects. The repository must be covered by one of the organization’s GitHub App installations; with the per-user gate configured, the caller must hold the matching GitHub permission (`read`/`comment` tiers need read, `write` needs write).",
+        "description": "Grant the agent access to one code-host repository. With `provider: github` (the default) the repository is named `owner/repo` and must be covered by one of the organization’s GitHub App installations; App-backed workspaces may add repositories beyond their implicit workspace grant, scratch workspaces may add any covered repository, and a manual GitHub workspace may explicitly authorize only its own repository for control-plane review/check effects. With the per-user gate configured, the caller must hold the matching GitHub permission (`read`/`comment` tiers need read, `write` needs write). With `provider: gitlab` the project is named by its numeric id and must already be a managed GitLab project in this organization; authorizing it provisions the agent’s own GitLab bot account and project membership before the grant lands.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "repoFullName": {
-                    "type": "string",
-                    "pattern": "^[^/\\s]+\\/[^/\\s]+$"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "provider": {
+                        "type": "string",
+                        "enum": [
+                          "gitlab"
+                        ]
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "pattern": "^[1-9]\\d*$"
+                      },
+                      "access": {
+                        "default": "read",
+                        "type": "string",
+                        "enum": [
+                          "read",
+                          "comment",
+                          "write"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "provider",
+                      "projectId"
+                    ],
+                    "additionalProperties": false
                   },
-                  "access": {
-                    "default": "read",
-                    "type": "string",
-                    "enum": [
-                      "read",
-                      "comment",
-                      "write"
-                    ]
+                  {
+                    "type": "object",
+                    "properties": {
+                      "provider": {
+                        "default": "github",
+                        "type": "string",
+                        "enum": [
+                          "github"
+                        ]
+                      },
+                      "repoFullName": {
+                        "type": "string",
+                        "pattern": "^[^/\\s]+\\/[^/\\s]+$"
+                      },
+                      "access": {
+                        "default": "read",
+                        "type": "string",
+                        "enum": [
+                          "read",
+                          "comment",
+                          "write"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "repoFullName"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "repoFullName"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -29155,6 +29596,13 @@
                     "id": {
                       "type": "string"
                     },
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "github",
+                        "gitlab"
+                      ]
+                    },
                     "repoId": {
                       "type": "string"
                     },
@@ -29185,6 +29633,7 @@
                   },
                   "required": [
                     "id",
+                    "provider",
                     "repoId",
                     "repoFullName",
                     "access",
@@ -29448,6 +29897,13 @@
                     "id": {
                       "type": "string"
                     },
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "github",
+                        "gitlab"
+                      ]
+                    },
                     "repoId": {
                       "type": "string"
                     },
@@ -29478,6 +29934,7 @@
                   },
                   "required": [
                     "id",
+                    "provider",
                     "repoId",
                     "repoFullName",
                     "access",
@@ -46455,6 +46912,105 @@
                       "repoFullName",
                       "events"
                     ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "agentId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "enabled": {
+                        "default": true,
+                        "type": "boolean"
+                      },
+                      "targetPlatform": {
+                        "default": "slack",
+                        "type": "string",
+                        "enum": [
+                          "slack",
+                          "telegram",
+                          "discord",
+                          "feishu"
+                        ]
+                      },
+                      "targetChannel": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "targetIntegrationId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "gitlab"
+                        ]
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "pattern": "^[1-9]\\d*$"
+                      },
+                      "events": {
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "pattern": "^(issues|merge_request|push):([a-z_]+|\\*)$"
+                        }
+                      },
+                      "commentFamilies": {
+                        "default": [],
+                        "maxItems": 2,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "issues",
+                            "merge_request"
+                          ]
+                        }
+                      },
+                      "mentionOnly": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "reviewPolicy": {
+                        "default": "off",
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "comment",
+                          "request_changes",
+                          "full"
+                        ]
+                      },
+                      "reportingMode": {
+                        "default": "off",
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "check",
+                          "status"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "agentId",
+                      "name",
+                      "kind",
+                      "projectId",
+                      "events"
+                    ]
                   }
                 ]
               }
@@ -46499,7 +47055,8 @@
                       "type": "string",
                       "enum": [
                         "webhook",
-                        "github"
+                        "github",
+                        "gitlab"
                       ]
                     },
                     "name": {
@@ -46556,13 +47113,13 @@
                       }
                     },
                     "commentFamilies": {
-                      "maxItems": 2,
                       "type": "array",
                       "items": {
                         "type": "string",
                         "enum": [
                           "issues",
-                          "pull_request"
+                          "pull_request",
+                          "merge_request"
                         ]
                       }
                     },
@@ -46922,7 +47479,8 @@
                         "type": "string",
                         "enum": [
                           "webhook",
-                          "github"
+                          "github",
+                          "gitlab"
                         ]
                       },
                       "name": {
@@ -46979,13 +47537,13 @@
                         }
                       },
                       "commentFamilies": {
-                        "maxItems": 2,
                         "type": "array",
                         "items": {
                           "type": "string",
                           "enum": [
                             "issues",
-                            "pull_request"
+                            "pull_request",
+                            "merge_request"
                           ]
                         }
                       },
@@ -47213,7 +47771,8 @@
                       "type": "string",
                       "enum": [
                         "webhook",
-                        "github"
+                        "github",
+                        "gitlab"
                       ]
                     },
                     "name": {
@@ -47270,13 +47829,13 @@
                       }
                     },
                     "commentFamilies": {
-                      "maxItems": 2,
                       "type": "array",
                       "items": {
                         "type": "string",
                         "enum": [
                           "issues",
-                          "pull_request"
+                          "pull_request",
+                          "merge_request"
                         ]
                       }
                     },
@@ -47499,6 +48058,100 @@
                       "kind": {
                         "type": "string",
                         "enum": [
+                          "gitlab"
+                        ]
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "pattern": "^[1-9]\\d*$"
+                      },
+                      "events": {
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "pattern": "^(issues|merge_request|push):([a-z_]+|\\*)$"
+                        }
+                      },
+                      "commentFamilies": {
+                        "maxItems": 2,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "issues",
+                            "merge_request"
+                          ]
+                        }
+                      },
+                      "mentionOnly": {
+                        "type": "boolean"
+                      },
+                      "reviewPolicy": {
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "comment",
+                          "request_changes",
+                          "full"
+                        ]
+                      },
+                      "reportingMode": {
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "check",
+                          "status"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "agentId",
+                      "name",
+                      "kind",
+                      "projectId",
+                      "events"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "agentId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "targetPlatform": {
+                        "default": "slack",
+                        "type": "string",
+                        "enum": [
+                          "slack",
+                          "telegram",
+                          "discord",
+                          "feishu"
+                        ]
+                      },
+                      "targetChannel": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "targetIntegrationId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
                           "github"
                         ]
                       },
@@ -47679,7 +48332,8 @@
                       "type": "string",
                       "enum": [
                         "webhook",
-                        "github"
+                        "github",
+                        "gitlab"
                       ]
                     },
                     "name": {
@@ -47736,13 +48390,13 @@
                       }
                     },
                     "commentFamilies": {
-                      "maxItems": 2,
                       "type": "array",
                       "items": {
                         "type": "string",
                         "enum": [
                           "issues",
-                          "pull_request"
+                          "pull_request",
+                          "merge_request"
                         ]
                       }
                     },
@@ -48286,6 +48940,293 @@
             }
           },
           "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/hooks/{id}/rerun": {
+      "post": {
+        "operationId": "rerunHook",
+        "summary": "Run a GitLab trigger again",
+        "tags": [
+          "Hooks"
+        ],
+        "description": "Re-dispatches one GitLab trigger turn for a merge request or issue thread. GitLab offers no native re-run control, so this is the console entry point. The enabled trigger, its agent, the managed project binding, and the subject are all revalidated live, and a merge-request rerun targets the head SHA GitLab reports right now — never a stored one. Refusals carry a machine-readable `code`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subject": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "merge_request",
+                          "issue"
+                        ]
+                      },
+                      "iid": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "iid"
+                    ]
+                  }
+                },
+                "required": [
+                  "subject"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "deliveryKey": {
+                      "type": "string"
+                    },
+                    "event": {
+                      "type": "string"
+                    },
+                    "headSha": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "accepted",
+                    "deliveryKey",
+                    "event",
+                    "headSha"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -49120,8 +50061,9 @@
                 "discord",
                 "feishu",
                 "hook",
+                "dream",
                 "github",
-                "dream"
+                "gitlab"
               ]
             },
             "in": "query",
@@ -49263,7 +50205,8 @@
                                 "type": "string",
                                 "enum": [
                                   "webhook",
-                                  "github"
+                                  "github",
+                                  "gitlab"
                                 ]
                               },
                               {
@@ -49363,8 +50306,9 @@
                 "discord",
                 "feishu",
                 "hook",
+                "dream",
                 "github",
-                "dream"
+                "gitlab"
               ]
             },
             "in": "query",
@@ -49587,7 +50531,8 @@
                                 "type": "string",
                                 "enum": [
                                   "webhook",
-                                  "github"
+                                  "github",
+                                  "gitlab"
                                 ]
                               },
                               {
@@ -49971,7 +50916,8 @@
                                       "type": "string",
                                       "enum": [
                                         "webhook",
-                                        "github"
+                                        "github",
+                                        "gitlab"
                                       ]
                                     },
                                     {
@@ -50634,7 +51580,8 @@
                           "type": "string",
                           "enum": [
                             "webhook",
-                            "github"
+                            "github",
+                            "gitlab"
                           ]
                         },
                         {
@@ -51899,6 +52846,40 @@
                         }
                       ]
                     },
+                    "autoMergePlacement": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "sandbox",
+                            "daemon"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "autoMergeWaitingOn": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "autoMergeError": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "canArmAutoMerge": {
                       "type": "boolean"
                     },
@@ -51990,6 +52971,9 @@
                     "unresolvedCount",
                     "threadsTruncated",
                     "autoMergeArmed",
+                    "autoMergePlacement",
+                    "autoMergeWaitingOn",
+                    "autoMergeError",
                     "canArmAutoMerge",
                     "degraded",
                     "degradedReason",
@@ -52044,7 +53028,7 @@
         "tags": [
           "Sessions"
         ],
-        "description": "Enables or disables GitHub auto-merge (squash) for this session’s pull request — the same identity the GET resolves, from the owning run or the session branch — using an installation token clamped to the owning agent’s repository tier — the write requires that clamp to actually carry `pull_requests: write`, so a read- or comment-tier agent is refused (403) rather than escalated. Idempotent: asking for the state the PR is already in succeeds without a mutation. 404 mirrors the GET; 409 relays GitHub declining the state change (for example a pull request whose checks already pass, which GitHub arms nothing for); 429 is GitHub rate limiting; 502 is GitHub unreachable.",
+        "description": "Arms or disarms merge-when-ready (squash) for this session’s pull request. The watcher runs at the EDGE — in the agent’s sandbox when its work runs in a pod, otherwise in the owning daemon’s process — and polls GitHub until the pull request is open, undrafted, conflict-free, with no failing or running check and no requested changes, then squash-merges the head it judged. It is deliberately NOT GitHub’s own auto-merge: `enablePullRequestAutoMerge` refuses every pull request that is not BLOCKED, so on a repository without required status checks it can never be armed at all. Nothing is persisted: the armed set is in memory at the edge, so a reclaimed sandbox or a restarted daemon forgets it and the box reads back unchecked. Arming needs the owning agent’s clamped grant to carry `pull_requests: write`, so a read- or comment-tier agent is refused (403); idempotent — asking for the state it is already in returns that state. 404 mirrors the GET. 409 with a `code` for every refusal the edge names: `AUTO_MERGE_SANDBOX_ASLEEP` (a cluster agent whose pod is down — its watcher belongs in that pod, so start the sandbox first), `AUTO_MERGE_ALREADY_MERGEABLE` (the pull request can be merged now, and arming would merge it on the first tick with no confirmation — use the Merge route, which the console confirms), `AUTO_MERGE_UNSUPPORTED_IMAGE` (a sandbox from an image predating the watcher — resume it), `DAEMON_FEATURE_MISSING`, `NO_DAEMON`. 503 when the daemon is unreachable.",
         "requestBody": {
           "required": true,
           "content": {
@@ -52091,10 +53075,47 @@
                   "properties": {
                     "armed": {
                       "type": "boolean"
+                    },
+                    "placement": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "sandbox",
+                            "daemon"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "waitingOn": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     }
                   },
                   "required": [
-                    "armed"
+                    "armed",
+                    "placement",
+                    "waitingOn",
+                    "error"
                   ],
                   "additionalProperties": false
                 }
@@ -52191,37 +53212,7 @@
               }
             }
           },
-          "429": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "502": {
+          "503": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -52421,6 +53412,188 @@
             }
           },
           "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/sessions/{id}/sandbox-keep-alive": {
+      "post": {
+        "operationId": "keepSessionSandboxAlive",
+        "summary": "Hold this session’s sandbox while its page is open",
+        "tags": [
+          "Sessions"
+        ],
+        "description": "Renews an open console page’s lease on the agent’s sandbox pod, so the idle sweep does not suspend work the page is watching. The DAEMON decides whether to hold, from facts the console cannot assert: uncommitted files in this session’s worktree, or an armed merge-when-ready watcher — which for a cluster agent is a process inside that very pod, so a suspend would silently disarm it. The answer says which reasons applied and for how long the hold stands; the console renews inside that window while its document is visible, and the hold lapses within one TTL when the page closes, the tab goes to the background, or the machine sleeps. Nothing is persisted, there is nothing to release, and a suspended pod is never woken by this call (`asleep: true`). `placement: daemon` means the agent runs no sandbox at all, which is an answer rather than an error. 404 mirrors the session reads; 409 when no daemon serves the agent or it is too old to hold a lease; 503 when its daemon is unreachable.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "held": {
+                      "type": "boolean"
+                    },
+                    "reasons": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "uncommitted-files",
+                          "auto-merge-armed"
+                        ]
+                      }
+                    },
+                    "ttlMs": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "placement": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "sandbox",
+                            "daemon"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "asleep": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "held",
+                    "reasons",
+                    "ttlMs",
+                    "placement",
+                    "asleep"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -52769,6 +53942,46 @@
                         "additionalProperties": false
                       }
                     },
+                    "unattributed": {
+                      "type": "object",
+                      "properties": {
+                        "sessions": {
+                          "type": "number"
+                        },
+                        "totalTokens": {
+                          "type": "number"
+                        },
+                        "inputTokens": {
+                          "type": "number"
+                        },
+                        "outputTokens": {
+                          "type": "number"
+                        },
+                        "thoughtTokens": {
+                          "type": "number"
+                        },
+                        "cachedReadTokens": {
+                          "type": "number"
+                        },
+                        "cachedWriteTokens": {
+                          "type": "number"
+                        },
+                        "costAmount": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "sessions",
+                        "totalTokens",
+                        "inputTokens",
+                        "outputTokens",
+                        "thoughtTokens",
+                        "cachedReadTokens",
+                        "cachedWriteTokens",
+                        "costAmount"
+                      ],
+                      "additionalProperties": false
+                    },
                     "series": {
                       "type": "object",
                       "properties": {
@@ -52946,6 +54159,10 @@
     {
       "name": "GitHub",
       "description": "GitHub App installations powering github-app workspaces (repo picker + short-lived git credentials)."
+    },
+    {
+      "name": "GitLab",
+      "description": "GitLab.com OAuth connections — the administration identity for project discovery and provisioning."
     }
   ]
 }
