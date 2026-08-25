@@ -18,14 +18,14 @@ A small daemon runs the agents — on machines you operate, or on managed infras
   image="https://i.ytimg.com/vi/KA7xHF5JbJc/hqdefault.jpg"
 />
 
-<Cards>
-  <Card title="Get started" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a daemon, configure the built-in agent, and finish your team setup</Card>
+<Cards columns={4} cardWidth="0">
+  <Card title="Get started" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a daemon and configure your first agent</Card>
 
 <Card title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">Understand daemons, the optional Relay, and the Control Plane</Card>
 
 <Card title="AgentConnect OSS" href="/docs/oss-get-started" icon="fa-duotone fa-box-open">Run the open-source stack with Docker Compose or Kubernetes</Card>
 
-<Card title="Star us on GitHub" href="https://github.com/agentconnect-md/agentconnect" icon="fa-brands fa-github">Browse the Apache-2.0 source, open an issue, or star the project</Card>
+<Card title="Star us on GitHub" href="https://github.com/agentconnect-md/agentconnect" target="_blank" icon="fa-duotone fa-star">Browse the Apache-2.0 source and star the project</Card>
 </Cards>
 
 <br />
