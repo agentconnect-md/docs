@@ -32,7 +32,7 @@ On AgentConnect OSS, the deployment operator must [configure the GitHub App firs
 
 The same, from a GitLab project — on GitLab.com or a self-managed instance. Pick **From GitLab**, choose the project, branch, agent directory and access, and the daemon clones it.
 
-There is no app to install: the deployment connects GitLab once, and each agent gets its own service account on the instance when you first pick a project for it. See [GitLab](/docs/gitlab).
+There is no app to install: the deployment connects GitLab once, and each agent gets its own service account on the instance when you first pick a project for it. See [GitLab](/docs/gitlab). On AgentConnect OSS, the operator [configures the deployment's GitLab OAuth application](/docs/deployment-and-configuration#gitlab) first.
 
 ### Worktrees for concurrent sessions
 

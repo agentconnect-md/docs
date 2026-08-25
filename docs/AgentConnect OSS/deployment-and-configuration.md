@@ -10,11 +10,11 @@ The default Docker Compose stack needs no configuration and stays on loopback. U
 
 ## What is configured where
 
-| Surface | Owns |
-| --- | --- |
-| `compose.env` | Images, ports, public URLs, database secrets, Vault, connectors, and Logto endpoints |
-| Setup Server | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
-| AgentConnect console | Organizations, agents, integrations, environments, tools, and skills |
+| Surface              | Owns                                                                                         |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| `compose.env`        | Images, ports, public URLs, database secrets, Vault, connectors, and Logto endpoints         |
+| Setup Server         | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
+| AgentConnect console | Organizations, agents, integrations, environments, tools, and skills                         |
 
 Setup Server is the supported configuration surface for browser authentication, provider apps, displayed sign-in methods, and preset-agent behavior. It saves deployment settings and write-only provider secrets in PostgreSQL.
 
@@ -36,12 +36,12 @@ docker compose --env-file compose.env up -d
 
 ## Image versions
 
-| Variable | Default |
-| --- | --- |
-| `AGENTCONNECT_VERSION` | `latest` |
-| `AGENTCONNECT_IMAGE_REGISTRY` | `ghcr.io/agentconnect-md` |
-| `AGENTCONNECT_PRISMA_CLI_VERSION` | `7.8.0-node24-r1` |
-| `AGENTCONNECT_OPEN_CONNECTOR_VERSION` | `latest` |
+| Variable                              | Default                   |
+| ------------------------------------- | ------------------------- |
+| `AGENTCONNECT_VERSION`                | `latest`                  |
+| `AGENTCONNECT_IMAGE_REGISTRY`         | `ghcr.io/agentconnect-md` |
+| `AGENTCONNECT_PRISMA_CLI_VERSION`     | `7.8.0-node24-r1`         |
+| `AGENTCONNECT_OPEN_CONNECTOR_VERSION` | `latest`                  |
 
 For reproducible deployments, pin an AgentConnect release:
 
@@ -53,16 +53,16 @@ Published application and migration images currently target `linux/amd64`.
 
 ## Local ports
 
-| Service | Variable | Default |
-| --- | --- | --- |
-| Web | `AGENTCONNECT_WEB_PORT` | `3000` |
-| Control Plane | `AGENTCONNECT_CP_PORT` | `8080` |
-| Relay | `AGENTCONNECT_RELAY_PORT` | `8090` |
-| PostgreSQL | `AGENTCONNECT_POSTGRES_PORT` | `5432` |
-| Connector gateway | `AGENTCONNECT_OPEN_CONNECTOR_PORT` | `3100` |
-| Setup Server | Fixed, loopback only | `8091` |
-| Logto sign-in | Optional overlay | `3001` |
-| Logto Console | Optional overlay | `3002` |
+| Service           | Variable                           | Default |
+| ----------------- | ---------------------------------- | ------- |
+| Web               | `AGENTCONNECT_WEB_PORT`            | `3000`  |
+| Control Plane     | `AGENTCONNECT_CP_PORT`             | `8080`  |
+| Relay             | `AGENTCONNECT_RELAY_PORT`          | `8090`  |
+| PostgreSQL        | `AGENTCONNECT_POSTGRES_PORT`       | `5432`  |
+| Connector gateway | `AGENTCONNECT_OPEN_CONNECTOR_PORT` | `3100`  |
+| Setup Server      | Fixed, loopback only               | `8091`  |
+| Logto sign-in     | Optional overlay                   | `3001`  |
+| Logto Console     | Optional overlay                   | `3002`  |
 
 `AGENTCONNECT_BIND_ADDRESS` defaults to `127.0.0.1` for Web, Control Plane, and Relay. PostgreSQL, the connector gateway, Setup Server, and the local Logto overlay remain loopback-only in the supplied Compose files.
 
@@ -70,12 +70,12 @@ Published application and migration images currently target `linux/amd64`.
 
 Containers use Docker service names internally. Browsers, daemons, provider callbacks, and links use these public origins:
 
-| Variable | Local default |
-| --- | --- |
-| `AGENTCONNECT_PUBLIC_WEB_URL` | `http://localhost:3000` |
-| `AGENTCONNECT_PUBLIC_CP_URL` | `http://localhost:8080` |
+| Variable                        | Local default           |
+| ------------------------------- | ----------------------- |
+| `AGENTCONNECT_PUBLIC_WEB_URL`   | `http://localhost:3000` |
+| `AGENTCONNECT_PUBLIC_CP_URL`    | `http://localhost:8080` |
 | `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://localhost:8090` |
-| `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090` |
+| `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090`   |
 
 Do not add a trailing slash.
 
@@ -132,11 +132,11 @@ PostgreSQL 18 stores data in the `agentconnect_postgres-data` volume. `docker co
 
 Replace these defaults before any network exposure:
 
-| Variable | Requirement |
-| --- | --- |
-| `AGENTCONNECT_POSTGRES_PASSWORD` | URL-safe characters |
-| `AGENTCONNECT_API_KEY_PEPPER` | At least 32 characters and stable |
-| `AGENTCONNECT_RELAY_TOKEN` | At least 32 characters |
+| Variable                         | Requirement                       |
+| -------------------------------- | --------------------------------- |
+| `AGENTCONNECT_POSTGRES_PASSWORD` | URL-safe characters               |
+| `AGENTCONNECT_API_KEY_PEPPER`    | At least 32 characters and stable |
+| `AGENTCONNECT_RELAY_TOKEN`       | At least 32 characters            |
 
 Generate a separate value for each secret:
 
@@ -267,9 +267,9 @@ ssh -L 3100:127.0.0.1:3100 operator@host.example
 
 ### Narrow the catalog
 
-| Variable | Default |
-| --- | --- |
-| `OPEN_CONNECTOR_PROVIDER_WHITELIST` | Unset, meaning every service |
+| Variable                            | Default                                                   |
+| ----------------------------------- | --------------------------------------------------------- |
+| `OPEN_CONNECTOR_PROVIDER_WHITELIST` | Unset, meaning every service                              |
 | `OPEN_CONNECTOR_PROVIDER_BLOCKLIST` | The services that overlap AgentConnect's own integrations |
 
 Both accept comma-separated service ids, and the blocklist is applied after the whitelist. The default blocklist keeps GitHub, Slack, Telegram, Discord, and Lark / Feishu out of the connector catalog because AgentConnect integrates them directly. Override it only when you deliberately want both paths available.
@@ -292,9 +292,9 @@ Configure the deployment GitHub App when agents need private repositories, repos
 
 The generated App requests:
 
-| Scope | Access |
-| --- | --- |
-| Metadata and email addresses | Read |
+| Scope                                                           | Access         |
+| --------------------------------------------------------------- | -------------- |
+| Metadata and email addresses                                    | Read           |
 | Contents, issues, pull requests, Actions, Checks, and workflows | Read and write |
 
 AgentConnect narrows each installation token to one authorized repository and the agent's repository grant. Installation owners still choose which repositories are available.
@@ -302,6 +302,34 @@ AgentConnect narrows each installation token to one authorized repository and th
 GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Setup can create the App for sign-in and repository installation but leaves webhook delivery disabled until you provide HTTPS ingress.
 
 See [GitHub](/docs/github) for triggers, reviews, and repository behavior.
+
+## GitLab
+
+Configure the deployment's GitLab OAuth application when agents need GitLab projects — on GitLab.com or on one self-managed instance; a deployment addresses one or the other, never both. The application is AgentConnect's **administration identity** on the instance: project discovery, the agents' service accounts, and webhook management. It is not the identity agents act as.
+
+1. In Setup, open **GitLab**. For a self-managed instance, put its address in **Instance base URL** (empty means GitLab.com; a path prefix and a non-default port are both supported and preserved). Setup probes what you typed: only an unusable URL blocks the save — an unreachable host, an untrusted certificate, or a response that is not a GitLab API root are reported as warnings, because Setup and the Control Plane need not sit in the same network position.
+2. Setup displays the exact **Redirect URI** and **Scopes** to register. GitLab has no API for creating OAuth applications, so this part happens on GitLab: in **User settings → Applications**, a group's **Settings → Applications**, or **Admin → Applications** for an instance-wide one, add an application whose redirect URI is _exactly_ that value, keep **Confidential** selected, and grant those scopes. GitLab shows the secret once.
+3. Paste the **Application ID** and **Secret** into Setup and choose **Save GitLab application**.
+4. Restart the Control Plane, then the console and Relay, which cache what it serves.
+5. In the console, **Integrations → Code hosts → Connect GitLab**, and authorize an account with the authority below.
+
+Until GitLab state exists you can change all of this freely, including **Clear configuration**. Once projects, tokens, or connections exist, the instance address is fixed: they carry no instance provenance, so retargeting would send one instance's credentials to another.
+
+### Self-managed instance requirements
+
+| Requirement               | Why                                                                                                                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GitLab 18.11 or later** | Group service accounts reached every tier, Community Edition included, at 18.11. Below that AgentConnect refuses to provision rather than guess.                                 |
+| **HTTPS, one address**    | Clone URLs, OAuth redirects, and GitLab's own `web_url` values only agree if there is a single address. Split internal/external addressing belongs in DNS.                       |
+| **A trusted certificate** | There is no skip-verify option at any layer. A private authority is supported by installing its bundle where every process and sandbox can read it.                              |
+| **Reachable ingress**     | GitLab refuses to deliver webhooks to the local network by default; if your AgentConnect ingress resolves to a private address, the integration looks installed and stays quiet. |
+
+Creating each agent's service account needs authority no GitLab API reports, so it is checked the first time a project is set up, not in advance. On a self-managed instance, either is enough:
+
+- **Premium or Ultimate** — turn on **Allow top-level group Owners to create service accounts** under **Admin → Settings → General**, and connect a top-level group Owner.
+- **Any tier, including Community Edition** — connect an **instance administrator**. On an instance with **Admin Mode** enabled, administrator API actions need a token scope AgentConnect does not request, so the delegation setting above is the only path there.
+
+Nothing about the instance has to be configured on your daemons: a daemon learns it from the agent it is serving, and clones from it on that basis.
 
 ## Slack deployment App
 
