@@ -12,7 +12,7 @@ Where the GitHub integration acts through one App installed on an organization, 
 
 An administrator connects the deployment once, in **Integrations → Code hosts → Connect GitLab**. The browser completes an OAuth authorization, and the connected account becomes the deployment's **administration identity**: AgentConnect uses it to discover projects, create the agents' service accounts, and manage project webhooks. It is not the identity agents act as.
 
-Connect an account with **Maintainer or Owner** access to the projects you intend to use. On a self-managed instance the requirements are a little wider — see [Self-managed instances](#self-managed-instances).
+Connect an account with **Maintainer or Owner** access to the projects you intend to use. On a self-managed instance, the deployment has to be pointed at that instance in Setup before this button does anything — see [Self-managed instances](#self-managed-instances), which also covers who is allowed to connect there.
 
 The connection is per organization, and one deployment addresses one instance. Once GitLab state exists, the instance address cannot be changed: connections, tokens and numeric project IDs carry no instance provenance, so retargeting would send one instance's credentials to another.
 
@@ -73,7 +73,19 @@ Everything above applies unchanged. What differs is what the instance itself mus
 | **A trusted certificate** | There is no skip-verify option at any layer. A private authority is supported by installing its bundle where every process and sandbox can read it.                              |
 | **Reachable ingress**     | GitLab refuses to deliver webhooks to the local network by default; if your AgentConnect ingress resolves to a private address, the integration looks installed and stays quiet. |
 
-Register **one OAuth application** on the instance as the administration identity — confidential, `api` scope, and the redirect URI exactly as Setup publishes it — then enter its Application ID, Secret and instance URL in Setup. A path prefix and a non-default port are both supported and preserved.
+### Point the deployment at your instance
+
+The instance and its OAuth application are deployment settings, so they are entered in **Setup**, not in the console. Setup is loopback-only: on Kubernetes reach it with a [port-forward](/docs/kubernetes-deployment#4-configure-sign-in-before-publishing-the-route), on Compose it is already on `localhost`.
+
+1. In Setup, open **GitLab** and put your instance in **Instance base URL** (empty means GitLab.com). A path prefix and a non-default port are both supported and preserved everywhere. Setup probes what you typed: only an unusable URL blocks the save — an unreachable host, an untrusted certificate or a response that is not a GitLab API root are reported as warnings, because Setup and the Control Plane need not sit in the same network position.
+2. Setup then displays the exact **Redirect URI** and **Scopes** to register. GitLab has no API for creating OAuth applications, so this part happens on the instance: in **User settings → Applications**, a group's **Settings → Applications**, or **Admin → Applications** for an instance-wide one, add an application whose redirect URI is _exactly_ that value, keep **Confidential** selected, and grant those scopes. GitLab shows the secret once.
+3. Paste the **Application ID** and **Secret** back into Setup and choose **Save GitLab application**.
+4. Restart the services that read deployment settings at startup — the Control Plane first, then the console and relay, which cache what it serves.
+5. In the console, **Integrations → Code hosts → Connect GitLab**, and authorize with an account that has the authority below.
+
+Until GitLab state exists you can change all of this freely, including **Clear configuration**. Once projects, tokens or connections exist, the instance address is fixed.
+
+### Who may connect
 
 Creating the agents' service accounts needs authority no GitLab API reports, so it is checked the first time you set up a project, not in advance. Either is enough:
 
