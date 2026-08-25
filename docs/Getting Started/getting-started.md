@@ -19,7 +19,7 @@ A small daemon runs the agents — on machines you operate, or on managed infras
 />
 
 <Cards columns={2} cardWidth="0">
-  <Card title="Get started" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a daemon, configure the built-in agent, and finish your team setup</Card>
+  <Card title="Get started" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a daemon, configure an agent, and set up your team</Card>
 
 <Card title="How it works" href="/docs/how-it-works" icon="fa-duotone fa-diagram-project">Understand daemons, the optional Relay, and the Control Plane</Card>
 
