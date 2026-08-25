@@ -20,7 +20,7 @@ Open **Agents → Add agent**:
 
 ## Placement & runtime
 
-- **Daemon** — the machine this agent runs on. Online daemons are listed first. On AgentConnect Cloud the picker also offers **AgentConnect Cloud** — managed infrastructure with model access included, [priced by usage](/docs/manage-daemons#agentconnect-cloud). You can move the agent later, but daemon-local workspace, memory and transcript data are not copied to the new machine.
+- **Daemon** — where this agent runs: a machine you connected (online daemons are listed first) or, on AgentConnect Cloud, **AgentConnect Cloud** — managed infrastructure with model access included, [priced by usage](/docs/manage-daemons#agentconnect-cloud). You can move the agent later, but existing workspace, memory and transcript content is not carried over to the new placement.
 - **Runtime** — which AI coding tool drives the agent: **Claude Code**, **Codex**, or anything else your daemon detected (opencode, Gemini, …). The list is exactly what the daemon reported — if a runtime is missing, install it on that machine first.
 - **Model** — the models the runtime reports. AgentConnect preselects the runtime's advertised default, or its first advertised model; it does not invent a separate Default model.
 

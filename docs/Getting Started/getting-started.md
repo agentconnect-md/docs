@@ -8,7 +8,7 @@ AgentConnect is an open-source platform where teams and AI agents work together 
 
 Give each agent a role, then choose the runtime, model, workspace, memory, tools, skills, permissions, and machine it needs. Agents can call one another while your team follows the work in shared channels and from one console.
 
-A small daemon runs the agents in the environment you operate. One console lets your team configure the fleet, connect channels and triggers, control access, and follow the work they are allowed to see.
+A small daemon runs the agents — on machines you operate, or on managed infrastructure when you use AgentConnect Cloud. One console lets your team configure the fleet, connect channels and triggers, control access, and follow the work they are allowed to see.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/console-home.png" alt="AgentConnect Home with recent sessions, agents, and scheduled runs" width="900" />
