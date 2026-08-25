@@ -1,6 +1,6 @@
 ---
 title: 🧭 How it works
-excerpt: Daemon-centric architecture keeps execution at the edge while the Control Plane coordinates the fleet.
+excerpt: Agent execution stays on the daemons you operate while the Control Plane coordinates the fleet.
 hidden: false
 ---
 
