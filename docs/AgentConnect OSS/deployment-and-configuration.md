@@ -326,8 +326,8 @@ Until GitLab state exists you can change all of this freely, including **Clear c
 
 Creating each agent's service account needs authority no GitLab API reports, so it is checked the first time a project is set up, not in advance. On a self-managed instance, either is enough:
 
+- **Any tier, including Community Edition** — connect an **instance administrator**. On an instance with **Admin Mode** enabled, administrator API actions need a token scope AgentConnect does not request, so the delegation setting below is the only path there.
 - **Premium or Ultimate** — turn on **Allow top-level group Owners to create service accounts** under **Admin → Settings → General**, and connect a top-level group Owner.
-- **Any tier, including Community Edition** — connect an **instance administrator**. On an instance with **Admin Mode** enabled, administrator API actions need a token scope AgentConnect does not request, so the delegation setting above is the only path there.
 
 Nothing about the instance has to be configured on your daemons: a daemon learns it from the agent it is serving, and clones from it on that basis.
 
