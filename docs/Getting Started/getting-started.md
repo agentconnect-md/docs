@@ -26,7 +26,7 @@ A small daemon runs the agents — on machines you operate, or on managed infras
 
 ## Why AgentConnect?
 
-An agent is more than a model API call. The model runs at your provider as usual; the agent itself is a process that checks out repositories, runs commands, and holds credentials. Your agents can touch real things. Something has to manage that. AgentConnect is that layer:
+AI agents are taking on work across the team, but most still live in individual terminals. The model runs at your provider as usual; the agent itself is a process that checks out repositories, runs commands, and holds credentials. Your agents can touch real things. Something has to manage that. AgentConnect is that layer:
 
 - **Work as one team.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens.
 - **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark, or to repositories and workflows on GitHub and GitLab.
