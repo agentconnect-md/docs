@@ -28,6 +28,12 @@ To pick repositories from a list, install the **AgentConnect GitHub app**:
 
 On AgentConnect OSS, the deployment operator must [configure the GitHub App first](/docs/deployment-and-configuration#github-app). Public repositories can still be cloned read-only without the App.
 
+## From GitLab
+
+The same, from a GitLab project — on GitLab.com or a self-managed instance. Pick **From GitLab**, choose the project, branch, agent directory and access, and the daemon clones it.
+
+There is no app to install: the deployment connects GitLab once, and each agent gets its own service account on the instance when you first pick a project for it. See [GitLab](/docs/gitlab).
+
 ### Worktrees for concurrent sessions
 
 New GitHub agents enable **Worktree** by default. Each session receives its own stable checkout, so concurrent sessions do not share branch or file state. Later turns in the same session return to that worktree. Turn Worktree off when every session should deliberately use the primary checkout instead.

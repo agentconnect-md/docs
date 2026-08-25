@@ -6,14 +6,15 @@ hidden: false
 
 An **integration** binds one agent to one way of reaching it. Six kinds are supported:
 
-| Platform                   | The agent responds to                         | You provide                               |
-| -------------------------- | --------------------------------------------- | ----------------------------------------- |
-| [Slack](/docs/slack)                 | Channels, threads, and DMs                    | Cloud Add to Slack or a custom Slack App  |
-| [Telegram](/docs/telegram)           | DMs and group messages                        | A bot token from @BotFather               |
-| [Discord](/docs/discord)             | Channels, threads, and DMs                    | A bot token; AgentConnect builds the invite |
-| [Lark / Feishu](/docs/lark-feishu)   | Group mentions and one-to-one chats           | One-click app setup or an App ID + secret |
-| [GitHub](/docs/github)               | Issues, PRs, comments on watched repos        | The AgentConnect GitHub app               |
-| [Webhooks](/docs/webhooks)           | Anything that can POST JSON                   | Nothing — we mint the endpoint            |
+| Platform                           | The agent responds to                                | You provide                                      |
+| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------ |
+| [Slack](/docs/slack)               | Channels, threads, and DMs                           | Cloud Add to Slack or a custom Slack App         |
+| [Telegram](/docs/telegram)         | DMs and group messages                               | A bot token from @BotFather                      |
+| [Discord](/docs/discord)           | Channels, threads, and DMs                           | A bot token; AgentConnect builds the invite      |
+| [Lark / Feishu](/docs/lark-feishu) | Group mentions and one-to-one chats                  | One-click app setup or an App ID + secret        |
+| [GitHub](/docs/github)             | Issues, PRs, comments on watched repos               | The AgentConnect GitHub app                      |
+| [GitLab](/docs/gitlab)             | Issues, merge requests, comments on watched projects | An OAuth connection; each agent gets its own bot |
+| [Webhooks](/docs/webhooks)         | Anything that can POST JSON                          | Nothing — we mint the endpoint                   |
 
 Add one from the agent page (**Integrations → Add integration**) or from the Agents list.
 
@@ -62,15 +63,15 @@ When an agent's team visibility is **Selected**, its chat conversations are gate
 
 Use these commands to control the current conversation without asking the model to do it. Slack uses `!` because Slack reserves `/` commands for apps.
 
-| Action | Other platforms | Slack |
-| --- | --- | --- |
-| Stop and mute | `/stop` | `!stop` |
-| Cancel the current turn | `/cancel` | `!cancel` |
-| Resume | `/resume` | `!resume` |
-| Queue a message | `/queue <message>` | `!queue <message>` |
-| Show session status | `/status` | `!status` |
+| Action                              | Other platforms                     | Slack                      |
+| ----------------------------------- | ----------------------------------- | -------------------------- |
+| Stop and mute                       | `/stop`                             | `!stop`                    |
+| Cancel the current turn             | `/cancel`                           | `!cancel`                  |
+| Resume                              | `/resume`                           | `!resume`                  |
+| Queue a message                     | `/queue <message>`                  | `!queue <message>`         |
+| Show session status                 | `/status`                           | `!status`                  |
 | Change model, effort, or permission | `/models`, `/effort`, `/permission` | The same commands with `!` |
-| Toggle fast mode | `/fast on`, `/fast off` | `!fast on`, `!fast off` |
+| Toggle fast mode                    | `/fast on`, `/fast off`             | `!fast on`, `!fast off`    |
 
 **Stop** also mutes the conversation until someone mentions the agent again or uses **resume**. **Cancel** interrupts only the current turn.
 
