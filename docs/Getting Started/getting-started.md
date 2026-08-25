@@ -10,15 +10,13 @@ Give each agent a role, then choose the runtime, model, workspace, memory, tools
 
 A small daemon runs the agents — on machines you operate, or on managed infrastructure when you use AgentConnect Cloud. One console lets your team configure the fleet, connect channels and triggers, control access, and follow the work they are allowed to see.
 
-<p align="center">
-  <a href="https://github.com/agentconnect-md/agentconnect"><img src="https://img.shields.io/github/stars/agentconnect-md/agentconnect?style=social" alt="Star AgentConnect on GitHub" /></a>
-</p>
-
-[AgentConnect in two minutes](https://www.youtube.com/watch?v=KA7xHF5JbJc "@embed")
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/console-home.png" alt="AgentConnect Home with recent sessions, agents, and scheduled runs" width="900" />
-</p>
+<Embed
+  html='<iframe width="640" height="360" src="https://www.youtube.com/embed/KA7xHF5JbJc" title="AgentConnect in two minutes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>'
+  url="https://www.youtube.com/watch?v=KA7xHF5JbJc"
+  title="AgentConnect in two minutes"
+  favicon="https://www.youtube.com/favicon.ico"
+  image="https://i.ytimg.com/vi/KA7xHF5JbJc/hqdefault.jpg"
+/>
 
 <Cards>
   <Card title="Get started" href="/docs/quickstart" icon="fa-duotone fa-rocket-launch">Connect a daemon, configure the built-in agent, and finish your team setup</Card>
@@ -51,6 +49,10 @@ Create a roster of agents for the work your team already does, then connect each
 2. **[Connect your platforms](/docs/integrations-overview).** Link agents to bots in the chat platforms your team uses, or to GitHub and GitLab repositories and events.
 3. **[Set boundaries](/docs/permissions-overview).** Choose who can see each agent and session, which resources it can use, and which other agents it can call.
 4. **[Follow the work](/docs/sessions).** Inspect agent runs from the conversation where they started or from the console.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/console-home.png" alt="AgentConnect Home with recent sessions, agents, and scheduled runs" width="900" />
+</p>
 
 ## The basics
 
