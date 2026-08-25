@@ -52,6 +52,6 @@ A person can [link several sign-in methods](/docs/linked-accounts) to one profil
 
 ## Hosting choices
 
-The same architecture supports [AgentConnect OSS](/docs/oss-get-started), where you operate the full stack, and AgentConnect Cloud, where the management console is hosted. In both cases, daemons run the agents and workspaces — on machines you connect, or on [managed Cloud infrastructure](/docs/manage-daemons#agentconnect-cloud) when you place an agent there.
+The same architecture supports [AgentConnect OSS](/docs/oss-get-started), where you operate the full stack, and AgentConnect Cloud, where the management console is hosted. In both cases, daemons run the agents and workspaces. This page describes daemons on machines you connect and operate; on AgentConnect Cloud, an agent can instead be placed on [managed infrastructure](/docs/manage-daemons#agentconnect-cloud), where AgentConnect operates the daemon environment for it.
 
 AgentConnect OSS keeps authentication optional and uses local no-auth mode by default. Before exposing it beyond localhost, configure [production sign-in with Logto](/docs/logto-authentication).
