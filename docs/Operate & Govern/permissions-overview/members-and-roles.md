@@ -10,7 +10,9 @@ Everything in AgentConnect belongs to an **organization**. Membership is the out
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/members-roles.png" alt="Invite organization members and assign a role" width="520" />
 </p>
 
-Your first sign-in creates an organization. Use the organization switcher to create or move between organizations when your deployment allows it.
+Signing in creates your profile, not an organization. A new account lands on **Create your organization**, where you choose a URL name (lowercase letters, digits, and hyphens) and an optional display name that defaults to it. If a teammate sent you a collaborator invite link, open that link instead and you join their organization rather than creating one.
+
+Most deployments cap a member at one organization; administrators are exempt, and going past the cap reports that the account has reached its limit. Use the organization switcher to move between organizations you belong to.
 
 ## Members
 

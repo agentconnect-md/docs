@@ -40,9 +40,10 @@ Linking or unlinking a provider does not change:
 - the AgentConnect profile ID;
 - organization membership or role;
 - agent, daemon, schedule, tool, or skill [team visibility](/docs/team-visibility);
-- existing resource-sharing grants;
-- another provider's permissions; or
-- a chat-platform user's access to a restricted agent.
+- existing resource-sharing grants; or
+- another provider's permissions.
+
+One exception is worth knowing: a restricted agent's **1:1 Slack DM** with a person who is already in that agent's shared-with audience seeds to the ordinary DM default rather than Off, once that person has linked their Slack identity in the same workspace. Both halves must hold — an unlinked member of the audience and a linked non-member each keep the conversation Off — and it applies only to 1:1 DMs on Slack, never to channels or group DMs. The rule re-evaluates when a link lands or the audience widens, it never reopens a conversation an editor turned Off deliberately, and it never closes one. Everything else about a restricted agent, including channel access, still starts Off.
 
 Linking also does not merge two AgentConnect profiles, install a GitHub App, authorize repositories, or install a chat bot. See [Permissions](/docs/permissions-overview) for the boundaries that still apply.
 

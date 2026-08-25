@@ -88,4 +88,4 @@ Once your agents are working, combine agents, models, and channels into more adv
 
 [AgentConnect OSS](/docs/oss-get-started) runs the Web console, Control Plane, Relay, and execution environment in infrastructure you operate. Use Docker Compose for local evaluation or the [official Helm chart](/docs/kubernetes-deployment) for a production-shaped Kubernetes deployment.
 
-[AgentConnect Cloud](https://app.agentconnect.md) is the hosted management console; sign up and connect a daemon to get started. In either model you connect your own machines as daemons; on Cloud you can also [run agents on managed infrastructure](/docs/manage-daemons#agentconnect-cloud), with model usage priced at the provider's published rates.
+[AgentConnect Cloud](https://app.agentconnect.md) is the hosted management console; sign up, name your organization, and your agents can run on Cloud's own pool with nothing to install. In either model you connect your own machines as daemons; on Cloud you can also [run agents on managed infrastructure](/docs/manage-daemons#agentconnect-cloud), with model usage priced at the provider's published rates.
