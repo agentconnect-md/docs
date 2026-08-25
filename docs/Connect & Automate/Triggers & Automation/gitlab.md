@@ -26,7 +26,13 @@ There is no separate "install on this project" step. A project is set up the mom
 
 The project must live in a **group**. A project in a personal namespace cannot be set up, because service accounts are group-owned — AgentConnect reports `personal_namespace_unsupported` and nothing is created.
 
-**Integrations → Code hosts** lists the projects that are set up, with two actions per project: **Repair** re-runs the provisioning above (use it after someone deletes the bot or the webhook by hand), and **Remove** deletes the webhook and the project's bots and stops agents answering there. Nothing in the project's code or history changes either way.
+**Integrations → Code hosts** shows the GitLab card as a roster of your agents and the service accounts each one holds. Projects needing attention are collected behind a **_N_ projects need attention** badge; expand it to act on one. Each project row offers three actions:
+
+- **Repair** re-runs the provisioning above — use it after someone deletes the bot or the webhook by hand.
+- **Remove** deletes the webhook and the project's bots and stops agents answering there. Nothing in the project's code or history changes.
+- **Take over administration** moves the project onto your own connection. Reach for it when the connection that set the project up was disconnected, or when the person who owned it has left: cleanup needs that account's own token, so without a takeover the project cannot be removed and the connection it belongs to cannot be released.
+
+A connection itself has two stages. **Disconnect** releases it but keeps the row, and deleting a released row removes it. Removal is refused while the connection still administers projects — take those over or remove them first, and the card says so.
 
 GitLab.com Free allows **100 service accounts per top-level group**; a self-managed Free or Community Edition instance allows 100 across the **entire instance**. The population is agents-with-projects, and a refused creation is reported as a quota failure that leaves existing accounts untouched.
 
