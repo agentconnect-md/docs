@@ -11,6 +11,12 @@ Give each agent a role, then choose the runtime, model, workspace, memory, tools
 A small daemon runs the agents — on machines you operate, or on managed infrastructure when you use AgentConnect Cloud. One console lets your team configure the fleet, connect channels and triggers, control access, and follow the work they are allowed to see.
 
 <p align="center">
+  <a href="https://github.com/agentconnect-md/agentconnect"><img src="https://img.shields.io/github/stars/agentconnect-md/agentconnect?style=social" alt="Star AgentConnect on GitHub" /></a>
+</p>
+
+[AgentConnect in two minutes](https://www.youtube.com/watch?v=KA7xHF5JbJc "@embed")
+
+<p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/console-home.png" alt="AgentConnect Home with recent sessions, agents, and scheduled runs" width="900" />
 </p>
 
