@@ -39,9 +39,10 @@ AgentConnect turns that glue into a platform:
 - **Work as one team.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens.
 - **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark, or to repositories and workflows on GitHub and GitLab.
 - **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
+- **Stay provider-neutral.** Claude Code, Codex, Grok Build, DeepSeek, Pi, and any other ACP-compatible runtime run side by side, and changing an agent's runtime does not rebuild the workflow around it.
 - **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [Knowledge](/docs/knowledge) that every agent can find on demand.
 - **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
-- **Stay in control.** Self-host the Apache-2.0 stack, run agents in your environment, and change runtimes without locking the team to one vendor.
+- **Stay in control.** Self-host the Apache-2.0 stack and keep agent execution and workspaces in the environment you operate.
 
 ## Build your agent team
 
