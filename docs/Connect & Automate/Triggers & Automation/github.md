@@ -63,6 +63,19 @@ When a PR cannot start automatically — most commonly because its author is not
 
 For a complete two-model setup, see [Fast PR reviews with deep review on demand](/docs/fast-and-deep-pr-reviews).
 
+### Make the agent name autocomplete
+
+GitHub's comment box suggests organization teams as you type `@`, but it has no way to suggest an agent name. Create a team in the organization named exactly after the agent and `@<organization>/<agent-name>` becomes a suggestion that targets that same one agent:
+
+1. In the organization, **Teams → New team**.
+2. Name it exactly the agent's name — `review-bot`, not "Review Bot".
+3. Leave visibility **Visible**. A secret team is not offered in the comment box.
+4. A description such as "AgentConnect Agent shortcut" tells your teammates what the entry is for.
+
+The team needs no members: AgentConnect matches the text you typed, never the team's membership. Everything else is unchanged — the same event, label, authorization and safety checks apply, and plain `@<agent-name>` keeps working whether or not the team exists.
+
+AgentConnect never creates, renames or deletes these teams; they are yours to manage. Teams exist only in organizations, so on a repository owned by a personal account only `@<agent-name>` applies.
+
 ## Manage watches
 
 The agent page groups its GitHub integration as one card — one row per watched repository with:

@@ -99,6 +99,7 @@ AgentConnect Checks are currently informational rather than required branch-prot
 
 - The visible mention must come from a current repository maintainer with `write` or `admin` permission. A comment authored by the GitHub App is rejected as a trigger, even if its text contains `@deep-review`; this prevents bot-to-bot loops. GitHub's native **Request review** control can also request the App, but it runs every matching reviewer rather than only `deep-review`.
 - A targeted `@deep-review` mention wins over the baseline reviewer's broader **updated** cadence for that delivery.
+- Nobody has to remember the exact name. An organization team named `deep-review` makes `@<organization>/deep-review` autocomplete in the comment box and summon the same agent — see [Make the agent name autocomplete](/docs/github#make-the-agent-name-autocomplete).
 - **Re-run all checks** reruns the current AgentConnect review Checks in the App's suite. Use the individual Check action when you want only one reviewer.
 - PR bodies, diffs, and comments are untrusted input. Use conservative agent permissions, especially on public repositories.
 
