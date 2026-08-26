@@ -67,7 +67,7 @@ The daemon connects to the Control Plane and Relay with outbound connections. If
 
 ## Guided setup
 
-Past the local stack — sign-in, public URLs, provider apps, and production hardening — a guided path helps. The repository ships a setup skill for Claude Code at `.claude/skills/agentconnect-setup`: open Claude Code in the checkout and ask it to set up AgentConnect, and it runs this page and the deployment pages as an interactive tutorial, verifying each checkpoint before continuing. It never asks you to paste secrets into chat.
+Past the local stack — sign-in, public URLs, provider apps, and production hardening — a guided path helps. The repository ships a setup skill at `.claude/skills/agentconnect-setup`, also exposed at `.agents/skills` so Claude Code, Codex, and other agent harnesses pick it up: open your coding agent in the checkout and ask it to set up AgentConnect, and it runs this page and the deployment pages as an interactive tutorial, verifying each checkpoint before continuing. It never asks you to paste secrets into chat.
 
 The sections below cover the same ground by hand, and stay the reference whether or not you use the skill.
 
