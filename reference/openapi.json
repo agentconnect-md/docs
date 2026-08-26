@@ -137,7 +137,7 @@
         "tags": [
           "Organizations"
         ],
-        "description": "Every organization the caller belongs to, with their role. Self-heals an interrupted signup by (re)creating the caller’s personal org.",
+        "description": "Every organization the caller belongs to, with their role. An empty list means the caller belongs to none yet and should create or join one.",
         "responses": {
           "200": {
             "description": "Default Response",
@@ -263,6 +263,14 @@
                           "selected"
                         ]
                       },
+                      "onboardingCompleted": {
+                        "type": "boolean"
+                      },
+                      "gettingStartedStep": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
                       "iconUrl": {
                         "anyOf": [
                           {
@@ -304,6 +312,8 @@
                       "slug",
                       "icon",
                       "defaultAgentVisibility",
+                      "onboardingCompleted",
+                      "gettingStartedStep",
                       "iconUrl",
                       "iconUploadEnabled",
                       "role",
@@ -472,6 +482,14 @@
                         "selected"
                       ]
                     },
+                    "onboardingCompleted": {
+                      "type": "boolean"
+                    },
+                    "gettingStartedStep": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
                     "iconUrl": {
                       "anyOf": [
                         {
@@ -513,6 +531,8 @@
                     "slug",
                     "icon",
                     "defaultAgentVisibility",
+                    "onboardingCompleted",
+                    "gettingStartedStep",
                     "iconUrl",
                     "iconUploadEnabled",
                     "role",
@@ -2803,7 +2823,7 @@
         "tags": [
           "Profile"
         ],
-        "description": "Redeem an activation link, making the signed-in user a formal (activated) user with a personal org. A link minted for a specific email must be redeemed by that verified email; an email-less bearer link may be redeemed by any verified identity and binds to the first redeemer (one use), except that an already-activated account is admitted without consuming it. Optionally send `expectSubject` to assert which signed-in identity the client meant: if it disagrees with the verified token, the request is refused (409 IDENTITY_CHANGED) instead of activating a different account. Idempotent on repeat by the same user. Requires OIDC sign-in with a verified email.",
+        "description": "Redeem an activation link, making the signed-in user a formal (activated) user. Activation grants admission, not an organization — the user creates or joins one afterwards. A link minted for a specific email must be redeemed by that verified email; an email-less bearer link may be redeemed by any verified identity and binds to the first redeemer (one use), except that an already-activated account is admitted without consuming it. Optionally send `expectSubject` to assert which signed-in identity the client meant: if it disagrees with the verified token, the request is refused (409 IDENTITY_CHANGED) instead of activating a different account. Idempotent on repeat by the same user. Requires OIDC sign-in with a verified email.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3320,6 +3340,14 @@
                         "selected"
                       ]
                     },
+                    "onboardingCompleted": {
+                      "type": "boolean"
+                    },
+                    "gettingStartedStep": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
                     "iconUrl": {
                       "anyOf": [
                         {
@@ -3361,6 +3389,8 @@
                     "slug",
                     "icon",
                     "defaultAgentVisibility",
+                    "onboardingCompleted",
+                    "gettingStartedStep",
                     "iconUrl",
                     "iconUploadEnabled",
                     "role",
@@ -3508,6 +3538,17 @@
                       "all",
                       "selected"
                     ]
+                  },
+                  "onboardingCompleted": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  },
+                  "gettingStartedStep": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
                   }
                 }
               }
@@ -3647,6 +3688,14 @@
                         "selected"
                       ]
                     },
+                    "onboardingCompleted": {
+                      "type": "boolean"
+                    },
+                    "gettingStartedStep": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
                     "iconUrl": {
                       "anyOf": [
                         {
@@ -3688,6 +3737,8 @@
                     "slug",
                     "icon",
                     "defaultAgentVisibility",
+                    "onboardingCompleted",
+                    "gettingStartedStep",
                     "iconUrl",
                     "iconUploadEnabled",
                     "role",
