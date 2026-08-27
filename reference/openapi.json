@@ -46779,7 +46779,7 @@
         "tags": [
           "Hooks"
         ],
-        "description": "Create a trigger for one agent. `kind:\"webhook\"` mints an ingress URL (the response carries it plus — when requested — the one-time HMAC signing secret, never retrievable again). `kind:\"github\"` subscribes a repository covered by one of the organization’s GitHub App installations to issue/PR events.",
+        "description": "Create a trigger for one agent. `kind:\"webhook\"` mints an ingress URL (the response carries it plus — when requested — the one-time HMAC signing secret, never retrievable again). `kind:\"github\"` subscribes a repository covered by one of the organization’s GitHub App installations to issue/PR events. A code-host trigger covers ONE subject `family`, so a repository watched for both pull requests and issues is two triggers, each with its own cadence and mention gate; a second trigger on the same family is a 409.",
         "requestBody": {
           "required": true,
           "content": {
@@ -46889,6 +46889,14 @@
                           "github"
                         ]
                       },
+                      "family": {
+                        "type": "string",
+                        "enum": [
+                          "pull_request",
+                          "issues",
+                          "push"
+                        ]
+                      },
                       "repoFullName": {
                         "type": "string",
                         "pattern": "^[^/\\s]+\\/[^/\\s]+$"
@@ -46960,6 +46968,7 @@
                       "agentId",
                       "name",
                       "kind",
+                      "family",
                       "repoFullName",
                       "events"
                     ]
@@ -47009,6 +47018,14 @@
                       "projectId": {
                         "type": "string",
                         "pattern": "^[1-9]\\d*$"
+                      },
+                      "family": {
+                        "type": "string",
+                        "enum": [
+                          "merge_request",
+                          "issues",
+                          "push"
+                        ]
                       },
                       "events": {
                         "minItems": 1,
@@ -47060,6 +47077,7 @@
                       "name",
                       "kind",
                       "projectId",
+                      "family",
                       "events"
                     ]
                   }
@@ -47148,6 +47166,16 @@
                       ]
                     },
                     "repoFullName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "family": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -47298,6 +47326,7 @@
                     "hmacConfigured",
                     "repoId",
                     "repoFullName",
+                    "family",
                     "events",
                     "commentFamilies",
                     "labelFilter",
@@ -47581,6 +47610,16 @@
                           }
                         ]
                       },
+                      "family": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "events": {
                         "type": "array",
                         "items": {
@@ -47712,6 +47751,7 @@
                       "hmacConfigured",
                       "repoId",
                       "repoFullName",
+                      "family",
                       "events",
                       "commentFamilies",
                       "labelFilter",
@@ -47873,6 +47913,16 @@
                         }
                       ]
                     },
+                    "family": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "events": {
                       "type": "array",
                       "items": {
@@ -48004,6 +48054,7 @@
                     "hmacConfigured",
                     "repoId",
                     "repoFullName",
+                    "family",
                     "events",
                     "commentFamilies",
                     "labelFilter",
@@ -48064,7 +48115,7 @@
         "tags": [
           "Hooks"
         ],
-        "description": "Update a hook definition. `kind` is immutable (it discriminates the body); a webhook hook’s ingress URL and signing secret are immutable too — rotating either is a delete + re-create. A github hook’s repository may be re-targeted (re-validated against the organization’s installations).",
+        "description": "Update a hook definition. `kind` is immutable (it discriminates the body); so is a code-host trigger’s subject `family`, which is why the update body carries none — delete and re-create to change it. A webhook hook’s ingress URL and signing secret are immutable too — rotating either is a delete + re-create. A github hook’s repository may be re-targeted (re-validated against the organization’s installations).",
         "requestBody": {
           "required": true,
           "content": {
@@ -48434,6 +48485,16 @@
                         }
                       ]
                     },
+                    "family": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "events": {
                       "type": "array",
                       "items": {
@@ -48565,6 +48626,7 @@
                     "hmacConfigured",
                     "repoId",
                     "repoFullName",
+                    "family",
                     "events",
                     "commentFamilies",
                     "labelFilter",
