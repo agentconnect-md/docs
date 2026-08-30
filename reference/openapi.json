@@ -23,7 +23,7 @@
         "tags": [
           "Deployment"
         ],
-        "description": "Returns the secret-free browser authentication configuration loaded for this process. A deployment change takes effect after restart.",
+        "description": "Returns the secret-free browser configuration loaded for this process: authentication plus the GitLab instance the deployment talks to. A deployment change takes effect after restart.",
         "responses": {
           "200": {
             "description": "Default Response",
@@ -104,10 +104,31 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "gitlab": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "instanceUrl": {
+                                      "type": "string",
+                                      "format": "uri"
+                                    }
+                                  },
+                                  "required": [
+                                    "instanceUrl"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             }
                           },
                           "required": [
-                            "auth"
+                            "auth",
+                            "gitlab"
                           ],
                           "additionalProperties": false
                         },
@@ -8119,13 +8140,6 @@
                     "type": "string",
                     "minLength": 1
                   },
-                  "approvalsReviewer": {
-                    "type": "string",
-                    "enum": [
-                      "user",
-                      "auto_review"
-                    ]
-                  },
                   "allowRuntimeChangesInChat": {
                     "type": "boolean"
                   },
@@ -8359,7 +8373,8 @@
                         },
                         "required": [
                           "mode"
-                        ]
+                        ],
+                        "additionalProperties": false
                       },
                       {
                         "type": "object",
@@ -8367,11 +8382,8 @@
                           "mode": {
                             "type": "string",
                             "enum": [
-                              "github"
+                              "git"
                             ]
-                          },
-                          "worktree": {
-                            "type": "boolean"
                           },
                           "gitRepo": {
                             "type": "string",
@@ -8379,17 +8391,16 @@
                             "maxLength": 512
                           },
                           "gitBranch": {
-                            "type": "string"
+                            "type": "string",
+                            "minLength": 1
                           },
                           "agentDir": {
                             "type": "string"
                           },
-                          "installationId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          "worktree": {
+                            "type": "boolean"
                           },
-                          "gitAccess": {
+                          "access": {
                             "type": "string",
                             "enum": [
                               "read",
@@ -8400,42 +8411,8 @@
                         "required": [
                           "mode",
                           "gitRepo"
-                        ]
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "mode": {
-                            "type": "string",
-                            "enum": [
-                              "gitlab"
-                            ]
-                          },
-                          "worktree": {
-                            "type": "boolean"
-                          },
-                          "projectId": {
-                            "type": "string",
-                            "pattern": "^[1-9]\\d*$"
-                          },
-                          "gitBranch": {
-                            "type": "string"
-                          },
-                          "agentDir": {
-                            "type": "string"
-                          },
-                          "gitAccess": {
-                            "type": "string",
-                            "enum": [
-                              "read",
-                              "write"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "mode",
-                          "projectId"
-                        ]
+                        ],
+                        "additionalProperties": false
                       }
                     ]
                   },
@@ -8718,20 +8695,6 @@
                       "anyOf": [
                         {
                           "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approvalsReviewer": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "auto_review"
-                          ]
                         },
                         {
                           "type": "null"
@@ -9039,7 +9002,7 @@
                             "mode": {
                               "type": "string",
                               "enum": [
-                                "github"
+                                "git"
                               ]
                             },
                             "worktree": {
@@ -9054,55 +9017,58 @@
                             "agentDir": {
                               "type": "string"
                             },
-                            "installationId": {
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "worktree",
-                            "gitRepo"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "gitlab"
-                              ]
-                            },
-                            "worktree": {
-                              "type": "boolean"
-                            },
-                            "gitRepo": {
-                              "type": "string"
-                            },
-                            "gitBranch": {
-                              "type": "string"
-                            },
-                            "agentDir": {
-                              "type": "string"
-                            },
-                            "projectId": {
-                              "type": "string"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
+                            "credential": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "github"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitlab"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "projectId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "projectId"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               ]
                             }
                           },
@@ -9267,7 +9233,6 @@
                     "showStatusBar",
                     "fastMode",
                     "permissionMode",
-                    "approvalsReviewer",
                     "allowRuntimeChangesInChat",
                     "pause",
                     "env",
@@ -9719,20 +9684,6 @@
                           }
                         ]
                       },
-                      "approvalsReviewer": {
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "enum": [
-                              "user",
-                              "auto_review"
-                            ]
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
                       "allowRuntimeChangesInChat": {
                         "type": "boolean"
                       },
@@ -10034,7 +9985,7 @@
                               "mode": {
                                 "type": "string",
                                 "enum": [
-                                  "github"
+                                  "git"
                                 ]
                               },
                               "worktree": {
@@ -10049,55 +10000,58 @@
                               "agentDir": {
                                 "type": "string"
                               },
-                              "installationId": {
-                                "type": "string",
-                                "format": "uuid",
-                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                              },
-                              "gitAccess": {
-                                "type": "string",
-                                "enum": [
-                                  "read",
-                                  "write"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "mode",
-                              "worktree",
-                              "gitRepo"
-                            ],
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "mode": {
-                                "type": "string",
-                                "enum": [
-                                  "gitlab"
-                                ]
-                              },
-                              "worktree": {
-                                "type": "boolean"
-                              },
-                              "gitRepo": {
-                                "type": "string"
-                              },
-                              "gitBranch": {
-                                "type": "string"
-                              },
-                              "agentDir": {
-                                "type": "string"
-                              },
-                              "projectId": {
-                                "type": "string"
-                              },
-                              "gitAccess": {
-                                "type": "string",
-                                "enum": [
-                                  "read",
-                                  "write"
+                              "credential": {
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "provider": {
+                                        "type": "string",
+                                        "enum": [
+                                          "github"
+                                        ]
+                                      },
+                                      "access": {
+                                        "type": "string",
+                                        "enum": [
+                                          "read",
+                                          "write"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "provider",
+                                      "access"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "provider": {
+                                        "type": "string",
+                                        "enum": [
+                                          "gitlab"
+                                        ]
+                                      },
+                                      "access": {
+                                        "type": "string",
+                                        "enum": [
+                                          "read",
+                                          "write"
+                                        ]
+                                      },
+                                      "projectId": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "provider",
+                                      "access",
+                                      "projectId"
+                                    ],
+                                    "additionalProperties": false
+                                  }
                                 ]
                               }
                             },
@@ -10238,7 +10192,6 @@
                       "showStatusBar",
                       "fastMode",
                       "permissionMode",
-                      "approvalsReviewer",
                       "allowRuntimeChangesInChat",
                       "pause",
                       "env",
@@ -10513,20 +10466,6 @@
                       "anyOf": [
                         {
                           "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approvalsReviewer": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "auto_review"
-                          ]
                         },
                         {
                           "type": "null"
@@ -10834,7 +10773,7 @@
                             "mode": {
                               "type": "string",
                               "enum": [
-                                "github"
+                                "git"
                               ]
                             },
                             "worktree": {
@@ -10849,55 +10788,58 @@
                             "agentDir": {
                               "type": "string"
                             },
-                            "installationId": {
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "worktree",
-                            "gitRepo"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "gitlab"
-                              ]
-                            },
-                            "worktree": {
-                              "type": "boolean"
-                            },
-                            "gitRepo": {
-                              "type": "string"
-                            },
-                            "gitBranch": {
-                              "type": "string"
-                            },
-                            "agentDir": {
-                              "type": "string"
-                            },
-                            "projectId": {
-                              "type": "string"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
+                            "credential": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "github"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitlab"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "projectId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "projectId"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               ]
                             }
                           },
@@ -11038,7 +10980,6 @@
                     "showStatusBar",
                     "fastMode",
                     "permissionMode",
-                    "approvalsReviewer",
                     "allowRuntimeChangesInChat",
                     "pause",
                     "env",
@@ -11292,20 +11233,6 @@
                       {
                         "type": "string",
                         "minLength": 1
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "approvalsReviewer": {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "enum": [
-                          "user",
-                          "auto_review"
-                        ]
                       },
                       {
                         "type": "null"
@@ -11812,20 +11739,6 @@
                         }
                       ]
                     },
-                    "approvalsReviewer": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "auto_review"
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "allowRuntimeChangesInChat": {
                       "type": "boolean"
                     },
@@ -12127,7 +12040,7 @@
                             "mode": {
                               "type": "string",
                               "enum": [
-                                "github"
+                                "git"
                               ]
                             },
                             "worktree": {
@@ -12142,55 +12055,58 @@
                             "agentDir": {
                               "type": "string"
                             },
-                            "installationId": {
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "worktree",
-                            "gitRepo"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "gitlab"
-                              ]
-                            },
-                            "worktree": {
-                              "type": "boolean"
-                            },
-                            "gitRepo": {
-                              "type": "string"
-                            },
-                            "gitBranch": {
-                              "type": "string"
-                            },
-                            "agentDir": {
-                              "type": "string"
-                            },
-                            "projectId": {
-                              "type": "string"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
+                            "credential": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "github"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitlab"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "projectId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "projectId"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               ]
                             }
                           },
@@ -12331,7 +12247,6 @@
                     "showStatusBar",
                     "fastMode",
                     "permissionMode",
-                    "approvalsReviewer",
                     "allowRuntimeChangesInChat",
                     "pause",
                     "env",
@@ -13230,7 +13145,7 @@
         "tags": [
           "Agent workspace"
         ],
-        "description": "Replace a workspace with scratch or a covered GitHub repository, or edit its repository, branch, working directory, and read/write access. Changing workspace type, repository, or branch discards daemon-local workspace files. The caller must hold the requested GitHub permission. Active work is drained and repository credentials are invalidated before success. Enabled GitHub review or Check actions reject edits that remove their required write authority.",
+        "description": "Replace a workspace with scratch or a Git repository, or edit its repository, branch, working directory, and read/write access. Who vouches for the repository is derived from the address: a github.com repository covered by an App installation or a managed GitLab project earns managed credentials, a public repository on either host is cloned anonymously (read-only), and any other Git host is cloned anonymously with no preflight. A repository whose owner is covered but which the installation does not grant is refused, since an anonymous clone cannot serve it. An unstated access tier takes the highest the target can carry: write where credentials are minted for it, read for an anonymous checkout. Changing workspace type, repository, or branch discards daemon-local workspace files. The caller must hold the requested host permission. Active work is drained and repository credentials are invalidated before success. Enabled GitHub review or Check actions reject edits that remove their required write authority.",
         "requestBody": {
           "required": true,
           "content": {
@@ -13258,15 +13173,13 @@
                       "mode": {
                         "type": "string",
                         "enum": [
-                          "github"
+                          "git"
                         ]
                       },
-                      "worktree": {
-                        "type": "boolean"
-                      },
-                      "repoFullName": {
+                      "gitRepo": {
                         "type": "string",
-                        "pattern": "^[^/\\s]+\\/[^/\\s]+$"
+                        "minLength": 1,
+                        "maxLength": 512
                       },
                       "gitBranch": {
                         "type": "string",
@@ -13275,8 +13188,10 @@
                       "agentDir": {
                         "type": "string"
                       },
-                      "gitAccess": {
-                        "default": "read",
+                      "worktree": {
+                        "type": "boolean"
+                      },
+                      "access": {
                         "type": "string",
                         "enum": [
                           "read",
@@ -13286,45 +13201,7 @@
                     },
                     "required": [
                       "mode",
-                      "repoFullName"
-                    ],
-                    "additionalProperties": false
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "mode": {
-                        "type": "string",
-                        "enum": [
-                          "gitlab"
-                        ]
-                      },
-                      "worktree": {
-                        "type": "boolean"
-                      },
-                      "projectId": {
-                        "type": "string",
-                        "pattern": "^[1-9]\\d*$"
-                      },
-                      "gitBranch": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "agentDir": {
-                        "type": "string"
-                      },
-                      "gitAccess": {
-                        "default": "read",
-                        "type": "string",
-                        "enum": [
-                          "read",
-                          "write"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "mode",
-                      "projectId"
+                      "gitRepo"
                     ],
                     "additionalProperties": false
                   }
@@ -13553,20 +13430,6 @@
                       "anyOf": [
                         {
                           "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approvalsReviewer": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "auto_review"
-                          ]
                         },
                         {
                           "type": "null"
@@ -13874,7 +13737,7 @@
                             "mode": {
                               "type": "string",
                               "enum": [
-                                "github"
+                                "git"
                               ]
                             },
                             "worktree": {
@@ -13889,55 +13752,58 @@
                             "agentDir": {
                               "type": "string"
                             },
-                            "installationId": {
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "worktree",
-                            "gitRepo"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "gitlab"
-                              ]
-                            },
-                            "worktree": {
-                              "type": "boolean"
-                            },
-                            "gitRepo": {
-                              "type": "string"
-                            },
-                            "gitBranch": {
-                              "type": "string"
-                            },
-                            "agentDir": {
-                              "type": "string"
-                            },
-                            "projectId": {
-                              "type": "string"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
+                            "credential": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "github"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitlab"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "projectId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "projectId"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               ]
                             }
                           },
@@ -14078,7 +13944,6 @@
                     "showStatusBar",
                     "fastMode",
                     "permissionMode",
-                    "approvalsReviewer",
                     "allowRuntimeChangesInChat",
                     "pause",
                     "env",
@@ -14572,20 +14437,6 @@
                         }
                       ]
                     },
-                    "approvalsReviewer": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "auto_review"
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "allowRuntimeChangesInChat": {
                       "type": "boolean"
                     },
@@ -14887,7 +14738,7 @@
                             "mode": {
                               "type": "string",
                               "enum": [
-                                "github"
+                                "git"
                               ]
                             },
                             "worktree": {
@@ -14902,55 +14753,58 @@
                             "agentDir": {
                               "type": "string"
                             },
-                            "installationId": {
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "worktree",
-                            "gitRepo"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "gitlab"
-                              ]
-                            },
-                            "worktree": {
-                              "type": "boolean"
-                            },
-                            "gitRepo": {
-                              "type": "string"
-                            },
-                            "gitBranch": {
-                              "type": "string"
-                            },
-                            "agentDir": {
-                              "type": "string"
-                            },
-                            "projectId": {
-                              "type": "string"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
+                            "credential": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "github"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitlab"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "projectId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "projectId"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               ]
                             }
                           },
@@ -15091,7 +14945,6 @@
                     "showStatusBar",
                     "fastMode",
                     "permissionMode",
-                    "approvalsReviewer",
                     "allowRuntimeChangesInChat",
                     "pause",
                     "env",
@@ -15521,20 +15374,6 @@
                         }
                       ]
                     },
-                    "approvalsReviewer": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "auto_review"
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "allowRuntimeChangesInChat": {
                       "type": "boolean"
                     },
@@ -15836,7 +15675,7 @@
                             "mode": {
                               "type": "string",
                               "enum": [
-                                "github"
+                                "git"
                               ]
                             },
                             "worktree": {
@@ -15851,55 +15690,58 @@
                             "agentDir": {
                               "type": "string"
                             },
-                            "installationId": {
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "worktree",
-                            "gitRepo"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "gitlab"
-                              ]
-                            },
-                            "worktree": {
-                              "type": "boolean"
-                            },
-                            "gitRepo": {
-                              "type": "string"
-                            },
-                            "gitBranch": {
-                              "type": "string"
-                            },
-                            "agentDir": {
-                              "type": "string"
-                            },
-                            "projectId": {
-                              "type": "string"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
+                            "credential": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "github"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitlab"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "projectId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "projectId"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               ]
                             }
                           },
@@ -16040,7 +15882,6 @@
                     "showStatusBar",
                     "fastMode",
                     "permissionMode",
-                    "approvalsReviewer",
                     "allowRuntimeChangesInChat",
                     "pause",
                     "env",
@@ -16457,20 +16298,6 @@
                         }
                       ]
                     },
-                    "approvalsReviewer": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "auto_review"
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "allowRuntimeChangesInChat": {
                       "type": "boolean"
                     },
@@ -16772,7 +16599,7 @@
                             "mode": {
                               "type": "string",
                               "enum": [
-                                "github"
+                                "git"
                               ]
                             },
                             "worktree": {
@@ -16787,55 +16614,58 @@
                             "agentDir": {
                               "type": "string"
                             },
-                            "installationId": {
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "worktree",
-                            "gitRepo"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "gitlab"
-                              ]
-                            },
-                            "worktree": {
-                              "type": "boolean"
-                            },
-                            "gitRepo": {
-                              "type": "string"
-                            },
-                            "gitBranch": {
-                              "type": "string"
-                            },
-                            "agentDir": {
-                              "type": "string"
-                            },
-                            "projectId": {
-                              "type": "string"
-                            },
-                            "gitAccess": {
-                              "type": "string",
-                              "enum": [
-                                "read",
-                                "write"
+                            "credential": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "github"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitlab"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "projectId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "projectId"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               ]
                             }
                           },
@@ -16976,7 +16806,6 @@
                     "showStatusBar",
                     "fastMode",
                     "permissionMode",
-                    "approvalsReviewer",
                     "allowRuntimeChangesInChat",
                     "pause",
                     "env",
@@ -53760,6 +53589,205 @@
         "responses": {
           "200": {
             "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/git/resolve": {
+      "get": {
+        "operationId": "resolveGitRepo",
+        "summary": "Resolve a git address",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Preview what writing this address as an agent workspace would derive for the calling user: who vouches for it (GitHub App installation, managed GitLab project, or an anonymous read-only clone), the caller’s access ceiling, the canonical cloneable address, and the default branch. Refusals mirror the write paths.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "in": "query",
+            "name": "gitRepo",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "github",
+                        "gitlab",
+                        "anonymous"
+                      ]
+                    },
+                    "gitRepo": {
+                      "type": "string"
+                    },
+                    "access": {
+                      "type": "string",
+                      "enum": [
+                        "read",
+                        "write"
+                      ]
+                    },
+                    "defaultBranch": {
+                      "type": "string"
+                    },
+                    "host": {
+                      "type": "string",
+                      "enum": [
+                        "github",
+                        "gitlab",
+                        "other"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "gitRepo",
+                    "access"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
