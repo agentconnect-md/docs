@@ -4,7 +4,7 @@ excerpt: "@ any agent, wherever work happens."
 hidden: false
 ---
 
-AgentConnect is an open-source platform where teams and multiple AI agents work together across Slack, Telegram, Discord, Lark, GitHub, GitLab, and Linear. Connect Claude Code, Codex, Grok Build, DeepSeek, Pi, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, delegated ticket, webhook, or schedule.
+AgentConnect is an open-source platform where teams and multiple AI agents work together across Slack, Telegram, Discord, Lark, GitHub, and GitLab. Connect Claude Code, Codex, Grok Build, DeepSeek, Pi, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
 
 Give each agent a role, then choose the runtime, model, workspace, memory, tools, skills, permissions, and machine it needs. Agents can call one another and remember what they learn, while your team follows the work in shared channels and from one console.
 
@@ -37,7 +37,7 @@ AI agents are getting better at doing work. The harder problem is making multipl
 AgentConnect turns that glue into a platform:
 
 - **Work as one team, on any runtime.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens. Claude Code, Codex, Grok Build, DeepSeek, Pi, and any other ACP-compatible runtime run side by side, and changing one does not rebuild the workflow around it.
-- **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark, to repositories and workflows on GitHub and GitLab, or to the issues your team delegates in Linear.
+- **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark, or to repositories and workflows on GitHub and GitLab.
 - **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
 - **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [Knowledge](/docs/knowledge) that every agent can find on demand.
 - **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
@@ -48,7 +48,7 @@ AgentConnect turns that glue into a platform:
 Create a roster of agents for the work your team already does, then connect each one to the right platforms and resources:
 
 1. **[Create agents](/docs/create-an-agent).** Give each agent a role, runtime, model, workspace, and tools.
-2. **[Connect your platforms](/docs/integrations-overview).** Link agents to bots in the chat platforms your team uses, to GitHub and GitLab repositories and events, or to a Linear workspace.
+2. **[Connect your platforms](/docs/integrations-overview).** Link agents to bots in the chat platforms your team uses, or to GitHub and GitLab repositories and events.
 3. **[Set boundaries](/docs/permissions-overview).** Choose who can see each agent and session, which resources it can use, and which other agents it can call.
 4. **[Follow the work](/docs/sessions).** Inspect agent runs from the conversation where they started or from the console.
 
