@@ -32,6 +32,10 @@ The project must live in a **group**. A project in a personal namespace cannot b
 - **Remove** deletes the webhook and the project's bots and stops agents answering there. Nothing in the project's code or history changes.
 - **Take over administration** moves the project onto your own connection. Reach for it when the connection that set the project up was disconnected, or when the person who owned it has left: cleanup needs that account's own token, so without a takeover the project cannot be removed and the connection it belongs to cannot be released.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitlab-code-hosts.png" alt="The GitLab card under Integrations → Code hosts: the administration connection, then one row per agent with the groups its service account belongs to" width="800" />
+</p>
+
 A connection itself has two stages. **Disconnect** releases it but keeps the row, and deleting a released row removes it. Removal is refused while the connection still administers projects — take those over or remove them first, and the card says so.
 
 GitLab.com Free allows **100 service accounts per top-level group**; a self-managed Free or Community Edition instance allows 100 across the **entire instance**. The population is agents-with-projects, and a refused creation is reported as a quota failure that leaves existing accounts untouched.
@@ -40,6 +44,10 @@ GitLab.com Free allows **100 service accounts per top-level group**; a self-mana
 
 On the agent: **Integrations → Add integration → GitLab**.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitlab-add-integration.png" alt="Add integration with GitLab selected: pick a project, choose issues or merge requests, and how eagerly the agent wakes up" width="560" />
+</p>
+
 A trigger rides an existing authorization and never creates one: the project must already be the agent's workspace or one of its authorized additional repositories, or adding the watch is refused.
 
 Choose the project, what to listen for — issues, merge requests, or both — and how eagerly the agent wakes up:
@@ -47,6 +55,10 @@ Choose the project, what to listen for — issues, merge requests, or both — a
 - **created** — when an issue or merge request is opened, plus later explicit mentions in that family.
 - **updated** — openings plus new revisions, labels and replies.
 - **mention only** — when the agent is @-mentioned.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitlab-agent-card.png" alt="An agent's GitLab card with three watched projects, each showing the merge-request family and its trigger" width="640" />
+</p>
 
 ## Who may trigger an agent
 

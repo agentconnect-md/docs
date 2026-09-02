@@ -18,6 +18,10 @@ On the agent: **Integrations → Add integration → Linear**.
 
 There is nothing to fill in. Choose **Connect Linear**, approve the workspace in the Linear tab that opens, and the connection lands back in the console. The agent you started from becomes each team's **dispatch default** — the agent a bare delegation reaches.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/linear-add-integration.png" alt="The Add integration dialog with Linear selected: pick a connected workspace or connect another one" width="640" />
+</p>
+
 The authorization asks for read and write access, permission to be assigned and mentioned as an app, and initiative access. If you connected a workspace before initiative support existed, everything else keeps working and only the three initiative tools ask you to reconnect.
 
 To put a **second agent** on the same workspace, open that agent's **Add integration → Linear** and pick the connected workspace from the list. To connect a **different** workspace, use **Connect another workspace…** in the same pane.
@@ -28,6 +32,10 @@ A connected workspace lists **one row per Linear team** on the agent's Linear ca
 
 - the **dispatch default** — the agent a bare delegation in that team starts; and
 - a **trigger** — **Mention** or **Off**.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/linear-agent-card.png" alt="An agent's Linear card listing two team rows, each with its dispatch default and an @-mention trigger" width="640" />
+</p>
 
 There is no "any message" setting: every Linear event is addressed to the app already, so a team either takes delegations and mentions or it is off. Turning a team **Off** mutes it for every agent on the workspace; unlinking an agent from the workspace is how that one agent stops answering anywhere in it.
 
@@ -50,6 +58,14 @@ Each delegation or mention creates one Linear agent session bound to one agent. 
 - **Stops** on request: the run is interrupted and the session settles with a note telling you to reply to continue.
 
 The full transcript is always in [Sessions](/docs/sessions), whatever reaches Linear.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/linear-issue-resources.png" alt="A Linear issue after delegation: the AgentConnect session in Resources, the agent session started by the delegator, and the issue moved from Todo to In Progress" width="640" />
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/linear-session-panel.png" alt="Linear's agent session panel with the run expanded: thoughts between steps, tools used, files edited, and the final response" width="460" />
+</p>
 
 ### How much reaches the feed
 
