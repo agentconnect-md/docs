@@ -63,3 +63,5 @@ Sometimes one repo isn't enough — a reviewer agent may need to read a shared l
 - Credentials remain limited to the repositories you list.
 
 By default an agent's GitHub credentials stop at its own workspace repository.
+
+An authorization is more than a credential grant: the daemon checks the repository out beside the workspace as a **secondary root** and hands it to the runtime, so the agent reads and edits those files locally instead of over the network. A root is cloned on the first session that needs it, and one that fails to clone is left out of that session rather than failing it. The **Workspace** tab's file browser moves between the checkouts, and a code-host review whose subject lives in an authorized repository runs against an exact checkout of it. A **Read only** grant still cannot push, even though its files are on disk.
