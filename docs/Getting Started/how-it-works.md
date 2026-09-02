@@ -18,7 +18,7 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 - launches and drives installed agent runtimes such as Claude Code and Codex over [ACP](https://agentclientprotocol.com);
 - owns the agents' working directories, git checkouts and transcripts.
 
-**The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub and generic webhooks, and webchat (the browser transport behind the [Playground](/docs/playground)), then forwards the request to the owning daemon. It does not durably store message content.
+**The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub, GitLab and generic webhooks, [Linear](/docs/linear) agent events, and webchat (the browser transport behind the [Playground](/docs/playground)), then forwards the request to the owning daemon. It does not durably store message content.
 
 **The Control Plane** manages authentication, organizations, permissions, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed skills](/docs/knowledge) and coordinates the daemon fleet.
 

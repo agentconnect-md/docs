@@ -31,6 +31,17 @@ Mention it to start a conversation; unmentioned follow-ups stay in the thread th
 
 Each discovered channel appears on the agent's Integrations card. Choose **@-mention** (the default), **any message**, or **Off** for inbound activation. Off does not uninstall the app or block scheduled and delegated outbound posts. See [In-conversation commands](/docs/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing session settings from Slack.
 
+## What an agent can do in Slack
+
+Replying is not all an agent can do in a Slack session. It also gets Slack's own surface as tools, and reaches for them on its own when the task calls for one:
+
+- **Read the room** — a channel's recent messages, a thread's replies, and a search of the workspace's public messages.
+- **React** — add an emoji reaction to a message, or read the reactions already on one.
+- **Leave something behind** — pin and unpin channel bookmarks, create and edit canvases, and read and update Slack lists.
+- **Reach further** — open a direct message, start a conversation, share a file, and schedule a message for later.
+
+These are injected only into sessions **on Slack**. The same agent working on another platform does not carry them; Discord and Lark / Feishu offer channel history, and Telegram reads attachments only. Everything an agent does this way is done as the bot, and shows up in the transcript like any other tool call.
+
 ## Give an agent a custom Slack identity
 
 <p align="center">
@@ -54,6 +65,15 @@ Use the manual fallback when you cannot create Slack configuration tokens:
 3. For **Socket Mode**, paste the Bot User OAuth token and an App-Level token (`xapp-…`) with `connections:write`.
 
 If Slack reports changed scopes, reinstall the App once before copying the Bot User OAuth token.
+
+## Keep the app's permissions current
+
+Slack grants permissions when the app is installed, so a release that adds a capability can leave an existing installation short of a scope. AgentConnect names the ones that are missing instead of failing quietly: open **Settings → Bots → Slack** and use **Refresh Slack app** on the bot's row.
+
+- When AgentConnect can update the app for you, it syncs the manifest and asks you to **reinstall the workspace** so Slack grants the added scopes.
+- When it cannot — a manifest install, or an app AgentConnect does not administer — it points you at the app's **OAuth & Permissions** page in Slack to add the listed scopes, then reinstall.
+
+A built-in installation is repaired from the same row: AgentConnect starts the reinstall for you and waits for Slack to confirm it.
 
 ## Delivery modes and self-hosting
 
