@@ -13,7 +13,7 @@ The default Docker Compose stack needs no configuration and stays on loopback. U
 | Surface              | Owns                                                                                         |
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | `compose.env`        | Images, ports, public URLs, database secrets, Vault, connectors, and Logto endpoints         |
-| Setup Server         | Logto browser auth, GitHub, Slack, Google, Lark / Feishu tenant apps, and deployment options |
+| Setup Server         | Logto browser auth, GitHub, GitLab, Linear, Slack, Google, Lark / Feishu tenant apps, and deployment options |
 | AgentConnect console | Organizations, agents, integrations, environments, tools, and skills                         |
 
 Setup Server is the supported configuration surface for browser authentication, provider apps, displayed sign-in methods, and preset-agent behavior. It saves deployment settings and write-only provider secrets in PostgreSQL.
@@ -330,6 +330,22 @@ Creating each agent's service account needs authority no GitLab API reports, so 
 - **Premium or Ultimate** — turn on **Allow top-level group Owners to create service accounts** under **Admin → Settings → General**, and connect a top-level group Owner.
 
 Nothing about the instance has to be configured on your daemons: a daemon learns it from the agent it is serving, and clones from it on that basis.
+
+## Linear
+
+Configure the deployment's Linear OAuth application when agents should work issues delegated to them in Linear. One application serves every organization and every connected workspace; no organization or agent ever holds Linear credentials.
+
+Both halves of the flow are public: the Control Plane terminates the OAuth callback and the Relay terminates Linear's webhooks, so both public URLs must be HTTPS before Setup will save the application.
+
+1. In Setup, open **Linear**. It shows the exact **Callback URL** and **Webhook URL** to register.
+2. Linear has no API for creating OAuth applications, so create it by hand. In Linear, open **Settings → API → OAuth applications** and add one application under your own product name and icon, with that callback URL. Enable webhooks, check **Agent session events**, and point them at the webhook URL Setup displays.
+3. Make the application **public** if workspaces other than the one that created it will connect it. Linear does not review it, and listing it in Linear's integration directory is optional.
+4. Paste the **Client ID**, **Client secret**, and **Webhook signing secret** into Setup and choose **Save Linear application**.
+5. Restart the Control Plane and Relay.
+
+The console's Linear surface reports that Linear is not set up until those credentials exist. Once they do, a workspace is connected from an agent's **Integrations → Add integration → Linear**; see [Linear](/docs/linear).
+
+Rotating the signing secret is a deployment action: save the new value in Setup, and every connected workspace is re-stamped with it. Deliveries can fail for a few seconds during the change, and Linear retries them.
 
 ## Slack deployment App
 

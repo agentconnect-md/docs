@@ -14,6 +14,7 @@ An **integration** binds one agent to one way of reaching it. The supported kind
 | [Lark / Feishu](/docs/lark-feishu) | Group mentions and one-to-one chats                  | One-click app setup or an App ID + secret        |
 | [GitHub](/docs/github)             | Issues, PRs, comments on watched repos               | The AgentConnect GitHub app                      |
 | [GitLab](/docs/gitlab)             | Issues, merge requests, comments on watched projects | An OAuth connection; each agent gets its own bot |
+| [Linear](/docs/linear)             | Issues delegated to the app, or mentions by name      | Approval of the workspace in a Linear popup      |
 | [Webhooks](/docs/webhooks)         | Anything that can POST JSON                          | Nothing — we mint the endpoint                   |
 
 Add one from the agent page (**Integrations → Add integration**) or from the Agents list.
@@ -41,13 +42,15 @@ There's no channel picker: **invite the bot to a channel and it appears in Agent
 
 Off keeps the bot in the channel, preserves past sessions, and only mutes inbound activation. A schedule or another agent's deliberate handoff can still post there. Manage the bot's actual channel or server membership on the chat platform.
 
+[Linear](/docs/linear) has the same shape with a different roster: its conversations are the workspace's **teams**, listed for you the moment you connect it, and a team row takes only **@-mention** or **Off** — every Linear event is addressed to the app already.
+
 ### Direct messages
 
 A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. One-to-one DMs use **On / Off**. Group conversations use the same trigger choices as channels. Conversations for a restricted agent start Off until an allowed editor enables them.
 
 ### Shared bots
 
-Normally one bot ↔ one agent. A **shared Slack bot** can serve multiple agents through a single identity. In **Settings → Bots**, expand the bot and pick the **Default dispatch** agent for each channel: one "@Assistant" in Slack, with different specialists behind it by channel.
+Normally one bot ↔ one agent. A **shared Slack bot** can serve multiple agents through a single identity, and a connected **Linear workspace** always does — every agent you enable on it works through the deployment's one Linear app. In **Settings → Bots**, expand the bot and pick the **Default dispatch** agent for each channel: one "@Assistant" in Slack, with different specialists behind it by channel.
 
 The channel trigger applies to the shared bot. Switching it **Off** stops routing through that bot in the channel.
 

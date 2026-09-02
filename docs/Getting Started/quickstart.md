@@ -88,7 +88,7 @@ Open **Getting started** from the console to resume the same checklist. You can 
 
 ## What's next
 
-- [Connect platforms](/docs/integrations-overview) — link agents to Slack, Telegram, Discord, Lark / Feishu, GitHub, and other triggers.
+- [Connect platforms](/docs/integrations-overview) — link agents to Slack, Telegram, Discord, Lark / Feishu, GitHub, GitLab, Linear, and other triggers.
 - [Create agents](/docs/create-an-agent) — add specialists with different roles, runtimes, models, and workspaces.
 - [Permissions](/docs/permissions-overview) — control agent, session, repository, and agent-to-agent access.
 - [How it works](/docs/how-it-works) — understand the daemon, optional Relay, and Control Plane.

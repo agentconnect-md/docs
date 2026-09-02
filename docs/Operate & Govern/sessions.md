@@ -4,7 +4,7 @@ excerpt: Review agent runs, inspect transcripts, and understand where session da
 hidden: false
 ---
 
-**Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, webhooks, schedules, or the Playground. The list contains the work allowed by each [session audience](/docs/session-visibility). An Agent's Team visibility separately controls access to that Agent and does not hide a session you are allowed to read.
+**Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, Linear delegations, webhooks, schedules, or the Playground. The list contains the work allowed by each [session audience](/docs/session-visibility). An Agent's Team visibility separately controls access to that Agent and does not hide a session you are allowed to read.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-detail.png" alt="A session transcript with the agent's plan, file edits, and tool output expanded" width="900" />
@@ -27,6 +27,16 @@ Sessions snapshot their execution config: the header reflects what the run _actu
 ### The transcript
 
 The transcript separates messages, reasoning, plans, tool calls, and file edits. Tool activity includes the available input and output, with diffs for file changes, so you can understand how the agent reached its result.
+
+## When a run asks for permission
+
+Depending on the agent's permission mode, a runtime can stop in the middle of a turn and ask before it acts. The turn parks until someone decides, and there are three places that decision can be made:
+
+- **In the console.** Anyone who can edit the agent decides from the agent or the session page. The notification bell raises an unread **Approval needed** item pointing at the waiting session, and marks it resolved once the wait ends.
+- **In a Slack DM.** When someone who may decide has [linked their Slack account](/docs/linked-accounts), the agent sends one of them the same card in a direct message, with links to the session and to the message that started the work. Deciding there is the same decision as deciding in the console, and the console records who made it.
+- **In the conversation.** Only when the agent's **Allow change in chat** setting is on and the session lives in Slack. The card is posted where the work is happening, so anyone who can see the conversation can click it — which is why this one is opt-in.
+
+By default the conversation gets a short notice that an approval is waiting and that an agent editor has to allow it. A [Linear](/docs/linear) session posts the same pointer into the issue's activity feed, with a link into the console.
 
 ## When several agents share a conversation
 
@@ -64,4 +74,10 @@ Delegated work runs in a linked child session and inherits the parent session's 
 
 ## Live sessions
 
-Running sessions update in place. Sessions started in the [Playground](/docs/playground) can also be continued from the browser.
+Running sessions update in place, and the session page offers a composer for the ones you may continue:
+
+- **Playground and webchat** sessions are continued in the browser, as they always were.
+- A **chat-platform** session — a Slack thread, a Telegram or Discord chat, a Lark / Feishu conversation — takes your message from the console and mirrors it into the original thread first, so the people there see what changed the agent's context. The agent's reply follows that session's own output mode.
+- A session started by a **GitHub, GitLab, webhook or schedule** event is continued console-only. Nothing is posted to the pull request, the issue, or the event's origin.
+
+Continuing is a write, so a Viewer never can, and a private session stays with the person who owns it. Beyond that it follows the session's audience, and it needs the owning agent to be visible to you and its daemon to be online. When one of those is missing, the composer explains itself instead of appearing.
