@@ -2657,7 +2657,7 @@
                   },
                   "platform": {
                     "minItems": 1,
-                    "maxItems": 4,
+                    "maxItems": 5,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -2665,7 +2665,8 @@
                         "slack",
                         "telegram",
                         "discord",
-                        "feishu"
+                        "feishu",
+                        "linear"
                       ]
                     }
                   },
@@ -4010,7 +4011,7 @@
         "tags": [
           "Daemons"
         ],
-        "description": "The org’s available daemon fleet, including install-wide pool members, overlaid with live connection status.",
+        "description": "The org’s available daemon fleet, including install-wide pool members, overlaid with live connection status. Liveness only — what each daemon can run is GET /daemons/capabilities, and a runtime’s per-model catalog is GET /daemons/:id.",
         "parameters": [
           {
             "schema": {
@@ -4150,6 +4151,188 @@
                       "health": {
                         "type": "string"
                       },
+                      "load": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "cpu": {
+                                "type": "number"
+                              },
+                              "mem": {
+                                "type": "number"
+                              },
+                              "agents": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "cpu",
+                              "mem",
+                              "agents"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "sessionEpoch": {
+                        "type": "number"
+                      },
+                      "maxAgents": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "activeSessions": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "lastSeenAt": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "createdBy": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "lastModifiedAt": {
+                        "type": "string"
+                      },
+                      "lastModifiedBy": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "sessionRetention": {
+                        "type": "string",
+                        "pattern": "^(?:never|[1-9]\\d{0,3}d)$"
+                      },
+                      "memberSetId": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "visibility": {
+                        "type": "string",
+                        "enum": [
+                          "org",
+                          "restricted"
+                        ]
+                      },
+                      "sharedWith": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "canEdit": {
+                        "type": "boolean"
+                      },
+                      "canManageSharing": {
+                        "type": "boolean"
+                      },
+                      "canManageLifecycle": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "daemonId",
+                      "host",
+                      "name",
+                      "agentVersion",
+                      "releaseChannel",
+                      "latestVersion",
+                      "availableVersions",
+                      "lifecycleOp",
+                      "status",
+                      "cloud",
+                      "health",
+                      "load",
+                      "sessionEpoch",
+                      "maxAgents",
+                      "activeSessions",
+                      "lastSeenAt",
+                      "createdAt",
+                      "createdBy",
+                      "lastModifiedAt",
+                      "lastModifiedBy",
+                      "sessionRetention",
+                      "memberSetId",
+                      "visibility",
+                      "sharedWith",
+                      "canEdit",
+                      "canManageSharing",
+                      "canManageLifecycle"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/daemons/capabilities": {
+      "get": {
+        "operationId": "listDaemonCapabilities",
+        "summary": "List daemon capabilities",
+        "tags": [
+          "Daemons"
+        ],
+        "description": "What each daemon in the fleet can run: platform/feature capabilities, the installed runtime profiles, and the daemon-configured MCP servers. This half of a daemon row changes only when it connects, upgrades, or re-probes, so it is read separately from the liveness poll. Each runtime’s catalog carries its runtime-level answers (default model, permission modes) but an empty models list: that per-model matrix is GET /daemons/:id.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "daemonId": {
+                        "type": "string"
+                      },
                       "capabilities": {
                         "type": "object",
                         "properties": {
@@ -4259,6 +4442,7 @@
                                   "type": "object",
                                   "properties": {
                                     "models": {
+                                      "maxItems": 0,
                                       "type": "array",
                                       "items": {
                                         "type": "object",
@@ -4417,151 +4601,13 @@
                           ],
                           "additionalProperties": false
                         }
-                      },
-                      "load": {
-                        "anyOf": [
-                          {
-                            "type": "object",
-                            "properties": {
-                              "cpu": {
-                                "type": "number"
-                              },
-                              "mem": {
-                                "type": "number"
-                              },
-                              "agents": {
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "cpu",
-                              "mem",
-                              "agents"
-                            ],
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "sessionEpoch": {
-                        "type": "number"
-                      },
-                      "maxAgents": {
-                        "type": "integer",
-                        "minimum": -9007199254740991,
-                        "maximum": 9007199254740991
-                      },
-                      "activeSessions": {
-                        "type": "integer",
-                        "minimum": -9007199254740991,
-                        "maximum": 9007199254740991
-                      },
-                      "lastSeenAt": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "createdAt": {
-                        "type": "string"
-                      },
-                      "createdBy": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "lastModifiedAt": {
-                        "type": "string"
-                      },
-                      "lastModifiedBy": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "sessionRetention": {
-                        "type": "string",
-                        "pattern": "^(?:never|[1-9]\\d{0,3}d)$"
-                      },
-                      "memberSetId": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "visibility": {
-                        "type": "string",
-                        "enum": [
-                          "org",
-                          "restricted"
-                        ]
-                      },
-                      "sharedWith": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "canEdit": {
-                        "type": "boolean"
-                      },
-                      "canManageSharing": {
-                        "type": "boolean"
-                      },
-                      "canManageLifecycle": {
-                        "type": "boolean"
                       }
                     },
                     "required": [
                       "daemonId",
-                      "host",
-                      "name",
-                      "agentVersion",
-                      "releaseChannel",
-                      "latestVersion",
-                      "availableVersions",
-                      "lifecycleOp",
-                      "status",
-                      "cloud",
-                      "health",
                       "capabilities",
                       "runtimeProfiles",
-                      "mcpServers",
-                      "load",
-                      "sessionEpoch",
-                      "maxAgents",
-                      "activeSessions",
-                      "lastSeenAt",
-                      "createdAt",
-                      "createdBy",
-                      "lastModifiedAt",
-                      "lastModifiedBy",
-                      "sessionRetention",
-                      "memberSetId",
-                      "visibility",
-                      "sharedWith",
-                      "canEdit",
-                      "canManageSharing",
-                      "canManageLifecycle"
+                      "mcpServers"
                     ],
                     "additionalProperties": false
                   }
@@ -4573,6 +4619,608 @@
       }
     },
     "/v1/orgs/{orgId}/daemons/{id}": {
+      "get": {
+        "operationId": "getDaemon",
+        "summary": "Get a daemon",
+        "tags": [
+          "Daemons"
+        ],
+        "description": "One daemon in full: its liveness row plus its capabilities and complete runtime profiles, including each runtime’s discovered model × configuration catalog. This is the only read carrying the per-model matrix — its readers all configure a single daemon at a time.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "daemonId": {
+                      "type": "string"
+                    },
+                    "host": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "name": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "agentVersion": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "releaseChannel": {
+                      "type": "string"
+                    },
+                    "latestVersion": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "availableVersions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "lifecycleOp": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "op": {
+                              "type": "string",
+                              "enum": [
+                                "restart",
+                                "upgrade"
+                              ]
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "pending",
+                                "succeeded",
+                                "failed"
+                              ]
+                            },
+                            "targetVersion": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "outcome": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "op",
+                            "status",
+                            "targetVersion",
+                            "outcome"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "cloud": {
+                      "type": "boolean"
+                    },
+                    "health": {
+                      "type": "string"
+                    },
+                    "capabilities": {
+                      "type": "object",
+                      "properties": {
+                        "platforms": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "runtimes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "acp": {
+                          "type": "boolean"
+                        },
+                        "features": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "platforms",
+                        "runtimes",
+                        "acp",
+                        "features"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "runtimeProfiles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "runtime": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "models": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "contextWindow": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "acpSupport": {
+                            "type": "string"
+                          },
+                          "acpProtocolVersion": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "toolCalling": {
+                            "type": "boolean"
+                          },
+                          "mcpCapabilities": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "http": {
+                                    "type": "boolean"
+                                  },
+                                  "sse": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "http",
+                                  "sse"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "modelCatalog": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "models": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        },
+                                        "efforts": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "value": {
+                                                "type": "string"
+                                              },
+                                              "name": {
+                                                "type": "string"
+                                              },
+                                              "description": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "value"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "defaultEffort": {
+                                          "type": "string"
+                                        },
+                                        "fastMode": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "id"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "defaultModel": {
+                                    "type": "string"
+                                  },
+                                  "permissionModes": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "value": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        },
+                                        "description": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "value"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "defaultPermissionMode": {
+                                    "type": "string"
+                                  },
+                                  "source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "native",
+                                      "acp"
+                                    ]
+                                  },
+                                  "observedAt": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "models",
+                                  "source",
+                                  "observedAt"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "modelsSource": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          },
+                          "observedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "runtime",
+                          "version",
+                          "models",
+                          "contextWindow",
+                          "acpSupport",
+                          "acpProtocolVersion",
+                          "toolCalling",
+                          "mcpCapabilities",
+                          "modelCatalog",
+                          "modelsSource",
+                          "authRequired",
+                          "observedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "mcpServers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "transport": {
+                            "type": "string",
+                            "enum": [
+                              "stdio",
+                              "http",
+                              "sse"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "transport"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "load": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "cpu": {
+                              "type": "number"
+                            },
+                            "mem": {
+                              "type": "number"
+                            },
+                            "agents": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "cpu",
+                            "mem",
+                            "agents"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "sessionEpoch": {
+                      "type": "number"
+                    },
+                    "maxAgents": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "activeSessions": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "lastSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "createdBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "lastModifiedAt": {
+                      "type": "string"
+                    },
+                    "lastModifiedBy": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "sessionRetention": {
+                      "type": "string",
+                      "pattern": "^(?:never|[1-9]\\d{0,3}d)$"
+                    },
+                    "memberSetId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "visibility": {
+                      "type": "string",
+                      "enum": [
+                        "org",
+                        "restricted"
+                      ]
+                    },
+                    "sharedWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "canEdit": {
+                      "type": "boolean"
+                    },
+                    "canManageSharing": {
+                      "type": "boolean"
+                    },
+                    "canManageLifecycle": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "daemonId",
+                    "host",
+                    "name",
+                    "agentVersion",
+                    "releaseChannel",
+                    "latestVersion",
+                    "availableVersions",
+                    "lifecycleOp",
+                    "status",
+                    "cloud",
+                    "health",
+                    "capabilities",
+                    "runtimeProfiles",
+                    "mcpServers",
+                    "load",
+                    "sessionEpoch",
+                    "maxAgents",
+                    "activeSessions",
+                    "lastSeenAt",
+                    "createdAt",
+                    "createdBy",
+                    "lastModifiedAt",
+                    "lastModifiedBy",
+                    "sessionRetention",
+                    "memberSetId",
+                    "visibility",
+                    "sharedWith",
+                    "canEdit",
+                    "canManageSharing",
+                    "canManageLifecycle"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
       "patch": {
         "operationId": "updateDaemon",
         "summary": "Update a daemon",
@@ -12809,6 +13457,26 @@
                                 "type": "string",
                                 "format": "date-time",
                                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "resolvedBy": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "resolvedByName": {
+                            "anyOf": [
+                              {
+                                "type": "string"
                               },
                               {
                                 "type": "null"
@@ -30281,7 +30949,7 @@
         "tags": [
           "Sessions"
         ],
-        "description": "Mints a short-lived token the browser presents to the relay pool to continue an existing chat-origin session from the console composer. Requires continuation authorization, un-purged content, a daemon that can still serve the session content (its recorder, or a live member of the shared store it was written to), and continuation-capable daemon and relay pool.",
+        "description": "Mints a short-lived token the browser presents to the relay pool to continue an existing session from the console composer — a chat thread (the human turn is mirrored back to it) or a hook-origin session such as a GitHub or GitLab event, whose only surface is the console. Requires continuation authorization, un-purged content, a daemon that can still serve the session content (its recorder, or a live member of the shared store it was written to), and continuation-capable daemon and relay pool.",
         "parameters": [
           {
             "schema": {
@@ -31440,6 +32108,46 @@
                               }
                             ]
                           },
+                          "icon": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "color": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "key": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "url": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "isPrivate": {
                             "type": "boolean"
                           },
@@ -31475,6 +32183,10 @@
                           "name",
                           "spaceId",
                           "space",
+                          "icon",
+                          "color",
+                          "key",
+                          "url",
                           "isPrivate",
                           "kind",
                           "trigger",
@@ -31744,6 +32456,46 @@
                                 }
                               ]
                             },
+                            "icon": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "color": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "key": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "url": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "isPrivate": {
                               "type": "boolean"
                             },
@@ -31779,6 +32531,10 @@
                             "name",
                             "spaceId",
                             "space",
+                            "icon",
+                            "color",
+                            "key",
+                            "url",
                             "isPrivate",
                             "kind",
                             "trigger",
@@ -31907,6 +32663,46 @@
                         }
                       ]
                     },
+                    "icon": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "key": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "isPrivate": {
                       "type": "boolean"
                     },
@@ -31942,6 +32738,10 @@
                     "name",
                     "spaceId",
                     "space",
+                    "icon",
+                    "color",
+                    "key",
+                    "url",
                     "isPrivate",
                     "kind",
                     "trigger",
@@ -33189,7 +33989,7 @@
         "tags": [
           "Bots"
         ],
-        "description": "Allow or disallow this HTTP bot from serving multiple agents. Allowing requires a platform that supports multi-agent bots (Slack today); relay ingress is unchanged either way.",
+        "description": "Allow or disallow this HTTP bot from serving multiple agents. Allowing requires a platform that supports multi-agent bots; relay ingress is unchanged either way.",
         "requestBody": {
           "required": true,
           "content": {
@@ -45121,7 +45921,8 @@
                       "slack",
                       "telegram",
                       "discord",
-                      "feishu"
+                      "feishu",
+                      "linear"
                     ]
                   },
                   "targetChannel": {
@@ -45228,7 +46029,8 @@
                         "slack",
                         "telegram",
                         "discord",
-                        "feishu"
+                        "feishu",
+                        "linear"
                       ]
                     },
                     "targetChannel": {
@@ -45533,7 +46335,8 @@
                         "slack",
                         "telegram",
                         "discord",
-                        "feishu"
+                        "feishu",
+                        "linear"
                       ]
                     },
                     "targetChannel": {
@@ -45865,7 +46668,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -46396,7 +47200,8 @@
                         "slack",
                         "telegram",
                         "discord",
-                        "feishu"
+                        "feishu",
+                        "linear"
                       ]
                     },
                     "targetChannel": {
@@ -46639,7 +47444,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -46700,7 +47506,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -46826,7 +47633,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -47073,7 +47881,8 @@
                         "slack",
                         "telegram",
                         "discord",
-                        "feishu"
+                        "feishu",
+                        "linear"
                       ]
                     },
                     "targetChannel": {
@@ -47508,7 +48317,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -47811,7 +48621,8 @@
                         "slack",
                         "telegram",
                         "discord",
-                        "feishu"
+                        "feishu",
+                        "linear"
                       ]
                     },
                     "targetChannel": {
@@ -47974,7 +48785,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -48068,7 +48880,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -48179,7 +48992,8 @@
                           "slack",
                           "telegram",
                           "discord",
-                          "feishu"
+                          "feishu",
+                          "linear"
                         ]
                       },
                       "targetChannel": {
@@ -48383,7 +49197,8 @@
                         "slack",
                         "telegram",
                         "discord",
-                        "feishu"
+                        "feishu",
+                        "linear"
                       ]
                     },
                     "targetChannel": {
@@ -50326,6 +51141,20 @@
           },
           {
             "schema": {
+              "type": "string",
+              "enum": [
+                "thinking",
+                "tool_call",
+                "awaiting_permission",
+                "idle"
+              ]
+            },
+            "in": "query",
+            "name": "activityState",
+            "required": false
+          },
+          {
+            "schema": {
               "type": "string"
             },
             "in": "path",
@@ -50648,6 +51477,15 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "activityState": {
+                            "type": "string",
+                            "enum": [
+                              "thinking",
+                              "tool_call",
+                              "awaiting_permission",
+                              "idle"
+                            ]
                           }
                         },
                         "required": [
@@ -50676,7 +51514,8 @@
                           "visibility",
                           "externalProvider",
                           "externalResolution",
-                          "contentPurgedAt"
+                          "contentPurgedAt",
+                          "activityState"
                         ],
                         "additionalProperties": false
                       }
@@ -51033,6 +51872,15 @@
                                       "type": "null"
                                     }
                                   ]
+                                },
+                                "activityState": {
+                                  "type": "string",
+                                  "enum": [
+                                    "thinking",
+                                    "tool_call",
+                                    "awaiting_permission",
+                                    "idle"
+                                  ]
                                 }
                               },
                               "required": [
@@ -51061,7 +51909,8 @@
                                 "visibility",
                                 "externalProvider",
                                 "externalResolution",
-                                "contentPurgedAt"
+                                "contentPurgedAt",
+                                "activityState"
                               ],
                               "additionalProperties": false
                             }

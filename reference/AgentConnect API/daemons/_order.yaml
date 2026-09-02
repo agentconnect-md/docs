@@ -6,3 +6,5 @@
 - upgradedaemon
 - restartdaemon
 - getdaemonlifecycleop
+- listdaemoncapabilities
+- getdaemon
