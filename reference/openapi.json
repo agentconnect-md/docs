@@ -4453,6 +4453,9 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "description": {
+                                            "type": "string"
+                                          },
                                           "efforts": {
                                             "type": "array",
                                             "items": {
@@ -4888,6 +4891,9 @@
                                           "type": "string"
                                         },
                                         "name": {
+                                          "type": "string"
+                                        },
+                                        "description": {
                                           "type": "string"
                                         },
                                         "efforts": {
@@ -5511,6 +5517,9 @@
                                           "type": "string"
                                         },
                                         "name": {
+                                          "type": "string"
+                                        },
+                                        "description": {
                                           "type": "string"
                                         },
                                         "efforts": {
@@ -6409,6 +6418,9 @@
                                           "type": "string"
                                         },
                                         "name": {
+                                          "type": "string"
+                                        },
+                                        "description": {
                                           "type": "string"
                                         },
                                         "efforts": {
@@ -47468,6 +47480,7 @@
                         "type": "string",
                         "enum": [
                           "perDelivery",
+                          "perSubject",
                           "shared"
                         ]
                       },
@@ -47773,6 +47786,7 @@
                       "enum": [
                         "perDelivery",
                         "perThread",
+                        "perSubject",
                         "shared"
                       ]
                     },
@@ -48209,6 +48223,7 @@
                         "enum": [
                           "perDelivery",
                           "perThread",
+                          "perSubject",
                           "shared"
                         ]
                       },
@@ -48513,6 +48528,7 @@
                       "enum": [
                         "perDelivery",
                         "perThread",
+                        "perSubject",
                         "shared"
                       ]
                     },
@@ -49017,6 +49033,7 @@
                         "type": "string",
                         "enum": [
                           "perDelivery",
+                          "perSubject",
                           "shared"
                         ]
                       }
@@ -49089,6 +49106,7 @@
                       "enum": [
                         "perDelivery",
                         "perThread",
+                        "perSubject",
                         "shared"
                       ]
                     },
