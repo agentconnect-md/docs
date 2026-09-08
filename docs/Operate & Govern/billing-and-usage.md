@@ -8,7 +8,7 @@ Two console pages answer "what did this cost, and who spent it".
 
 **Analytics** charts metered tokens and cost, and is always available — including on a self-hosted stack with no billing service, where it reports what your own daemons metered. **Billing** holds the prepaid credit balance and the ledger behind it, and appears only on deployments that run a billing service.
 
-The two do not cover the same money. Analytics reports everything metered, and agents on daemons you connect yourself use the provider subscriptions or API keys on those machines — that traffic is counted but never billed. Only metered Cloud work draws down the balance. See [Cloud pricing](/docs/manage-daemons#pricing) for the rates and what running out of credits does.
+The two do not cover the same money. Analytics reports everything metered, and agents on daemons you connect yourself use the provider credentials configured on those machines — that traffic is counted but never billed. Only metered Cloud work draws down the balance. See [Cloud pricing](/docs/manage-daemons#pricing) for the rates and what running out of credits does.
 
 ## Billing
 

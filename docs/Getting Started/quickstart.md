@@ -32,7 +32,7 @@ Signing in creates your profile, not an organization. Choose a URL name — lowe
 Setup now asks **Where to run**, and your answer decides whether there is anything to install:
 
 - **Cloud** (**Cluster** on a self-hosted deployment with a daemon pool) — agents run on infrastructure the deployment already operates. Nothing to install, and setup finishes here. Cloud starts you with free credits.
-- **Daemon** — bring your own machine and your own runtime subscription or API key. Choosing this adds the connection step below.
+- **Daemon** — bring your own machine and your own provider credentials. Choosing this adds the connection step below.
 
 Only owners see this setup, and it runs once per organization: both **Finish** and **Skip** mark it complete, and an organization that already has a daemon never sees it again.
 
