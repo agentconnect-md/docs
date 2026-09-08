@@ -47425,7 +47425,7 @@
         "tags": [
           "Hooks"
         ],
-        "description": "Create a trigger for one agent. `kind:\"webhook\"` mints an ingress URL (the response carries it plus — when requested — the one-time HMAC signing secret, never retrievable again). `kind:\"github\"` subscribes a repository covered by one of the organization’s GitHub App installations to issue/PR events. A code-host trigger covers ONE subject `family`, so a repository watched for both pull requests and issues is two triggers, each with its own cadence and mention gate; a second trigger on the same family is a 409.",
+        "description": "Create a trigger for one agent. `kind:\"webhook\"` mints an ingress URL (the response carries it plus — when requested — the one-time HMAC signing secret, never retrievable again). `kind:\"github\"` subscribes a repository covered by one of the organization’s GitHub App installations to issue, pull-request, push or deployment events. A code-host trigger covers ONE subject `family`, so a repository watched for both pull requests and issues is two triggers, each with its own cadence and mention gate; a second trigger on the same family is a 409. A `deployment_status:<state>` pattern selects on the status state (`success`, `failure`, …).",
         "requestBody": {
           "required": true,
           "content": {
@@ -47543,7 +47543,8 @@
                         "enum": [
                           "pull_request",
                           "issues",
-                          "push"
+                          "push",
+                          "deployment"
                         ]
                       },
                       "repoFullName": {
@@ -47556,7 +47557,7 @@
                         "type": "array",
                         "items": {
                           "type": "string",
-                          "pattern": "^(issues|pull_request|issue_comment|pull_request_review_comment|push):([a-z_]+|\\*)$"
+                          "pattern": "^(issues|pull_request|issue_comment|pull_request_review_comment|push|deployment|deployment_status):([a-z_]+|\\*)$"
                         }
                       },
                       "commentFamilies": {
@@ -48925,7 +48926,7 @@
                         "type": "array",
                         "items": {
                           "type": "string",
-                          "pattern": "^(issues|pull_request|issue_comment|pull_request_review_comment|push):([a-z_]+|\\*)$"
+                          "pattern": "^(issues|pull_request|issue_comment|pull_request_review_comment|push|deployment|deployment_status):([a-z_]+|\\*)$"
                         }
                       },
                       "commentFamilies": {
