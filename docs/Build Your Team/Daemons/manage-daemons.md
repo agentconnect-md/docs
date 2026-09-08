@@ -50,7 +50,7 @@ Cloud is usage-based. Placing an agent there costs nothing by itself — you pay
 - **Usage is deducted from your organization's prepaid credit balance.** Owners add credits on the **Billing** page. See [Billing & usage](/docs/billing-and-usage) for the balance, the ledger, and the Analytics view behind it.
 - **Running out pauses Cloud work.** When the balance is exhausted, Cloud placements stop taking new model traffic until credits are added. There is no overage billing.
 
-Agents on daemons you connect yourself are never billed: they use the provider subscriptions or API keys on those machines, and their model traffic flows directly between your machine and your provider.
+Agents on daemons you connect yourself are never billed: they use the provider credentials configured on those machines, and their model traffic flows directly between your machine and your provider.
 
 ## Session retention
 
