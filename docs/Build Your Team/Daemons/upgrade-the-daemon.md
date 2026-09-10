@@ -35,7 +35,7 @@ An upgrade is recorded as successful only when the daemon reconnects and reports
 Two limits worth knowing:
 
 - **A remote upgrade has no process-level automatic rollback.** Once the old daemon has exited, recovery is a host-side job — see [Roll back](#roll-back). A local `upgrade --restart` does roll back on its own.
-- **An offline daemon can still be queued.** Recent daemons pick up a pending upgrade at their next authenticated connection, before full startup, which recovers a daemon that is stuck short of ready. Daemons old enough to predate that path need an online connection or a host-side upgrade.
+- **The console offers Upgrade only while the daemon is online.** An offline or stuck daemon has to be upgraded from the host, or queued through the upgrade endpoint in the [API reference](/reference) (`POST /v1/orgs/{orgId}/daemons/{id}/upgrade`). A queued upgrade is picked up at the daemon's next authenticated connection, before full startup, which is what recovers a daemon that never reaches ready. Daemons old enough to predate that path need an online connection or a host-side upgrade.
 
 ## Upgrade a service-installed daemon on the host
 
@@ -138,6 +138,6 @@ A stale definition usually shows up as a service that will not start after a Nod
 
 ## Good to know
 
-- **Upgrades drain first.** The daemon finishes local work before exiting, so an upgrade is not an abrupt kill of running sessions. Expect the daemon to be briefly unreachable while it relaunches.
+- **Upgrades drain, within a grace period.** The daemon stops accepting new turns and gives in-flight work a bounded window to finish — 25 seconds by default for ordinary local work — then cancels whatever is left and stops its runtimes. An upgrade is not an abrupt kill, but a long-running turn can still be interrupted, so pick the window accordingly. Expect the daemon to be briefly unreachable while it relaunches.
 - **Keep runtimes current too.** Agent runtimes on the host are upgraded with their own tools, not by the daemon. Some of AgentConnect's protections depend on switches that only newer runtime releases publish — see [What a runtime sign-in brings](/docs/install-the-daemon#what-a-runtime-sign-in-brings). Restart the daemon after changing a runtime installation or the service user's `PATH`.
 - **Kubernetes installs upgrade differently.** An install-wide daemon pool moves with its Helm release, not with these commands. See [Kubernetes deployment](/docs/kubernetes-deployment#upgrade).
