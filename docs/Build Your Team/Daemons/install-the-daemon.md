@@ -72,7 +72,7 @@ Manage it with:
 | `npx -y @agentconnect.md/cli up` / `down` / `restart` | Start / stop / restart the background service |
 | `npx -y @agentconnect.md/cli uninstall-service` | Stop and remove the service |
 | `npx -y @agentconnect.md/cli run` | Run in the foreground (ignores the service) |
-| `npx -y @agentconnect.md/cli upgrade --restart` | Upgrade, restart, health-check and roll back on failure |
+| `npx -y @agentconnect.md/cli upgrade --restart` | Upgrade, restart, health-check and roll back on failure — see [Upgrade the daemon](/docs/upgrade-the-daemon) |
 
 ## What lands on disk
 
@@ -104,7 +104,7 @@ Useful CLI and daemon-run flags:
 
 ## Good to know
 
-- **Updates:** the CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure.
+- **Updates:** the CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure. See [Upgrade the daemon](/docs/upgrade-the-daemon).
 - **Sandboxing:** a supported Linux daemon can confine selected agents, or require the boundary for every agent and fail closed. See [Sandboxing](/docs/sandboxing) before using it as a production guarantee.
 - **A temporary Control Plane outage does not stop established work.** Existing sessions and platform connections continue until the daemon reconnects.
 - **Multiple machines:** add as many daemons as you like — a beefy workstation for heavy agents, a laptop for experiments. You can later move an agent between compatible online daemons; see [Manage daemons](/docs/manage-daemons).

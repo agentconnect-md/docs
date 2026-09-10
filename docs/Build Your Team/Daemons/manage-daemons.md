@@ -26,7 +26,7 @@ A restart or upgrade appears as **Restarting** or **Upgrading** until the daemon
 Restart and upgrade use the ordinary daemon edit permission: any Owner or Collaborator who can see the daemon may run them. Viewers cannot.
 
 - **Restart** (online daemons) — drains work and asks the service supervisor to relaunch the same version.
-- **Upgrade** (online daemons) — installs a selected release, drains and relaunches, then health-checks the result. A failed upgrade rolls back when possible. The entry point is the **Update to \<version\>** badge on an outdated daemon.
+- **Upgrade** (online daemons) — installs a selected release, drains and relaunches, then health-checks the result. A failed upgrade rolls back when possible. The entry point is the **Update to \<version\>** badge on an outdated daemon. See [Upgrade the daemon](/docs/upgrade-the-daemon) for channels, host-side upgrades and rollback.
 - **Reconnect** (offline daemons) — mints a fresh one-time token and shows a command to run on that host. Its identity and agent placements are preserved.
 - **Delete** (offline daemons) — removes the daemon and revokes its keys. Its agents are left unplaced and inactive, so they stop responding until you place them on another daemon. The local process and files remain on the machine until you stop or remove them there.
 
