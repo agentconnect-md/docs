@@ -47,3 +47,9 @@
 - listagentmemorychannels
 - listagentsessiontasks
 - resolvegitrepo
+- getagentmemoryentrycapabilities
+- listagentmemoryentries
+- createagentmemoryentry
+- updateagentmemoryentry
+- deleteagentmemoryentry
+- getagentmemoryentry
