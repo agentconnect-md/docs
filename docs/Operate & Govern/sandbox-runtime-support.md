@@ -6,39 +6,46 @@ hidden: false
 
 This page describes **self-hosted Linux SRT and microsandbox** support. It does not describe AgentConnect Cloud's provider authentication or Kubernetes pool credential handling. Configure the backend, mounts, and image in [Sandboxing](/docs/sandboxing).
 
-## What a test result establishes
-
-- **Native tool checks** run the runtime's own tool boundary against credential fixtures and normal workspace operations.
-- **Model/tool turn** means an authenticated native ACP conversation and a native tool call completed in a real Linux microsandbox VM.
-- **Transport check** uses synthetic keys to verify native credential loading, TLS/header injection, and rejection at an unauthorized host. An expected provider authentication error is not a successful model turn.
-- **Image probe** checks the packaged executable and ACP startup/capability behavior. A model list, an auth-required response, or presence in the ACP registry does not establish an authenticated conversation.
-
-These results cover the tested paths, not every model provider, authentication layout, permission mode, or session lifecycle operation. Full release-level acceptance for attachments, cancellation, Git, restart recovery, network isolation, and Docker remains tracked in [sandbox follow-ups](https://github.com/agentconnect-md/agentconnect/issues/1874).
-
 ## Runtime execution and image inventory
 
-The full image currently declares **14 runtime families**. The legacy `qoder` ID shares the Qoder CLI binary; it is not a second installation. The smaller pool image contains Claude Code, Codex, and DeepSeek Harness.
+| Runtime          | SRT          | microsandbox      | Full image |
+| ---------------- | ------------ | ----------------- | ---------- |
+| Claude Code      | Tool checks  | Tools + transport | Yes        |
+| Codex            | Tool checks  | Tools + transport | Yes        |
+| DeepSeek Harness | Not verified | API + tools       | Yes        |
+| OpenCode         | Not verified | API + tools       | Yes        |
+| pi               | Not verified | API + tools       | Yes        |
+| Grok Build       | Not verified | API + tools       | Yes        |
+| Qwen Code        | Not verified | API + tools       | Yes        |
+| Oh My Pi         | Not verified | API + tools       | Yes        |
+| Amp              | Not verified | Transport only    | No         |
+| Cline            | Not verified | Startup only      | Yes        |
+| Devin            | Not verified | Startup only      | Yes        |
+| Antigravity ACP  | Not verified | Startup only      | Yes        |
+| GitHub Copilot   | Not verified | Startup only      | Yes        |
+| Qoder CLI        | Not verified | Startup only      | Yes        |
+| Qoder CN CLI     | Not verified | Startup only      | Yes        |
+| Kimi CLI         | Not verified | Not verified      | No         |
+| GLM Agent        | Not verified | Not verified      | No         |
 
-| Runtime                                                      | SRT validation recorded                                                                                   | microsandbox validation recorded                                                                                               | In default full image |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------- |
-| Claude Code (`claude-acp`)                                   | Native Bash and file-tool credential restrictions, including new/resumed sessions                         | Native policy checks; saved API-login transport with synthetic keys; a real API-key model turn was not part of that validation | Yes                   |
-| Codex (`codex-acp`)                                          | Native permission-profile and credential-denial canaries                                                  | Native policy checks; saved API-login transport with synthetic keys; a real API-key model turn was not part of that validation | Yes                   |
-| DeepSeek Harness (`dsh-acp`)                                 | No separate native-session result recorded here                                                           | Authenticated API model/tool turn, guest key inspection, wrong-host rejection, stop/resume and key rotation                    | Yes                   |
-| OpenCode (`opencode`)                                        | No separate native-session result recorded here                                                           | Authenticated API model/tool turn; multiple providers, private OAuth preservation, resume and key rotation                     | Yes                   |
-| pi (`pi-acp`)                                                | No separate native-session result recorded here                                                           | Authenticated API model/tool turn; custom model configuration, private OAuth preservation and key rotation                     | Yes                   |
-| Grok Build (`grok-build`)                                    | No separate native-session result recorded here                                                           | Per-model API model/tool turn and key rotation; cached API-login path remains unvalidated                                      | Yes                   |
-| Qwen Code (`qwen-code`)                                      | No separate native-session result recorded here                                                           | OpenAI-compatible API model/tool turn and key rotation                                                                         | Yes                   |
-| Oh My Pi (`omp`)                                             | No separate native-session result recorded here                                                           | API model/tool turn, private SQLite key inspection and key rotation                                                            | Yes                   |
-| Amp (`amp-acp`)                                              | No separate native-session result recorded here                                                           | Native ACP transport and VM projection checks with synthetic keys; authenticated model/tool turn pending                       | No                    |
-| Cline (`cline`)                                              | No separate native-session result recorded here                                                           | Image probe. Ordinary API-provider-only login is rejected before a model request in the tested native ACP path                 | Yes                   |
-| Devin (`devin`)                                              | Host credential/request assessment only; not an SRT session result                                        | Image probe; credential proxy deferred because native authentication also uses a Protobuf request body                         | Yes                   |
-| Antigravity ACP, GitHub Copilot CLI, Qoder CLI, Qoder CN CLI | No separate native-session result recorded here                                                           | Image probes; no authenticated VM model/tool result claimed here                                                               | Yes                   |
-| Kimi CLI (`kimi`)                                            | Binary discovery and OAuth-file recognition exist; real ACP validation remains pending                    | Not validated; API-key credential discovery is incomplete                                                                      | No                    |
-| GLM Agent (`glm-acp-agent`)                                  | Automatic discovery is incomplete: the registry's `npx` entry lacks the required installation-state check | Not validated                                                                                                                  | No                    |
+### What the labels mean
 
-An unrecorded SRT result does not mean the runtime is refused by SRT. It means this matrix does not claim a verified native session for that combination. SRT uses the daemon user's host installation; microsandbox requires the executable in the selected image. Custom runtime IDs do not automatically inherit a registered runtime's credential import or API key protection.
+- **API + tools:** a real API-authenticated conversation and native tool call passed in a VM.
+- **Tool checks:** the runtime's native tools respected credential restrictions.
+- **Transport:** native API login and proxy injection checked with fake keys; no authenticated model turn.
+- **Startup only:** executable and ACP startup probes, without an authenticated conversation.
+- **Not verified:** no validated sandbox session recorded; this does not mean the runtime cannot run.
 
-The GLM row refers to the standalone ACP agent, not a GLM model selected through another runtime such as OpenCode or pi.
+### Test scope
+
+- **Claude / Codex:** native credential-denial checks. Claude also covers Bash and file tools in new/resumed sessions. VM API transport checks used fake keys; a real API-key model turn remains unverified. Amp also has no real-account model/tool result yet.
+- **API + tools rows:** guest key visibility, stop/resume and key rotation were checked. OpenCode and pi also covered provider configuration and private OAuth preservation. Grok's tested path uses a per-model key; Qwen's uses an OpenAI-compatible provider.
+- **Cline / Devin:** Cline's tested API-provider-only login fails before a model request. Devin's proxy assessment used host requests, not an SRT session. See [credential limits](#limits-that-affect-setup).
+- **Kimi / GLM:** Kimi binary and OAuth-file discovery exist, but API-key discovery is incomplete. GLM's automatic discovery is incomplete. The GLM row is the standalone ACP agent, not GLM models used through OpenCode or pi.
+
+The full image contains **14 runtime families**. The legacy `qoder` ID aliases Qoder CLI. The pool image contains Claude Code, Codex, and DeepSeek Harness. SRT uses host installations; microsandbox needs the binary in its image. Custom runtime IDs do not automatically inherit credential protection.
+
+These results cover the tested paths. Full session, network, Docker, and lifecycle acceptance remains tracked in [sandbox follow-ups](https://github.com/agentconnect-md/agentconnect/issues/1874).
 
 Validation records: [full image probes](https://github.com/agentconnect-md/agentconnect/pull/1917), [shared Claude/Codex policies](https://github.com/agentconnect-md/agentconnect/pull/1902), [Claude native file tools](https://github.com/agentconnect-md/agentconnect/pull/1989), [Codex native permission profiles](https://github.com/agentconnect-md/agentconnect/pull/423). The API implementation records are linked below.
 
