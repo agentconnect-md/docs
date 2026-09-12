@@ -14,6 +14,7 @@ An **integration** binds one agent to one way of reaching it. The supported kind
 | [Lark / Feishu](/docs/lark-feishu) | Group mentions and one-to-one chats                  | One-click app setup or an App ID + secret        |
 | [GitHub](/docs/github)             | Issues, PRs, comments on watched repos               | The AgentConnect GitHub app                      |
 | [GitLab](/docs/gitlab)             | Issues, merge requests, comments on watched projects | An OAuth connection; each agent gets its own bot |
+| [Gitea](/docs/gitea)               | Issues, PRs, comments, reviews on watched repos       | One bot user's token, per organization            |
 | [Linear](/docs/linear)             | Issues delegated to the app, or mentions by name      | Approval of the workspace in a Linear popup      |
 | [Webhooks](/docs/webhooks)         | Anything that can POST JSON                          | Nothing — we mint the endpoint                   |
 

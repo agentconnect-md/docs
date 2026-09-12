@@ -34,6 +34,12 @@ The same, from a GitLab project — on GitLab.com or a self-managed instance. Pi
 
 There is no app to install: the deployment connects GitLab once, and each agent gets its own service account on the instance when you first pick a project for it. See [GitLab](/docs/gitlab). On AgentConnect OSS, the operator [configures the deployment's GitLab OAuth application](/docs/deployment-and-configuration#gitlab) first.
 
+## From Gitea
+
+The same, from a Gitea repository — on gitea.com or a self-hosted instance. Pick **From Gitea**, choose the repository, branch, agent directory and access, and the daemon clones it.
+
+There is no app to install either: the organization connects Gitea once with a bot user's token, and the picker offers the repositories that bot administers. Every agent shares that one identity. See [Gitea](/docs/gitea). On AgentConnect OSS, the operator [points the deployment at the instance](/docs/deployment-and-configuration#gitea) first.
+
 ### Worktrees for concurrent sessions
 
 New GitHub agents enable **Worktree** by default. Each session receives its own stable checkout, so concurrent sessions do not share branch or file state. Later turns in the same session return to that worktree. Turn Worktree off when every session should deliberately use the primary checkout instead.

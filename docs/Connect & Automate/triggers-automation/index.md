@@ -8,6 +8,7 @@ Agents do not need to wait for a chat message. Start work from:
 
 - [GitHub](/docs/github) issues, pull requests, and review events;
 - [GitLab](/docs/gitlab) issues, merge requests, and comments;
+- [Gitea](/docs/gitea) issues, pull requests, comments, and reviews;
 - [Linear](/docs/linear) issues delegated or mentioned by name;
 - [Webhooks](/docs/webhooks) sent by another system; or
 - [Schedules](/docs/schedules) that run at a time or interval you choose.
