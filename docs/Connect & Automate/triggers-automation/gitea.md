@@ -74,7 +74,9 @@ Choose the repository, what to listen for — **issues**, **pull requests**, or 
 
 Several agents may watch the same repository. `@<agent-name>` targets one agent; the bot's own handle broadcasts to every matching agent.
 
-On a repository owned by an organization, `@<organization>/<agent-name>` targets that same one agent too. Gitea's comment box suggests organization teams as you type `@` but has no way to suggest an agent name, so creating a **visible** team named exactly after the agent — `review-bot`, not "Review Bot" — makes the targeted handle autocomplete as a reporter types. The team needs no members: AgentConnect matches the text you typed, never the team's membership, and plain `@<agent-name>` keeps working whether or not the team exists. Teams exist only in organizations, so on a repository owned by a personal account only the bare form applies.
+On a repository owned by an organization, `@<organization>/<agent-name>` targets that same one agent too. Gitea's comment box suggests organization teams as you type `@` but has no way to suggest an agent name, so creating a team named exactly after the agent — `review-bot`, not "Review Bot" — turns the targeted handle into a suggestion. Gitea offers every team to an organization owner and to a site administrator, and to everyone else only the teams they belong to, so add the people who should get the shortcut as members.
+
+Membership changes nothing about triggering: AgentConnect matches the text you typed, never the team's membership, so a hand-typed `@<organization>/<agent-name>` works either way, and plain `@<agent-name>` keeps working whether or not the team exists. Teams exist only in organizations, so a repository owned by a personal account has nothing to autocomplete — use `@<agent-name>` there.
 
 Because Gitea shares one index space between issues and pull requests, a session is keyed on the subject as well as the number, so issue 12 and pull request 12 are never the same conversation.
 
