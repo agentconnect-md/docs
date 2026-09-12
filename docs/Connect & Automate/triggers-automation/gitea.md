@@ -64,11 +64,19 @@ Each repository row carries its state and the three things you can do to it:
 - **Rotate the webhook signing secret** installs a replacement webhook; the old one is retired once Gitea delivers an event under the new key.
 - **Remove** deletes the managed webhook on Gitea and stops agents answering there. Nothing in the repository's code or history changes. While a trigger, an agent workspace or an additional repository still points at the repository, Remove is refused and names what does — remove those first.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-code-hosts.png" alt="The Gitea card under Integrations → Code hosts: the bot user's connection, then one row per repository in use with its state" width="800" />
+</p>
+
 A repository whose test delivery never arrived stays **ready** with a warning about the outbound webhook allowlist, so a blocked address is visible at setup time rather than after the first missed pull request. On a self-hosted instance, see [Gitea on AgentConnect OSS](/docs/deployment-and-configuration#gitea).
 
 ## Watch a repository
 
 On the agent: **Integrations → Add integration → Gitea**.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-add-integration.png" alt="Add integration with Gitea selected: pick a repository, choose issues or pull requests, and how eagerly the agent wakes up" width="560" />
+</p>
 
 A trigger rides an existing authorization and never creates one: the repository must already be the agent's [workspace](/docs/workspaces-and-repos) or one of its authorized additional repositories, or adding the watch is refused. It does not need to be on the Gitea card yet — making it the workspace or an additional repository puts it there.
 
@@ -78,7 +86,15 @@ Choose the repository, what to listen for — **issues**, **pull requests**, or 
 - **any update** — openings plus new revisions, replies and submitted reviews. Close, reopen and merge stay inert.
 - **@-mention** — when the agent (`@<agent-name>`, or `@<organization>/<agent-name>`) or the organization's Gitea bot is @-mentioned. Requesting the bot as a reviewer starts a turn whatever the cadence.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-agent-card.png" alt="An agent's Gitea card with one watched repository, showing the pull-request and issue families and their triggers" width="640" />
+</p>
+
 Several agents may watch the same repository. `@<agent-name>` targets one agent; the bot's own handle broadcasts to every matching agent.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-issue-replies.png" alt="One issue answered by two agents through the same webhook: each reply is one comment from the bot user, signed with the agent that wrote it" width="720" />
+</p>
 
 On a repository owned by an organization, `@<organization>/<agent-name>` targets that same one agent too. Gitea's comment box suggests organization teams as you type `@` but has no way to suggest an agent name, so creating a team named exactly after the agent — `review-bot`, not "Review Bot" — turns the targeted handle into a suggestion. Gitea offers every team to an organization owner and to a site administrator, and to everyone else only the teams they belong to, so add the people who should get the shortcut as members.
 
@@ -105,6 +121,14 @@ Each qualifying event starts a session on the agent's daemon with the event as c
 - **Ordinary reply** — one comment from the bot user, on the issue or the pull request. Gitea's `eyes` reaction on the triggering comment acknowledges the turn before the reply exists.
 - **Reviews** — expand **PR review** on a pull-request watch to allow a formal `COMMENT` review with inline comments, `REQUEST_CHANGES`, and `APPROVE`. Gitea takes **one comment per line**, never a range: a range collapses to its end line, with the start recorded in the comment's first line.
 - **Run state** — one commit status on the pull request's head, with the context `agentconnect/<agent-name>`, linking back to the session in the console. It does not block merging unless an operator adds that context to a branch protection's required checks.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-pr-review.png" alt="A REQUEST_CHANGES review from the bot user on a pull request: the summary, then an inline comment anchored to the offending line" width="800" />
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-pr-status.png" alt="The pull request's checks: one commit status in the agentconnect/agent-name context, linking back to the session" width="720" />
+</p>
 
 To run an agent again on a pull request: write a follow-up comment in the session, push a new revision, or re-request the bot as a reviewer.
 
