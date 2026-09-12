@@ -64,10 +64,6 @@ Each repository row carries its state and the three things you can do to it:
 - **Rotate the webhook signing secret** installs a replacement webhook; the old one is retired once Gitea delivers an event under the new key.
 - **Remove** deletes the managed webhook on Gitea and stops agents answering there. Nothing in the repository's code or history changes. While a trigger, an agent workspace or an additional repository still points at the repository, Remove is refused and names what does — remove those first.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-code-hosts.png" alt="The Gitea card under Integrations → Code hosts: the bot user's connection, then one row per repository in use with its state" width="800" />
-</p>
-
 A repository whose test delivery never arrived stays **ready** with a warning about the outbound webhook allowlist, so a blocked address is visible at setup time rather than after the first missed pull request. On a self-hosted instance, see [Gitea on AgentConnect OSS](/docs/deployment-and-configuration#gitea).
 
 ## Watch a repository
@@ -124,10 +120,6 @@ Each qualifying event starts a session on the agent's daemon with the event as c
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-pr-review.png" alt="A REQUEST_CHANGES review from the bot user on a pull request: the summary, then an inline comment anchored to the offending line" width="800" />
-</p>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/gitea-pr-status.png" alt="The pull request's checks: one commit status in the agentconnect/agent-name context, linking back to the session" width="720" />
 </p>
 
 To run an agent again on a pull request: write a follow-up comment in the session, push a new revision, or re-request the bot as a reviewer.
