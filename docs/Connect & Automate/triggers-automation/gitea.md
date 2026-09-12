@@ -40,23 +40,29 @@ AgentConnect installs, repairs, tests and removes each repository's webhook itse
 
 Admin also carries the permission lookup AgentConnect authorizes contributors with — Gitea only answers another user's permission to an admin of that repository — so it is not only about webhooks.
 
-## Add repositories
+## Repositories in use
 
-With the connection in place, **Add repository** on the Gitea card opens a picker listing the repositories the bot **administers right now**. A repository that does not appear is a permission to grant rather than a bug. Adding one records it, installs the managed webhook, and fires a test delivery it waits for before the row reads **ready**.
+With the connection in place, a repository joins the organization the first time something uses it: pick it in a **trigger**, make it an agent's **workspace**, or add it as an agent's **additional repository**, and AgentConnect records the repository as part of that save — it appears on the Gitea card as **ready**. Every picker lists the repositories the bot **administers right now**, marking the ones not yet in use as *added on save*. A repository that does not appear is a permission to grant rather than a bug.
+
+The managed webhook is a separate step, and it follows the first trigger: once an enabled trigger listens on the repository, AgentConnect installs the webhook with that trigger's events, fires a test delivery, and clears the row's warning when the relay receives it. That installation runs right after the trigger is saved, not inside the save. A repository used only as a workspace or an additional repository has no webhook — it does not need one — and its row says nothing about a webhook until a trigger wants it.
+
+**Add repository** on the Gitea card records a repository ahead of its first use. It is optional, and it installs no webhook either: the first enabled trigger does that.
+
+Several agents can use one repository. They share its one webhook, which subscribes to the union of what their triggers listen for and narrows again as triggers — or the agents holding them — are removed. Removing the last trigger does not remove the repository from the card: it stays, without a webhook, until you **Remove** it yourself.
 
 Each repository row carries its state and the three things you can do to it:
 
 | State                   | What it means                                                                                                               |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | **setting up**          | Provisioning is running.                                                                                                    |
-| **ready**               | The webhook is installed and verified. Agents can be pointed at it.                                                         |
+| **ready**               | The repository is recorded and the bot's Admin confirmed. When a trigger needs the webhook, it is installed and verified here too; a warning names a test delivery that never arrived. |
 | **setup incomplete**    | The bot lost Admin. Sessions keep working — comments, reviews, statuses and Git need only Write — but webhook repair stops and contributor checks fail closed. |
 | **bot access degraded** | Gitea rejected the bot token. Replace it on the connection, then **Repair**.                                                |
 | **removal incomplete**  | Removal did not finish, so the webhook may still be on the repository.                                                       |
 
 - **Repair** re-runs provisioning — use it after someone deletes the webhook by hand, or once you have fixed what a row's message names.
 - **Rotate the webhook signing secret** installs a replacement webhook; the old one is retired once Gitea delivers an event under the new key.
-- **Remove** deletes the managed webhook on Gitea and stops agents answering there. Nothing in the repository's code or history changes.
+- **Remove** deletes the managed webhook on Gitea and stops agents answering there. Nothing in the repository's code or history changes. While a trigger, an agent workspace or an additional repository still points at the repository, Remove is refused and names what does — remove those first.
 
 A repository whose test delivery never arrived stays **ready** with a warning about the outbound webhook allowlist, so a blocked address is visible at setup time rather than after the first missed pull request. On a self-hosted instance, see [Gitea on AgentConnect OSS](/docs/deployment-and-configuration#gitea).
 
@@ -64,7 +70,7 @@ A repository whose test delivery never arrived stays **ready** with a warning ab
 
 On the agent: **Integrations → Add integration → Gitea**.
 
-A trigger rides an existing authorization and never creates one: the repository must already be the agent's [workspace](/docs/workspaces-and-repos) or one of its authorized additional repositories, or adding the watch is refused.
+A trigger rides an existing authorization and never creates one: the repository must already be the agent's [workspace](/docs/workspaces-and-repos) or one of its authorized additional repositories, or adding the watch is refused. It does not need to be on the Gitea card yet — making it the workspace or an additional repository puts it there.
 
 Choose the repository, what to listen for — **issues**, **pull requests**, or both — and how eagerly the agent wakes up:
 
