@@ -4231,6 +4231,9 @@
                             "items": {
                               "type": "string"
                             }
+                          },
+                          "sandboxUnavailable": {
+                            "type": "string"
                           }
                         },
                         "required": [
@@ -4693,6 +4696,9 @@
                           "items": {
                             "type": "string"
                           }
+                        },
+                        "sandboxUnavailable": {
+                          "type": "string"
                         }
                       },
                       "required": [
@@ -5328,6 +5334,9 @@
                           "items": {
                             "type": "string"
                           }
+                        },
+                        "sandboxUnavailable": {
+                          "type": "string"
                         }
                       },
                       "required": [
@@ -6238,6 +6247,9 @@
                           "items": {
                             "type": "string"
                           }
+                        },
+                        "sandboxUnavailable": {
+                          "type": "string"
                         }
                       },
                       "required": [
@@ -12951,6 +12963,33 @@
                                     "projectId"
                                   ],
                                   "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitea"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "repoId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "repoId"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               ]
                             }
@@ -13051,6 +13090,12 @@
                     "sandboxRequired": {
                       "type": "boolean"
                     },
+                    "sandboxUnavailable": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -13058,7 +13103,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       }
                     },
@@ -13139,6 +13185,7 @@
                     "runInSandbox",
                     "sandboxSupported",
                     "sandboxRequired",
+                    "sandboxUnavailable",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -13902,6 +13949,33 @@
                                       "projectId"
                                     ],
                                     "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "provider": {
+                                        "type": "string",
+                                        "enum": [
+                                          "gitea"
+                                        ]
+                                      },
+                                      "access": {
+                                        "type": "string",
+                                        "enum": [
+                                          "read",
+                                          "write"
+                                        ]
+                                      },
+                                      "repoId": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "provider",
+                                      "access",
+                                      "repoId"
+                                    ],
+                                    "additionalProperties": false
                                   }
                                 ]
                               }
@@ -14002,6 +14076,12 @@
                       "sandboxRequired": {
                         "type": "boolean"
                       },
+                      "sandboxUnavailable": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
                       "hookKinds": {
                         "type": "array",
                         "items": {
@@ -14009,7 +14089,8 @@
                           "enum": [
                             "webhook",
                             "github",
-                            "gitlab"
+                            "gitlab",
+                            "gitea"
                           ]
                         }
                       }
@@ -14066,6 +14147,7 @@
                       "runInSandbox",
                       "sandboxSupported",
                       "sandboxRequired",
+                      "sandboxUnavailable",
                       "hookKinds"
                     ],
                     "additionalProperties": false
@@ -14658,6 +14740,33 @@
                                     "projectId"
                                   ],
                                   "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitea"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "repoId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "repoId"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               ]
                             }
@@ -14758,6 +14867,12 @@
                     "sandboxRequired": {
                       "type": "boolean"
                     },
+                    "sandboxUnavailable": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -14765,7 +14880,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       }
                     }
@@ -14822,6 +14938,7 @@
                     "runInSandbox",
                     "sandboxSupported",
                     "sandboxRequired",
+                    "sandboxUnavailable",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -15900,6 +16017,33 @@
                                     "projectId"
                                   ],
                                   "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitea"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "repoId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "repoId"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               ]
                             }
@@ -16000,6 +16144,12 @@
                     "sandboxRequired": {
                       "type": "boolean"
                     },
+                    "sandboxUnavailable": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -16007,7 +16157,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       }
                     }
@@ -16064,6 +16215,7 @@
                     "runInSandbox",
                     "sandboxSupported",
                     "sandboxRequired",
+                    "sandboxUnavailable",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -17561,6 +17713,33 @@
                                     "projectId"
                                   ],
                                   "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitea"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "repoId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "repoId"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               ]
                             }
@@ -17661,6 +17840,12 @@
                     "sandboxRequired": {
                       "type": "boolean"
                     },
+                    "sandboxUnavailable": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -17668,7 +17853,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       }
                     }
@@ -17725,6 +17911,7 @@
                     "runInSandbox",
                     "sandboxSupported",
                     "sandboxRequired",
+                    "sandboxUnavailable",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -18530,6 +18717,33 @@
                                     "projectId"
                                   ],
                                   "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitea"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "repoId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "repoId"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               ]
                             }
@@ -18630,6 +18844,12 @@
                     "sandboxRequired": {
                       "type": "boolean"
                     },
+                    "sandboxUnavailable": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -18637,7 +18857,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       }
                     }
@@ -18694,6 +18915,7 @@
                     "runInSandbox",
                     "sandboxSupported",
                     "sandboxRequired",
+                    "sandboxUnavailable",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -19435,6 +19657,33 @@
                                     "projectId"
                                   ],
                                   "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitea"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "repoId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "repoId"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               ]
                             }
@@ -19535,6 +19784,12 @@
                     "sandboxRequired": {
                       "type": "boolean"
                     },
+                    "sandboxUnavailable": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -19542,7 +19797,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       }
                     }
@@ -19599,6 +19855,7 @@
                     "runInSandbox",
                     "sandboxSupported",
                     "sandboxRequired",
+                    "sandboxUnavailable",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -20327,6 +20584,33 @@
                                     "projectId"
                                   ],
                                   "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "provider": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gitea"
+                                      ]
+                                    },
+                                    "access": {
+                                      "type": "string",
+                                      "enum": [
+                                        "read",
+                                        "write"
+                                      ]
+                                    },
+                                    "repoId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "access",
+                                    "repoId"
+                                  ],
+                                  "additionalProperties": false
                                 }
                               ]
                             }
@@ -20427,6 +20711,12 @@
                     "sandboxRequired": {
                       "type": "boolean"
                     },
+                    "sandboxUnavailable": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "hookKinds": {
                       "type": "array",
                       "items": {
@@ -20434,7 +20724,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       }
                     }
@@ -20491,6 +20782,7 @@
                     "runInSandbox",
                     "sandboxSupported",
                     "sandboxRequired",
+                    "sandboxUnavailable",
                     "hookKinds"
                   ],
                   "additionalProperties": false
@@ -32439,7 +32731,8 @@
                         "type": "string",
                         "enum": [
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       },
                       "repoId": {
@@ -32519,7 +32812,7 @@
         "tags": [
           "Agents"
         ],
-        "description": "Grant the agent access to one code-host repository. With `provider: github` (the default) the repository is named `owner/repo` and must be covered by one of the organization’s GitHub App installations; App-backed workspaces may add repositories beyond their implicit workspace grant, scratch workspaces may add any covered repository, and a manual GitHub workspace may explicitly authorize only its own repository for control-plane review/check effects. With the per-user gate configured, the caller must hold the matching GitHub permission (`read`/`comment` tiers need read, `write` needs write). With `provider: gitlab` the project is named by its numeric id and must already be a managed GitLab project in this organization; authorizing it provisions the agent’s own GitLab bot account and project membership before the grant lands.",
+        "description": "Grant the agent access to one code-host repository. With `provider: github` (the default) the repository is named `owner/repo` and must be covered by one of the organization’s GitHub App installations; App-backed workspaces may add repositories beyond their implicit workspace grant, scratch workspaces may add any covered repository, and a manual GitHub workspace may explicitly authorize only its own repository for control-plane review/check effects. With the per-user gate configured, the caller must hold the matching GitHub permission (`read`/`comment` tiers need read, `write` needs write). With `provider: gitlab` the project is named by its numeric id and must already be a managed GitLab project in this organization; authorizing it provisions the agent’s own GitLab bot account and project membership before the grant lands. With `provider: gitea` the repository is named by its numeric id and must already be a managed Gitea repository in this organization; the organization’s bot token serves every tier, so the tier is a clamp on what the agent may do, never a provider role.",
         "requestBody": {
           "required": true,
           "content": {
@@ -32552,6 +32845,35 @@
                     "required": [
                       "provider",
                       "projectId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "provider": {
+                        "type": "string",
+                        "enum": [
+                          "gitea"
+                        ]
+                      },
+                      "repoId": {
+                        "type": "string",
+                        "pattern": "^[1-9]\\d*$"
+                      },
+                      "access": {
+                        "default": "read",
+                        "type": "string",
+                        "enum": [
+                          "read",
+                          "comment",
+                          "write"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "provider",
+                      "repoId"
                     ],
                     "additionalProperties": false
                   },
@@ -32622,7 +32944,8 @@
                       "type": "string",
                       "enum": [
                         "github",
-                        "gitlab"
+                        "gitlab",
+                        "gitea"
                       ]
                     },
                     "repoId": {
@@ -32919,7 +33242,8 @@
                       "type": "string",
                       "enum": [
                         "github",
-                        "gitlab"
+                        "gitlab",
+                        "gitea"
                       ]
                     },
                     "repoId": {
@@ -49297,6 +49621,115 @@
                       "family",
                       "events"
                     ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "agentId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "enabled": {
+                        "default": true,
+                        "type": "boolean"
+                      },
+                      "targetPlatform": {
+                        "default": "slack",
+                        "type": "string",
+                        "enum": [
+                          "slack",
+                          "telegram",
+                          "discord",
+                          "feishu",
+                          "linear"
+                        ]
+                      },
+                      "targetChannel": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "targetIntegrationId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "gitea"
+                        ]
+                      },
+                      "repoId": {
+                        "type": "string",
+                        "pattern": "^[1-9]\\d*$"
+                      },
+                      "family": {
+                        "type": "string",
+                        "enum": [
+                          "merge_request",
+                          "issues",
+                          "push"
+                        ]
+                      },
+                      "events": {
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "pattern": "^(issues|merge_request|push):([a-z_]+|\\*)$"
+                        }
+                      },
+                      "commentFamilies": {
+                        "default": [],
+                        "maxItems": 2,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "issues",
+                            "merge_request"
+                          ]
+                        }
+                      },
+                      "mentionOnly": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "reviewPolicy": {
+                        "default": "off",
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "comment",
+                          "request_changes",
+                          "full"
+                        ]
+                      },
+                      "reportingMode": {
+                        "default": "off",
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "check",
+                          "status"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "agentId",
+                      "name",
+                      "kind",
+                      "repoId",
+                      "family",
+                      "events"
+                    ]
                   }
                 ]
               }
@@ -49338,7 +49771,8 @@
                       "enum": [
                         "webhook",
                         "github",
-                        "gitlab"
+                        "gitlab",
+                        "gitea"
                       ]
                     },
                     "name": {
@@ -49585,6 +50019,36 @@
               }
             }
           },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "409": {
             "description": "Default Response",
             "content": {
@@ -49731,7 +50195,8 @@
                         "enum": [
                           "webhook",
                           "github",
-                          "gitlab"
+                          "gitlab",
+                          "gitea"
                         ]
                       },
                       "name": {
@@ -49996,7 +50461,8 @@
                       "enum": [
                         "webhook",
                         "github",
-                        "gitlab"
+                        "gitlab",
+                        "gitea"
                       ]
                     },
                     "name": {
@@ -50355,6 +50821,101 @@
                       "kind": {
                         "type": "string",
                         "enum": [
+                          "gitea"
+                        ]
+                      },
+                      "repoId": {
+                        "type": "string",
+                        "pattern": "^[1-9]\\d*$"
+                      },
+                      "events": {
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "pattern": "^(issues|merge_request|push):([a-z_]+|\\*)$"
+                        }
+                      },
+                      "commentFamilies": {
+                        "maxItems": 2,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "issues",
+                            "merge_request"
+                          ]
+                        }
+                      },
+                      "mentionOnly": {
+                        "type": "boolean"
+                      },
+                      "reviewPolicy": {
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "comment",
+                          "request_changes",
+                          "full"
+                        ]
+                      },
+                      "reportingMode": {
+                        "type": "string",
+                        "enum": [
+                          "off",
+                          "check",
+                          "status"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "agentId",
+                      "name",
+                      "kind",
+                      "repoId",
+                      "events"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "agentId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "targetPlatform": {
+                        "default": "slack",
+                        "type": "string",
+                        "enum": [
+                          "slack",
+                          "telegram",
+                          "discord",
+                          "feishu",
+                          "linear"
+                        ]
+                      },
+                      "targetChannel": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "targetIntegrationId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
                           "github"
                         ]
                       },
@@ -50534,7 +51095,8 @@
                       "enum": [
                         "webhook",
                         "github",
-                        "gitlab"
+                        "gitlab",
+                        "gitea"
                       ]
                     },
                     "name": {
@@ -51102,289 +51664,6 @@
             }
           },
           "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/orgs/{orgId}/hooks/{id}/rerun": {
-      "post": {
-        "operationId": "rerunHook",
-        "summary": "Run a GitLab trigger again",
-        "tags": [
-          "Hooks"
-        ],
-        "description": "Re-dispatches one GitLab trigger turn for a merge request or issue thread. GitLab offers no native re-run control, so this is the console entry point. The enabled trigger, its agent, the managed project binding, and the subject are all revalidated live, and a merge-request rerun targets the head SHA GitLab reports right now — never a stored one. Refusals carry a machine-readable `code`.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "subject": {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "merge_request",
-                          "issue"
-                        ]
-                      },
-                      "iid": {
-                        "type": "integer",
-                        "exclusiveMinimum": 0,
-                        "maximum": 9007199254740991
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "iid"
-                    ]
-                  }
-                },
-                "required": [
-                  "subject"
-                ]
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "orgId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "accepted": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    },
-                    "deliveryKey": {
-                      "type": "string"
-                    },
-                    "event": {
-                      "type": "string"
-                    },
-                    "headSha": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "accepted",
-                    "deliveryKey",
-                    "event",
-                    "headSha"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "statusCode": {
-                      "type": "number"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "statusCode",
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "503": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -52221,7 +52500,8 @@
                 "hook",
                 "dream",
                 "github",
-                "gitlab"
+                "gitlab",
+                "gitea"
               ]
             },
             "in": "query",
@@ -52352,7 +52632,8 @@
                                 "enum": [
                                   "webhook",
                                   "github",
-                                  "gitlab"
+                                  "gitlab",
+                                  "gitea"
                                 ]
                               },
                               {
@@ -52450,7 +52731,8 @@
                 "hook",
                 "dream",
                 "github",
-                "gitlab"
+                "gitlab",
+                "gitea"
               ]
             },
             "in": "query",
@@ -52668,7 +52950,8 @@
                                 "enum": [
                                   "webhook",
                                   "github",
-                                  "gitlab"
+                                  "gitlab",
+                                  "gitea"
                                 ]
                               },
                               {
@@ -52975,7 +53258,8 @@
                                       "enum": [
                                         "webhook",
                                         "github",
-                                        "gitlab"
+                                        "gitlab",
+                                        "gitea"
                                       ]
                                     },
                                     {
@@ -53529,7 +53813,8 @@
                           "enum": [
                             "webhook",
                             "github",
-                            "gitlab"
+                            "gitlab",
+                            "gitea"
                           ]
                         },
                         {
@@ -55516,6 +55801,7 @@
                       "enum": [
                         "github",
                         "gitlab",
+                        "gitea",
                         "anonymous"
                       ]
                     },
@@ -55537,6 +55823,7 @@
                       "enum": [
                         "github",
                         "gitlab",
+                        "gitea",
                         "other"
                       ]
                     }
