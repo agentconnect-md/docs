@@ -8769,19 +8769,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -8815,19 +8803,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -8861,19 +8837,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -8907,19 +8871,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -8953,19 +8905,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -8999,19 +8939,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9045,19 +8973,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9091,19 +9007,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9302,19 +9206,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9348,19 +9240,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9394,19 +9274,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9440,19 +9308,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9486,19 +9342,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9532,19 +9376,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9578,19 +9410,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9624,19 +9444,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9836,19 +9644,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9882,19 +9678,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9928,19 +9712,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -9974,19 +9746,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10020,19 +9780,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10066,19 +9814,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10112,19 +9848,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10158,19 +9882,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10426,19 +10138,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10472,19 +10172,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10518,19 +10206,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10564,19 +10240,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10610,19 +10274,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10656,19 +10308,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10702,19 +10342,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10748,19 +10376,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -10954,19 +10570,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11000,19 +10604,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11046,19 +10638,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11092,19 +10672,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11138,19 +10706,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11184,19 +10740,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11230,19 +10774,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11276,19 +10808,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11547,19 +11067,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11593,19 +11101,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11639,19 +11135,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11685,19 +11169,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11731,19 +11203,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11777,19 +11237,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11823,19 +11271,7 @@
                       "type": "string"
                     },
                     "code": {
-                      "type": "string",
-                      "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
-                      ]
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -11869,19 +11305,878 @@
                       "type": "string"
                     },
                     "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/agents/{id}/memory/entries/{ref}/history": {
+      "get": {
+        "operationId": "listAgentMemoryEntryHistory",
+        "summary": "List unified memory entry history",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Returns one bounded page of change events for an entry, newest first where the home orders them, through a daemon supporting memory-entries-history-v1. A Control-Plane home pages its own change log back through the daemon.",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "in": "query",
+            "name": "channelKey",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "default": 5,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "in": "path",
+            "name": "ref",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "events": {
+                      "maxItems": 5,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "maxLength": 512
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "create",
+                              "update",
+                              "delete"
+                            ]
+                          },
+                          "at": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "tool",
+                              "console",
+                              "distill",
+                              "dream"
+                            ]
+                          },
+                          "before": {
+                            "type": "string",
+                            "maxLength": 4001
+                          },
+                          "after": {
+                            "type": "string",
+                            "maxLength": 4001
+                          },
+                          "truncated": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "order": {
                       "type": "string",
                       "enum": [
-                        "UNSUPPORTED",
-                        "FORBIDDEN",
-                        "NOT_FOUND",
-                        "INVALID_ARGUMENT",
-                        "CONFLICT",
-                        "STALE_BINDING",
-                        "CURSOR_EXPIRED",
-                        "TOO_LARGE",
-                        "UNAVAILABLE",
-                        "AMBIGUOUS_WRITE"
+                        "newest-first",
+                        "backend"
                       ]
+                    }
+                  },
+                  "required": [
+                    "events",
+                    "order"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orgs/{orgId}/agents/{id}/memory/entries/search": {
+      "post": {
+        "operationId": "searchAgentMemoryEntries",
+        "summary": "Search unified memory entries",
+        "tags": [
+          "Agents"
+        ],
+        "description": "Returns bounded hits with snippets for a query through a daemon supporting memory-entries-search-v1. The result names the search kind and coverage; it is never an enumeration.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048
+                  },
+                  "limit": {
+                    "default": 5,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 20
+                  }
+                },
+                "required": [
+                  "query"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "in": "query",
+            "name": "channelKey",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "hits": {
+                      "maxItems": 20,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "entry": {
+                            "type": "object",
+                            "properties": {
+                              "ref": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 4096
+                              },
+                              "label": {
+                                "type": "string",
+                                "maxLength": 512
+                              },
+                              "description": {
+                                "type": "string",
+                                "maxLength": 1024
+                              },
+                              "format": {
+                                "type": "string",
+                                "enum": [
+                                  "markdown",
+                                  "text"
+                                ]
+                              },
+                              "byteSize": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "updatedAt": {
+                                "type": "string"
+                              },
+                              "revision": {
+                                "type": "string",
+                                "maxLength": 512
+                              },
+                              "origin": {
+                                "type": "string",
+                                "enum": [
+                                  "active",
+                                  "inherited"
+                                ]
+                              },
+                              "editable": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "ref",
+                              "label",
+                              "format",
+                              "byteSize",
+                              "origin",
+                              "editable"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "snippet": {
+                            "type": "string",
+                            "maxLength": 1024
+                          }
+                        },
+                        "required": [
+                          "entry",
+                          "snippet"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "lexical",
+                        "semantic",
+                        "hybrid",
+                        "unknown"
+                      ]
+                    },
+                    "coverage": {
+                      "type": "string",
+                      "enum": [
+                        "complete",
+                        "partial",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "hits",
+                    "kind",
+                    "coverage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "currentRevision": {
+                      "type": "string",
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "statusCode",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "statusCode": {
+                      "type": "number"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
                     },
                     "currentRevision": {
                       "type": "string",
@@ -16589,6 +16884,9 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "private": {
+                        "type": "boolean"
                       }
                     },
                     "required": [
@@ -16597,7 +16895,8 @@
                       "source",
                       "ref",
                       "subDir",
-                      "skills"
+                      "skills",
+                      "private"
                     ],
                     "additionalProperties": false
                   }
@@ -36915,6 +37214,9 @@
                           "type": "string"
                         }
                       },
+                      "ui": {
+                        "type": "boolean"
+                      },
                       "createdBy": {
                         "type": [
                           "string",
@@ -36933,6 +37235,43 @@
                           "type": "string"
                         }
                       },
+                      "auth": {
+                        "type": "string"
+                      },
+                      "oauth": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          },
+                          "issuer": {
+                            "type": "string"
+                          },
+                          "scopes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "clientSource": {
+                            "type": "string"
+                          },
+                          "expiresAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "issuer",
+                          "scopes",
+                          "clientSource",
+                          "expiresAt"
+                        ],
+                        "additionalProperties": false
+                      },
                       "createdAt": {
                         "type": "string"
                       }
@@ -36945,10 +37284,12 @@
                       "url",
                       "visibility",
                       "sharedWith",
+                      "ui",
                       "createdBy",
                       "canEdit",
                       "canManageSharing",
                       "headerNames",
+                      "auth",
                       "createdAt"
                     ],
                     "additionalProperties": false
@@ -36989,6 +37330,9 @@
                       "sse"
                     ]
                   },
+                  "ui": {
+                    "type": "boolean"
+                  },
                   "visibility": {
                     "type": "string",
                     "enum": [
@@ -37001,6 +37345,13 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "auth": {
+                    "type": "string",
+                    "enum": [
+                      "headers",
+                      "oauth2"
+                    ]
                   },
                   "headers": {
                     "default": [],
@@ -37080,6 +37431,9 @@
                         "type": "string"
                       }
                     },
+                    "ui": {
+                      "type": "boolean"
+                    },
                     "createdBy": {
                       "type": [
                         "string",
@@ -37098,6 +37452,43 @@
                         "type": "string"
                       }
                     },
+                    "auth": {
+                      "type": "string"
+                    },
+                    "oauth": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "issuer": {
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "clientSource": {
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "issuer",
+                        "scopes",
+                        "clientSource",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -37113,10 +37504,12 @@
                     "url",
                     "visibility",
                     "sharedWith",
+                    "ui",
                     "createdBy",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
+                    "auth",
                     "createdAt",
                     "grantKey"
                   ],
@@ -37309,6 +37702,9 @@
                         "type": "string"
                       }
                     },
+                    "ui": {
+                      "type": "boolean"
+                    },
                     "createdBy": {
                       "type": [
                         "string",
@@ -37327,6 +37723,43 @@
                         "type": "string"
                       }
                     },
+                    "auth": {
+                      "type": "string"
+                    },
+                    "oauth": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "issuer": {
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "clientSource": {
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "issuer",
+                        "scopes",
+                        "clientSource",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    },
                     "createdAt": {
                       "type": "string"
                     }
@@ -37339,10 +37772,12 @@
                     "url",
                     "visibility",
                     "sharedWith",
+                    "ui",
                     "createdBy",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
+                    "auth",
                     "createdAt"
                   ],
                   "additionalProperties": false
@@ -37421,6 +37856,9 @@
                         "value"
                       ]
                     }
+                  },
+                  "ui": {
+                    "type": "boolean"
                   }
                 },
                 "additionalProperties": false
@@ -37481,6 +37919,9 @@
                         "type": "string"
                       }
                     },
+                    "ui": {
+                      "type": "boolean"
+                    },
                     "createdBy": {
                       "type": [
                         "string",
@@ -37499,6 +37940,43 @@
                         "type": "string"
                       }
                     },
+                    "auth": {
+                      "type": "string"
+                    },
+                    "oauth": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "issuer": {
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "clientSource": {
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "issuer",
+                        "scopes",
+                        "clientSource",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    },
                     "createdAt": {
                       "type": "string"
                     }
@@ -37511,10 +37989,12 @@
                     "url",
                     "visibility",
                     "sharedWith",
+                    "ui",
                     "createdBy",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
+                    "auth",
                     "createdAt"
                   ],
                   "additionalProperties": false
@@ -37797,6 +38277,9 @@
                         "type": "string"
                       }
                     },
+                    "ui": {
+                      "type": "boolean"
+                    },
                     "createdBy": {
                       "type": [
                         "string",
@@ -37815,6 +38298,43 @@
                         "type": "string"
                       }
                     },
+                    "auth": {
+                      "type": "string"
+                    },
+                    "oauth": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "issuer": {
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "clientSource": {
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "issuer",
+                        "scopes",
+                        "clientSource",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    },
                     "createdAt": {
                       "type": "string"
                     },
@@ -37830,10 +38350,12 @@
                     "url",
                     "visibility",
                     "sharedWith",
+                    "ui",
                     "createdBy",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
+                    "auth",
                     "createdAt",
                     "grantKey"
                   ],
@@ -37996,6 +38518,9 @@
                         "type": "string"
                       }
                     },
+                    "ui": {
+                      "type": "boolean"
+                    },
                     "createdBy": {
                       "type": [
                         "string",
@@ -38014,6 +38539,43 @@
                         "type": "string"
                       }
                     },
+                    "auth": {
+                      "type": "string"
+                    },
+                    "oauth": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "issuer": {
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "clientSource": {
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "issuer",
+                        "scopes",
+                        "clientSource",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    },
                     "createdAt": {
                       "type": "string"
                     }
@@ -38026,10 +38588,12 @@
                     "url",
                     "visibility",
                     "sharedWith",
+                    "ui",
                     "createdBy",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
+                    "auth",
                     "createdAt"
                   ],
                   "additionalProperties": false
@@ -38191,6 +38755,9 @@
                           "type": "string"
                         }
                       },
+                      "private": {
+                        "type": "boolean"
+                      },
                       "visibility": {
                         "type": "string"
                       },
@@ -38224,6 +38791,7 @@
                       "ref",
                       "subDir",
                       "skills",
+                      "private",
                       "visibility",
                       "sharedWith",
                       "createdBy",
@@ -38245,7 +38813,7 @@
         "tags": [
           "Skill sources"
         ],
-        "description": "Register an org-level public GitHub skill source. The numeric repository identity is resolved server-side (org installation first, then a public read), so no client needs to know it; `githubRepoId` in the body only overrides that lookup. A repository that cannot be identified is rejected — 400 when GitHub says it does not exist, 503 while GitHub is unreachable — rather than persisted as a row the projection would silently drop. The daemon acquires a bounded local snapshot; the remote source is never passed to the CLI. `skills` empty ⇒ install every skill the snapshot exposes. Rejected with 409 while any agent already enables skills under the requested source name — agents bind by name, so a new source must not silently capture existing selections.",
+        "description": "Register an org-level GitHub skill source. The numeric repository identity is resolved server-side (org installation first, then a public read), so no client needs to know it; `githubRepoId` in the body only overrides that lookup. A private repository is accepted when the org GitHub App installation covers its owner: the row is marked `private` and daemons acquire it with a read-only installation token minted for every agent that enables the source. A repository that cannot be identified is rejected — 400 when GitHub says it does not exist, 503 while GitHub is unreachable — rather than persisted as a row the projection would silently drop. The daemon acquires a bounded local snapshot; the remote source is never passed to the CLI. `skills` empty ⇒ install every skill the snapshot exposes. Rejected with 409 while any agent already enables skills under the requested source name — agents bind by name, so a new source must not silently capture existing selections.",
         "requestBody": {
           "required": true,
           "content": {
@@ -38361,6 +38929,9 @@
                         "type": "string"
                       }
                     },
+                    "private": {
+                      "type": "boolean"
+                    },
                     "visibility": {
                       "type": "string"
                     },
@@ -38394,6 +38965,7 @@
                     "ref",
                     "subDir",
                     "skills",
+                    "private",
                     "visibility",
                     "sharedWith",
                     "createdBy",
@@ -38758,6 +39330,9 @@
                         "type": "string"
                       }
                     },
+                    "private": {
+                      "type": "boolean"
+                    },
                     "visibility": {
                       "type": "string"
                     },
@@ -38791,6 +39366,7 @@
                     "ref",
                     "subDir",
                     "skills",
+                    "private",
                     "visibility",
                     "sharedWith",
                     "createdBy",
@@ -38962,6 +39538,9 @@
                         "type": "string"
                       }
                     },
+                    "private": {
+                      "type": "boolean"
+                    },
                     "visibility": {
                       "type": "string"
                     },
@@ -38995,6 +39574,7 @@
                     "ref",
                     "subDir",
                     "skills",
+                    "private",
                     "visibility",
                     "sharedWith",
                     "createdBy",
@@ -39610,6 +40190,9 @@
                         "type": "string"
                       }
                     },
+                    "private": {
+                      "type": "boolean"
+                    },
                     "visibility": {
                       "type": "string"
                     },
@@ -39643,6 +40226,7 @@
                     "ref",
                     "subDir",
                     "skills",
+                    "private",
                     "visibility",
                     "sharedWith",
                     "createdBy",
@@ -44209,6 +44793,9 @@
                         "type": "string"
                       }
                     },
+                    "ui": {
+                      "type": "boolean"
+                    },
                     "createdBy": {
                       "type": [
                         "string",
@@ -44226,6 +44813,43 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "auth": {
+                      "type": "string"
+                    },
+                    "oauth": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "issuer": {
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "clientSource": {
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "issuer",
+                        "scopes",
+                        "clientSource",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
                     },
                     "createdAt": {
                       "type": "string"
@@ -44245,10 +44869,12 @@
                     "url",
                     "visibility",
                     "sharedWith",
+                    "ui",
                     "createdBy",
                     "canEdit",
                     "canManageSharing",
                     "headerNames",
+                    "auth",
                     "createdAt",
                     "grantKey"
                   ],
@@ -49589,6 +50215,16 @@
                           ]
                         }
                       },
+                      "labelFilter": {
+                        "default": [],
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        }
+                      },
                       "mentionOnly": {
                         "default": false,
                         "type": "boolean"
@@ -49696,6 +50332,16 @@
                             "issues",
                             "merge_request"
                           ]
+                        }
+                      },
+                      "labelFilter": {
+                        "default": [],
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
                         }
                       },
                       "mentionOnly": {
@@ -50753,6 +51399,15 @@
                           ]
                         }
                       },
+                      "labelFilter": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        }
+                      },
                       "mentionOnly": {
                         "type": "boolean"
                       },
@@ -50846,6 +51501,15 @@
                             "issues",
                             "merge_request"
                           ]
+                        }
+                      },
+                      "labelFilter": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
                         }
                       },
                       "mentionOnly": {

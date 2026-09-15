@@ -53,3 +53,5 @@
 - updateagentmemoryentry
 - deleteagentmemoryentry
 - getagentmemoryentry
+- listagentmemoryentryhistory
+- searchagentmemoryentries
