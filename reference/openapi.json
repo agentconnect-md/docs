@@ -34600,7 +34600,353 @@
                           "null"
                         ]
                       },
-                      "result": {}
+                      "result": {},
+                      "nativeUi": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "resourceUri": {
+                                "type": "string",
+                                "enum": [
+                                  "ui://agentconnect/integration-setup"
+                                ]
+                              },
+                              "resourceVersion": {
+                                "type": "number",
+                                "enum": [
+                                  1
+                                ]
+                              },
+                              "orgId": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "intent": {
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "mode": {
+                                        "type": "string",
+                                        "enum": [
+                                          "create"
+                                        ]
+                                      },
+                                      "provider": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "maxLength": 64
+                                      },
+                                      "agentId": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                      }
+                                    },
+                                    "required": [
+                                      "mode"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "mode": {
+                                        "type": "string",
+                                        "enum": [
+                                          "edit"
+                                        ]
+                                      },
+                                      "agentId": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                      },
+                                      "target": {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "integration",
+                                              "codehost-subscription"
+                                            ]
+                                          },
+                                          "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                          }
+                                        },
+                                        "required": [
+                                          "kind",
+                                          "id"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "required": [
+                                      "mode",
+                                      "agentId",
+                                      "target"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "resourceUri",
+                              "resourceVersion",
+                              "orgId",
+                              "intent"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "resourceUri": {
+                                "type": "string",
+                                "enum": [
+                                  "ui://agentconnect/code-host-setup"
+                                ]
+                              },
+                              "resourceVersion": {
+                                "type": "number",
+                                "enum": [
+                                  1
+                                ]
+                              },
+                              "orgId": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "intent": {
+                                "type": "object",
+                                "properties": {
+                                  "provider": {
+                                    "type": "string",
+                                    "enum": [
+                                      "github",
+                                      "gitlab",
+                                      "gitea"
+                                    ]
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "resourceUri",
+                              "resourceVersion",
+                              "orgId",
+                              "intent"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "resourceUri": {
+                                "type": "string",
+                                "enum": [
+                                  "ui://agentconnect/agent-setup"
+                                ]
+                              },
+                              "resourceVersion": {
+                                "type": "number",
+                                "enum": [
+                                  1
+                                ]
+                              },
+                              "orgId": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "intent": {
+                                "type": "object",
+                                "properties": {
+                                  "agentId": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                  },
+                                  "section": {
+                                    "type": "string",
+                                    "enum": [
+                                      "basics",
+                                      "runtime",
+                                      "access",
+                                      "secrets"
+                                    ]
+                                  },
+                                  "created": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "agentId"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "resourceUri",
+                              "resourceVersion",
+                              "orgId",
+                              "intent"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "resourceUri": {
+                                "type": "string",
+                                "enum": [
+                                  "ui://agentconnect/skill-setup"
+                                ]
+                              },
+                              "resourceVersion": {
+                                "type": "number",
+                                "enum": [
+                                  1
+                                ]
+                              },
+                              "orgId": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "intent": {
+                                "type": "object",
+                                "properties": {
+                                  "source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "registry",
+                                      "git"
+                                    ]
+                                  },
+                                  "query": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 200
+                                  },
+                                  "agentId": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "resourceUri",
+                              "resourceVersion",
+                              "orgId",
+                              "intent"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "resourceUri": {
+                                "type": "string",
+                                "enum": [
+                                  "ui://agentconnect/mcp-setup"
+                                ]
+                              },
+                              "resourceVersion": {
+                                "type": "number",
+                                "enum": [
+                                  1
+                                ]
+                              },
+                              "orgId": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "intent": {
+                                "type": "object",
+                                "properties": {
+                                  "agentId": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "resourceUri",
+                              "resourceVersion",
+                              "orgId",
+                              "intent"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "resourceUri": {
+                                "type": "string",
+                                "enum": [
+                                  "ui://agentconnect/agent-tools"
+                                ]
+                              },
+                              "resourceVersion": {
+                                "type": "number",
+                                "enum": [
+                                  1
+                                ]
+                              },
+                              "orgId": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "intent": {
+                                "type": "object",
+                                "properties": {
+                                  "agentId": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                  },
+                                  "focus": {
+                                    "type": "string",
+                                    "enum": [
+                                      "mcp",
+                                      "skills"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "agentId"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "resourceUri",
+                              "resourceVersion",
+                              "orgId",
+                              "intent"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
                     },
                     "required": [
                       "operationId",
@@ -34735,7 +35081,353 @@
                         "null"
                       ]
                     },
-                    "result": {}
+                    "result": {},
+                    "nativeUi": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/integration-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "mode": {
+                                      "type": "string",
+                                      "enum": [
+                                        "create"
+                                      ]
+                                    },
+                                    "provider": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 64
+                                    },
+                                    "agentId": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                    }
+                                  },
+                                  "required": [
+                                    "mode"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "mode": {
+                                      "type": "string",
+                                      "enum": [
+                                        "edit"
+                                      ]
+                                    },
+                                    "agentId": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                    },
+                                    "target": {
+                                      "type": "object",
+                                      "properties": {
+                                        "kind": {
+                                          "type": "string",
+                                          "enum": [
+                                            "integration",
+                                            "codehost-subscription"
+                                          ]
+                                        },
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        }
+                                      },
+                                      "required": [
+                                        "kind",
+                                        "id"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "required": [
+                                    "mode",
+                                    "agentId",
+                                    "target"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/code-host-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "provider": {
+                                  "type": "string",
+                                  "enum": [
+                                    "github",
+                                    "gitlab",
+                                    "gitea"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/agent-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "section": {
+                                  "type": "string",
+                                  "enum": [
+                                    "basics",
+                                    "runtime",
+                                    "access",
+                                    "secrets"
+                                  ]
+                                },
+                                "created": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "agentId"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/skill-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "registry",
+                                    "git"
+                                  ]
+                                },
+                                "query": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 200
+                                },
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/mcp-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/agent-tools"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "focus": {
+                                  "type": "string",
+                                  "enum": [
+                                    "mcp",
+                                    "skills"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "agentId"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
                   },
                   "required": [
                     "operationId",
@@ -34892,7 +35584,353 @@
                         "null"
                       ]
                     },
-                    "result": {}
+                    "result": {},
+                    "nativeUi": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/integration-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "mode": {
+                                      "type": "string",
+                                      "enum": [
+                                        "create"
+                                      ]
+                                    },
+                                    "provider": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 64
+                                    },
+                                    "agentId": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                    }
+                                  },
+                                  "required": [
+                                    "mode"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "mode": {
+                                      "type": "string",
+                                      "enum": [
+                                        "edit"
+                                      ]
+                                    },
+                                    "agentId": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                    },
+                                    "target": {
+                                      "type": "object",
+                                      "properties": {
+                                        "kind": {
+                                          "type": "string",
+                                          "enum": [
+                                            "integration",
+                                            "codehost-subscription"
+                                          ]
+                                        },
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        }
+                                      },
+                                      "required": [
+                                        "kind",
+                                        "id"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "required": [
+                                    "mode",
+                                    "agentId",
+                                    "target"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/code-host-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "provider": {
+                                  "type": "string",
+                                  "enum": [
+                                    "github",
+                                    "gitlab",
+                                    "gitea"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/agent-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "section": {
+                                  "type": "string",
+                                  "enum": [
+                                    "basics",
+                                    "runtime",
+                                    "access",
+                                    "secrets"
+                                  ]
+                                },
+                                "created": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "agentId"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/skill-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "registry",
+                                    "git"
+                                  ]
+                                },
+                                "query": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 200
+                                },
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/mcp-setup"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "resourceUri": {
+                              "type": "string",
+                              "enum": [
+                                "ui://agentconnect/agent-tools"
+                              ]
+                            },
+                            "resourceVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "orgId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "intent": {
+                              "type": "object",
+                              "properties": {
+                                "agentId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "focus": {
+                                  "type": "string",
+                                  "enum": [
+                                    "mcp",
+                                    "skills"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "agentId"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "resourceUri",
+                            "resourceVersion",
+                            "orgId",
+                            "intent"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
                   },
                   "required": [
                     "operationId",
