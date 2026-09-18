@@ -4,3 +4,6 @@
 - updatehook
 - deletehook
 - listhookruns
+- listtrustedactors
+- addtrustedactor
+- removetrustedactor
