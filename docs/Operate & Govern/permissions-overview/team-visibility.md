@@ -4,26 +4,26 @@ excerpt: Choose which people can discover and use an agent, daemon, schedule, MC
 hidden: false
 ---
 
-Team visibility controls which **people** may reach a resource. It is separate from [Agent visibility](/docs/agent-visibility), which controls which **agents** may call one another. New resources are visible to the whole organization by default, but you can restrict sensitive or experimental resources to selected members.
+Team visibility controls which **people** may reach a resource. It is separate from [Agent visibility](/docs/agent-visibility), which controls which **agents** may call one another. New resources are visible to the whole organization by default. Selected limits access for Collaborators and Viewers while keeping resources accessible to organization Owners.
 
 ## Setting visibility
 
 Supported create and edit surfaces have a **Visibility** or **Team visibility** field:
 
 - **Everyone** means every organization member may see the resource.
-- **Selected** means exactly the current organization members you select may see it.
+- **Selected** means the current organization members you select, plus every organization Owner, may see it.
 
-Selected must always retain at least one current organization member. The organization Owner role does not bypass a Selected audience. A member's [role](/docs/members-and-roles) still decides whether allowed access is read-only or editable.
+Selected must always retain at least one explicitly selected current organization member. Owners can view and edit the resource even when they are not selected. Removing an Owner from the selection does not remove their role-based access. A member's [role](/docs/members-and-roles) still decides whether access is read-only or editable.
 
 Anyone who can edit a resource can also change its audience. A selected Collaborator may therefore share it onward; a selected Viewer remains read-only.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-access.png" alt="Everyone and Selected team visibility" width="640" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/team-visibility-owner-access.png" alt="A schedule's Selected visibility includes selected members and organization owners" width="900" />
 </p>
 
 ## When a member leaves
 
-AgentConnect removes a departing member from every Selected audience. Resources remain Selected, and AgentConnect ensures that at least one current member retains access.
+AgentConnect removes a departing member from every Selected audience. Resources remain Selected, and AgentConnect keeps at least one current member explicitly selected.
 
 ## Resources with their own visibility
 
@@ -37,11 +37,15 @@ The following resources have independent visibility:
 
 Agent and daemon visibility are independent. A member may be allowed to see an agent without being allowed to see its hosting daemon. They cannot place or move an agent onto a daemon they cannot see.
 
-Other resources derive access from a parent. Integrations, webhooks, and workspace operations follow their Agent; schedule configuration and run history follow the schedule; daemon keys follow the daemon. Analytics intersects the Agent and Session boundaries. [Sessions have their own audience](/docs/session-visibility): metadata, transcripts, tool details, relationships, and live updates can remain readable even when the owning Agent is hidden. Bots are organization-wide infrastructure and do not have their own Selected audience.
+Other resources derive access from a parent. Integrations, webhooks, and workspace operations follow their Agent; schedule configuration and run history follow the schedule; daemon keys follow the daemon. Bots are organization-wide infrastructure and do not have their own Selected audience.
+
+[Analytics](/docs/billing-and-usage#who-sees-what) gives Owners complete organization-wide usage attribution. For Collaborators and Viewers, attribution requires access to both the Agent and the Session.
+
+[Sessions have their own audience](/docs/session-visibility): metadata, transcripts, tool details, relationships, and live updates can remain readable even when the owning Agent is hidden. Owner access to a resource does not grant access to its private or provider-restricted sessions.
 
 ## What a restricted agent changes
 
-A restricted Agent disappears from Agent lists and pickers, its detail and configuration surfaces, workspace operations, invocation controls, and Analytics for members outside its audience.
+A restricted Agent disappears from Agent lists and pickers, its detail and configuration surfaces, workspace operations, invocation controls, and Analytics attribution for unselected Collaborators and Viewers. Organization Owners retain access.
 
 Sessions produced by that Agent do not disappear solely because the Agent is restricted. A member who passes a session's audience can still read its metadata, transcript, tool details, relationships, and live updates. The console may show the Agent's name as a plain session label or filter, but never as a link; that context grants no access to the Agent itself.
 

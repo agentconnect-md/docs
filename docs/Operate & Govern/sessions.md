@@ -32,11 +32,22 @@ The transcript separates messages, reasoning, plans, tool calls, and file edits.
 
 Depending on the agent's permission mode, a runtime can stop in the middle of a turn and ask before it acts. The turn parks until someone decides, and there are three places that decision can be made:
 
-- **In the console.** Anyone who can edit the agent decides from the agent or the session page. The notification bell raises an unread **Approval needed** item pointing at the waiting session, and marks it resolved once the wait ends.
+- **In the console.** Anyone who can edit the agent can decide, including an organization Owner outside its Selected list. Use the agent page, or the session page when its audience allows you to open it. The notification bell raises an unread **Approval needed** item pointing at the waiting session, and marks it resolved once the wait ends.
 - **In a Slack DM.** When someone who may decide has [linked their Slack account](/docs/linked-accounts), the agent sends one of them the same card in a direct message, with links to the session and to the message that started the work. Deciding there is the same decision as deciding in the console, and the console records who made it.
 - **In the conversation.** Only when the agent's **Allow change in chat** setting is on and the session lives in Slack. The card is posted where the work is happening, so anyone who can see the conversation can click it — which is why this one is opt-in.
 
 By default the conversation gets a short notice that an approval is waiting and that an agent editor has to allow it. A [Linear](/docs/linear) session posts the same pointer into the issue's activity feed, with a link into the console.
+
+For Slack DM notifications, AgentConnect chooses one recipient. Within an eligible Slack workspace, it checks these candidates in order:
+
+1. The person who sent the message that triggered the turn.
+2. The session owner.
+3. For a Selected agent, its explicitly selected members in their saved order.
+4. The agent's creator.
+
+Every candidate must be a current organization member who can edit the agent and has a linked Slack identity in that workspace. Owners qualify even when they are not selected, but being an Owner alone does not add them to the recipient list. An Owner receives the DM only when this order selects them.
+
+AgentConnect rechecks edit permission and the linked Slack identity when the recipient clicks. If no eligible recipient can be resolved, the approval stays available in the console and the conversation keeps its waiting notice.
 
 ## When several agents share a conversation
 

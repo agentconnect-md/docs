@@ -79,6 +79,12 @@ Tightening a source session to Private also tightens its descendants. Widening a
 
 AgentConnect uses the same unavailable response when a session does not exist, was removed, or falls outside your session audience, so the response does not reveal protected session existence. For a provider audience, confirm that the matching social account is linked and still has access to the source conversation or repository. A hidden owning Agent by itself does not make an otherwise readable session unavailable.
 
+## Usage and transcript access
+
+Organization Owners can see complete [Analytics](/docs/billing-and-usage#who-sees-what) totals, agent and model breakdowns, and spend over time, including usage from Private and provider-restricted sessions. These aggregates do not reveal session IDs, titles, transcripts, or tool details, and do not make those sessions available in the session list or through a direct link.
+
+Collaborators and Viewers receive attribution only for Agents and Sessions they can access. Withheld usage remains in the organization total and the **Restricted usage** rollup.
+
 ## Memory caveat
 
 For AgentConnect-managed or supported external memory, making an Everyone session Private stops future shared-memory capture after the daemon applies the change. It does not remove information already captured while the session was visible to Everyone.

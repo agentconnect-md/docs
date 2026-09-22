@@ -27,7 +27,9 @@ Each axis has the same shape: an organization-wide default, and a per-resource c
 | [Session visibility](/docs/session-visibility) | A person → one session and its transcript | **Session access**, off by default | **Everyone** or **Private**; a provider audience is read-only |
 | [Agent visibility](/docs/agent-visibility) | An agent → another agent | **Default agent visibility**, All agents by default | Inbound and outbound peer lists |
 
-A role never overrides an audience. An organization Owner who is not selected cannot see a restricted resource, and a Private session has no Owner override either.
+Organization Owners can view and edit every team resource, including resources whose **Selected** list does not include them. This does not override [Session visibility](/docs/session-visibility): private and provider-restricted sessions keep their own audiences for every role.
+
+Owners also receive complete [usage attribution](/docs/billing-and-usage#who-sees-what) across the organization. Seeing aggregate spend does not grant access to the sessions behind it.
 
 ## Organization defaults
 

@@ -113,7 +113,7 @@ The agent's **Tools & Skills** tab also shows the skills its prepared workspace 
 
 ## Visibility and roles
 
-MCP providers and Git skill sources have independent [team visibility](/docs/team-visibility): **Everyone** or **Selected**. Selected means exactly the current organization members chosen for that resource; at least one member must remain selected, and the organization Owner role does not add access. The current user starts selected when creating one and may replace themselves after selecting someone else. Collaborators can create and edit resources they are allowed to access, while Viewers are read-only.
+MCP providers and Git skill sources have independent [team visibility](/docs/team-visibility): **Everyone** or **Selected**. Selected grants access to the chosen current organization members and every organization Owner. At least one member must remain explicitly selected. The current user starts selected when creating one and may replace themselves after selecting someone else; Owners retain access through their role. Collaborators can create and edit resources they are allowed to access, while Viewers are read-only.
 
 Managed-skill approval, revision governance, and archive or restore actions require an organization Owner.
 
