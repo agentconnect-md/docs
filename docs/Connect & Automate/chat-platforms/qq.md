@@ -4,7 +4,13 @@ excerpt: Connect an official QQ bot for private chats and group @mentions on a s
 hidden: false
 ---
 
-QQ is available on **self-hosted deployments only**. AgentConnect Cloud does not offer it. The official Helm chart turns it on by default (`features.qq`); on the Docker Compose stack, add `qq` to `FEATURE_FLAGS` in `compose.env` and restart the web container. Until it is on, QQ does not appear in the integration picker.
+QQ is available on **self-hosted deployments only**. AgentConnect Cloud does not offer it. The official Helm chart turns it on by default (`features.qq`). On the Docker Compose stack, add `qq` to `FEATURE_FLAGS` in `compose.env`, then recreate the web service — `docker compose restart` keeps the container's current environment and would leave the flag off:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate web
+```
+
+Until the flag is on, QQ does not appear in the integration picker.
 
 The daemon connects outbound to QQ's official bot API, so no public callback URL is required.
 
