@@ -6,6 +6,8 @@ hidden: false
 
 > 🧪 **Experimental:** Daemon groups are an experimental feature. Behavior, configuration and limits may change between releases, and some edges are still rough. Try them on agents where a lost conversation or an interrupted turn is acceptable.
 
+> ☸️ **Kubernetes is the recommended way to run agents at scale.** The [Kubernetes deployment](/docs/kubernetes-deployment) is the production-shaped one: its install-wide daemon pool keeps an agent running across replaceable members, and every session runs in its own sandbox pod against one shared store, with no per-machine setup. Reach for daemon groups when the agents run on machines you operate yourself.
+
 A **daemon group** is a named set of daemons you connected to your organization. Placing an agent on a group, instead of on one daemon, gives you two separate features:
 
 | Feature | What it does | How you turn it on |
