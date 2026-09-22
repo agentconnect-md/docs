@@ -32,7 +32,7 @@ Restart and upgrade use the ordinary daemon edit permission: any Owner or Collab
 
 ## Placement
 
-Every agent placed on a daemon you connected runs on that one machine — it owns the agent's workspace, runtime processes and transcripts. You can move an agent from its **Configuration** tab when both sides are online, ready and compatible with its runtime, model and MCP servers.
+Every agent placed on a daemon you connected runs on that one machine — it owns the agent's workspace, runtime processes and transcripts. You can move an agent from its **Configuration** tab when both sides are online, ready and compatible with its runtime, model and MCP servers. To let an agent survive one machine going down, place it on a [daemon group](/docs/daemon-groups) (experimental) instead.
 
 A move cold-reprovisions the saved agent definition; it does not migrate daemon-local workspace, memory or transcript bytes. Commit or back up local work first, and expect GitHub workspaces to be cloned again on the target.
 
