@@ -1,5 +1,5 @@
 ---
-title: ⚡ Triggers & automation
+title: ⚡ Workflows
 excerpt: Start agent work from code events, tracker issues, incoming requests, or a schedule.
 hidden: false
 ---
