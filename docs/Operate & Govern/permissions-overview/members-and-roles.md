@@ -29,8 +29,10 @@ An organization must always have at least one Owner, so its last Owner cannot be
 
 |                                                                                   | **Owner** | **Collaborator** | **Viewer** |
 | --------------------------------------------------------------------------------- | --------- | ---------------- | ---------- |
-| See resources allowed by [team visibility](/docs/team-visibility) | ✓ | ✓ | ✓ |
-| Read allowed sessions, transcripts, and Analytics                                 | ✓         | ✓                | ✓          |
+| See team resources | All organization resources | Everyone or explicitly selected | Everyone or explicitly selected |
+| Read sessions and transcripts allowed by their session audience | ✓ | ✓ | ✓ |
+| Read organization-wide usage totals | ✓ | ✓ | ✓ |
+| See complete Analytics attribution | ✓ | — | — |
 | Create resources and edit resources they can see                                  | ✓         | ✓                | —          |
 | Talk to an agent they can see in the [Playground](/docs/playground)               | ✓         | ✓                | ✓          |
 | Start a scheduled run with **Run now**                                            | ✓         | ✓                | —          |
@@ -39,11 +41,13 @@ An organization must always have at least one Owner, so its last Owner cannot be
 | Uninstall a GitHub App installation                                               | ✓         | —                | —          |
 | Manage members, roles, and organization settings                                  | ✓         | —                | —          |
 
-Roles do not override a resource's audience. An organization Owner who is not explicitly selected cannot see a restricted team resource. Owners can manage membership and organization settings without receiving an automatic read override.
+Organization Owners can view, edit, and change sharing on every team resource, including resources whose **Selected** list does not include them. Collaborators and Viewers need access through [Team visibility](/docs/team-visibility).
 
-When a member leaves or is removed, AgentConnect removes them from every Selected audience and keeps each resource reachable by at least one current member.
+When a member leaves or is removed, AgentConnect removes them from every Selected audience and keeps at least one current member explicitly selected for each resource.
 
-A [private session](/docs/session-visibility) likewise has no organization Owner override. Its transcript is visible only to its matched owner.
+[Session visibility](/docs/session-visibility) applies independently to every role. A Private session is visible only to its matched owner; organization Owners must also pass provider audience checks to read provider-restricted sessions.
+
+Owners can see complete [Analytics attribution](/docs/billing-and-usage#who-sees-what), including usage from sessions they cannot read. Collaborators and Viewers receive attribution only for Agents and Sessions they can access, with the rest included in organization totals as unattributed usage.
 
 Collaborators can change the audience of any resource they are allowed to edit. This includes sharing it with more members or switching it back to **Everyone**. Share sensitive resources only with collaborators you trust to manage that audience.
 

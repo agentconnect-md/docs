@@ -34,7 +34,7 @@ The Activity chart buckets the ledger over the last **24h**, **7d**, **30d**, or
 
 The Transactions table lists the ledger newest first, filtered to **Usage** or **Top-ups**, and loads more as you page through it. Credit rows carry a kind — **Credit purchase**, **Adjustment**, **Promotional credit**, or **Refund** — and an adjustment may include a note from whoever recorded it.
 
-Usage rows name the agents that spent the money, as chips with each one's share. What gets named follows your own view of the fleet: an agent is named when it appears in your Analytics view for that charge's period, and ids outside that fold into a single unnamed rollup. That rollup carries no agent count — the fact that spend exists is not a way to enumerate agents you cannot otherwise see — and it is appended after the chip cap, so a row with many agents never hides it behind a `+N`.
+Usage rows name the agents that spent the money, as chips with each one's share. Names follow your access to the Agent itself, as on the Agents page. Owners can see every current organization Agent; other members see Agents allowed by [Team visibility](/docs/team-visibility). Hidden or deleted Agents fold into a single unnamed rollup with no agent count, shown separately from the `+N` overflow for named chips. Session audiences do not change this billing attribution.
 
 ## Analytics
 
@@ -54,7 +54,13 @@ Source is recorded when the session runs, so moving an agent between a daemon an
 | Capability | Owner | Other members |
 | --- | --- | --- |
 | Read the balance, Activity, and Transactions | ✅ | ✅ |
-| See an agent named on a usage row | Only for agents they may see | Only for agents they may see |
+| Read organization-wide Analytics totals and source totals | ✅ | ✅ |
+| See Analytics agent/model breakdowns and spend over time | Complete organization usage | Only usage from Agents and Sessions they can access |
+| See an agent named on a billing usage row | All current organization Agents | Only Agents they can see |
 | Add credits | ✅ | ❌ |
 
-Attribution follows the same visibility rules as the rest of the console, and the Owner role is not an override: it does not bypass a Selected audience under [Team visibility](/docs/team-visibility), nor a private [session audience](/docs/session-visibility).
+Owners receive complete Analytics attribution, including spend from restricted Agents, another member's Private session, or a provider-restricted session. The aggregates do not include session IDs, titles, transcripts, or tool details. Reading a session still requires its own [session audience](/docs/session-visibility).
+
+For Collaborators and Viewers, Analytics attribution requires access to both the Agent and the Session. Withheld spend stays in the organization total and appears as **Restricted usage**. Attributed agent rows plus that rollup equal the total. Their spend chart includes only attributed usage, so it may sum to less than the organization total. Source totals remain organization-wide for every role.
+
+For example, an Agent with $4 of shared-session spend and $7 from another member's Private session contributes $11 to the organization total. An Owner sees all $11 attributed to that Agent. A Collaborator who can access the Agent and only the shared session sees $4 attributed and $7 as unattributed usage.
