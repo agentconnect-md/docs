@@ -17,6 +17,8 @@ hidden: false
 | `microsandbox`             | General-purpose tasks and less-trusted code | A separate VM per session                                    |
 | Kubernetes (Agent Sandbox) | Teams running many agents across machines   | Centrally managed agent pods and persistent workspaces       |
 
+`srt` is not a security boundary: it shares the host's kernel and user, and the daemon runs some workspace operations, such as Git, outside it. Run an agent that acts on content from outside your organization, such as outside contributors' pull requests and issues or public webhooks, in `microsandbox` or Kubernetes, even when a maintainer starts its sessions.
+
 ### Compare Linux daemon sandboxes
 
 | What you use       | SRT                                                 | microsandbox                                  |
