@@ -91,7 +91,7 @@ sudo apt-get update
 sudo apt-get install --yes bubblewrap ripgrep socat
 ```
 
-The host must allow unprivileged user namespaces. The daemon checks that the sandbox can start. Ubuntu 23.10 and later restrict them by default: [allow them for bubblewrap](#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap) first.
+The host must allow unprivileged user namespaces. The daemon checks that the sandbox can start. Ubuntu 24.04 and later restrict them by default, and Ubuntu 23.10 does once the restriction is turned on: [allow them for bubblewrap](#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap) first.
 
 ### microsandbox
 
@@ -191,7 +191,7 @@ bwrap: setting up uid map: Permission denied
 
 Newer daemons name the AppArmor restriction in the reason directly.
 
-**Cause:** Ubuntu 23.10 and later set `kernel.apparmor_restrict_unprivileged_userns=1` by default, in `/usr/lib/sysctl.d/10-apparmor.conf`. An unprivileged user namespace then gets no capabilities, so bubblewrap can't set up the sandbox's isolated network. A value of `0` set at runtime, for example with `sysctl -w`, is lost on reboot.
+**Cause:** Ubuntu 24.04 and later set `kernel.apparmor_restrict_unprivileged_userns=1` by default, in `/usr/lib/sysctl.d/10-apparmor.conf`. Ubuntu 23.10 introduced the setting but leaves it at `0` by default. With it on, an unprivileged user namespace gets no capabilities, so bubblewrap can't set up the sandbox's isolated network. A value of `0` set at runtime, for example with `sysctl -w`, is lost on reboot.
 
 **Fix:** give bubblewrap an AppArmor profile that allows user namespaces. The profile covers only `/usr/bin/bwrap`, where the `bubblewrap` package installs it; every other program stays restricted. Create `/etc/apparmor.d/bwrap` and load it:
 
