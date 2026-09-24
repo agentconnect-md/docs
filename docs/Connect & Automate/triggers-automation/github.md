@@ -32,7 +32,7 @@ AgentConnect checks the content author's **current repository permission** throu
 
 AgentConnect checks the author of each comment, including edited content; the webhook sender is not substituted for the content author. Trigger permission is separate from what the agent may do afterward: comments, formal reviews, Checks, and repository writes still require the configured AgentConnect repository grant and GitHub App permissions.
 
-> ⚠️ **Public repositories:** external issue bodies, pull requests, diffs, and comments remain untrusted input even though they cannot dispatch an agent without a maintainer request. Use a conservative [permission mode](/docs/create-an-agent) and narrowly scoped repository credentials.
+> ⚠️ **Public repositories:** external issue bodies, pull requests, diffs, and comments remain untrusted input even though they cannot dispatch an agent without a maintainer request. Use a conservative [permission mode](/docs/create-an-agent) and narrowly scoped repository credentials, and run the agent in `microsandbox` or Kubernetes ([execution environments](/docs/sandboxing#choose-an-execution-environment)).
 
 A GitHub identity linked to a signed-in AgentConnect profile can participate in two separate console-user checks:
 
