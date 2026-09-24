@@ -1,25 +1,25 @@
 ---
 title: 🛡️ Sandboxing
-excerpt: Choose a sandbox backend and control which resources agents can access.
+excerpt: Choose the boundary each agent's sessions run in and control which resources agents can access.
 hidden: false
 ---
 
 **Kubernetes:** the official Helm deployment uses [Agent Sandbox](https://github.com/kubernetes-sigs/agent-sandbox) by default to manage agent pods and persistent workspaces. See [Kubernetes deployment](/docs/kubernetes-deployment) for setup and configuration.
 
-**Linux host daemons:** enable **Run in sandbox** to limit an agent's access to the machine. Each sandbox gets a private runtime home and its assigned workspace. Share additional host directories through [mounts](/docs/sandbox-mounts).
+**Daemons you run:** each agent's **Execution strategy** sets the boundary its sessions run in, from none to a separate VM. The sandboxing strategies need Linux. Each sandbox gets a private runtime home and its assigned workspace. Share additional host directories through [mounts](/docs/sandbox-mounts).
 
 ## Choose an execution environment
 
 | Option                     | Best for                                    | Environment                                                  |
 | -------------------------- | ------------------------------------------- | ------------------------------------------------------------ |
-| No sandbox                 | Trusted tasks that need full host access    | Runs directly on the host with the daemon user's permissions |
-| SRT                        | Trusted internal development and automation | Host tools with filesystem and network restrictions          |
-| microsandbox               | General-purpose tasks and less-trusted code | A separate VM per session                                    |
+| `host` (no sandbox)        | Trusted tasks that need full host access    | Runs directly on the host with the daemon user's permissions |
+| `srt`                      | Trusted internal development and automation | Host tools with filesystem and network restrictions          |
+| `microsandbox`             | General-purpose tasks and less-trusted code | A separate VM per session                                    |
 | Kubernetes (Agent Sandbox) | Teams running many agents across machines   | Centrally managed agent pods and persistent workspaces       |
 
-### Compare Linux daemon backends
+### Compare Linux daemon sandboxes
 
-| What you use       | SRT (default)                                       | microsandbox                                  |
+| What you use       | SRT                                                 | microsandbox                                  |
 | ------------------ | --------------------------------------------------- | --------------------------------------------- |
 | Tools and packages | Host tools; install in writable paths               | Image tools; install inside the session VM    |
 | Host files         | Protected paths hidden; other paths may be readable | Only assigned host mounts                     |
@@ -30,27 +30,57 @@ hidden: false
 | OAuth credentials  | Tool rules (Claude/Codex); otherwise unshielded     | Same as SRT                                   |
 | Saved API keys     | Tool rules (Claude/Codex); otherwise unshielded     | Host proxy (supported saved keys)             |
 
-Both backends write to the assigned workspace. Shared workspaces and writable host mounts remain shared; microsandbox keeps other VM files separate for each session.
+Both sandboxes write to the assigned workspace. Shared workspaces and writable host mounts remain shared; microsandbox keeps other VM files separate for each session.
 
 Tool rules restrict credential access by the runtime's tools. The host proxy keeps real API keys outside the VM. See [Credential protection](/docs/credential-protection) for supported runtimes, login methods, and limitations.
 
 Technical background: [SRT isolation](https://github.com/anthropics/sandbox-runtime#how-it-works) and [microsandbox](https://github.com/superradcompany/microsandbox).
 
+## Pick an execution strategy
+
+Choose the strategy in **Execution strategy** when you add or edit an agent. The picker lists the strategies available where the agent is placed:
+
+- **One daemon:** that daemon's strategies.
+- **A [daemon group](/docs/daemon-groups):** the strategies at least one serving member offers. Sessions can't run on a member that lacks the chosen strategy, so check that every member you rely on can run it.
+- **AgentConnect Cloud or a [Kubernetes daemon pool](/docs/kubernetes-deployment):** no picker. Each session already runs in its own pod.
+
+Each option names its boundary:
+
+| Option               | Boundary                   |
+| -------------------- | -------------------------- |
+| `host · no boundary` | None                       |
+| `srt · process`      | An SRT process sandbox     |
+| `microsandbox · VM`  | A separate virtual machine |
+
+A strategy that can't run there stays in the list, disabled and marked **unavailable**. Hover over it to see why: the reason from the daemon's startup check, or `sandbox.<strategy> is off on this daemon` when the daemon's configuration turns the strategy off.
+
+New agents start on `host` where it can run, otherwise on the first available sandbox. A daemon too old to report its strategies offers `host` and **Sandbox** instead, where **Sandbox** is the sandbox that daemon is configured to use. [Upgrade the daemon](/docs/upgrade-the-daemon) to choose a specific strategy.
+
+In **Edit**, the picker is locked while a move to another daemon is pending; save the move first. If the agent's placement no longer offers its saved strategy, the strategy stays selected and is marked "Not offered where this agent is placed." The agent's **Configuration** tab shows the choice as the **Execution strategy** row of the Runtime card.
+
+AgentConnect never falls back to a weaker boundary. A session whose strategy can't run on its machine is refused with the reason.
+
+Agents created before the picker keep their boundary. An agent that had **Run in sandbox** off uses `host`. One that had it on uses the sandbox its daemon was configured with, `srt` or `microsandbox`, once that daemon reports its strategies. A sandboxed agent with no daemon uses `srt`.
+
 ## Configure the daemon
 
 Add the settings to the daemon's existing `config.json` (normally `~/.agentconnect/config.json`). Keep its existing connection and identity settings.
 
-### SRT
-
-SRT is the default. To select it explicitly:
+The `sandbox` object lists the strategies the daemon offers. All three are on by default, so leaving them out is the same as:
 
 ```json
 {
   "sandbox": {
-    "backend": "srt"
+    "host": true,
+    "srt": true,
+    "microsandbox": true
   }
 }
 ```
+
+Each value is `true` (offer the strategy with its defaults), `false` (turn it off), or, for `microsandbox`, an object of VM settings. At startup the daemon checks each strategy it offers. A strategy that fails its check is unavailable; the daemon logs the reason, and the picker shows it. The checks install and download nothing. A daemon with no available strategy refuses to start.
+
+### SRT
 
 On Ubuntu or Debian, install its dependencies:
 
@@ -63,10 +93,11 @@ The host must allow unprivileged user namespaces. The daemon checks that the san
 
 ### microsandbox
 
+To change the VM resources, give `microsandbox` an object:
+
 ```json
 {
   "sandbox": {
-    "backend": "microsandbox",
     "microsandbox": {
       "cpus": 2,
       "memoryMiB": 2048,
@@ -78,21 +109,25 @@ The host must allow unprivileged user namespaces. The daemon checks that the san
 
 These resource values are defaults. CPU and memory limits apply per VM. `diskGiB` sets the capacity of each writable disk (root, Docker data, and an additional disk when using overlays). Disk files grow as data is written.
 
-microsandbox requires a Linux amd64 host. The daemon user needs access to `/dev/kvm` and `/dev/vhost-vsock`. Virtual hosts need nested virtualization. The daemon installs the microsandbox SDK and prepares the image automatically. An uncached image makes the first startup slower.
+microsandbox requires a Linux amd64 host. The daemon user needs access to `/dev/kvm` and `/dev/vhost-vsock`. Virtual hosts need nested virtualization. The daemon installs the microsandbox SDK and prepares the image when the first microsandbox session starts. An uncached image makes that first start slower.
 
-### Enable sandboxing
+### Require a sandbox
 
-Turn on **Run in sandbox** when adding or editing an agent. To require sandboxing for every agent on the daemon, add:
+To refuse unsandboxed sessions on a daemon, turn `host` off:
 
 ```json
 {
-  "security": {
-    "requireSandbox": true
+  "sandbox": {
+    "host": false
   }
 }
 ```
 
-Required mode locks the agent setting on and refuses daemon startup if the selected backend is unavailable. Selecting a backend alone does not enable sandboxing for agents that have it turned off.
+The picker then shows `host` as unavailable for agents on this daemon, and new agents start on the first available sandbox. Agents already set to `host` can't start sessions there until you pick a sandbox for them. If no sandbox is available either, the daemon refuses to start.
+
+### Older configurations
+
+`sandbox.backend` and `security.requireSandbox` are retired. A daemon that still finds them reads them once at startup and logs a warning: it ignores `backend` and offers every strategy as above, and it reads `requireSandbox: true` as `"host": false`. Remove them from `config.json`. Which sandbox a session uses is now the agent's **Execution strategy**.
 
 Restart after editing the configuration:
 
@@ -100,7 +135,7 @@ Restart after editing the configuration:
 npx -y @agentconnect.md/cli restart
 ```
 
-For a named instance, add `--instance <name>`. For a foreground daemon, relaunch its existing command (add `--require-sandbox` to enforce sandboxing). See [Upgrade the daemon](/docs/upgrade-the-daemon) for instance commands.
+For a named instance, add `--instance <name>`. For a foreground daemon, relaunch its existing command (add `--require-sandbox` to turn `host` off). See [Upgrade the daemon](/docs/upgrade-the-daemon) for instance commands.
 
 ## Runtime image
 
@@ -109,7 +144,6 @@ microsandbox uses the `ghcr.io/agentconnect-md/runtime-sandbox-full` image selec
 ```json
 {
   "sandbox": {
-    "backend": "microsandbox",
     "microsandbox": {
       "image": "registry.example.com/agentconnect/runtime-sandbox-full:build-tag"
     }
@@ -135,7 +169,8 @@ The policy restricts private-network access, but does not guarantee that every p
 
 | Message                       | What to check                                                                          |
 | ----------------------------- | -------------------------------------------------------------------------------------- |
-| Sandbox unavailable           | Backend requirements and daemon logs                                                   |
+| Strategy unavailable          | The reason in the picker's tooltip, the strategy's requirements, and daemon logs       |
+| Session refused by strategy   | The agent's strategy can't run on that machine; fix the reason or pick another one     |
 | Binary not installed in image | The selected image contains the runtime                                                |
 | Login required                | The runtime is signed in as the daemon user                                            |
 | Mount rejected                | Existing source, valid target, and supported mode (see [Mounts](/docs/sandbox-mounts)) |

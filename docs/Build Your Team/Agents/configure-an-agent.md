@@ -7,12 +7,12 @@ hidden: false
 Open an agent from **Agents** to manage its integrations, runtime, workspace, access, memory, tools, and skills.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-runtime.png" alt="Agent runtime and sandbox settings" width="560" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-runtime.png" alt="Agent runtime settings" width="560" />
 </p>
 
 ## Configuration
 
-The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. **Edit** lets you change the display name, daemon, runtime, model, effort/reasoning, fast mode, permission mode and sandbox setting. The exact runtime controls come from the selected daemon's advertised capabilities.
+The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. **Edit** lets you change the display name, daemon, runtime, model, effort/reasoning, fast mode, permission mode and execution strategy. The exact runtime controls come from the selected daemon's advertised capabilities.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/agent-configuration.png" alt="The Configuration tab: basics, runtime behavior, description, access, variables, and secrets" width="820" />
@@ -31,7 +31,7 @@ Other runtime behavior settings include:
 - **Allow change in chat** — when on, chat users can change session runtime settings (via the [in-conversation commands](/docs/integrations-overview#in-conversation-commands)) and answer approval requests. When off, only people who can edit the agent can do so.
 - **Show footer** — add the agent, runtime, model and session links to replies.
 - **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
-- **Run in sandbox** — place the runtime inside AgentConnect's Linux OS sandbox. The control is **Unavailable** when the selected daemon cannot enforce it and **Required** when the daemon operator has locked it on. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/docs/sandboxing).
+- **Execution strategy** — the boundary the agent's sessions run in: `host · no boundary`, `srt · process` or `microsandbox · VM`. The picker lists what the agent's placement offers. A strategy that can't run there stays listed as **unavailable**; hover over it to see why. If the placement no longer offers the saved strategy, it stays selected and is marked "Not offered where this agent is placed." The Runtime card shows the choice as an **Execution strategy** row. Agents on AgentConnect Cloud have neither the picker nor the row, because each session already runs in its own pod. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/docs/sandboxing#pick-an-execution-strategy).
 
 ## Description and persona
 
@@ -39,7 +39,7 @@ The Description card is edited separately. It is not just display copy: AgentCon
 
 ## Move an agent
 
-Choose another daemon in **Edit** to move the agent. The target must be online and support the selected runtime, model, tools, and skills.
+Choose another daemon in **Edit** to move the agent. The target must be online and support the selected runtime, model, tools, and skills. While the move is pending, the **Execution strategy** picker is locked; save the move first, then change the strategy.
 
 AgentConnect waits for active work to stop and reprovisions the saved definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcripts. Commit or back up local work first; GitHub workspaces are cloned again on the new machine.
 

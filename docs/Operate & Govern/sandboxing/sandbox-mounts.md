@@ -14,13 +14,15 @@ Use `sandbox.mounts` to give sandboxed agents access to host directories such as
 | `target` | Path inside the sandbox (`~` means the session home in microsandbox) |
 | `mode`   | `readonly` (default), `writable`, or `overlay`                       |
 
-| Mode       | Host files            | Session changes                         | Backends     |
+| Mode       | Host files            | Session changes                         | Strategies   |
 | ---------- | --------------------- | --------------------------------------- | ------------ |
 | `readonly` | Readable              | Not written through this mount          | Both         |
 | `writable` | Readable and writable | Shared with the host and other sessions | Both         |
 | `overlay`  | Readable              | Private to each session                 | microsandbox |
 
 Paths must be absolute after `~` expansion. Sources must exist before the daemon starts. Writable mounts need host permissions that allow the runtime user to write (normally UID 10001 inside microsandbox).
+
+`sandbox.mounts` applies to every sandboxing strategy the daemon offers. A mount that a strategy can't honor, such as an `overlay` mount or a different `target` for SRT, makes that strategy unavailable, with the validation error as the reason; the daemon still starts. If you don't use that strategy, turn it off, for example `"srt": false`. See [Configure the daemon](/docs/sandboxing#configure-the-daemon).
 
 ## SRT: share a writable cache
 
@@ -29,7 +31,6 @@ SRT requires `source` and `target` to resolve to the same path:
 ```json
 {
   "sandbox": {
-    "backend": "srt",
     "mounts": [
       {
         "source": "/srv/agent-cache/pnpm",
@@ -53,7 +54,6 @@ microsandbox can expose the directory at a different path:
 ```json
 {
   "sandbox": {
-    "backend": "microsandbox",
     "mounts": [
       {
         "source": "/srv/reference-data",
@@ -74,7 +74,6 @@ Use `overlay` to reuse a populated host cache while keeping session changes priv
 ```json
 {
   "sandbox": {
-    "backend": "microsandbox",
     "mounts": [
       {
         "source": "/srv/agent-cache/pnpm",
