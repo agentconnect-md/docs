@@ -210,6 +210,8 @@ sudo apparmor_parser -r /etc/apparmor.d/bwrap
 
 AppArmor loads the profile again at every boot.
 
+Don't use Ubuntu's `bwrap-userns-restrict` profile from the `apparmor-profiles` package instead. It strips capabilities inside the sandbox, so the daemon's check passes, but a runtime that starts its own bubblewrap sandbox inside it, such as Codex, fails with `bwrap: No permissions to create new namespace`.
+
 Alternatively, lift the restriction for the whole machine. This turns the protection off for every program, not only bubblewrap:
 
 ```bash
