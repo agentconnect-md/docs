@@ -12,7 +12,7 @@ The daemon is the machine-side half of AgentConnect: it hosts your agents, drive
 - **Node.js 24.12 or newer** — use [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli), the stable entry point that installs, launches and upgrades the daemon for you.
 - At least one agent runtime installed and authenticated on the machine — e.g. Claude Code (`claude`) or Codex (`codex`). The daemon **detects runtimes automatically** (from the machine's installed launchers, via the [ACP registry](https://agentclientprotocol.com)) and reports what it finds — runtimes, versions, models — to the console.
 - **Outbound network only.** The daemon dials out to your configured Control Plane and to the chat platforms. It never listens on a public port, so it runs fine on a laptop behind NAT.
-- **Optional Linux sandboxing:** SRT (default) requires `bubblewrap`, `ripgrep`, `socat`, and unprivileged user namespaces. microsandbox requires KVM and vsock access. See [Sandboxing](/docs/sandboxing) for setup and [Credential protection](/docs/credential-protection) for login support.
+- **Optional Linux sandboxing:** the daemon offers every execution strategy by default and makes each one available only when its requirements are met. SRT requires `bubblewrap`, `ripgrep`, `socat`, and unprivileged user namespaces. microsandbox requires KVM and vsock access. See [Sandboxing](/docs/sandboxing) for setup and [Credential protection](/docs/credential-protection) for login support.
 
 ## Connect a machine
 
@@ -100,11 +100,11 @@ Useful CLI and daemon-run flags:
 | `--agents-dir <dir>` | Change the agents directory |
 | `--max-agents <n>` | Cap how many agents this daemon will host |
 | `--log-level <level>` | `trace` `debug` `info` `warn` `error` |
-| `--require-sandbox` | Fail startup unless every agent can be sandboxed |
+| `--require-sandbox` | Refuse unsandboxed sessions (the same as `sandbox.host: false`) |
 
 ## Good to know
 
 - **Updates:** the CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure. See [Upgrade the daemon](/docs/upgrade-the-daemon).
-- **Sandboxing:** a supported Linux daemon can confine selected agents, or require the boundary for every agent and fail closed. See [Sandboxing](/docs/sandboxing) before using it as a production guarantee.
+- **Sandboxing:** on a supported Linux daemon, each agent's **Execution strategy** chooses its boundary. The daemon can also refuse unsandboxed sessions, and refuses to start when none of its strategies can run. See [Sandboxing](/docs/sandboxing) before using it as a production guarantee.
 - **A temporary Control Plane outage does not stop established work.** Existing sessions and platform connections continue until the daemon reconnects.
 - **Multiple machines:** add as many daemons as you like — a beefy workstation for heavy agents, a laptop for experiments. You can later move an agent between compatible online daemons; see [Manage daemons](/docs/manage-daemons).
