@@ -83,7 +83,7 @@ Set this on every member, against the same database, and restart each daemon. Ke
 
 ### What it does
 
-Without parallel sessions, every session of an agent runs on the member serving it. With parallel sessions, each new **isolated** session is placed on the member currently running the fewest isolated sessions. A tie stays on the serving member. A session keeps the machine it started on for its whole life, and the serving member keeps handling the conversation and relays it to the machine running the session.
+Without parallel sessions, every session of an agent runs on the member serving it. With parallel sessions, each new **isolated** session is placed on the member that would be least full with it, measured against each machine's [session capacity](#size-each-machine). A member already at its capacity is skipped, and a tie stays on the serving member. With every machine at the same capacity, as by default, this is simply the member running the fewest isolated sessions. A session keeps the machine it started on for its whole life, and the serving member keeps handling the conversation and relays it to the machine running the session.
 
 How a session runs on the other machine follows the agent's **Run in sandbox** setting:
 
@@ -113,10 +113,22 @@ Parallel sessions need two consents, each set in its own place:
 
 A member without `sandbox.share` still serves agents and runs its own sessions; it just does not run anyone else's.
 
+### Size each machine
+
+Each member's session capacity is `limits.maxConcurrentSessions` in its `config.json`, 32 by default. It is the most sessions the machine runs for its group, counting its own isolated sessions, and it decides each machine's share of new sessions. When the members are different sizes, give each one a capacity in proportion to what it can run and restart that daemon. For example, a large workstation and two smaller machines could use:
+
+| Machine | `config.json` |
+| --- | --- |
+| 128 GB workstation | `{ "limits": { "maxConcurrentSessions": 8 } }` |
+| 32 GB machine | `{ "limits": { "maxConcurrentSessions": 2 } }` |
+| 16 GB machine | `{ "limits": { "maxConcurrentSessions": 1 } }` |
+
+The workstation then takes the larger share of new sessions. Like `sandbox.share`, capacity is the machine owner's setting and cannot be set from the console. Only other members' sessions are refused at capacity: a member's own sessions still run on it.
+
 ### What sharing a machine lends
 
 - **Its runtime sign-in.** A session that runs on a lending machine uses that machine's runtime login or API-key setup (for example its Codex or Claude sign-in) and its sandbox settings. The agent's provider credentials, secrets and repository credentials still come from the serving member, over an encrypted connection. Share only machines whose runtime accounts you are willing to have the group's agents use.
-- **CPU, memory and disk**, up to the machine's own session limit.
+- **CPU, memory and disk**, up to the machine's [session capacity](#size-each-machine).
 - **One network port**, as described in [Requirements](#requirements).
 
 ### See where a session runs
@@ -128,9 +140,9 @@ A session's page shows **Runs on** with the machine running it. A session that s
 | **not on a group** | The agent is placed on one daemon, not on a group. |
 | **spreading off** | The group's **Spread sessions across the group** switch is off. |
 | **shared workspace** | The session uses the agent's shared workspace instead of its own. |
-| **least loaded** | The serving member was running the fewest sessions. |
+| **least loaded** | The serving member was the least full for its capacity. |
 | **no member could run it** | No lending member offers what the session needs. |
-| **every member full** | Every lending member is at its session limit. |
+| **every member full** | Every lending member is at its session capacity. |
 | **control plane unreachable** | Placement could not be decided at the time. |
 | **memory kept here** | The agent's memory lives on this daemon. |
 
