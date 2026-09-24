@@ -101,7 +101,7 @@ AgentConnect Checks are currently informational rather than required branch-prot
 - A targeted `@deep-review` mention wins over the baseline reviewer's broader **updated** cadence for that delivery.
 - Nobody has to remember the exact name. An organization team named `deep-review` makes `@<organization>/deep-review` autocomplete in the comment box and summon the same agent — see [Make the agent name autocomplete](/docs/github#make-the-agent-name-autocomplete).
 - **Re-run all checks** reruns the current AgentConnect review Checks in the App's suite. Use the individual Check action when you want only one reviewer.
-- PR bodies, diffs, and comments are untrusted input. Use conservative agent permissions, especially on public repositories.
+- PR bodies, diffs, and comments are untrusted input. Use conservative agent permissions, especially on public repositories, and run reviewers of outside contributions in microsandbox or Kubernetes ([execution environments](/docs/sandboxing#choose-an-execution-environment)).
 
 For automatic model escalation without a maintainer mention, use trusted agent-to-agent orchestration instead of trying to trigger another agent through a visible GitHub bot comment.
 
