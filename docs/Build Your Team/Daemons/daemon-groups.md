@@ -41,7 +41,7 @@ The agent stays with the member that took it over. It does not return to the pre
 ### Set it up
 
 1. Connect two or more daemons and [create a group](#before-you-start) with them.
-2. Make sure every member can run the agent: the agent's runtime installed and signed in, and its MCP servers available, on each member. The group's **Runtimes** list shows what every serving member offers.
+2. Make sure every member can run the agent: the agent's runtime installed and signed in, its MCP servers available, and its [execution strategy](/docs/sandboxing#pick-an-execution-strategy) available, on each member. The group's **Runtimes** list shows what every serving member offers. The **Execution strategy** picker is broader: it lists every strategy at least one serving member offers. A session that would run on a member without the agent's strategy is refused there; it never falls back to a weaker boundary.
 3. Place the agent on the group: in the agent's **Configuration**, choose the group in **Runs on**. The picker reads "Any daemon in the group can serve this agent".
 
 You can also create an agent directly on a group.
@@ -85,17 +85,18 @@ Set this on every member, against the same database, and restart each daemon. Ke
 
 Without parallel sessions, every session of an agent runs on the member serving it. With parallel sessions, each new **isolated** session is placed on the member that would be least full with it, measured against each machine's [session capacity](#size-each-machine). A member already at its capacity is skipped, and a tie stays on the serving member. With every machine at the same capacity, as by default, this is simply the member running the fewest isolated sessions. A session keeps the machine it started on for its whole life, and the serving member keeps handling the conversation and relays it to the machine running the session.
 
-How a session runs on the other machine follows the agent's **Run in sandbox** setting:
+How a session runs on the other machine follows the agent's **Execution strategy**:
 
-| Agent | Session on another member |
+| Execution strategy | Session on another member |
 | --- | --- |
-| **Run in sandbox** off | A process on that machine, in its own session directory. Linux only. |
-| **Run in sandbox** on | A microsandbox VM on that machine. Needs microsandbox configured there. |
+| `host` | A process on that machine, in its own session directory. Linux only. |
+| `microsandbox` | A microsandbox VM on that machine. Needs microsandbox available there. |
+| `srt` | Not spread yet. The session stays on the serving member, which reports **no member could run it**. |
 
 ### Requirements
 
 - The agent is on a group ([failover](#set-it-up) set up).
-- Each session has its own workspace: **Worktree** is on (labelled **Session isolation** when the agent runs in a sandbox). Sessions that share one workspace always stay on the serving member.
+- Each session has its own workspace: **Worktree** is on (labelled **Session isolation** when the agent's execution strategy is a sandbox). Sessions that share one workspace always stay on the serving member.
 - The members can reach each other directly over TCP. A member that lends capacity listens on one port, on every interface. The port is chosen when the daemon starts, and other members reach it at the address the daemon uses to connect to AgentConnect, so allow inbound connections between members.
 
 ### Turn it on
