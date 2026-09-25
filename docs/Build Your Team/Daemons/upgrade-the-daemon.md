@@ -24,7 +24,7 @@ Releases live side by side under the daemon root, so a switch is a pointer move 
 
 ## Upgrade from the console
 
-An outdated daemon shows an **Update to \<version\>** badge on the **Daemons** page. Open the daemon and use **Upgrade**.
+An outdated daemon shows an **Update to \<version\>** badge on the **Infra** page. Open the daemon and use **Upgrade**.
 
 This needs the ordinary daemon edit permission: any Owner or Collaborator who can see the daemon. Viewers cannot.
 

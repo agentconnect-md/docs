@@ -7,7 +7,7 @@ hidden: false
 A daemon runs agents in an environment you control, with access to the workspaces, tools, and credentials you choose.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png" alt="Daemons connected to AgentConnect" width="900" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png" alt="The Infra page: AgentConnect Cloud, the connected daemons, and a daemon group" width="900" />
 </p>
 
 - [Install the daemon](/docs/install-the-daemon) and connect it to your AgentConnect organization.

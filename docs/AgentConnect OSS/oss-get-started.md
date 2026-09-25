@@ -59,7 +59,7 @@ The Compose stack deliberately does not run the daemon in a container. Keeping i
 
 In the Web console:
 
-1. Open **Daemons** and choose **Add daemon**.
+1. Open **Infra** and choose **Add daemon**.
 2. Copy the one-time command.
 3. Run that exact command on the machine that should host the agents.
 

@@ -4,10 +4,10 @@ excerpt: Monitor daemon health, maintain services, move agents safely between ma
 hidden: false
 ---
 
-**Daemons** lists the machines connected to your organization. Open one to inspect its health, available runtimes, resources, hosted agents, capabilities, and visibility.
+**Infra** lists the machines connected to your organization under **Daemons**. Open one to inspect its health, available runtimes, resources, hosted agents, capabilities, and visibility.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png" alt="The Daemons list" width="900" />
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemons.png" alt="The Infra page: AgentConnect Cloud, the connected daemons, and a daemon group" width="900" />
 </p>
 
 ## Status
@@ -40,7 +40,7 @@ A move cold-reprovisions the saved agent definition; it does not migrate daemon-
 
 On [AgentConnect Cloud](https://app.agentconnect.md), the daemon picker offers one entry that is not one of your machines: **AgentConnect Cloud**. Place an agent there and it runs on infrastructure managed by AgentConnect — no machine to prepare, no runtime to install or sign in, no provider API keys. Model access is included, with a curated set of runtimes and models, and each agent runs in its own isolated environment.
 
-On the **Daemons** page this appears as a single **Cloud** entry; open it to see the agents placed there and recent credit activity. Unlike a machine you connect, a Cloud placement is not tied to one machine: the agent's workspace, memory and transcripts live in its managed environment, which AgentConnect may serve from different capacity over time. Cloud placements and your own machines coexist in one organization; moving an agent between them is a cold reprovision like any other move — the agent is recreated from its saved definition, and existing workspace, memory and transcript content stays behind.
+On the **Infra** page this appears as a single **AgentConnect Cloud** entry; open it to see the agents placed there and recent credit activity. Unlike a machine you connect, a Cloud placement is not tied to one machine: the agent's workspace, memory and transcripts live in its managed environment, which AgentConnect may serve from different capacity over time. Cloud placements and your own machines coexist in one organization; moving an agent between them is a cold reprovision like any other move — the agent is recreated from its saved definition, and existing workspace, memory and transcript content stays behind.
 
 ### Pricing
 
@@ -60,5 +60,9 @@ Each daemon has an **Expire sessions** setting: choose a common window, enter a 
 
 - **Stuck “Waiting for daemon…” in Add daemon** — the command probably failed in your terminal. Check that Node is ≥ 24.12 (`node -v`) and that the machine can reach your control-plane URL over HTTPS/WSS.
 - **Daemon shows offline but the process is running** — check the log (`npx -y @agentconnect.md/cli status` prints its path, default `~/.agentconnect/logs/daemon.log`). Repeated `connect/handshake failed` usually means the key was revoked — use **Reconnect** for that daemon, or onboard a new one if it was deleted.
-- **Runtime missing from the pickers** — check the daemon user's runtime installation and saved login. For microsandbox, the runtime must also be installed in the selected image. Use the **Host / Sandbox** switch in Runtimes to check each environment (a daemon with `sandbox.host` off shows only Sandbox).
+- **Runtime missing from the pickers** — check the daemon user's runtime installation and saved login. For microsandbox, the runtime must also be installed in the selected image. Use the **Host**, **Sandbox** and **VM** tabs in Runtimes to check each strategy; a strategy that can't run shows the reason in place of its runtimes.
 - **An execution strategy is unavailable** — hover over it in the agent's **Execution strategy** picker to see why, and check the daemon log. SRT needs its host tools and user namespaces; microsandbox needs KVM and vsock access. A strategy set to `false` in the daemon's `sandbox` configuration shows as off on this daemon. See [Sandboxing](/docs/sandboxing#configure-the-daemon).
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemon-runtimes.png" alt="A daemon's Runtimes card on the Sandbox tab, showing why the strategy is unavailable" width="820" />
+</p>
