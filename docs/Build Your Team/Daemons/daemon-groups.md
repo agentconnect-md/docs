@@ -89,7 +89,7 @@ How a session runs on the other machine follows the agent's **Execution strategy
 | --- | --- |
 | `host` | A process on that machine, in its own session directory. Linux only. |
 | `microsandbox` | A microsandbox VM on that machine. Needs microsandbox available there. |
-| `srt` | Not spread yet. The session stays on the serving member, which reports **no member could run it**. |
+| `srt` | An SRT sandbox on that machine. Needs `srt` available there. |
 
 ### Requirements
 
