@@ -19,8 +19,6 @@ Failover works without parallel sessions. Parallel sessions build on failover: t
 
 ## Before you start
 
-**Availability.** The console shows daemon groups only where the deployment turns them on. On a self-hosted install, set `features.daemonGroups: true` in the Helm values, or `FEATURE_FLAGS=daemon-groups` for the console with Docker Compose.
-
 **Create a group.** Open **Daemons**, go to **Daemon groups**, and choose **New group**. Give it a name, pick its daemons, and leave **Spread sessions across the group** off unless you are setting up [parallel sessions](#parallel-sessions). A daemon belongs to one group at a time. You can also add or remove a daemon from its own page with **Join \<group\>** and **Leave \<group\>**.
 
 Joining a group does not move anything. Agents already placed directly on that daemon keep running there, and the group's page lists them as **pinned**. Leaving a group hands the group's agents to its remaining members.
