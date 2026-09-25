@@ -6,7 +6,7 @@ hidden: false
 
 **Kubernetes:** the official Helm deployment uses [Agent Sandbox](https://github.com/kubernetes-sigs/agent-sandbox) by default to manage agent pods and persistent workspaces. See [Kubernetes deployment](/docs/kubernetes-deployment) for setup and configuration.
 
-**Daemons you run:** each agent's **Execution strategy** sets the boundary its sessions run in, from none to a separate VM. The sandboxing strategies need Linux. Each sandbox gets a private runtime home and its assigned workspace. Share additional host directories through [mounts](/docs/sandbox-mounts).
+**Daemons you run:** each agent's **Execution strategy** sets the boundary its sessions run in, from none to a separate VM. `srt` and `microsandbox` run only on Linux; a macOS daemon offers only `host`, and the picker shows the other two as unavailable. Each sandbox gets a private runtime home and its assigned workspace. Share additional host directories through [mounts](/docs/sandbox-mounts).
 
 ## Choose an execution environment
 
