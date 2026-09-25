@@ -12,12 +12,12 @@ hidden: false
 
 | Option                     | Best for                                    | Environment                                                  |
 | -------------------------- | ------------------------------------------- | ------------------------------------------------------------ |
-| `host` (no sandbox)        | Trusted tasks that need full host access    | Runs directly on the host with the daemon user's permissions |
-| `srt`                      | Trusted internal development and automation | Host tools with filesystem and network restrictions          |
-| `microsandbox`             | General-purpose tasks and less-trusted code | A separate VM per session                                    |
+| **Host** (`host`)          | Trusted tasks that need full host access    | Runs directly on the host with the daemon user's permissions |
+| **Sandbox** (`srt`)        | Trusted internal development and automation | Host tools with filesystem and network restrictions          |
+| **VM** (`microsandbox`)    | General-purpose tasks and less-trusted code | A separate VM per session                                    |
 | Kubernetes (Agent Sandbox) | Teams running many agents across machines   | Centrally managed agent pods and persistent workspaces       |
 
-`srt` is not a security boundary: it shares the host's kernel and user, and the daemon runs some workspace operations, such as Git, outside it. Run an agent that acts on content from outside your organization, such as outside contributors' pull requests and issues or public webhooks, in `microsandbox` or Kubernetes, even when a maintainer starts its sessions.
+`srt` is not a security boundary: it shares the host's kernel and user, and the daemon runs some workspace operations outside it, such as Git in a workspace that sessions share. Run an agent that acts on content from outside your organization, such as outside contributors' pull requests and issues or public webhooks, in `microsandbox` or Kubernetes, even when a maintainer starts its sessions.
 
 ### Compare Linux daemon sandboxes
 
@@ -46,15 +46,17 @@ Choose the strategy in **Execution strategy** when you add or edit an agent. The
 - **A [daemon group](/docs/daemon-groups):** the strategies at least one serving member offers. Sessions can't run on a member that lacks the chosen strategy, so check that every member you rely on can run it.
 - **AgentConnect Cloud or a [Kubernetes daemon pool](/docs/kubernetes-deployment):** no picker. Each session already runs in its own pod.
 
-Each option names its boundary:
-
-| Option               | Boundary                   |
-| -------------------- | -------------------------- |
-| `host · no boundary` | None                       |
-| `srt · process`      | An SRT process sandbox     |
-| `microsandbox · VM`  | A separate virtual machine |
+| Option                  | Boundary                   |
+| ----------------------- | -------------------------- |
+| **Host** (`host`)       | None                       |
+| **Sandbox** (`srt`)     | An SRT process sandbox     |
+| **VM** (`microsandbox`) | A separate virtual machine |
 
 A strategy that can't run there stays in the list, disabled and marked **unavailable**. Hover over it to see why: the reason from the daemon's startup check, or `sandbox.<strategy> is off on this daemon` when the daemon's configuration turns the strategy off.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/execution-strategy-unavailable.png" alt="The Execution strategy picker on a daemon without the SRT tools: Sandbox and VM are marked unavailable, and the tooltip names the missing packages" width="560" />
+</p>
 
 New agents start on `host` where it can run, otherwise on the first available sandbox. A daemon too old to report its strategies offers `host` and **Sandbox** instead, where **Sandbox** is the sandbox that daemon is configured to use. [Upgrade the daemon](/docs/upgrade-the-daemon) to choose a specific strategy.
 

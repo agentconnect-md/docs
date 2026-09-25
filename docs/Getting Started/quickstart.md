@@ -84,7 +84,7 @@ Use **Start your first conversation** to open Home, or start from Slack, GitHub,
 
 ## If you skipped setup
 
-Open **Getting started** from the console to resume the same checklist. You can also use **Daemons → Add daemon** and the built-in AgentConnect agent's settings to do the daemon-path steps by hand.
+Open **Getting started** from the console to resume the same checklist. You can also use **Infra → Add daemon** and the built-in AgentConnect agent's settings to do the daemon-path steps by hand.
 
 ## What's next
 

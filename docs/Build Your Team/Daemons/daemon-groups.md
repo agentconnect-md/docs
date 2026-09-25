@@ -19,11 +19,15 @@ Failover works without parallel sessions. Parallel sessions build on failover: t
 
 ## Before you start
 
-**Create a group.** Open **Daemons**, go to **Daemon groups**, and choose **New group**. Give it a name, pick its daemons, and leave **Spread sessions across the group** off unless you are setting up [parallel sessions](#parallel-sessions). A daemon belongs to one group at a time. You can also add or remove a daemon from its own page with **Join \<group\>** and **Leave \<group\>**.
+**Create a group.** Open **Infra**, go to **Daemon groups**, and choose **New group**. Give it a name, pick its daemons, and leave **Spread sessions across the group** off unless you are setting up [parallel sessions](#parallel-sessions). A daemon belongs to one group at a time. You can also add or remove a daemon from its own page with **Join \<group\>** and **Leave \<group\>**.
 
 Joining a group does not move anything. Agents already placed directly on that daemon keep running there, and the group's page lists them as **pinned**. Leaving a group hands the group's agents to its remaining members.
 
 The group's page shows its members, which one is **serving**, the agents on the group and its active sessions. **Runtimes** lists only what every serving member offers, because an agent on the group runs on whichever member is serving it.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemon-group.png" alt="A daemon group's page: two serving members, their load and pinned agents, and the runtimes every serving member offers" width="820" />
+</p>
 
 ## Failover
 
@@ -40,9 +44,13 @@ The agent stays with the member that took it over. It does not return to the pre
 
 1. Connect two or more daemons and [create a group](#before-you-start) with them.
 2. Make sure every member can run the agent: the agent's runtime installed and signed in, its MCP servers available, and its [execution strategy](/docs/sandboxing#pick-an-execution-strategy) available, on each member. The group's **Runtimes** list shows what every serving member offers. The **Execution strategy** picker is broader: it lists every strategy at least one serving member offers. A session that would run on a member without the agent's strategy is refused there; it never falls back to a weaker boundary.
-3. Place the agent on the group: in the agent's **Configuration**, choose the group in **Runs on**. The picker reads "Any daemon in the group can serve this agent".
+3. Place the agent on the group: in the agent's **Configuration**, choose the group in **Runs on**. The picker reads "Any daemon in the group can serve this agent."
 
 You can also create an agent directly on a group.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/runs-on-group.png" alt="The Runs on picker, listing a daemon group beside single daemons" width="560" />
+</p>
 
 ### What carries over and what doesn't
 
@@ -95,6 +103,7 @@ How a session runs on the other machine follows the agent's **Execution strategy
 
 - The agent is on a group ([failover](#set-it-up) set up).
 - Each session has its own workspace: **Worktree** is on (labelled **Session isolation** when the agent's execution strategy is a sandbox). Sessions that share one workspace always stay on the serving member.
+- Each member that lends capacity offers the agent's execution strategy and has the agent's runtime signed in, with the agent's model available. Other members are skipped.
 - The members can reach each other directly over TCP. A member that lends capacity listens on one port, on every interface. The port is chosen when the daemon starts, and other members reach it at the address the daemon uses to connect to AgentConnect, so allow inbound connections between members.
 
 ### Turn it on
@@ -102,6 +111,11 @@ How a session runs on the other machine follows the agent's **Execution strategy
 Parallel sessions need two consents, each set in its own place:
 
 1. **The group.** Open the group's **Edit group** and turn on **Spread sessions across the group**. Off, no session of any agent in the group moves.
+
+   <p align="center">
+     <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/daemon-group-edit.png" alt="Edit group with two daemons selected and Spread sessions across the group turned on" width="420" />
+   </p>
+
 2. **Each machine that lends capacity.** On every member that should run other members' sessions, add this to its `config.json` and restart that daemon:
 
    ```json
@@ -132,7 +146,11 @@ The workstation then takes the larger share of new sessions. Like `sandbox.share
 
 ### See where a session runs
 
-A session's page shows **Runs on** with the machine running it. A session that stayed on the serving member says why:
+A session's **Details** show **Runs on** with the machine running it. A session that stayed on the serving member says why:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agentconnect-md/docs/HEAD/images/session-runs-on.png" alt="A session's Details, with Runs on showing the serving member and the reason least loaded" width="300" />
+</p>
 
 | Reason | Meaning |
 | --- | --- |
@@ -143,11 +161,10 @@ A session's page shows **Runs on** with the machine running it. A session that s
 | **no member could run it** | No lending member offers what the session needs. |
 | **every member full** | Every lending member is at its session capacity. |
 | **control plane unreachable** | Placement could not be decided at the time. |
-| **memory kept here** | The agent's memory lives on this daemon. |
 
 ### If a lending machine goes away
 
-A session that ran on another machine keeps that machine for its whole life. While that machine is briefly offline, the session's turns fail with a retryable error. If it stays offline past a grace period, the session is started again on another member, without the uncommitted work that was on the lost machine.
+A session that ran on another machine keeps that machine for its whole life. While that machine is briefly offline, the session's turns fail with a retryable error. If it stays offline for more than about 10 minutes, the session is started again on another member, without the uncommitted work that was on the lost machine.
 
 ## Limitations
 

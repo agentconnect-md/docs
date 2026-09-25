@@ -98,4 +98,4 @@ Keep the host cache stable while sessions use it. Overlay sources must be direct
 
 Restart the daemon after changing its configuration. Environment-only changes apply when the runtime restarts. Changes to mounts, VM resources, credential layout, or image content rebuild the affected VM on refresh or next use. Host-mounted files are kept; VM-local files, Docker data, and overlay writes are reset.
 
-For older configurations, replace `security.sandboxReadRoots` with `readonly` mounts and `security.sandboxWriteRoots` with `writable` mounts. Keep `source` and `target` equal for SRT. Remove the old fields after converting them. Replace a mount's old `readOnly` field with `mode` as well.
+For older configurations, replace `security.sandboxReadRoots` with `readonly` mounts and `security.sandboxWriteRoots` with `writable` mounts. Keep `source` and `target` equal for SRT. Remove the old fields after converting them. Replace a mount's old `readOnly` field with `mode` as well. The daemon refuses to start while any of these old fields remain.

@@ -16,7 +16,7 @@ The daemon is the machine-side half of AgentConnect: it hosts your agents, drive
 
 ## Connect a machine
 
-In a new organization, onboarding shows the connection command inline. If you skipped onboarding, open **Daemons → Add daemon**. Both paths mint a one-time key and show the exact command to run on the target machine:
+In a new organization, onboarding shows the connection command inline. If you skipped onboarding, open **Infra → Add daemon**. Both paths mint a one-time key and show the exact command to run on the target machine:
 
 ```bash
 npx -y @agentconnect.md/cli run --api-url <your-control-plane-ws-url> --api-key <one-time-key>
