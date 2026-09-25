@@ -113,6 +113,8 @@ openConnector:
 
 The daemon pool defaults to three members and three pre-warmed runtime sandboxes. Each warm sandbox holds a running pod and a workspace PVC. Set `daemonPool.runtime.warmReplicas: 0` when you prefer lower standing cost over a faster first agent launch.
 
+The default runtime image contains Claude Code, Codex, and DeepSeek Harness. To select the published full image with Qwen Code, OpenCode, and other ACP runtimes, see [Runtime authentication on Kubernetes](/docs/kubernetes-runtime-authentication#choose-the-runtime-image).
+
 ### Run Logto in the cluster
 
 The chart does not deploy Logto. Whether you run [Logto Cloud](/docs/logto-authentication#logto-cloud) or your own Logto in the same cluster, the two `logto` values above are the only startup topology AgentConnect needs — everything else about sign-in is Setup Server's to own.
@@ -150,11 +152,14 @@ Setup Server uses the same ServiceAccount and cipher configuration by default, s
 
 ### Model credentials for every agent
 
+See [Runtime authentication on Kubernetes](/docs/kubernetes-runtime-authentication) for API-key setup, runtime-specific Secret mappings, and gateway endpoints. The same mapping feeds the independent pool probe and agent sessions.
+
 Agents in the pool need a model provider credential. Per agent or per organization, that is a [variable or secret](/docs/variables-and-secrets) named for whatever the runtime reads — `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`. An install that pays for one key and wants every agent on it can set that key once, in a Secret the chart references by name:
 
 ```bash
 kubectl -n agentconnect create secret generic agentconnect-model-credentials \
-  --from-literal=DEEPSEEK_MODEL_TOKEN='replace-me'
+  --from-literal=DEEPSEEK_MODEL_TOKEN='replace-me' \
+  --from-literal=DEEPSEEK_MODEL_BASE_URL='https://api.deepseek.com'
 ```
 
 ```yaml
@@ -163,7 +168,7 @@ daemonPool:
     existingSecret: agentconnect-model-credentials
 ```
 
-The Secret's **entries are the variables**: `<PREFIX>MODEL_TOKEN` and `<PREFIX>MODEL_BASE_URL`, where the prefix is `ANTHROPIC_` for Claude, `OPENAI_` for Codex, `DEEPSEEK_`, or empty for the pair every runtime falls back to. A token with no base URL is a plain provider key on that provider's own endpoint, which needs nothing else from the cluster: the agents namespace already allows DNS and outbound 443. A base URL with no token aims a runtime at an endpoint that issues its own credential.
+The Secret's **entries are the variables**: `<PREFIX>MODEL_TOKEN` and `<PREFIX>MODEL_BASE_URL`, where the prefix is `ANTHROPIC_` for Claude, `OPENAI_` for Codex, `DEEPSEEK_`, or empty for the shared fallback of those recognized runtimes and OpenCode. The example uses [DeepSeek's documented API root](https://api-docs.deepseek.com/guides/harness/). A token with no base URL is a plain provider key on that provider's own endpoint, which needs nothing else from the cluster: the agents namespace already allows DNS and outbound 443. A base URL with no token aims a runtime at an endpoint that issues its own credential. For Qwen Code and other ACP runtimes, map their own API-key variables with `daemonPool.runtimeEnvironment` as shown in the runtime authentication guide.
 
 Two rules make this predictable:
 
