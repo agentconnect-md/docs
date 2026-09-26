@@ -1,28 +1,56 @@
 name: Deploy
 
-# main deploys the test channel, release the prod channel. A build resolves its release from the
-# application repository's tags, so rerun the last run to pick up a release that shipped since.
+# main is the test channel and release the prod channel. A push builds the branch it lands on, and
+# the deployment side rebuilds a channel when its environment changes, through a repository_dispatch:
+# `test-deployed` rebuilds test against the candidate it carries, `prod-promoted` rebuilds prod. Prod
+# always binds to DOCS_PROD_RELEASE, the version the deployment side reports production runs, so the
+# reference never runs ahead of the production API.
 on:
   push:
     branches: [main, release]
+  repository_dispatch:
+    types: [test-deployed, prod-promoted]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: deploy-${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
   cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    environment: ${{ github.ref_name == 'release' && 'prod' || 'test' }}
+    environment: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
     env:
-      DOCS_CHANNEL: ${{ github.ref_name == 'release' && 'prod' || 'test' }}
+      DOCS_CHANNEL: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          # A dispatch runs on the default branch; prod's content is the release branch.
+          ref: ${{ env.DOCS_CHANNEL == 'prod' && 'release' || github.ref }}
+      - name: Pin the release
+        env:
+          PROD_RELEASE: ${{ vars.DOCS_PROD_RELEASE }}
+          DISPATCHED_RELEASE: ${{ github.event.client_payload.version }}
+        run: |
+          case "$DOCS_CHANNEL" in
+            prod) RELEASE="$PROD_RELEASE" ;;
+            test) RELEASE="$DISPATCHED_RELEASE" ;;
+          esac
+          if [ "$DOCS_CHANNEL" = prod ] && [ -z "$RELEASE" ]; then
+            echo "::error::DOCS_PROD_RELEASE is not set; it names the version production runs."
+            exit 1
+          fi
+          if [ -n "$RELEASE" ]; then
+            if [[ ! "$RELEASE" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]]; then
+              echo "::error::'$RELEASE' is not a release tag."
+              exit 1
+            fi
+            echo "DOCS_RELEASE=$RELEASE" >> "$GITHUB_ENV"
+          fi
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
