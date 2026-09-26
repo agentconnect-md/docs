@@ -1,0 +1,228 @@
+---
+title: "登录"
+icon: LogIn
+description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录。"
+---
+
+AgentConnect 使用 Logto 处理人类用户登录、可续期的浏览器令牌以及关联的社交身份。组织、角色、Agent 可见范围、会话可见范围和仓库权限仍由 AgentConnect 自己管理。
+
+基础 Compose 栈在本地评估时默认关闭身份验证。当你需要真实身份时，请从以下路径中选择一种：
+
+| 路径 | 适用场景 |
+| --- | --- |
+| 内置 Logto OSS 叠加配置 | 无需 DNS 或 TLS 的本地评估 |
+| Logto Cloud | 托管的生产环境登录 |
+| 外部 Logto OSS | 自行管理的生产环境登录 |
+
+## 使用内置叠加配置进行本地登录 [#local-sign-in-with-the-bundled-overlay]
+
+### 1. 启动 AgentConnect 和 Logto [#1-start-agentconnect-and-logto]
+
+在 AgentConnect 仓库中执行：
+
+```bash
+docker compose -f compose.yaml -f compose.logto.yaml up -d
+```
+
+打开：
+
+- Logto Console：[http://localhost:3002](http://localhost:3002)
+- Setup：[http://localhost:8091](http://localhost:8091)
+- AgentConnect：[http://localhost:3000](http://localhost:3000)
+
+如果这是一个全新的数据库，请先完成 Logto Console 的初始引导。
+
+### 2. 创建 Management API 应用 [#2-create-the-management-api-application]
+
+在 **Logto Console → Applications** 中创建一个 **Machine-to-machine** 应用。为它分配内置的 **Logto Management API access** 角色，然后复制它的 App ID 和 App Secret。
+
+打开 Setup，选择**继续设置**，在**连接 Logto** 下输入这些凭证。AgentConnect 会把该密钥存储为只写的部署密钥。
+
+预期的 Management API 资源为：
+
+```text
+https://default.logto.app/api
+```
+
+应用和角色的创建方法参见 Logto 的 [Management API 指南](https://docs.logto.io/integrate-logto/interact-with-management-api)。
+
+### 3. 选择第一个登录提供方 [#3-choose-the-first-sign-in-provider]
+
+Setup 会创建或更新 AgentConnect SPA、它的重定向地址、所选的社交连接器、登录体验以及 `ADMIN` 角色。
+
+| 提供方 | 本地初始引导 |
+| --- | --- |
+| Google | 本地推荐；使用页面显示的精确裸 localhost 值创建 Web OAuth 客户端 |
+| GitHub | Setup 会创建一个同时用于仓库集成和登录的 App |
+| Slack | 需要 Logto、Web、控制平面和 Relay 的源地址都使用 HTTPS |
+
+Google 是最简短的本地路径。把它的客户端 ID 和密钥粘贴到 Setup 中，然后选择**保存 Google OAuth 并配置 Logto**。在所有必需的公开源地址都使用 HTTPS 之前，初始提供方选择器会禁用 Slack。
+
+### 4. 认领第一位管理员 [#4-claim-the-first-administrator]
+
+Setup 完成提供方配置后：
+
+1. 选择**使用 Logto 登录**。
+2. 使用已配置的提供方完成登录。
+3. Setup 会把 `ADMIN` 角色分配给这第一位用户。
+4. 再登录一次，让刷新后的令牌包含该角色。
+
+随后 Setup 会打开完整的部署设置。更改之后请重启使用这些设置的服务：
+
+```bash
+docker compose restart control-plane relay web
+```
+
+内置叠加配置仅用于本地评估。在你添加 API 资源之前，它使用 SPA 的 ID 令牌；在把 AgentConnect 暴露到网络之前，请先按下面的生产环境登录进行配置。
+
+## 生产环境登录 [#production-sign-in]
+
+生产环境的浏览器会话需要最终的 HTTPS 源地址和一个自定义 API 资源。在配置提供方应用之前，先在 `compose.env` 中设置 AgentConnect 的源地址：
+
+```dotenv
+AGENTCONNECT_PUBLIC_WEB_URL=https://app.agentconnect.example
+AGENTCONNECT_PUBLIC_CP_URL=https://api.agentconnect.example
+AGENTCONNECT_PUBLIC_RELAY_URL=https://relay.agentconnect.example
+AGENTCONNECT_RELAY_DAEMON_URL=wss://relay.agentconnect.example
+```
+
+然后选择 Logto Cloud 或外部 Logto OSS 部署。
+
+### Logto Cloud [#logto-cloud]
+
+Logto Cloud 是最简短的托管路径：
+
+1. 在 [Logto Cloud](https://cloud.logto.io/) 中创建或选择一个租户。
+2. 使用至少包含一个自定义 API 资源的套餐。Free 套餐目前不包含自定义 API 资源，因此生产环境的 AgentConnect 登录需要 Pro 或更高套餐。参见 [Logto 定价](https://logto.io/pricing)。
+3. 复制该租户的规范端点 `https://<tenant-id>.logto.app`。
+4. 将 Logto 的服务地址添加到 `compose.env`：
+
+```dotenv
+LOGTO_ENDPOINT=https://tenant-id.logto.app
+LOGTO_ADMIN_ENDPOINT=https://cloud.logto.io
+OIDC_ISSUER=https://tenant-id.logto.app/oidc
+LOGTO_MGMT_ENDPOINT=https://tenant-id.logto.app
+```
+
+如果登录使用自定义域名，请将它用于 `LOGTO_ENDPOINT` 和 `OIDC_ISSUER`。`LOGTO_MGMT_ENDPOINT` 则保持为规范的 `logto.app` 租户地址，因为 Logto Cloud 不接受通过自定义域名发起的 Management API 令牌请求。
+
+在 Logto Console 中创建一个 **Machine-to-machine** 应用，并为它分配内置的 **Logto Management API access** 角色。在 Setup 初始引导时输入的 Management API 资源必须是：
+
+```text
+https://tenant-id.logto.app/api
+```
+
+### 外部 Logto OSS [#external-logto-oss]
+
+让 Logto OSS 运行在其最终的 HTTPS 源地址之后，然后把这些地址添加到 `compose.env`：
+
+```dotenv
+LOGTO_ENDPOINT=https://login.agentconnect.example
+LOGTO_ADMIN_ENDPOINT=https://admin.agentconnect.example
+OIDC_ISSUER=https://login.agentconnect.example/oidc
+LOGTO_MGMT_ENDPOINT=https://login.agentconnect.example
+```
+
+创建一个 **Machine-to-machine** 应用，分配 **Logto Management API access** 角色，并保留默认的 Management API 资源：
+
+```text
+https://default.logto.app/api
+```
+
+### 连接 Setup Server [#connect-setup-server]
+
+使用该环境文件启动基础栈：
+
+```bash
+docker compose --env-file compose.env up -d
+```
+
+打开 Setup，选择**继续设置**，输入所选 Logto 部署对应的 M2M App ID、App Secret 和 Management API 资源。Setup 会验证这些凭证，创建或接管浏览器 SPA，并配置受支持的社交连接器。
+
+选择第一个登录提供方并登录；在 Setup 分配 `ADMIN` 角色之后再登录一次。然后在 Setup 中配置浏览器 API 资源、要显示的登录方式、提供方应用及其凭证。
+
+## 创建控制平面 API 资源 [#create-the-control-plane-api-resource]
+
+生产环境的浏览器会话需要一个可续期的访问令牌，其 audience 标识 AgentConnect 控制平面。在 **Logto Console → API resources** 中创建一个自定义 API 资源：
+
+| 设置 | 示例 |
+| --- | --- |
+| 名称 | `AgentConnect Control Plane` |
+| API 标识符 | `https://api.agentconnect.example` |
+
+该标识符必须是绝对 URI，但不必真正解析到控制平面。AgentConnect 自行执行授权，因此这个资源不需要 Logto 权限或用户角色。
+
+在 Setup 中：
+
+1. 打开 **Logto → 编辑**。
+2. 将该标识符填入**浏览器 API 资源**。
+3. 保存，选择**应用预期设置**，然后重启控制平面和 Web。
+
+保存的值会同时作为浏览器令牌的 resource 和控制平面的 audience。Logto 要求请求的 resource 与其注册的 API 标识符完全一致；参见 [保护全局 API 资源](https://docs.logto.io/authorization/global-api-resources)。
+
+没有 API 资源时，AgentConnect 会回退到 SPA 的 ID 令牌。这对本地叠加配置来说足够了，但它不是正常的生产会话，因为当前的浏览器流程不会续期这个回退令牌。
+
+## 社交登录提供方 [#social-providers]
+
+Setup 通过对应的提供方卡片管理 GitHub、Google 和 Slack 的 Logto 连接器：
+
+- **GitHub**：一个 AgentConnect GitHub App 即可同时处理仓库集成和登录。
+- **Google**：按照 Setup 显示的精确源地址和回调值手动创建 OAuth 客户端；内置的本地值使用裸 `localhost`。
+- **Slack**：一个部署级应用即可同时处理工作区安装和独立的 Slack OIDC 登录流程；所有公开源地址都必须使用 HTTPS。
+
+Lark 和飞书卡片配置的是用于可信工作区机器人准入的区域租户应用。它们不会自动把 Lark 或飞书添加为 Logto 登录方式。参见 [Lark 和飞书租户应用](/self-hosting/provider-apps#lark-and-feishu-tenant-apps)。
+
+### Google 登录 [#google-sign-in]
+
+Google 是本地登录最简单的提供方。内置拓扑使用裸 `localhost`，Google 允许本地 Web OAuth 客户端使用它。
+
+1. 在 Setup 初始引导时选择 Google，或稍后打开它的 **Google** 卡片。
+2. 在 Google Auth Platform 中创建一个 Web OAuth 客户端，使用 Setup 显示的精确源地址和重定向 URI。
+3. 保存客户端 ID 和密钥，然后重启控制平面和 Web。
+
+Setup 会创建或更新对应的 Logto 连接器，并可以对其进行验证。请手动核对显示的 Google 源地址和重定向 URI。
+
+## Lark 和飞书身份 [#lark-and-feishu-identities]
+
+Lark 和飞书的会话访问权限属于高级自托管配置。它同时需要：
+
+- 一个保留了提供方跨应用 `union_id` 的 Logto 社交身份；以及
+- 在 Setup 中配置的对应区域登录应用。
+
+登录应用和每个已准入的 AgentConnect 机器人应用必须属于同一个提供方工作区。AgentConnect 使用 `union_id` 在这些应用之间识别同一个人，然后使用已安装机器人的凭证检查其当前的群聊成员身份。这次成员身份读取不会使用个人的提供方令牌或登录应用的凭证。
+
+Setup 不会创建 Lark 或飞书的 Logto 连接器。如果你启用了其中任一登录方式，请确认其 Logto 身份记录包含 `union_id`；仅限单个应用范围的 `open_id` 是不够的。机器人权限和安装流程参见 [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)。
+
+## 关联更多社交账号 [#link-additional-social-accounts]
+
+要让用户能在**个人资料 → 登录方式**中添加或移除登录提供方：
+
+1. 在 **Logto Console → Sign-in & account → Account center** 中启用 Account API。
+2. 将 **Social identities** 设为 **Edit**。
+3. 保留每个提供方常规的 Logto 回调地址以及 Setup 显示的 AgentConnect 回调地址。
+
+Logto 在更改社交身份之前可能要求输入所有权验证码：
+
+| 提供方 | 关联时是否需要邮箱验证 |
+| --- | --- |
+| GitHub | 通常不需要 |
+| Google | 通常不需要 |
+| Slack | 需要 |
+
+如果流程中出现**发送验证码**，请配置一个支持 `UserPermissionValidation` 模板的 Logto [邮件连接器](https://docs.logto.io/connectors/email-connectors)。用户还需要一个已验证的主邮箱；仅存在于社交身份内部的邮箱地址是不够的。
+
+内置的 Logto OSS 部署不包含邮件投递服务。当你启用会发送验证码的流程时，请接入 SMTP、HTTP 或其他受支持的邮件服务提供方。
+
+Logto 在 [通过 Account API 管理账户设置](https://docs.logto.io/end-user-flows/account-settings/by-account-api) 中说明了身份编辑行为。
+
+## 验证设置 [#verify-the-setup]
+
+1. 在浏览器的隐私窗口中登录 AgentConnect。
+2. 确认只有拥有 `ADMIN` 角色的用户才能打开 Setup。
+3. 打开**个人资料 → 登录方式**，关联第二个已配置的提供方。
+4. 确认在原始访问令牌过期后，AgentConnect 仍能继续调用控制平面。
+5. 在 Setup 中运行每个可用的提供方检查，并手动核对所有标记为无法验证的回调地址。
+
+立即返回 `401` 通常意味着浏览器 API 资源与控制平面的 audience 不匹配。点击提供方按钮后跳到 Logto 错误页，通常意味着登录体验中缺少该连接器。
+
+在 Setup 中完成 Logto 登录的初始引导之前，请让本地无身份验证的栈只绑定在回环地址上。

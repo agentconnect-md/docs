@@ -1,0 +1,45 @@
+---
+title: "Webhook"
+icon: Webhook
+description: "一个 HTTPS 端点，把任何 POST 请求变成一次 Agent 会话——并通过 HMAC 签名验证请求确实来自你。"
+---
+
+import imgWebhookIntegration from '@/public/images/webhook-integration.png'
+
+Webhook 集成为 Agent 提供一个**入站 HTTPS 端点**。任何能够 POST JSON 的东西——CI、监控系统、另一台机器上的 cron、你自己的应用——都可以启动这个 Agent。
+
+<Image src={imgWebhookIntegration} alt="创建 Webhook 集成" width={640} />
+
+## 创建 [#create-one]
+
+在 Agent 页面：**集成 → 添加集成 → Webhook**，为它命名（默认为 `<agent>-webhook`），然后点击**创建**。对话框会显示：
+
+- **入站端点**——这个集成的 `POST` URL。
+- **签名密钥**——**只显示一次**；请立即复制。用于验证你的请求。
+- **发送测试投递**——一条现成的 curl 命令，消息内容可编辑，让你在写任何代码之前就能先发一次测试。
+
+## 发送消息 [#send-a-message]
+
+JSON 请求体就是 Agent 收到的消息。保持内容聚焦，把指令放在大段日志或诊断数据之前：
+
+```bash
+BODY='{"message":"Deploy of api-server v2.31 failed on step migrate — investigate and summarize."}'
+SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" -r | cut -d' ' -f1)
+
+curl -X POST "$WEBHOOK_URL" \
+  -H "content-type: application/json" \
+  -H "X-AC-Signature: sha256=$SIG" \
+  -d "$BODY"
+```
+
+签名是用你的签名密钥对原始请求体计算的 HMAC-SHA256，通过 `X-AC-Signature: sha256=<hex>` 发送。缺少签名或签名错误的请求会被拒绝。
+
+## 会发生什么 [#what-happens]
+
+每次投递都会在 Agent 的 Daemon 上启动（或继续）一个会话——你可以在[会话](/operate-govern/sessions)中找到它，触发来源显示为该 Webhook，并附带完整的会话记录。Agent 页面会显示这个 Webhook 最近的投递记录以及上次触发的时间。
+
+## 提示 [#tips]
+
+- 在消息里写明指令，而不只是给数据：“*这是失败的构建日志：……请诊断并起草一个工单”* 比只丢一段日志要好得多。
+- 把 Webhook 和 [GitHub 工作区](/build-your-team/agents/workspaces-and-repos)搭配使用，这样 Agent 才能真正查看它被告知的那些代码。
+- 要轮换密钥，删除这个 Webhook 集成并新建一个（新的 URL 和密钥）。

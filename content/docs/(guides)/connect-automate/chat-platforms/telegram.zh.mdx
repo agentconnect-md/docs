@@ -1,0 +1,35 @@
+---
+title: "Telegram"
+icon: Telegram
+description: "从 @BotFather 拿到一个令牌，你的 Agent 就能回复 Telegram 私信和群组消息。"
+---
+
+import imgTelegramIntegration from '@/public/images/telegram-integration.png'
+
+Telegram 是最快捷的聊天集成：一个令牌，无需应用审核，无需公网 URL——Daemon 主动向外连接 Telegram 的 API。
+
+<Image src={imgTelegramIntegration} alt="连接 Telegram 机器人" width={640} />
+
+## 创建机器人 [#create-the-bot]
+
+1. 在 Telegram 中给 [@BotFather](https://t.me/botfather) 发消息，发送 `/newbot`，然后按提示操作（先是机器人名称，再是以 `bot` 结尾的用户名）。
+2. BotFather 会回复一个类似 `123456789:AAE…` 的**机器人令牌**——复制它。
+3. 在 @BotFather 中发送 `/setprivacy`，选择该机器人，然后选择 **Disable**。AgentConnect 目前要求先关闭群组隐私模式，才会连接机器人。
+
+## 连接 [#connect-it]
+
+在你的 Agent 上，打开**集成 → 添加集成 → Telegram** 并粘贴令牌。AgentConnect 会自动验证令牌并检查群组隐私模式。如果隐私模式仍然开启，对话框会在你于 @BotFather 中修改设置的同时持续检查；当 Telegram 报告它已关闭时，**连接**按钮就会可用。
+
+AgentConnect 自动化的是检查，而不是设置本身：Telegram 的 Bot API 没有提供让 AgentConnect 关闭群组隐私模式的方法。
+
+## 使用 [#use-it]
+
+- **私信机器人**——打开 `t.me/<your_bot_username>`，直接聊天即可。
+- **群组**——把机器人加入群组。群组隐私模式关闭后，它在 AgentConnect 中的触发条件可以使用 **@ 提及**或**所有消息**。如果某个群组在你更改隐私模式之前就添加了机器人，而普通消息仍然收不到，把它移除再重新添加一次。
+
+关于停止、取消、排队以及更改支持的会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+
+## 说明 [#notes]
+
+- 一个 Telegram 机器人绑定一个 Agent。删除集成会释放机器人以供复用（下次选择**使用已有机器人**）。
+- 机器人及其令牌在**设置 → Bots → Telegram** 中按组织统一管理。

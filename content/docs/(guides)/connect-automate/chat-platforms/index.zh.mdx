@@ -1,0 +1,21 @@
+---
+title: "聊天平台"
+icon: MessagesSquare
+description: "把 Agent 接入你的团队已经在用的对话中。"
+---
+
+import imgAddIntegration from '@/public/images/add-integration.png'
+
+把 Agent 连接到 [Slack](/connect-automate/chat-platforms/slack)、[Telegram](/connect-automate/chat-platforms/telegram)、[Discord](/connect-automate/chat-platforms/discord) 或 [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)。自托管部署还可以连接 [QQ](/connect-automate/chat-platforms/qq)。每个集成把一个 Agent 绑定到一个机器人和一组对话。
+
+<Image src={imgAddIntegration} alt="为 Agent 选择聊天平台" width={640} />
+
+在 AgentConnect Cloud 上，Slack 可以从内置的**添加到 Slack** 流程开始。Lark / 飞书也提供推荐的一键配置。Telegram、Discord 和 QQ 则从各自平台提供的凭证开始。
+
+阅读[机器人](/connect-automate/chat-platforms/bots)以了解可复用的机器人身份和共享机器人路由。实际的多 Agent 配置请参见[一个 Slack 应用按频道对接不同 Agent](/how-to-guides/one-slack-app-across-channels)。
+
+## 管理对话 [#manage-conversations]
+
+机器人发现某个频道、群组或私信后，该对话就会出现在 Agent 的集成上。频道和群组可以只响应提及、响应任何消息，或完全不响应。每个观察到的一对一私信都有一个针对该 Agent 的独立**开启 / 关闭**控制。对于可见范围为所有人的 Agent，它初始为开启；对于[受限 Agent](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes)，则初始为关闭。
+
+把对话切换为**关闭**只会屏蔽入站激活，不会移除机器人，也不会阻止定时任务和 Agent 交接这类主动的出站工作。想让机器人退出某个对话时，请在聊天平台上管理机器人的实际成员身份。

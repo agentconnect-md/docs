@@ -1,0 +1,260 @@
+---
+title: "使用 Helm 部署"
+icon: ShipWheel
+description: "使用官方 Helm Chart 部署 AgentConnect OSS，并让 Agent 运行在隔离的 Kubernetes 沙箱中。"
+---
+
+官方的 AgentConnect Helm Chart 是面向生产形态的 OSS 部署方式。它会安装 Web 控制台、控制平面、Setup Server、Relay（中继）、连接器网关，以及一个供整个安装实例共用的 Daemon 池。Agent Runtime 运行在带持久化工作区的隔离 `agent-sandbox` Pod 中，而不是运行在运维人员的机器上。
+
+如需本地评估，请使用 [Docker Compose 快速开始](/self-hosting/docker-compose/quick-start)。当你希望由集群接管 Agent 的执行与工作区时，使用本指南。
+
+该 Chart 以 OCI 制品的形式发布在 `oci://ghcr.io/agentconnect-md/charts/agentconnect`。它的版本号与 AgentConnect 发布版本一致（不含前导的 `v`），其默认镜像标签也与该发布版本匹配。
+
+## 开始之前 [#before-you-start]
+
+你需要：
+
+- Kubernetes 1.28 或更新版本；
+- 对集群的 Helm 和 `kubectl` 访问权限；
+- 用于当前官方镜像的 `linux/amd64` 工作节点；
+- 一个可从 AgentConnect 命名空间访问的 PostgreSQL 数据库；
+- 用于 Agent 工作区的动态卷供应器和 StorageClass；
+- 安装 CRD、集群范围 RBAC 以及 `agent-sandbox` 控制器的权限；以及
+- 如需公开访问，一个 Gateway API 控制器、一个已有的 Gateway、DNS 和 TLS。
+
+该 Chart 会创建 `HTTPRoute` 资源，但不会安装 Gateway API 控制器、创建 Gateway，也不管理 DNS 和证书。你可以设置 `route.enabled: false`，改为提供自己的入口。
+
+从 [AgentConnect 发布页](https://github.com/agentconnect-md/agentconnect/releases)选择一个包含该 Chart 的 AgentConnect 发布版本（`v1.44.0-rc.58` 或更新），然后校验制品。不要包含发布标签前导的 `v`：
+
+```bash
+export AGENTCONNECT_CHART_VERSION=X.Y.Z
+
+helm show chart oci://ghcr.io/agentconnect-md/charts/agentconnect \
+  --version "$AGENTCONNECT_CHART_VERSION"
+```
+
+所有受支持的值都记录在 Chart 的 [values.yaml](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/values.yaml) 中。
+
+## 1. 创建命名空间和 Secret [#1-create-the-namespace-and-secrets]
+
+创建 Release 命名空间：
+
+```bash
+kubectl create namespace agentconnect
+```
+
+控制平面需要一个 PostgreSQL URL、一个稳定的 API 密钥 pepper，以及一个共享的 Relay 凭证：
+
+```bash
+kubectl -n agentconnect create secret generic agentconnect-secrets \
+  --from-literal=DATABASE_URL='postgresql://control_plane:replace-me@postgres.example.test:5432/agentconnect?schema=public' \
+  --from-literal=API_KEY_PEPPER="$(openssl rand -hex 32)" \
+  --from-literal=RELAY_TOKEN="$(openssl rand -hex 24)" \
+  --from-literal=OPEN_CONNECTOR_ENCRYPTION_KEY="$(openssl rand -hex 32)"
+```
+
+`API_KEY_PEPPER` 实际上是永久性的：轮换它会使现有的 Daemon 和个人 API 密钥失效。连接器密钥用于在其持久卷中加密连接器的 OAuth 凭证，应在创建第一个连接之前就已存在。请把这些值保存在你的密钥管理器中，并使用经过 URL 编码的数据库密码。
+
+Kubernetes Daemon 池有一份单独的数据平面文档。它是会话、会话记录、队列以及池成员共享的其他执行数据的持久存储。把下面的内容保存为 `data-plane.json`：
+
+```json
+{
+  "version": 1,
+  "databaseUrl": "postgresql://daemon_pool:replace-me@postgres.example.test:5432/agentconnect",
+  "maxConnections": 4
+}
+```
+
+从该文件创建 Secret：
+
+```bash
+kubectl -n agentconnect create secret generic agentconnect-data-plane \
+  --from-file=config.json=./data-plane.json
+```
+
+控制平面和 Daemon 池可以使用同一个 PostgreSQL 服务。请让它们的凭证保持独立，以便分别限定权限范围和轮换，并同时备份控制数据和执行数据。
+
+## 2. 创建 values 文件 [#2-create-the-values-file]
+
+从一个小的覆盖文件开始，而不是复制完整的 Chart 默认值。把下面的内容保存为 `agentconnect-values.yaml`，并替换示例中的主机名、Gateway 监听器和 StorageClass：
+
+```yaml
+publicUrl: https://app.example.test
+
+# Configure this before the first install so Setup uses the intended issuer and Management API.
+logto:
+  endpoint: https://login.example.test
+  # Set this separately when a custom login domain does not serve the Management API.
+  mgmtEndpoint: https://tenant.example.test
+
+route:
+  # Keep the deployment private until Logto sign-in is configured.
+  enabled: false
+  gateway:
+    name: public-gateway
+    namespace: default
+    sectionName: https
+
+daemonPool:
+  # The chart creates this namespace with restricted Pod Security labels and default-deny networking.
+  sandboxNamespace: agentconnect-agents
+  runtime:
+    workspace:
+      storageClass: standard
+      size: 10Gi
+
+# The default-on connector gateway persists its own SQLite database in a separate PVC.
+openConnector:
+  persistence:
+    storageClass: standard
+```
+
+`publicUrl` 是最终的浏览器源地址。在默认的同源拓扑中，控制台在 `/` 提供服务，控制平面在 `/cp`，Relay 路径也在同一主机上。当你需要独立的公开源地址时，Chart 也支持专用的 `apiHost`、`mcpHost` 和 `relay.host` 值。
+
+Daemon 池默认有三个成员和三个预热的 Runtime 沙箱。每个预热沙箱都占用一个运行中的 Pod 和一个工作区 PVC。如果你更看重降低常驻成本而非更快的首次 Agent 启动，请设置 `daemonPool.runtime.warmReplicas: 0`。
+
+默认的 Runtime 镜像包含 Claude Code、Codex 和 DeepSeek Harness。要选择包含 Qwen Code、OpenCode 及其他 ACP Runtime 的已发布完整镜像，参见 [Runtime 认证](/self-hosting/kubernetes/runtime-authentication#choose-the-runtime-image)。
+
+### 在集群内运行 Logto [#run-logto-in-the-cluster]
+
+该 Chart 不会部署 Logto。无论你使用 [Logto Cloud](/self-hosting/sign-in#logto-cloud) 还是在同一集群中运行自己的 Logto，上面的两个 `logto` 值就是 AgentConnect 需要的全部启动拓扑——登录相关的其他一切都由 Setup Server 负责。
+
+对于集群内的 Logto，`endpoint` 是面向浏览器的源地址，`mgmtEndpoint` 是集群内的 Service 源地址：
+
+```yaml
+logto:
+  endpoint: https://login.example.test
+  mgmtEndpoint: http://logto.agentconnect.svc.cluster.local
+```
+
+有三件事决定这样做能否成功：
+
+- **用不带端口的 Service 源地址来代理 Logto 的容器端口**。Logto 根据到达它的请求来构造它对外公布的 URL，因此带有显式端口的集群内地址会把该端口放进发现结果中。用一个 80 端口指向容器的 Service，可以让管理源地址不带端口，并让对外公布的 URL 与你的公开源地址保持一致。
+- **给 Logto 设置 `TRUST_PROXY_HEADER`，并向它发送 `X-Forwarded-Proto: https`**。当 TLS 在你的 Gateway 之前终止时，进入集群的这一跳是明文 HTTP；没有这个请求头，Logto 会公布一个 `http://` 的签发者，针对它的所有 OIDC 发现都会失败。在 Gateway API 中，这表现为路由上的一个 `RequestHeaderModifier` 过滤器。
+- **不要为 Logto 的管理控制台配置路由**。用与访问 Setup Server 相同的方式，即 `kubectl port-forward` 来访问它，并把它的管理端点设置为该本地源地址。
+
+无论采用哪种部署方式，Management API 资源都是固定的标识符 `https://default.logto.app/api`——它不是你的部署实际提供服务的 URL。
+
+### 加密已存储的应用密钥 [#encrypt-stored-application-secrets]
+
+默认情况下，只写的提供方密钥和 Agent 密钥在 PostgreSQL 中以明文静态存储。在 Setup 或控制台中录入生产凭证之前，请配置一个 Vault Transit 密钥，以及一个绑定到 Chart 的 `agentconnect-control-plane` ServiceAccount 的 Kubernetes 认证角色。然后把加密设置加入同一个 values 文件：
+
+```yaml
+controlPlane:
+  config:
+    SECRET_CIPHER: vault-transit
+    VAULT_ADDR: https://vault.example.test
+    VAULT_TRANSIT_KEY: agentconnect-cp
+    VAULT_JWT_ROLE: agentconnect
+```
+
+Setup Server 默认使用同一个 ServiceAccount 和同样的加密配置，因此两个进程能够加密和解密同一批值。关于 Transit 策略和迁移行为，参见[密钥存储](/self-hosting/docker-compose/configuration#secret-storage)。
+
+### 为所有 Agent 提供模型凭证 [#model-credentials-for-every-agent]
+
+关于 API 密钥设置、按 Runtime 区分的 Secret 映射以及网关端点，参见 [Runtime 认证](/self-hosting/kubernetes/runtime-authentication)。同一份映射会同时供给独立的池探测和 Agent 会话。
+
+池中的 Agent 需要模型提供方的凭证。按 Agent 或按组织设置时，那是一个[变量或密钥](/build-your-team/variables-and-secrets)，其名称取决于 Runtime 读取的变量——`ANTHROPIC_API_KEY`、`OPENAI_API_KEY`、`DEEPSEEK_API_KEY`。如果一个安装实例只为一个密钥付费，并希望所有 Agent 都使用它，可以把该密钥设置一次，放在 Chart 按名称引用的 Secret 中：
+
+```bash
+kubectl -n agentconnect create secret generic agentconnect-model-credentials \
+  --from-literal=DEEPSEEK_MODEL_TOKEN='replace-me' \
+  --from-literal=DEEPSEEK_MODEL_BASE_URL='https://api.deepseek.com'
+```
+
+```yaml
+daemonPool:
+  modelCredentials:
+    existingSecret: agentconnect-model-credentials
+```
+
+这个 Secret 的**条目就是变量**：`<PREFIX>MODEL_TOKEN` 和 `<PREFIX>MODEL_BASE_URL`，其中前缀对 Claude 是 `ANTHROPIC_`，对 Codex 是 `OPENAI_`，或者是 `DEEPSEEK_`，也可以为空，作为上述已识别 Runtime 和 OpenCode 的共享回退。示例使用了 [DeepSeek 文档中的 API 根地址](https://api-docs.deepseek.com/guides/harness/)。只有令牌而没有基础 URL 时，它就是提供方自身端点上的普通提供方密钥，不需要集群提供任何其他东西：agents 命名空间已经允许 DNS 和出站 443。只有基础 URL 而没有令牌时，Runtime 会指向一个自行签发凭证的端点。对于 Qwen Code 和其他 ACP Runtime，请按 Runtime 认证指南所示，用 `daemonPool.runtimeEnvironment` 映射它们各自的 API 密钥变量。
+
+两条规则让这一切可预期：
+
+- 该 Secret 是安装实例中这些变量的**唯一**来源。在 `daemonPool.extraEnv` 中设置其中任何一个，或让 `modelEgress.clients` 渲染出一个，都会在安装时被拒绝。凭证对必须完整地一起提供——一个只含令牌的 Secret，配上别处遗留的基础 URL，会把真实的提供方密钥发往一个从未签发过它的端点。
+- 出于同样的原因，Secret 中携带的值**优先于 Agent 自己的同名变量**。当 Agent 应当使用自己的密钥时，请不要设置 `modelCredentials`。
+
+## 3. 安装 AgentConnect [#3-install-agentconnect]
+
+安装你已校验的版本：
+
+```bash
+helm upgrade --install agentconnect \
+  oci://ghcr.io/agentconnect-md/charts/agentconnect \
+  --version "$AGENTCONNECT_CHART_VERSION" \
+  --namespace agentconnect \
+  --values agentconnect-values.yaml \
+  --wait \
+  --timeout 15m
+```
+
+在全新集群上，Helm 会在 Release 之前安装四个 `agent-sandbox` CRD，Chart 则安装固定版本的控制器栈。Chart 还会创建专用的 agents 命名空间、Daemon 池的 TokenReview RBAC、SandboxTemplate 以及预热池。
+
+检查部署进度：
+
+```bash
+kubectl -n agentconnect get pods
+kubectl -n agentconnect-agents get pods,pvc
+kubectl -n agentconnect logs deployment/agentconnect-control-plane -c migrate
+```
+
+迁移容器应成功退出，应用 Pod 应变为 Ready，agents 命名空间中应出现预热的沙箱 Pod 和 PVC。
+
+## 4. 在发布路由之前配置登录 [#4-configure-sign-in-before-publishing-the-route]
+
+Setup Server 有意不提供 Service 或公开路由。把它转发到你的工作站：
+
+```bash
+kubectl -n agentconnect port-forward deployment/agentconnect-setup-server 8091:8091
+```
+
+打开 [http://localhost:8091](http://localhost:8091)，连接 Logto，配置浏览器应用和第一个社交登录提供方，并认领初始管理员。按照[登录](/self-hosting/sign-in)完成应用、API Resource 和提供方的步骤。
+
+初始 values 文件已经为 Setup 提供了 Logto 端点。对于使用自定义登录域名的 Logto Cloud，让 `logto.endpoint` 保持为该登录源地址，`logto.mgmtEndpoint` 保持为租户的标准 Management API 源地址。
+
+在 Setup 中保存部署设置后，重启那些在启动时加载这些设置的服务——先重启控制平面，等它变为 Ready 后再重启其他服务：
+
+```bash
+kubectl -n agentconnect rollout restart deployment/agentconnect-control-plane
+kubectl -n agentconnect rollout status deployment/agentconnect-control-plane
+
+kubectl -n agentconnect rollout restart \
+  deployment/agentconnect-web \
+  statefulset/agentconnect-relay
+```
+
+这个顺序之所以重要，原因只有一个：控制台在启动时从控制平面读取登录配置，因此如果控制台与仍在提供旧配置的控制平面同时重启，它会缓存旧配置并且不显示登录按钮。再重启一次控制台即可修复；在控制平面之后再启动它则可以避免这个问题。
+
+等待滚动更新完成，在 `agentconnect-values.yaml` 中把 `route.enabled` 改为 `true`，然后再次应用 Chart：
+
+```bash
+helm upgrade agentconnect \
+  oci://ghcr.io/agentconnect-md/charts/agentconnect \
+  --version "$AGENTCONNECT_CHART_VERSION" \
+  --namespace agentconnect \
+  --values agentconnect-values.yaml \
+  --wait \
+  --timeout 15m
+```
+
+确认路由已附加到预期的 Gateway：
+
+```bash
+kubectl -n agentconnect get httproute
+kubectl -n agentconnect describe httproute agentconnect
+```
+
+如果父 Gateway 位于另一个命名空间，其监听器必须允许来自 AgentConnect 命名空间的路由。
+
+## 5. 运行第一个 Agent [#5-run-the-first-agent]
+
+打开最终的 Web URL 并登录。Daemon 池会以 **Kubernetes 集群**的身份自行注册，因此你不需要复制**添加 Daemon** 命令，也不需要安装主机 CLI。
+
+创建一个 Agent，选择 **Kubernetes 集群**，并从 Runtime 沙箱镜像上报的 Runtime 中选择一个。为它提供该 Runtime 所需的模型凭证——按 Agent 或组织作为[变量或密钥](/build-your-team/variables-and-secrets)设置，或按[为所有 Agent 提供模型凭证](#model-credentials-for-every-agent)所述为整个安装实例设置一次。然后在 Playground（控制台中显示为“试用”）中发送一条消息，确认该 Agent 获得了沙箱和持久化工作区。
+
+## 下一步 [#next]
+
+- [运维](/self-hosting/kubernetes/operations)：升级、孤立对象清理和故障排查
+- [Runtime 认证](/self-hosting/kubernetes/runtime-authentication)：API 密钥和模型端点
+- [提供方应用](/self-hosting/provider-apps)：GitHub、GitLab、Linear 和其他部署应用

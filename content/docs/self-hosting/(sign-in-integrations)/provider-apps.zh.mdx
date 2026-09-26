@@ -1,0 +1,136 @@
+---
+title: "提供方应用"
+icon: Handshake
+description: "在 Setup Server 中注册部署的 GitHub、GitLab、Gitea、Linear、Slack 和 Lark / 飞书应用。"
+---
+
+Setup Server 管理着向代码托管平台和聊天平台标识你的部署的那些应用。每张卡片都会显示需要注册的精确回调地址，并以只写方式存储凭证。在创建应用之前先设置最终的公开 URL：Setup 会从这些值推导出回调地址。
+
+## GitHub App [#github-app]
+
+当 Agent 需要访问私有仓库、需要仓库范围的 Git 凭证，或需要 GitHub Issue 和 Pull Request 触发器时，配置部署级 GitHub App。
+
+1. 设置最终的 Web、控制平面和 Relay 公开 URL。
+2. 在 Setup 中打开 **GitHub**，选择**创建 GitHub App**。manifest 流程会自动填入当前的回调地址、事件和权限。
+3. 如果使用已有的 App，保存它的身份信息和密钥，然后选择**检查匹配**。
+4. 重启控制平面和 Relay。
+5. 在 AgentConnect 中打开**设置 → GitHub**，安装该 App 并选择它的仓库。
+
+生成的 App 会请求以下权限：
+
+| 范围                                                     | 访问权限 |
+| -------------------------------------------------------- | -------- |
+| 元数据和邮箱地址                                         | 读取     |
+| 内容、Issue、Pull Request、Actions、Checks 和工作流      | 读写     |
+
+AgentConnect 会把每个安装令牌收窄到一个已授权的仓库和该 Agent 的仓库授权范围。安装的所有者仍然决定哪些仓库可用。
+
+GitHub Webhook 需要一个可访问的 HTTPS Relay。在默认的本地 HTTP 栈上，Setup 可以创建用于登录和仓库安装的 App，但在你提供 HTTPS 入口之前，Webhook 投递会保持禁用。
+
+触发器、评审和仓库行为参见 [GitHub](/connect-automate/triggers-automation/github)。
+
+## GitLab [#gitlab]
+
+当 Agent 需要访问 GitLab 项目时，配置部署的 GitLab OAuth 应用——可以是 GitLab.com，也可以是一个自行管理的实例；一个部署只能面向其中之一，不能同时面向两者。该应用是 AgentConnect 在该实例上的**管理身份**：用于项目发现、Agent 的服务账号以及 Webhook 管理。它不是 Agent 执行操作时使用的身份。
+
+1. 在 Setup 中打开 **GitLab**。对于自行管理的实例，把它的地址填入**实例基础 URL**（留空表示 GitLab.com；路径前缀和非默认端口都受支持并会被保留）。Setup 会探测你输入的地址：只有无法使用的 URL 才会阻止保存——主机不可达、证书不受信任或响应不是 GitLab API 根路径，这些只会作为警告报告，因为 Setup 和控制平面不一定处于相同的网络位置。
+2. Setup 会显示需要注册的精确**重定向 URI** 和**权限范围**。GitLab 没有用于创建 OAuth 应用的 API，所以这一步要在 GitLab 上完成：在 **User settings → Applications**、某个群组的 **Settings → Applications**，或用于整个实例的 **Admin → Applications** 中，添加一个重定向 URI *完全等于*该值的应用，保持勾选 **Confidential**，并授予这些权限范围。GitLab 只会显示一次 secret。
+3. 把 **Application ID** 和 **Secret** 粘贴到 Setup 中，选择**保存 GitLab 应用**。
+4. 重启控制平面，然后重启控制台和 Relay，因为它们缓存了控制平面提供的内容。
+5. 在控制台中打开**集成 → 代码托管平台 → 连接 GitLab**，并授权一个具备下文所述权限的账号。
+
+在 GitLab 状态存在之前，你可以随意更改这些设置，包括**清除配置**。一旦存在项目、令牌或连接，实例地址就固定了：这些数据不携带实例来源信息，因此改换目标会把一个实例的凭证发送到另一个实例。
+
+### 自行管理实例的要求 [#self-managed-instance-requirements]
+
+| 要求                        | 原因                                                                                                                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **GitLab 18.11 或更高版本** | 群组服务账号在 18.11 中才覆盖到包括 Community Edition 在内的所有版本层级。低于该版本时，AgentConnect 会拒绝置备，而不是靠猜测。                                                      |
+| **HTTPS，单一地址**         | 克隆 URL、OAuth 重定向和 GitLab 自身的 `web_url` 值只有在只有一个地址时才能一致。内外网地址拆分应当在 DNS 层解决。                                                                   |
+| **受信任的证书**            | 任何层都没有跳过验证的选项。私有 CA 可以通过[安装其证书包](/self-hosting/docker-compose/configuration#private-certificate-authorities)到每个进程和沙箱都能读取的位置来支持。 |
+| **可达的入口**              | GitLab 默认拒绝向本地网络投递 Webhook；如果你的 AgentConnect 入口解析到私有地址，集成看起来已安装，但会一直没有动静。                                                                |
+
+创建每个 Agent 的服务账号所需的权限没有任何 GitLab API 会报告，因此它在第一次设置项目时检查，而不是提前检查。在 GitLab.com 上，需要的是顶级群组的 **Owner**。在自行管理的实例上，以下两种方式任选其一即可：
+
+- **任意版本层级，包括 Community Edition**——连接一个**实例管理员**。在启用了 **Admin Mode** 的实例上，管理员 API 操作需要一个 AgentConnect 不会请求的令牌范围，因此下面的委托设置是那里唯一可行的路径。
+- **Premium 或 Ultimate**——在 **Admin → Settings → General** 下开启 **Allow top-level group Owners to create service accounts**，然后连接一个顶级群组 Owner。
+
+你的 Daemon 上不需要配置任何与该实例相关的内容：Daemon 会从它所服务的 Agent 那里获知实例信息，并据此从该实例克隆。
+
+## Gitea [#gitea]
+
+当 Agent 需要访问 Gitea 仓库时，把部署指向一个 Gitea 实例——可以是 gitea.com，也可以是一个自托管实例；一个部署只能面向其中之一，不能同时面向两者。这里**没有需要注册的应用**。Gitea 的 OAuth 提供方不会带来任何独立身份——使用 OAuth 令牌执行的操作会归属于授权用户，与该用户手动生成的令牌完全一样——因此该集成直接使用机器人用户的个人访问令牌。
+
+这样部署只需要管理一个值：
+
+1. 在 Setup 中打开 **Gitea**，把实例地址填入**实例基础 URL**。留空表示 gitea.com；路径前缀（`https://gitea.example.test/gitea`）和非默认端口都受支持，并会在各处保留。
+2. Setup 会探测你输入的地址并应用版本下限。只有无法使用的 URL 或低于 **Gitea 1.23** 的实例才会阻止保存——主机不可达、证书链不受信任或响应不是 Gitea API 根路径，这些只会作为警告报告，因为 Setup 和控制平面不一定处于相同的网络位置。
+3. 重启控制平面。
+
+**机器人用户及其令牌不属于部署状态**。每个组织创建自己的机器人用户，在其 Agent 将要工作的仓库上授予它 Admin 权限，然后在控制台的**集成 → 代码托管平台 → Gitea** 下粘贴该用户的令牌；参见 [Gitea](/connect-automate/triggers-automation/gitea)。运维人员永远不会接触该令牌。
+
+在 Gitea 状态存在之前，该地址可以随意更改。一旦存在仓库、令牌或连接，它就固定了：存储的令牌、数字仓库 ID 和 Webhook ID 都不携带实例来源信息，因此改换目标会把一个实例的凭证发送到另一个实例。请先移除所有 Gitea 仓库并断开机器人连接。
+
+### 自托管实例的要求 [#self-hosted-instance-requirements]
+
+| 要求                     | 原因                                                                                                                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Gitea 1.23 或更高版本** | 这是限定范围的令牌模型和评审请求 Webhook 都趋于稳定的版本。`GET /api/v1/version` 无需令牌即可响应，因此版本下限会在保存 URL 时检查，并在每次连接时再次检查。            |
+| **HTTPS，单一地址**      | 克隆 URL、提供给 Agent 的仓库地址以及 Gitea 自身的 `html_url` 值只有在只有一个地址时才能一致。内外网地址拆分应当在 DNS 层解决。                                        |
+| **受信任的证书**         | 任何层都没有跳过验证的选项。私有 CA 可以通过[安装其证书包](/self-hosting/docker-compose/configuration#private-certificate-authorities)来支持。                          |
+| **启用 HTTP Git**        | 克隆、拉取和推送全部通过 HTTPS 并使用机器人的令牌进行。SSH 远程仓库和明文 HTTP 不在约定范围内。                                                                        |
+| **可达的 Relay 地址**    | Gitea 默认拒绝向私有地址投递 Webhook，而且拒绝发生在投递时而不是创建时——见下文。                                                                                      |
+
+不支持 Forgejo 和 Codeberg：Forgejo 从 Gitea 1.22 分叉出来，在本集成所依赖的令牌范围、行内评论结构、Webhook 头和事件词汇上都有分歧，而且它的版本字符串解析出来低于版本下限。
+
+如果实例在仓库已经设置好之后降到了版本下限以下，它仍会继续为这些仓库提供服务——已有会话和凭证照常工作，只有新的设置和令牌替换会被拒绝。
+
+### 让 Gitea 能访问 Webhook 端点 [#let-gitea-reach-the-webhook-endpoint]
+
+Gitea 默认拒绝向回环地址和私有地址投递 Webhook，这由 `app.ini` 中 `[webhook]` 下的 `ALLOWED_HOST_LIST` 控制，它继承自 `[security]`。拒绝发生在**投递**时，而不是创建时：Webhook 会顺利安装，然后一直没有动静。
+
+因此 Gitea 投递到的 Relay 地址必须能从实例访问，或者由运维人员把它写进允许列表：
+
+```ini
+[webhook]
+ALLOWED_HOST_LIST = relay.example.test
+```
+
+该值接受主机名、CIDR 范围和内置分组（`private`、`loopback`、`external`、`*`）；优先指定单个主机，而不是放开整个分组。编辑 `app.ini` 后重启 Gitea。
+
+AgentConnect 在添加仓库的最后一步会发起一次测试投递，并等待它到达。如果始终没有到达，仓库会处于**带警告的就绪**状态，并指明这个设置，这样被拦截的地址在设置时就能看到，而不是等到第一个 Pull Request 被漏掉之后才发现。修正允许列表，然后在仓库行上点击**修复**——或者干脆等待第一次真实投递，它同样会清除该警告。
+
+## Linear [#linear]
+
+当 Agent 需要处理在 Linear 中委派给它们的 Issue 时，配置部署的 Linear OAuth 应用。一个应用服务于所有组织和所有已连接的工作区；任何组织或 Agent 都不会持有 Linear 凭证。
+
+该流程的两个部分都是公开的：控制平面终结 OAuth 回调，Relay 终结 Linear 的 Webhook，因此这两个公开 URL 都必须是 HTTPS，Setup 才会保存该应用。
+
+1. 在 Setup 中打开 **Linear**。它会显示需要注册的精确**回调 URL** 和 **Webhook URL**。
+2. Linear 没有用于创建 OAuth 应用的 API，所以请手动创建。在 Linear 中打开 **Settings → API → OAuth applications**，使用你自己的产品名称和图标添加一个应用，并填入该回调 URL。启用 Webhook，勾选 **Agent session events**，并把它们指向 Setup 显示的 Webhook URL。
+3. 如果除创建它的工作区之外还有其他工作区要连接它，请把应用设为**公开**。Linear 不会审核它，是否在 Linear 的集成目录中上架也是可选的。
+4. 把 **Client ID**、**Client secret** 和 **Webhook 签名密钥**粘贴到 Setup 中，选择**保存 Linear 应用**。
+5. 重启控制平面和 Relay。
+
+在这些凭证存在之前，控制台的 Linear 界面会提示 Linear 尚未设置。凭证存在后，就可以从某个 Agent 的**集成 → 添加集成 → Linear** 连接工作区；参见 [Linear](/connect-automate/triggers-automation/linear)。
+
+轮换签名密钥是一项部署级操作：在 Setup 中保存新值，所有已连接的工作区都会被重新打上该密钥。切换期间投递可能会失败几秒钟，Linear 会重试。
+
+## Slack 部署应用 [#slack-deployment-app]
+
+Setup 可以为内置的 `agentconnect` Agent 和可选的 Slack 登录创建一个部署级 Slack 应用。这并不能取代 [Slack](/connect-automate/chat-platforms/slack) 中推荐的按 Agent 配置的机器人集成。
+
+1. 配置可访问的 HTTPS Logto、Web、控制平面和 Relay 源地址。
+2. 当 Setup 提示时，创建一个临时的 Slack 应用配置令牌。
+3. 在 Setup 中打开 **Slack**，选择**创建 Slack 应用**。
+4. 重启控制平面和 Relay。
+
+Setup 会构建并检查当前的 Slack manifest，包括 OAuth、Events API 和交互回调。在默认的 HTTP localhost 拓扑上无法使用 Slack 登录；本地初始引导请使用 Google。
+
+## Lark 和飞书租户应用 [#lark-and-feishu-tenant-apps]
+
+**Lark** 和**飞书**卡片配置一个区域登录应用，作为部署的租户锚点。AgentConnect 用它来确保只有属于同一个可信工作区的多个机器人应用才会被接受；登录应用本身不是 AgentConnect 聊天机器人。
+
+选择**创建 Lark 应用** / **创建飞书应用**，或保存已有凭证。对于已有应用，请启用并发布名为**获取企业信息**（`tenant:tenant:readonly`）的提供方权限。保存后重启控制平面。
+
+机器人设置和投递模式参见 [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)。

@@ -1,0 +1,86 @@
+---
+title: "集成概览"
+icon: Plug
+description: "Agent 如何接入各个渠道——机器人、集成、共享机器人，以及在任何对话中都可用的命令。"
+---
+
+import imgAddIntegration from '@/public/images/add-integration.png'
+
+**集成**把一个 Agent 与一种触达它的方式绑定在一起。支持的类型如下：
+
+| 平台                                                          | Agent 响应的内容                                | 你需要提供                                        |
+| ------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------- |
+| [Slack](/connect-automate/chat-platforms/slack)               | 频道、线程和私信                                | Cloud 上的“添加到 Slack”，或自定义 Slack 应用     |
+| [Telegram](/connect-automate/chat-platforms/telegram)         | 私信和群组消息                                  | 来自 @BotFather 的机器人令牌                      |
+| [Discord](/connect-automate/chat-platforms/discord)           | 频道、线程和私信                                | 机器人令牌；AgentConnect 会生成邀请链接           |
+| [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)   | 群组 @ 提及和一对一聊天                         | 一键应用配置，或 App ID + 密钥                    |
+| [GitHub](/connect-automate/triggers-automation/github)        | 所监视仓库中的 Issue、PR 和评论                 | AgentConnect 的 GitHub App                        |
+| [GitLab](/connect-automate/triggers-automation/gitlab)        | 所监视项目中的 Issue、Merge Request 和评论      | 一个 OAuth 连接；每个 Agent 拥有自己的机器人      |
+| [Gitea](/connect-automate/triggers-automation/gitea)          | 所监视仓库中的 Issue、PR、评论和评审            | 每个组织一个机器人用户的令牌                      |
+| [Linear](/connect-automate/triggers-automation/linear)        | 委派给该应用的 Issue，或按名称的提及            | 在 Linear 弹窗中批准工作区                        |
+| [Webhook](/connect-automate/triggers-automation/webhooks)     | 任何能 POST JSON 的东西                         | 无需提供——我们为你生成端点                        |
+
+在 Agent 页面（**集成 → 添加集成**）或 Agent 列表中添加集成。
+
+<Image src={imgAddIntegration} alt="添加集成并选择平台" width={640} />
+
+## 机器人是身份，集成是绑定 [#bots-are-identities-integrations-are-bindings]
+
+对于聊天平台来说，真正存在于你的 Slack 工作区、Telegram 群组、Discord 服务器或 Lark / 飞书租户中的是一个**机器人**——一个拥有自己令牌的持久身份。集成把*这个机器人*绑定到*一个 Agent*。
+
+- 删除集成会**释放机器人**而不是销毁它——可以通过**使用已有机器人**选择器把它复用给另一个 Agent。
+- 机器人在**设置 → Bots** 中按组织统一管理：参见[机器人](/connect-automate/chat-platforms/bots)。
+
+平台卡片会根据 Agent 所在 Daemon 支持的能力启用。在 AgentConnect Cloud 上，Slack 和 Lark / 飞书提供引导式设置，而 Telegram 和 Discord 从机器人令牌开始。自托管的运维人员可以在各平台的设置中选择直接连接，或由 Relay（中继）承接的回调。
+
+## 绑定频道 [#binding-channels]
+
+没有频道选择器：**把机器人邀请进频道，它就会出现在 AgentConnect 中**。随后每个已加入的频道都会显示在 Agent 的集成卡片上，并带有各自的触发条件：
+
+- **@ 提及**——默认值；未提及的后续消息会在 Agent 已加入的线程（thread）中继续。
+- **所有消息**——对频道里的每条消息都运行该频道的 Agent。
+- **关闭**——不在该频道中响应，包括提及、已有的线程关联、控制命令或共享机器人回退。
+
+关闭会让机器人留在频道中、保留过去的会话，只是屏蔽入站激活。定时任务或另一个 Agent 的主动交接仍然可以在那里发消息。机器人实际的频道或服务器成员身份请在聊天平台上管理。
+
+[Linear](/connect-automate/triggers-automation/linear) 的形态相同，只是名单不同：它的对话是工作区的**团队**，在你连接的那一刻就会列出；团队行只接受 **@ 提及**或**关闭**——每个 Linear 事件本来就是发给该应用的。
+
+### 私信 [#direct-messages]
+
+有人给机器人发消息后，私信就会出现，每个 Agent 各自控制自己的私信对话。一对一私信使用**开启 / 关闭**。群组对话使用与频道相同的触发条件选项。受限 Agent 的对话初始为关闭，直到有权限的编辑者启用它们。
+
+### 共享机器人 [#shared-bots]
+
+通常是一个机器人对应一个 Agent。**共享 Slack 机器人**可以通过单一身份服务多个 Agent，而已连接的 **Linear 工作区**始终如此——你在它上面启用的每个 Agent 都通过部署中唯一的 Linear 应用工作。在**设置 → Bots** 中展开机器人，为每个频道选择**默认分发** Agent：Slack 里只有一个“@Assistant”，背后按频道由不同的专家 Agent 负责。
+
+频道触发条件作用于共享机器人。将其切换为**关闭**会停止该频道中经由该机器人的路由。
+
+### 跨平台交接 [#cross-platform-handoffs]
+
+把同一个 Agent 连接到多个聊天平台后，它就可以从一个对话向另一个对话发起主动交接。只在两个你信任并已批准互通信息的消息工作区之间使用此功能。目标端会开启自己的关联会话，而不是合并两个平台的会话记录。参见[在受信任的工作区之间交接对话](/how-to-guides/hand-off-conversations-across-messaging-platforms)。
+
+### 受限 Agent [#restricted-agents]
+
+当 Agent 的团队可见范围为**指定成员**时，它的聊天对话同样受限。新发现的频道和私信初始为**关闭**，直到有权限的编辑者在集成卡片上逐一启用。每个 Agent 之后也可以选择关闭作为显式静音。参见[团队可见范围](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes)。
+
+## 对话内命令 [#in-conversation-commands]
+
+使用这些命令可以直接控制当前对话，而不必让模型来做。Slack 使用 `!`，因为 Slack 把 `/` 命令保留给了应用。
+
+| 操作                       | 其他平台                            | Slack                      |
+| -------------------------- | ----------------------------------- | -------------------------- |
+| 停止并静音                 | `/stop`                             | `!stop`                    |
+| 取消当前轮次               | `/cancel`                           | `!cancel`                  |
+| 恢复                       | `/resume`                           | `!resume`                  |
+| 排队一条消息               | `/queue <message>`                  | `!queue <message>`         |
+| 查看会话状态               | `/status`                           | `!status`                  |
+| 更改模型、推理强度或权限   | `/models`、`/effort`、`/permission` | 相同的命令，改用 `!`       |
+| 切换快速模式               | `/fast on`、`/fast off`             | `!fast on`、`!fast off`    |
+
+**停止**还会让对话静音，直到有人再次提及 Agent 或使用**恢复**。**取消**只中断当前轮次。
+
+运行时设置命令（`/models`、`/effort`、`/permission`、`/fast`）只有在 Agent 的**允许在聊天中更改**设置开启时才生效。在 Telegram 和 Discord 上，这些命令会出现在原生命令菜单中，注册的名称是 `/models` 而不是 `/model`（手动输入时两者都接受）。
+
+## Agent 应该有多“健谈”？ [#how-chatty-should-an-agent-be]
+
+Agent 的**输出模式**决定哪些内容会送达平台：**极简**只保留一条实时更新的回复，**低**会发布回复，**中**会加上工具和计划，**高**还会包含推理和工具输出，**无**则只把运行保留在 Web 会话中。完整的会话记录始终可以在[会话](/operate-govern/sessions)中查看。

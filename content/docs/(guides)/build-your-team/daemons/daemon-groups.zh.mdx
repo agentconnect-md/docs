@@ -1,0 +1,171 @@
+---
+title: "Daemon 组"
+icon: Boxes
+description: "让多个 Daemon 共享 Agent，使 Agent 在一台机器宕机时继续运行，并让它的会话可以在多台机器上运行。"
+---
+
+import imgDaemonGroup from '@/public/images/daemon-group.png'
+import imgDaemonGroupEdit from '@/public/images/daemon-group-edit.png'
+import imgRunsOnGroup from '@/public/images/runs-on-group.png'
+import imgSessionRunsOn from '@/public/images/session-runs-on.png'
+
+<Callout type="info">
+**Kubernetes 是大规模运行 Agent 的推荐方式**。[Kubernetes 部署](/self-hosting/kubernetes/deploy)是面向生产环境的方案：其安装级 Daemon 池让 Agent 在可替换的成员之间持续运行，每个会话都在自己的沙箱 Pod 中、基于同一个共享存储运行，无需逐台机器设置。当 Agent 运行在你自己运维的机器上时，再选择 Daemon 组。
+</Callout>
+
+**Daemon 组**是你连接到组织的一组具名 Daemon。把 Agent 放置在组上而不是单个 Daemon 上，会带来两项相互独立的功能：
+
+| 功能 | 作用 | 如何启用 |
+| --- | --- | --- |
+| [**故障转移**](#failover) | 同一时间由一个成员为 Agent 提供服务。当该成员停止时，另一个成员接管该 Agent。 | 用两个或更多 Daemon 创建一个组，并把 Agent 放置在组上。 |
+| [**并行会话**](#parallel-sessions) | Agent 的隔离会话可以在组内的其他成员上运行，而不仅仅是在为它提供服务的成员上。 | 为该组打开**在组内分散会话**，并在每台应运行这些会话的机器上设置 `sandbox.share`。 |
+
+故障转移不依赖并行会话即可工作。并行会话建立在故障转移之上：它只适用于放置在组上的 Agent。
+
+## 开始之前 [#before-you-start]
+
+**创建一个组**。打开**基础设施**，进入 **Daemon 组**，选择**新建组**。为它命名、挑选它的 Daemon，并保持**在组内分散会话**关闭，除非你正在设置[并行会话](#parallel-sessions)。一个 Daemon 同一时间只能属于一个组。你也可以在 Daemon 自己的页面上用 **加入 \<group\>** 和 **离开 \<group\>** 来添加或移除它。
+
+加入组不会移动任何东西。已直接放置在该 Daemon 上的 Agent 继续在那里运行，组的页面会把它们列为**固定**。离开组会把该组的 Agent 交给其余成员。
+
+组的页面显示它的成员、哪个成员正在**服务中**、组上的 Agent 及其活跃会话。**Runtime** 只列出每个服务中成员都提供的内容，因为组上的 Agent 会在为它提供服务的任一成员上运行。
+
+<Image src={imgDaemonGroup} alt="Daemon 组的页面：两个服务中的成员、它们的负载和固定的 Agent，以及每个服务中成员都提供的 Runtime" width={820} />
+
+## 故障转移 [#failover]
+
+### 作用 [#what-it-does]
+
+放置在组上的 Agent 同一时间由一个成员提供服务。该成员运行它的轮次、持有它的聊天平台连接，并运行它的定时任务和触发器。如果该成员停止服务，另一个成员会接管该 Agent，在需要时安装它，然后继续：
+
+- **重启或升级**会先排空该成员，因此排空一完成，另一个成员就会立即接管。
+- **未经排空就消失的成员**（崩溃、断电、网络丢失）会保留该 Agent，直到其租约到期，大约两分钟。之后另一个成员接管它。
+
+Agent 会留在接管它的成员上。当之前的成员恢复时，Agent 不会回到那里，也不会在成员之间重新平衡。
+
+### 设置步骤 [#set-it-up]
+
+1. 连接两个或更多 Daemon，并用它们[创建一个组](#before-you-start)。
+2. 确保每个成员都能运行该 Agent：在每个成员上，Agent 的 Runtime 已安装并登录、它的 MCP 服务器可用、它的[执行策略](/operate-govern/sandboxing#pick-an-execution-strategy)可用。组的 **Runtime** 列表显示每个服务中成员都提供的内容。**执行策略**选择器的范围更广：它列出至少一个服务中成员提供的每种策略。会话若要在缺少该 Agent 策略的成员上运行，会在那里被拒绝；它永远不会退回到更弱的隔离边界。
+3. 把 Agent 放置到组上：在 Agent 的**配置**中，在**运行位置**里选择该组。选择器会显示“该分组中任意一个 Daemon 都可以为此 agent 服务。”
+
+你也可以直接在组上创建 Agent。
+
+<Image src={imgRunsOnGroup} alt="运行位置选择器，在单个 Daemon 旁列出了一个 Daemon 组" width={560} />
+
+### 哪些会随之转移，哪些不会 [#what-carries-over-and-what-doesnt]
+
+| 转移到新成员 | 留在运行它的成员上 |
+| --- | --- |
+| Agent 已保存的定义、集成、定时任务和触发器 | 对话的会话记录和每个会话的 Runtime 状态 |
+| 托管记忆——组上的 Agent 把它保存在 AgentConnect 中 | Runtime 自身的原生记忆 |
+| GitHub、GitLab 和 Gitea 工作区，会在新成员上重新克隆 | 空白工作区，以及任何工作区中未提交的工作 |
+
+实际上，故障转移后继续的对话会在新成员上启动一个全新的 Runtime 会话。曾在之前成员上运行的 Webchat 对话会说明这一点，而不是在没有历史记录的情况下作答。希望在故障转移后保留的工作，请提交并推送。
+
+组上使用托管记忆的 Agent 始终把记忆保存在 AgentConnect 中，而不是某一个 Daemon 上，因此每个成员看到的记忆都相同。
+
+### 可选：共享会话历史 [#optional-share-session-history]
+
+默认情况下，每个成员把会话保存在自己的存储中。成员也可以改为共享一个 PostgreSQL 数据库，这样无论哪个成员为 Agent 提供服务，会话条目和会话记录都可见。把连接信息放在 Daemon 根目录下、与 `config.json` 并列的一个文件中：
+
+```json
+{ "version": 1, "databaseUrl": "postgresql://agentconnect:<password>@db.example.test:5432/agentconnect", "maxConnections": 4 }
+```
+
+然后在 `config.json` 中让 Daemon 指向它：
+
+```json
+{ "store": { "backend": "postgres", "configFile": "data-plane.json" } }
+```
+
+在每个成员上都做此设置，指向同一个数据库，并重启每个 Daemon。连接文件应仅对 Daemon 的用户可读。
+
+- 存储是按机器设置的，因此它作用于该 Daemon 上的每个 Agent，而不仅仅是组上的 Agent。
+- 它需要控制平面。在机器自己的 Agent 目录中定义的 Agent 不会在其上提供服务。
+- 不会迁移任何数据：切换到 PostgreSQL 的 Daemon 会在没有先前本地历史的情况下启动。
+- 共享存储承载的是记录，而不是 Runtime 自身的状态。Runtime 曾在之前成员上运行的会话在新成员上仍会全新启动，除非它是通过[并行会话](#parallel-sessions)在另一个成员上运行的。
+
+## 并行会话 [#parallel-sessions]
+
+### 作用 [#what-it-does-1]
+
+没有并行会话时，Agent 的每个会话都在为它提供服务的成员上运行。启用并行会话后，每个新的**隔离**会话会被放置到加入它之后最不满的成员上，衡量标准是每台机器的[会话容量](#size-each-machine)。已达到容量的成员会被跳过，平局时留在服务中的成员上。当每台机器容量相同时（默认如此），这就是运行隔离会话最少的那个成员。会话在整个生命周期内都保持在它启动时所在的机器上，服务中的成员继续处理对话，并把它转发到运行该会话的机器。
+
+会话在另一台机器上如何运行取决于 Agent 的**执行策略**：
+
+| 执行策略 | 在另一个成员上的会话 |
+| --- | --- |
+| `host` | 那台机器上的一个进程，位于其自己的会话目录中。仅支持 Linux。 |
+| `microsandbox` | 那台机器上的一个 microsandbox 虚拟机。需要那里有可用的 microsandbox。 |
+| `srt` | 那台机器上的一个 SRT 沙箱。需要那里有可用的 `srt`。 |
+
+### 要求 [#requirements]
+
+- Agent 位于组上（已设置[故障转移](#set-it-up)）。
+- 每个会话都有自己的工作区：**工作树**已开启（当 Agent 的执行策略是沙箱时，标签为**会话隔离**）。共用一个工作区的会话始终留在服务中的成员上。
+- 每个出借容量的成员都提供该 Agent 的执行策略，并且已登录该 Agent 的 Runtime、可使用该 Agent 的模型。其他成员会被跳过。
+- 成员之间能够通过 TCP 直接互相访问。出借容量的成员会在所有网络接口上监听一个端口。端口在 Daemon 启动时选定，其他成员通过该 Daemon 连接 AgentConnect 时所用的地址来访问它，因此请允许成员之间的入站连接。
+
+### 开启 [#turn-it-on]
+
+并行会话需要两处各自独立的同意设置：
+
+1. **组**。打开组的**编辑组**，并打开**在组内分散会话**。关闭时，组内任何 Agent 的会话都不会移动。
+
+   <Image src={imgDaemonGroupEdit} alt="编辑组：选中了两个 Daemon，并打开了“在组内分散会话”" width={420} />
+
+2. **每台出借容量的机器**。在每个应运行其他成员会话的成员上，把以下内容加入其 `config.json` 并重启该 Daemon：
+
+   ```json
+   { "sandbox": { "share": true } }
+   ```
+
+   这是机器所有者的决定，因此它只存在于机器自己的配置文件中，在 Daemon 启动时读取，无法从控制台设置。默认关闭。
+
+没有 `sandbox.share` 的成员仍然为 Agent 提供服务并运行自己的会话；只是不会运行其他成员的会话。
+
+### 为每台机器设置容量 [#size-each-machine]
+
+每个成员的会话容量是其 `config.json` 中的 `limits.maxConcurrentSessions`，默认 32。它是该机器为其所在组运行的会话数上限（包括它自己的隔离会话），并决定每台机器分得多少新会话。当成员规格不同时，请按各自能运行的量为每台机器设置成比例的容量，并重启该 Daemon。例如，一台大型工作站和两台较小的机器可以使用：
+
+| 机器 | `config.json` |
+| --- | --- |
+| 128 GB 工作站 | `{ "limits": { "maxConcurrentSessions": 8 } }` |
+| 32 GB 机器 | `{ "limits": { "maxConcurrentSessions": 2 } }` |
+| 16 GB 机器 | `{ "limits": { "maxConcurrentSessions": 1 } }` |
+
+这样工作站会分得更大份额的新会话。与 `sandbox.share` 一样，容量是机器所有者的设置，无法从控制台设置。达到容量时只会拒绝其他成员的会话：成员自己的会话仍然在它上面运行。
+
+### 共享一台机器会出借什么 [#what-sharing-a-machine-lends]
+
+- **它的 Runtime 登录**。在出借机器上运行的会话使用那台机器的 Runtime 登录或 API 密钥设置（例如它的 Codex 或 Claude 登录）及其沙箱设置。Agent 的提供方凭证、密钥和仓库凭证仍然来自服务中的成员，通过加密连接传输。只共享那些你愿意让组内 Agent 使用其 Runtime 账号的机器。
+- **CPU、内存和磁盘**，上限为该机器的[会话容量](#size-each-machine)。
+- **一个网络端口**，如[要求](#requirements)中所述。
+
+### 查看会话在哪里运行 [#see-where-a-session-runs]
+
+会话的**详情**中会在**运行于**显示运行它的机器。留在服务中成员上的会话会说明原因：
+
+<Image src={imgSessionRunsOn} alt="会话详情：“运行于”显示服务中的成员，原因为“负载最低”" width={300} />
+
+| 原因 | 含义 |
+| --- | --- |
+| **未加入组** | 该 Agent 放置在单个 Daemon 上，而不是组上。 |
+| **未开启分散** | 该组的**在组内分散会话**开关处于关闭状态。 |
+| **共享工作区** | 该会话使用 Agent 的共享工作区，而不是自己的工作区。 |
+| **负载最低** | 服务中的成员相对其容量而言最空闲。 |
+| **没有成员能运行** | 没有出借成员能提供该会话所需的条件。 |
+| **成员均已满** | 每个出借成员都已达到其会话容量。 |
+| **控制面不可达** | 当时无法决定放置位置。 |
+
+### 如果出借机器消失 [#if-a-lending-machine-goes-away]
+
+在另一台机器上运行的会话在整个生命周期内都保持在那台机器上。当那台机器短暂离线时，该会话的轮次会以可重试的错误失败。如果它离线超过大约 10 分钟，该会话会在另一个成员上重新启动，但不包含丢失机器上未提交的工作。
+
+## 限制 [#limitations]
+
+- 故障转移后 Agent 不会重新平衡，恢复的成员也不会取回它的 Agent。
+- 没有共享存储时，对话历史不会随 Agent 转移到新成员。
+- 出借容量的机器必须是 Linux，能够直接互相访问，并在防火墙中放行出借端口。该端口不固定。
+- 多宿主机器会通告它用于连接 AgentConnect 的地址。目前尚无覆盖选项。

@@ -1,0 +1,89 @@
+---
+title: "GitLab"
+icon: GitLab
+description: "连接 GitLab.com 或你自己的实例，为每个 Agent 提供独立的机器人账号，并由 Issue 和 Merge Request 触发。"
+---
+
+import imgGitlabCodeHosts from '@/public/images/gitlab-code-hosts.png'
+import imgGitlabAddIntegration from '@/public/images/gitlab-add-integration.png'
+import imgGitlabAgentCard from '@/public/images/gitlab-agent-card.png'
+
+GitLab 集成让 Agent **监视一个项目**：Issue、Merge Request 和评论会成为会话，Agent 则以 Merge Request 备注和评审的形式回写。它在 **GitLab.com** 和**自管理实例**上的工作方式相同——一个部署只连接其中之一，绝不会同时连接两者。
+
+GitHub 集成通过安装在组织上的一个 App 行事，而 GitLab 则为**每个 Agent 提供独立的用户**：一个群组服务账号，在你首次为该 Agent 设置项目时创建。Agent 在 GitLab 上做的一切——克隆、推送、评论、评审——都归属于这个账号，撤销它就恰好撤销了一个 Agent。
+
+## 连接 GitLab [#connect-gitlab]
+
+管理员在**集成 → 代码托管平台 → 连接 GitLab** 中为部署连接一次。浏览器完成 OAuth 授权后，所连接的账号成为部署的**管理身份**：AgentConnect 用它来发现项目、创建各 Agent 的服务账号，以及管理项目 Webhook。它不是 Agent 行事时使用的身份。
+
+在 GitLab.com 上，请连接一个是你项目所在**顶级群组的 Owner** 的账号：创建每个 Agent 的服务账号需要这个权限，项目级的 Maintainer 权限并不够。在 AgentConnect OSS 上，运维人员需要先[配置部署的 GitLab OAuth 应用](/self-hosting/provider-apps#gitlab)——对于自管理实例，该页面还说明了实例必须提供什么，以及在实例上持有创建权限的两种方式。
+
+连接按组织划分，一个部署只对应一个实例。一旦存在 GitLab 状态，实例地址就不能再更改：连接、令牌和数字项目 ID 都不携带实例来源信息，因此重新指向会把一个实例的凭证发送给另一个实例。
+
+## 为 Agent 分配项目 [#give-an-agent-a-project]
+
+没有单独的“在此项目上安装”步骤。当你第一次把项目交给某个 Agent——作为它的[工作区](/build-your-team/agents/workspaces-and-repos)，或作为已授权的其他仓库——项目就在那一刻完成设置。设置会做三件事：
+
+1. 如果该 Agent 还没有**服务账号**，就在项目的顶级群组中为它创建一个；
+2. 把该账号以 **Developer** 身份加入项目；以及
+3. 协调 AgentConnect 用来投递事件的项目 **Webhook**。
+
+项目必须位于**群组**中。个人命名空间下的项目无法设置，因为服务账号归群组所有——AgentConnect 会报告 `personal_namespace_unsupported`，并且不会创建任何东西。
+
+**集成 → 代码托管平台**把 GitLab 卡片显示为你的 Agent 名册，以及每个 Agent 持有的服务账号。需要关注的项目会被收在一个 **_N_ 个项目需要关注**的标记后面；展开它即可对某一个进行操作。每个项目行提供三个操作：
+
+- **修复**会重新运行上述配置——在有人手动删除了机器人或 Webhook 之后使用它。
+- **移除**会删除 Webhook 和项目的机器人，并让 Agent 停止在那里应答。项目的代码和历史不会有任何改变。
+- **接管管理权限**把项目转移到你自己的连接上。当设置该项目的连接已被断开，或拥有它的人已经离开时使用它：清理需要那个账号自己的令牌，因此如果不接管，项目就无法移除，它所属的连接也无法释放。
+
+<Image src={imgGitlabCodeHosts} alt="集成 → 代码托管平台下的 GitLab 卡片：管理连接，然后每个 Agent 一行，列出其服务账号所属的群组" width={800} />
+
+连接本身有两个阶段。**断开连接**会释放它但保留该行，删除已释放的行才会移除它。只要连接仍在管理项目，移除就会被拒绝——先接管或移除那些项目，卡片会提示这一点。
+
+GitLab.com Free 允许**每个顶级群组 100 个服务账号**；自管理的 Free 或 Community Edition 实例允许**整个实例**共 100 个。计数对象是拥有项目的 Agent，被拒绝的创建会报告为配额失败，已有账号不受影响。
+
+## 监视项目 [#watch-a-project]
+
+在 Agent 页面：**集成 → 添加集成 → GitLab**。
+
+<Image src={imgGitlabAddIntegration} alt="选择了 GitLab 的添加集成对话框：选择项目，选择 Issue 或 Merge Request，以及 Agent 被唤醒的积极程度" width={560} />
+
+触发器依托已有的授权，从不创建授权：项目必须已经是该 Agent 的工作区或其已授权的其他仓库之一，否则添加监视项会被拒绝。
+
+选择项目、监听对象——Issue、Merge Request、Release 或任意组合——以及 Agent 被唤醒的积极程度：
+
+- **创建时**——当 Issue 或 Merge Request 被创建时，以及之后在该类型中被明确提及时。
+- **任意更新**——创建，加上新修订、标签和回复。
+- **@ 提及**——当 Agent 被 @ 提及时。
+
+Release 只提供**已发布**这一个选项。
+
+<Image src={imgGitlabAgentCard} alt="一个 Agent 的 GitLab 卡片，其中有三个被监视的项目，每个都显示 Merge Request 类型及其触发条件" width={640} />
+
+## 谁可以触发 Agent [#who-may-trigger-an-agent]
+
+AgentConnect 在事件发生的那一刻，通过 GitLab API 检查内容作者的**当前项目成员身份**。Webhook 携带的标签从不被视为权威依据。
+
+只有在目标项目上拥有 **Developer 或更高**权限的成员才能启动 Agent。成员身份处于等待中、已过期、级别更低、缺失或根本无法获取时，一律视为无权限——Agent 不会运行。直接成员、祖先群组成员和受邀群组成员都算数，取最高的有效级别。
+
+> 这比 GitHub 集成更严格，后者接受 triage 角色。GitLab 的 Reporter 角色不具备 Merge Request 权限，因此门槛设在 Developer。
+
+来自项目外部的 Merge Request 本身不会启动 Agent。当前拥有 Developer 或更高权限的成员可以通过明确提及 Agent 来请求第一轮工作。触发权限与 Agent 之后能做什么是两回事：评论、评审和推送仍然需要你授予该 Agent 的仓库授权。
+
+## Agent 会做什么 [#what-the-agent-does]
+
+每个符合条件的事件都会在 Agent 的 Daemon 上启动一个会话，并以该事件作为上下文；这些会话会出现在[会话](/operate-govern/sessions)中，并链接回 GitLab。
+
+- **普通回复**——来自 Agent 服务账号的一条备注。
+- **评审**——行内评论先起草，然后作为一次评审统一发布。**批准**是一次已发布的评审，加上一次以被评审提交为围栏的批准调用。**请求修改**在 Premium 及以上版本会阻止合并；在 Free 版本上可见但仅供参考。AgentConnect 从不编辑评审者列表。
+- **运行状态**——Merge Request 上的一条备注，随运行进展更新，并链接回控制台中的会话。GitLab Free 没有外部状态检查，因此这条备注就是运行的状态展示面，而不是流水线条目。
+
+要让 Agent 在某个线程上再次运行，可以重新请求其服务账号作为评审者、提及它，或从控制台重新运行该会话。
+
+Git 访问使用通过本地套接字提供给 Agent 沙箱的短期令牌：**没有任何 GitLab 凭证会被写入磁盘**，并且每个 Agent 只能访问其自身账号可以访问的内容。
+
+## 自管理实例 [#self-managed-instances]
+
+上述一切在你自己的实例上同样适用。不同之处在于运维工作，每个部署只需做一次：把部署指向该实例、注册 OAuth 应用，以及满足实例必须提供的条件（GitLab 18.11+、一个 HTTPS 地址、受信任的证书、GitLab 能够投递到的入口）。这些全部记录在 [AgentConnect OSS 上的 GitLab](/self-hosting/provider-apps#gitlab) 中。
+
+实例的任何信息都不需要在你的 Daemon 上配置：Daemon 会从它所服务的 Agent 那里获知。

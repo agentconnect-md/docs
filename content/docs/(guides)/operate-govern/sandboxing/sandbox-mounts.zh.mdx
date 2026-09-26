@@ -1,0 +1,101 @@
+---
+title: "挂载"
+icon: FolderInput
+description: "以只读或可写方式与沙箱化的 Agent 共享主机目录。"
+---
+
+使用 `sandbox.mounts` 让沙箱化的 Agent 访问主机目录，例如参考数据、缓存或工具链。工作区和 Runtime 主目录由 Daemon 自动提供。
+
+## 挂载选项 [#mount-options]
+
+| 字段     | 含义                                                     |
+| -------- | -------------------------------------------------------- |
+| `source` | 已存在的主机路径（`~` 表示 Daemon 用户的主目录）         |
+| `target` | 沙箱内的路径（`~` 表示 microsandbox 中的会话主目录）     |
+| `mode`   | `readonly`（默认）、`writable` 或 `overlay`              |
+
+| 模式       | 主机文件   | 会话内的更改             | 策略                              |
+| ---------- | ---------- | ------------------------ | --------------------------------- |
+| `readonly` | 可读       | 不会通过此挂载写入       | 两者                              |
+| `writable` | 可读可写   | 与主机及其他会话共享     | 两者                              |
+| `overlay`  | 可读       | 每个会话私有             | microsandbox；在 SRT 下为只读     |
+
+路径在展开 `~` 之后必须是绝对路径。源路径必须在 Daemon 启动前就已存在。可写挂载需要主机权限允许 Runtime 用户写入（在 microsandbox 内通常是 UID 10001）。
+
+`sandbox.mounts` 对 Daemon 提供的每一种沙箱策略都生效。某个策略无法满足的挂载（例如 SRT 下 `target` 与源路径不同）会使该策略不可用，原因即为对应的校验错误；Daemon 仍会启动。如果你不使用该策略，请关闭它，例如 `"srt": false`。见[配置 Daemon](/operate-govern/sandboxing#configure-the-daemon)。
+
+## SRT：共享可写缓存 [#srt-share-a-writable-cache]
+
+SRT 要求 `source` 和 `target` 解析为同一路径：
+
+```json
+{
+  "sandbox": {
+    "mounts": [
+      {
+        "source": "/srv/agent-cache/pnpm",
+        "target": "/srv/agent-cache/pnpm",
+        "mode": "writable"
+      }
+    ],
+    "env": {
+      "PNPM_CONFIG_STORE_DIR": "/srv/agent-cache/pnpm"
+    }
+  }
+}
+```
+
+SRT 挂载只会增加访问权限。`readonly` 条目无法收回工作区或可写挂载已经授予的写权限。
+
+## microsandbox：映射主机目录 [#microsandbox-map-a-host-directory]
+
+microsandbox 可以把目录暴露在不同的路径下：
+
+```json
+{
+  "sandbox": {
+    "mounts": [
+      {
+        "source": "/srv/reference-data",
+        "target": "/reference",
+        "mode": "readonly"
+      }
+    ]
+  }
+}
+```
+
+挂载不能替换受保护的 Runtime 路径，也不能把不同的源映射到同一目标。嵌套挂载使用自己的读写模式。
+
+## microsandbox：共享缓存但私有写入 [#microsandbox-share-a-cache-with-private-writes]
+
+使用 `overlay` 可以复用已填充的主机缓存，同时让会话内的更改保持私有：
+
+```json
+{
+  "sandbox": {
+    "mounts": [
+      {
+        "source": "/srv/agent-cache/pnpm",
+        "target": "~/.local/share/pnpm/store",
+        "mode": "overlay"
+      }
+    ],
+    "env": {
+      "PNPM_CONFIG_STORE_DIR": "${HOME}/.local/share/pnpm/store"
+    }
+  }
+}
+```
+
+主机目录保持只读。每个会话的新增与删除在虚拟机停止/启动后仍然保留，在虚拟机重建或移除时消失。某个会话下载的新软件包不会被加入共享的主机缓存。
+
+会话使用主机缓存期间，请保持它稳定不变。overlay 的源必须是目录，且 overlay 的目标不能与其他挂载重叠。
+
+## 应用配置更改 [#apply-configuration-changes]
+
+`sandbox.env` 为沙箱化的 Runtime 提供环境变量默认值。Agent 和 Runtime 设置可以覆盖它们，但由 Daemon 控制的 HOME、XDG 和安全相关设置除外。值按字面量处理（上面示例中的 `${HOME}` 是由 pnpm 自己展开的）。
+
+更改配置后请重启 Daemon。仅涉及环境变量的更改在 Runtime 重启时生效。对挂载、虚拟机资源、凭证布局或镜像内容的更改会在刷新或下次使用时重建受影响的虚拟机。挂载自主机的文件会保留；虚拟机本地文件、Docker 数据和 overlay 写入会被重置。
+
+对于旧版配置，请把 `security.sandboxReadRoots` 替换为 `readonly` 挂载，把 `security.sandboxWriteRoots` 替换为 `writable` 挂载。SRT 下保持 `source` 与 `target` 相同。转换完成后删除旧字段。同样，把挂载中旧的 `readOnly` 字段替换为 `mode`。只要还有任何旧字段存在，Daemon 就会拒绝启动。

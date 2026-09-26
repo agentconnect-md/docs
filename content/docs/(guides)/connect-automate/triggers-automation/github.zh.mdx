@@ -1,0 +1,119 @@
+---
+title: "GitHub"
+icon: GitHub
+description: "由 Issue、Pull Request 和评论触发 Agent——并让它们以评论的形式回复。"
+---
+
+import imgGithubIntegration from '@/public/images/github-integration.png'
+
+GitHub 集成让 Agent **监视一个仓库**，或某个安装实例下的全部仓库：新的 Issue、Pull Request 和评论会成为会话，Agent 则可以用 PR / Issue 评论的形式回写。它依托部署的 [AgentConnect GitHub App](/build-your-team/agents/workspaces-and-repos)。AgentConnect Cloud 不需要为每个仓库配置 Webhook；AgentConnect OSS 的运维人员则在 Relay 上配置一个部署级别的 GitHub App Webhook。
+
+## 监视仓库 [#watch-a-repository]
+
+在 Agent 页面：**集成 → 添加集成 → GitHub**。
+
+<Image src={imgGithubIntegration} alt="选择仓库和 GitHub 触发条件" width={640} />
+
+1. **仓库**——从 GitHub App 覆盖、且当前登录者有权使用的仓库中选择。公开仓库始终可用于只读设置；私有仓库需要一个已关联且具备访问权限的 GitHub 身份。如果选中的仓库尚未授权给该 Agent，授权步骤会直接在此处打开。列表以每个 GitHub App 安装实例开头，显示为**整个 `<account>`**（[见下文](#watch-every-repository-of-an-installation)）。
+2. **监听对象**——Pull Request、Issue、部署、Release，或任意组合；每一项都有自己的触发器。
+3. **触发条件**——Agent 被唤醒的积极程度：
+   - **创建时**——当 PR 或 Issue 被创建时，以及之后在所选类型中被明确提及时。
+   - **任意更新**——创建，加上受支持的新修订、标签和回复。关闭、重新打开和正文编辑不会运行 Agent。
+   - **@ 提及**——当被分配的 Agent 或 GitHub App 被 @ 提及时。以原生方式请求该 App 作为 PR 评审者同样属于明确请求，可以启动匹配的 PR 评审者。
+
+   部署和 Release 没有可供提及的线程。当部署被**创建**或报告**任意状态**时，以及当 Release **已发布**或有**任意更新**（每次发布、编辑或取消发布）时，Agent 都会运行。
+
+### 监视安装实例下的全部仓库 [#watch-every-repository-of-an-installation]
+
+选择**整个 `<account>`** 会监视该安装实例覆盖的每一个仓库，包括之后再加入的仓库。你监听的每个对象会成为一个名为 `<account>/*` 的监视项，各自拥有自己的触发节奏和评审设置。
+
+- 这需要 Agent 的[安装实例授权](/build-your-team/agents/workspaces-and-repos#additional-authorized-repositories)，只有组织所有者才能授予。缺少该授权时，所有者会被带到该步骤；其他人则可以在授权完成后选择该安装实例。
+- 正式评审和信息性 Check 需要该授权处于**读写**级别。各个仓库不需要单独授权，即使是 Check 也不需要。
+- 在同一个仓库上，同一个 Agent 针对该仓库和对象的单独监视项优先，因此 Agent 绝不会因为一个事件运行两次。想给某个仓库不同的设置，就用单独的监视项。
+- 要把某个仓库排除在外，把它从 GitHub App 安装实例中移除，或者改为逐个仓库监视。
+- 只要 Agent 仍持有针对整个安装实例的监视项，该安装实例授权就无法撤销。请先删除这些监视项。
+
+## 谁可以触发 Agent [#who-may-trigger-an-agent]
+
+AgentConnect 通过 GitHub 检查内容作者的**当前仓库权限**。只有拥有 `write` 或 `admin` 权限的人才能自动启动 Agent；GitHub Webhook 中的 `author_association` 标签不被视为权威依据。
+
+- 由没有当前 `write` 或 `admin` 权限的人创建的 Issue 或 Pull Request 不会启动 Agent，即使正文中提及了该 Agent 或 GitHub App。
+- 当前拥有 `write` 或 `admin` 权限的维护者可以在评论中明确提及该 Agent 或 App，以在外部作者创建的线程上请求第一轮工作。只读用户发出同样的提及则没有任何效果。
+- 未提及 Agent 的后续回复只有在评论者和原 Issue / PR 作者都仍拥有 `write` 或 `admin` 权限时，才按配置的触发节奏处理。
+- 原生的评审请求和 Check 重跑遵循同样的“当前维护者”边界。
+
+AgentConnect 检查每条评论（包括被编辑的内容）的作者；不会用 Webhook 的发送者替代内容作者。触发权限与 Agent 之后能做什么是两回事：评论、正式评审、Check 和仓库写入仍然需要已配置的 AgentConnect 仓库授权和 GitHub App 权限。
+
+<Callout type="warn">
+**公开仓库**：外部的 Issue 正文、Pull Request、diff 和评论仍然是不可信输入，即使它们在没有维护者请求的情况下无法调度 Agent。请使用保守的[权限模式](/build-your-team/agents/create-an-agent)和范围收窄的仓库凭证，并在 `microsandbox` 或 Kubernetes 中运行 Agent（[执行环境](/operate-govern/sandboxing#choose-an-execution-environment)）。
+</Callout>
+
+关联到已登录 AgentConnect 个人资料的 GitHub 身份可以参与两项彼此独立的控制台用户检查：
+
+- 可选的按用户仓库授权用它来验证私有仓库访问权限和每一项写入授权；以及
+- **设置 → 会话访问权限 → 遵循 GitHub 访问权限**在判断查看者是否可以读取来自私有仓库的会话时会用到它。
+
+公开仓库的只读设置和公开仓库的会话不需要关联 GitHub 个人资料。关联 GitHub 不会安装 GitHub App、不会授予仓库，也不会改变上述 Webhook 作者规则。参见[关联账号](/how-to-guides/linked-accounts)。
+
+## Agent 会做什么 [#what-the-agent-does]
+
+每个符合条件的事件都会在 Agent 的 Daemon 上启动一个会话，并以该事件作为上下文（标题、正文，以及适用时的 diff 摘录）。即使工作区为**只读**，已启用的监视项也可以发布 Agent 的普通最终回复。正式评审、状态 Check 和仓库变更需要**读写**授权。参见[工作区与仓库](/build-your-team/agents/workspaces-and-repos)。
+
+由 GitHub 触发的会话会出现在[会话](/operate-govern/sessions)中，以仓库 / 线程作为其频道，并链接回 GitHub。启用仓库访问同步后，它们的只读 **GitHub 成员**受众跟随源仓库当前的可见性和查看者的访问权限，而不是 AgentConnect 的角色覆盖。
+
+## PR 评审 [#pr-reviews]
+
+对于 Pull Request 监视项，展开 **PR 评审**并选择：
+
+- **关闭**——运行 Agent 并把最终回复作为普通 PR 评论发布，不做正式评审或 Check。
+- **简要**——允许正式的 `COMMENT` 评审和行内评论。
+- **详细**——展示行内评论、`REQUEST_CHANGES`、`APPROVE` 和信息性状态 Check 的控制项。
+
+正式评审需要 Agent 拥有仓库**写入**权限，以及有效的 GitHub App `pull_requests:write` 权限。信息性 Check 还额外需要 `checks:write`。
+
+多个 Agent 可以监视同一个仓库。在 PR 对话中，`@<agent-name>` 指向一个匹配的 Agent，而 `@<github-app-name>` 会广播给所有匹配的评审者。两种形式都仍然遵循事件类型、标签、安装实例、实时维护者授权和机器人发送者安全检查。
+
+当 PR 无法自动启动时——最常见的原因是其作者不是当前维护者——已启用的状态 Check 可以提供**请求评审**操作。当前拥有 `write` 或 `admin` 权限的维护者可以用它启动评审，而无需添加评论。
+
+完整的双模型配置见[快速 PR 评审与按需深度评审](/how-to-guides/fast-and-deep-pr-reviews)。
+
+### 合并前要求评审 [#require-a-review-before-merging]
+
+AgentConnect 本身从不阻止合并。要让合并等待某个评审者，请在目标分支的 ruleset 或分支保护中要求其信息性 Check：
+
+1. 为该评审者设置一个 Pull Request 监视项，触发节奏为**任意更新**，且**仅包含这些标签**下不填任何内容，并在 **PR 评审 → 详细**下开启其信息性 Check。Check 只会出现在该监视项评审过的修订上，因此换成其他任何设置，都会有一些 Pull Request 永远等待下去。
+2. 在 GitHub 中启用 **Require status checks to pass**，并添加 `AgentConnect PR Review: <agent-name>`。把它的来源设为 AgentConnect GitHub App，这样其他任何东西都无法满足该检查。
+
+此后，在评审排队或运行中、Agent 请求修改时，以及评审失败或从未运行时，合并都会被阻止。它不是一个批准门槛：
+
+- 只带评论结束的评审报告为 `neutral`，GitHub 将其视为通过。
+- 在没有新提交的情况下更改目标分支会保留 head 的 Check，因此在新评审发布自己的结果之前，之前的结果仍然有效。
+
+要从失败或被中断的评审中恢复，请在 Pull Request 的 Checks 标签页使用 **Re-run**，或使用该 Check 的**请求评审**操作。来自没有 `write` 或 `admin` 权限的作者的 Pull Request 会一直等待，直到维护者启动评审（[谁可以触发 Agent](#who-may-trigger-an-agent)）。
+
+### 让 Agent 名称支持自动补全 [#make-the-agent-name-autocomplete]
+
+在 GitHub 的评论框中输入 `@` 时会提示组织的团队，但它没有办法提示 Agent 名称。在组织中创建一个名称与 Agent 完全一致的团队，`@<organization>/<agent-name>` 就会成为一个提示项，指向同一个 Agent：
+
+1. 在组织中，**Teams → New team**。
+2. 名称与 Agent 名称完全一致——是 `review-bot`，而不是“Review Bot”。
+3. 可见性保持 **Visible**。秘密团队不会出现在评论框中。
+4. 写一段类似“AgentConnect Agent shortcut”的描述，告诉队友这个条目是干什么用的。
+
+团队不需要任何成员：AgentConnect 匹配的是你输入的文本，从不看团队成员。其他一切都不变——同样的事件、标签、授权和安全检查照常适用，而且不管团队存在与否，普通的 `@<agent-name>` 都继续有效。
+
+AgentConnect 从不创建、重命名或删除这些团队；它们由你自己管理。团队只存在于组织中，因此在个人账号拥有的仓库上只能使用 `@<agent-name>`。
+
+## 管理监视项 [#manage-watches]
+
+Agent 页面把它的 GitHub 集成归为一张卡片——每个被监视的仓库一行，安装实例则显示为 `<account>/*`，其中包含：
+
+- 事件开关和触发节奏选择器（**创建时 / 任意更新 / @ 提及**），
+- 最近的投递（触发了什么、何时触发、启动了哪个会话），
+- **添加仓库**，用同一个 Agent 监视更多仓库。
+
+## 前提条件 [#requirements]
+
+- **GitHub App** 必须已为你的组织安装（**设置 → GitHub → 在 GitHub 安装**）；如果尚未安装，集成对话框会提供安装按钮，并带有**已安装，立即同步**刷新按钮。
+- 已启用的监视项在**只读**访问权限下可以发布普通的最终回复。正式评审、Check 和仓库变更需要**读写**。
+- 在 AgentConnect OSS 上，运维人员必须先[配置部署的 GitHub App 及其 Relay Webhook](/self-hosting/provider-apps#github-app)。

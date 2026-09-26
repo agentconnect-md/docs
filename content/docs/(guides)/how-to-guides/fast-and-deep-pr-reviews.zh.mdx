@@ -1,0 +1,115 @@
+---
+title: "分层 PR 评审"
+icon: GitPullRequest
+description: "用快速模型评审每一次 PR 修订，只在变更需要更深入分析时才召唤更强的评审者。"
+---
+
+import imgGithubIntegration from '@/public/images/github-integration.png'
+
+用两个 Agent 搭建分层评审工作流：快速评审者覆盖每一次 Pull Request 修订，而能力更强的模型保持空闲，直到维护者明确要求进行更深入的评审。
+
+<Image src={imgGithubIntegration} alt="配置 Pull Request 评审者及其触发器" width={640} />
+
+两个 Agent 通过同一个 AgentConnect GitHub App 监听同一个仓库。每个 Agent 都有自己的 Runtime、模型、指令、会话和评审设置。
+
+这是[多 Agent 工作模式](/build-your-team/agents/multi-agent-work-modes#layered-or-on-demand-specialists)中的分层专家模式。配置评审者之前，请先把它与触发器扇出和直接委派进行比较。
+
+| Agent | 模型特点 | 触发条件 | PR 评审 | 角色 |
+| --- | --- | --- | --- | --- |
+| `quick-review` | 快速高效 | **任意更新** | **简要** | 基础正确性与回归问题 |
+| `deep-review` | 强推理能力 | **@ 提及** | **详细** | 架构、安全、迁移、运维 |
+
+## 开始之前 [#before-you-start]
+
+你需要：
+
+- 两个在线的 Agent，分别配置你想要对比的 Runtime 和模型；
+- 已为该仓库安装 AgentConnect GitHub App；
+- 两个 Agent 都拥有仓库的**读写**访问权限；以及
+- GitHub App 实际具有 `pull_requests:write` 权限。深度评审者还需要 `checks:write` 权限来发布信息性 Check。
+
+集成行为见 [GitHub](/connect-automate/triggers-automation/github)，仓库授权见[工作区与仓库](/build-your-team/agents/workspaces-and-repos)。
+
+## 1. 配置评审者 [#1-configure-the-reviewers]
+
+创建两个 Agent，并给每个 Agent 分配一个范围明确的评审角色。
+
+对于 `quick-review`，使用快速模型，指令可以类似于：
+
+```text
+Review each pull-request revision for correctness, missing tests, obvious security
+issues, and compatibility regressions. Keep findings concise and actionable. Do not
+claim approval or request changes; leave deeper architectural analysis to deep-review.
+```
+
+对于 `deep-review`，使用更强的模型，指令可以类似于：
+
+```text
+Perform a deep pull-request review. Prioritize architecture, concurrency, security,
+data migrations, failure recovery, and operational risk. Verify findings against the
+current diff and avoid repeating comments that are already resolved.
+```
+
+保持 Agent 名称稳定。深度评审者的名称会成为它在 GitHub 上的定向句柄，例如 `@deep-review`。
+
+## 2. 让两个 Agent 都监听该仓库 [#2-watch-the-repository-with-both-agents]
+
+在 `quick-review` 上，打开**集成 → 添加集成 → GitHub**：
+
+1. 选择仓库。
+2. 在**监听对象**下选择 **Pull Request**。
+3. 把**触发条件**设为**任意更新**。
+4. 把 **PR 评审**设为**简要**。
+
+在 `deep-review` 上重复以上操作，但改为选择：
+
+1. **Pull Request**；
+2. **@ 提及**；以及
+3. **详细**。
+
+**任意更新**节奏覆盖新打开的 PR、新的修订以及受支持的 PR 对话事件。只有带有修订的事件才会开启一次自动评审生成。如果你只想在 PR 首次打开时做基础评审，请改选**打开时**；之后的提交就需要显式提及才会触发。
+
+## 3. 运行工作流 [#3-run-the-workflow]
+
+打开 PR 或推送新修订会自动运行 `quick-review`。
+
+当某个变更需要更深入的分析时，有权限的维护者在 PR 中添加一条只点名第二个 Agent 的评论：
+
+```text
+@deep-review Please review the concurrency, migration, and rollback risks in this revision.
+```
+
+Agent 句柄会收窄仓库级扇出，因此这条评论只运行 `deep-review`，不会重新运行 `quick-review`。句柄匹配不区分大小写，但必须是完整的 Agent 名称。
+
+如果改为提及 GitHub App（例如 `@your-agentconnect-app`），则属于广播形式，会运行该仓库所有匹配的评审者。
+
+## GitHub 上会显示什么 [#what-appears-on-github]
+
+每个 Agent 各自维护独立的 PR 会话。启用了信息性 Check 上报的评审者会显示为：
+
+```text
+AgentConnect PR Review: <agent-name>
+```
+
+两个 Agent 仍然以同一个安装级 GitHub App 身份写入。因此，这一模式让基础评审者保持在**简要**，它可以提交正式的 `COMMENT` 评审，但不能 `APPROVE` 或 `REQUEST_CHANGES`。深度评审者使用**详细**来给出决定性结论、行内评论和信息性 Check。
+
+只有当仓库把 AgentConnect Check 设为必需时，它才会阻止合并。[合并前要求评审](/connect-automate/triggers-automation/github#require-a-review-before-merging)说明了哪些评审者可以被设为必需；像 `deep-review` 这样的 **@ 提及**评审者不能。
+
+## 重要行为 [#important-behavior]
+
+- 可见的提及必须来自具有 `write` 或 `admin` 权限的当前仓库维护者。由 GitHub App 自己发出的评论会被拒绝作为触发器，即使其文本包含 `@deep-review`；这可以防止机器人之间的循环。GitHub 原生的 **Request review** 控件也可以请求该 App 评审，但它会运行所有匹配的评审者，而不只是 `deep-review`。
+- 对于同一次投递，定向的 `@deep-review` 提及优先于基础评审者更宽泛的**任意更新**节奏。
+- 没有人需要记住确切的名称。创建一个名为 `deep-review` 的组织团队后，`@<organization>/deep-review` 就能在评论框中自动补全，并召唤同一个 Agent——见[让 Agent 名称自动补全](/connect-automate/triggers-automation/github#make-the-agent-name-autocomplete)。
+- **Re-run all checks** 会重新运行该 App 检查套件中当前的 AgentConnect 评审 Check。如果只想重新运行一个评审者，请使用单个 Check 的操作。
+- PR 正文、差异和评论都是不可信输入。请使用保守的 Agent 权限，尤其是在公开仓库上，并把评审外部贡献的评审者运行在 `microsandbox` 或 Kubernetes 中（[执行环境](/operate-govern/sandboxing#choose-an-execution-environment)）。
+
+如果想在没有维护者提及的情况下自动升级到更强的模型，请使用可信的 Agent 间编排，而不要试图通过可见的 GitHub 机器人评论去触发另一个 Agent。
+
+## 故障排查 [#troubleshooting]
+
+| 症状 | 检查 |
+| --- | --- |
+| `@deep-review` 没有反应 | 确切的 Agent 名称；评论作者具有 `write`/`admin` 权限；**@ 提及**触发条件 |
+| 两个评审者都运行了 | 提及 Agent，而不是 GitHub App |
+| 没有行内评论或结论 | **详细**；仓库**读写**权限；App 的 `pull_requests:write` |
+| 没有信息性 Check | Check 上报设置以及 App 的 `checks:write` |

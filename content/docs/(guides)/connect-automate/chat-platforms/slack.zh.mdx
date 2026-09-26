@@ -1,0 +1,92 @@
+---
+title: "Slack"
+icon: Slack
+description: "一键安装内置的 AgentConnect Slack 应用，或在 Agent 需要独立身份时连接自定义应用。"
+---
+
+import imgAddIntegration from '@/public/images/add-integration.png'
+import imgSlackIntegration from '@/public/images/slack-integration.png'
+
+在 **AgentConnect Cloud** 上，推荐的路径是内置的**添加到 Slack** 应用。你只需批准工作区安装；AgentConnect 会完成 OAuth 流程并接入，不会要求你提供应用 manifest、令牌、签名密钥或回调 URL。
+
+<Image src={imgAddIntegration} alt="安装内置的 AgentConnect Slack 应用" width={640} />
+
+## 在 Cloud 上把 AgentConnect 添加到 Slack [#add-agentconnect-to-slack-on-cloud]
+
+内置的 Slack 应用属于内置的 `agentconnect` Agent——AgentConnect 为每个组织创建的预置 Agent。先把该 Agent 放到某个 Daemon 上并选好它的 Runtime 和模型，然后从任一入口开始：
+
+- 打开**开始使用**卡片并选择**添加到 Slack**；或者
+- 打开 `agentconnect` Agent，然后选择**集成 → 添加集成 → Slack**。
+
+点击**添加到 Slack**，选择工作区，并批准所请求的权限。控制台会等待 Slack 完成，并在机器人就绪后自动关闭设置对话框。AgentConnect 建议每个 Agent 使用一个机器人身份，因此这次安装最初只服务内置 Agent。
+
+## 使用 [#use-it]
+
+把机器人邀请进频道：
+
+```text
+/invite @your-bot
+```
+
+提及它即可开始对话；未提及的后续消息会留在 Agent 已加入的线程（thread）中。机器人也会回复私信。
+
+每个被发现的频道都会出现在 Agent 的集成卡片上。为入站激活选择 **@ 提及**（默认）、**所有消息**或**关闭**。关闭不会卸载应用，也不会阻止定时任务和受托的出站发消息。关于从 Slack 停止、取消、排队以及更改会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+
+## Agent 在 Slack 中能做什么 [#what-an-agent-can-do-in-slack]
+
+在 Slack 会话中，Agent 能做的不只是回复。它还会把 Slack 自身的功能作为工具获得，并在任务需要时主动使用它们：
+
+- **了解现场**——读取频道最近的消息、线程中的回复，以及搜索工作区的公开消息。
+- **表态**——给消息添加表情回应，或读取消息上已有的回应。
+- **留下痕迹**——置顶和取消置顶频道书签，创建和编辑画布，以及读取和更新 Slack 列表。
+- **走得更远**——打开私信、发起对话、分享文件，以及安排稍后发送的消息。
+
+这些工具只会注入到 **Slack 上**的会话。同一个 Agent 在其他平台上工作时不会带着它们；Discord 和 Lark / 飞书提供频道历史，Telegram 只能读取附件。Agent 通过这种方式做的一切都以机器人的身份完成，并像其他工具调用一样出现在会话记录中。
+
+## 给 Agent 一个自定义的 Slack 身份 [#give-an-agent-a-custom-slack-identity]
+
+<Image src={imgSlackIntegration} alt="连接自定义的 Slack 机器人身份" width={640} />
+
+在内置 Agent 上，当它需要专属的 Slack 应用时，选择**改用自定义 bot 身份**。其他 Agent 会直接进入自定义身份流程。当自托管部署没有发布内置应用时，这也是常规路径。
+
+### 配置令牌安装 [#configuration-token-install]
+
+这是推荐的自定义应用路径。如果你还没有保存 Slack 配置令牌，AgentConnect 会链接到 [Slack 的配置令牌页面](https://api.slack.com/authentication/config-tokens)。粘贴访问令牌（`xoxe.xoxp-…`）及其刷新令牌（`xoxe-…`），这样 AgentConnect 才能轮换它；只保存访问令牌的话，大约 12 小时后就会过期。Slack 把这对令牌限定在一个用户和一个工作区。AgentConnect 会为当前登录用户保存它，该用户可以在**个人资料 → Slack 配置令牌**中替换或清除。
+
+为应用命名，点击**创建并安装**，然后在 Slack 中批准。使用 **HTTP (Events API)** 投递时，AgentConnect 会自动获取机器人令牌和签名密钥，无需复制粘贴凭证即可完成。使用 **Socket 模式**时，Slack 仍要求你生成一个带 `connections:write` 的 App-Level 令牌，并粘贴生成的 `xapp-…` 令牌。
+
+### Manifest 安装 [#manifest-install]
+
+当你无法创建 Slack 配置令牌时，使用这条手动备用路径：
+
+1. 选择**复制 manifest 并打开 Slack**，然后用复制的 manifest 创建并安装应用。
+2. 对于 **HTTP**，粘贴 Bot User OAuth 令牌（`xoxb-…`）和签名密钥。
+3. 对于 **Socket 模式**，粘贴 Bot User OAuth 令牌和一个带 `connections:write` 的 App-Level 令牌（`xapp-…`）。
+
+如果 Slack 提示权限范围有变化，请先重新安装一次应用，再复制 Bot User OAuth 令牌。
+
+## 保持应用权限为最新 [#keep-the-apps-permissions-current]
+
+Slack 在安装应用时授予权限，因此新增功能的版本可能让已有安装缺少某个权限范围。AgentConnect 会指出缺少的权限范围，而不是静默失败：打开**设置 → Bots → Slack**，在该机器人的行上使用**刷新 Slack 应用**。
+
+- 当 AgentConnect 能替你更新应用时，它会同步 manifest，并要求你**重新安装工作区**，以便 Slack 授予新增的权限范围。
+- 当它做不到时——manifest 安装的应用，或不由 AgentConnect 管理的应用——它会把你指向 Slack 中该应用的 **OAuth & Permissions** 页面，让你添加列出的权限范围，然后重新安装。
+
+内置安装也从同一行修复：AgentConnect 会替你发起重新安装，并等待 Slack 确认。
+
+## 投递模式与自托管 [#delivery-modes-and-self-hosting]
+
+- **HTTP (Events API)** 是 Cloud 上的默认值。入站回调经由 AgentConnect Relay（中继）进入，并直接送达所属的 Daemon。可共享的机器人必须使用 HTTP。
+- **Socket 模式**是由 Daemon 发起的出站连接。它不需要 Relay 或公网回调 URL，且限制为每个机器人一个 Agent。
+
+自托管部署只有在运维人员配置了[部署级 Slack 应用](/self-hosting/provider-apps#slack-deployment-app)之后才会显示内置的**添加到 Slack** 路径。否则，请使用自定义应用。HTTP 只有在部署拥有公网可达且已连接的 Relay 时才可用；没有的话，使用 Socket 模式。
+
+## 让一个 Slack 应用服务多个 Agent [#use-one-slack-app-with-multiple-agents]
+
+AgentConnect 一般建议每个 Agent 使用一个机器人身份。如果你的团队确实希望同一个 Slack 身份在不同频道中表现不同，可以把机器人设为可共享，并把每个频道分发给不同的 Agent：
+
+1. 打开**设置 → Bots → Slack**，为该机器人开启**可共享**。
+2. 在每个额外的 Agent 上，选择**集成 → 添加集成 → Slack → 使用已有机器人**并选中它。
+3. 回到**设置 → Bots**，展开该机器人，为每个频道选择**默认分发** Agent。
+
+完整模式请参见[一个 Slack 应用按频道对接不同 Agent](/how-to-guides/one-slack-app-across-channels)。

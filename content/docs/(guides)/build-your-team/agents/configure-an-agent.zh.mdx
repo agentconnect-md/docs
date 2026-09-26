@@ -1,0 +1,80 @@
+---
+title: "配置 Agent"
+icon: SlidersHorizontal
+description: "编辑 Agent 的人设、Runtime、工作区、访问权限、变量、记忆、工具和技能。"
+---
+
+import imgAgentRuntime from '@/public/images/agent-runtime.png'
+import imgAgentConfiguration from '@/public/images/agent-configuration.png'
+
+从 **Agents** 中打开一个 Agent，即可管理它的集成、Runtime、工作区、访问权限、记忆、工具和技能。
+
+<Image src={imgAgentRuntime} alt="编辑对话框，其中执行策略选择器展开显示主机、沙箱和虚拟机" width={560} />
+
+## 配置 [#configuration]
+
+配置标签页汇集了 **基本信息**、**Runtime**、**描述**、**访问权限**、**变量** 和 **密钥**。通过 **编辑** 可以更改显示名称、Daemon、Runtime、模型、思考深度/推理强度、快速模式、权限模式和执行策略。具体的 Runtime 控制项来自所选 Daemon 声明的能力。
+
+<Image src={imgAgentConfiguration} alt="配置标签页：基本信息、Runtime 行为、描述、访问权限、变量和密钥" width={820} />
+
+**输出模式** 控制哪些内容会发送到已连接的聊天平台；完整的会话记录始终可以在[会话](/operate-govern/sessions)中查看：
+
+- **最简**——一条实时更新、最终停留在最终答案上的回复；中间步骤只出现在状态栏中。
+- **低**——只发送回复。
+- **中**——回复，外加工具活动和计划。
+- **高**——在“中”的基础上再加上推理和工具输出。
+- **无**——不向频道发布任何内容；运行仍然可以在它的 Web 会话中查看。
+
+其他 Runtime 行为设置包括：
+
+- **允许在聊天中更改**——开启后，聊天用户可以（通过[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)）更改会话的 Runtime 设置并回答审批请求。关闭后，只有能编辑该 Agent 的人才能这样做。
+- **显示页脚**——在回复中附上 Agent、Runtime、模型和会话链接。
+- **加入频道时介绍自己**——让 Agent 向频道中已有的 Agent 介绍自己，以便它们知道何时可以委派给它。
+- **执行策略**——Agent 会话运行所处的边界：**主机**（无边界）、**沙箱**（SRT 进程沙箱）或 **虚拟机**（microsandbox 虚拟机）。选择器列出 Agent 所在位置提供的策略。无法在该位置运行的策略仍会列出并标记为 **不可用**；将鼠标悬停在上面可查看原因。如果所在位置不再提供已保存的策略，该策略仍保持选中，并标记为“当前位置不提供此策略。”Runtime 卡片会以一行 **执行策略** 显示当前选择。AgentConnect Cloud 上的 Agent 既没有这个选择器也没有这一行，因为每个会话本来就运行在自己的 Pod 中。这个外层边界与 Runtime 的权限模式相互独立；参见[沙箱隔离](/operate-govern/sandboxing#pick-an-execution-strategy)。
+
+## 描述与人设 [#description-and-persona]
+
+描述卡片单独编辑。它不只是展示文案：AgentConnect 在每个会话中都把它用作 Agent 的人设和系统提示词的种子。请描述角色、职责，以及无论 Agent 在何处被调用都应适用的长期操作指引。
+
+## 移动 Agent [#move-an-agent]
+
+在 **编辑** 的 **运行位置** 中选择另一个 Daemon 或 [Daemon 组](/build-your-team/daemons/daemon-groups)，即可移动 Agent。目标必须在线，并支持所选的 Runtime、模型、工具和技能。在移动尚未完成期间，**执行策略** 选择器会被锁定；请先保存移动，再更改策略。
+
+AgentConnect 会等待进行中的工作停止，然后在目标上按已保存的定义重新部署。它 **不会** 复制 Daemon 本地的工作区文件、托管或原生记忆，或会话记录。请先提交或备份本地工作；GitHub 工作区会在新机器上重新克隆。
+
+## 变量与密钥 [#variables-and-secrets]
+
+**变量** 和 **密钥** 卡片设置归属于此 Agent 的环境值——API 端点、功能开关，以及它的工具所需的凭证。密钥在保存后只写不可读。
+
+组织所有者可以在 **设置 → 变量与密钥** 下一次性定义某个值，并把它分配给所有或指定的 Agent。已分配的行会带有 **组织** 标签，且在 Agent 页面上是只读的。关于优先级、轮换和密钥处理，参见[变量与密钥](/build-your-team/variables-and-secrets)。
+
+## Agent 可见范围（子 Agent 调用） [#agent-visibility-sub-agent-calls]
+
+Agent 可以把彼此作为子 Agent 调用。**Agent 可见范围** 卡片控制这种关系的两个方向：
+
+- **入站：哪些 Agent 可以调用此 Agent**？
+- **出站：此 Agent 可以调用哪些 Agent**？
+
+每个方向都可以允许 **所有 Agent**，或者一个 **已选择** 的列表。只有当来源方的出站策略和目标方的入站策略都允许时，调用才被许可。发现和调用都以组织为范围；两个 Agent 不需要共享聊天集成或频道。
+
+Agent 的初始值来自组织的 **默认 Agent 可见性** 设置。组织在两个方向上都以 **所有 Agent** 起步，所有者可以在 **设置** 下的 **默认 Agent 可见性** 卡片中选择 **隔离**。更改该组织设置只影响未来的 Agent；在这张卡片中的编辑只影响此 Agent。
+
+参见[多 Agent 工作模式](/build-your-team/agents/multi-agent-work-modes)选择协作模式，以及 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)了解完整的调用策略。团队中谁能看到该 Agent 由[团队可见范围](/operate-govern/permissions-overview/team-visibility)单独控制。
+
+## 记忆 [#memory]
+
+**记忆** 标签页显示 Agent 的持久记忆，也是切换其后端的唯一入口：**托管**、**原生**、**外部** 或 **关闭**。托管记忆可以作为文件编辑；外部后端则呈现由其能力决定的记录。切换不会迁移现有记忆——旧的存储仍保留在原处，但不再被加载。组织所有者需要先在 **知识库 → 外部记忆** 下注册外部服务，Agent 才能选择它。
+
+关于外部后端的完整演练，包括召回/捕获策略和一个自托管的 Mem0 示例，参见[使用 Mem0 OSS 作为外部记忆的指南](/how-to-guides/external-memory)。
+
+### Dreaming [#dreaming]
+
+使用 **托管** 记忆时，Dreaming 可以定期整合最近的记忆和会话历史。它的默认策略是每天 04:00（按 Daemon 的时区）运行一次，并把完成的记忆结果留待审阅。定时 Dreaming 会考虑自上次成功运行以来更新过的会话，没有新内容时会跳过。你可以关闭 Dreaming、移除定时任务以便只手动运行、明确选择自动采纳，还可以选择挖掘可复用的技能。一次 Dreaming 也可能提出[知识库或托管技能](/build-your-team/knowledge)的提案，但每个共享提案都必须由组织所有者审阅后才会发布。
+
+## 工具与技能 [#tools--skills]
+
+显示此 Agent 可用的 MCP 工具及其已启用的技能。组织级的提供方和技能来源是单独管理的，因此把某项加入库中并不会自动为 Agent 启用它。关于连接器、MCP 服务器、Git 来源、托管技能和按 Agent 启用，参见[工具与技能](/build-your-team/tools-and-skills)。
+
+## 删除 [#delete]
+
+**删除**（⋯ 菜单）会把该 Agent 及其触发器从组织中移除。它的集成会被释放，以便其机器人可以被复用。

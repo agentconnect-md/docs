@@ -1,0 +1,87 @@
+---
+title: "跨平台交接"
+icon: ArrowLeftRight
+description: "在两个你信任的消息工作区之间转移工作，同时让每个平台的会话与受众边界保持明确。"
+---
+
+import imgAddIntegration from '@/public/images/add-integration.png'
+
+只有当来源和目标都是**你信任的两个消息工作区**时，才使用这一模式。你应当控制或明确批准这两个环境，清楚谁能读取目标端的内容，并接受其安全与保留规则。
+
+<Image src={imgAddIntegration} alt="把 Agent 连接到经批准的消息平台" width={640} />
+
+> **信任边界**：把 Agent 连接到两个平台后，它就能在两者之间转移内容。这并不会让外部客户、合作伙伴或社区工作区变得可信。如果任何一方未获准接收该信息，请改用一次性的、经过审核和脱敏的消息。
+
+这里的*工作区*指 Slack 工作区、Discord 服务器、Lark / 飞书租户，或已知的 Telegram 群组或聊天，而不是 Agent 的代码工作区。
+
+一个 Agent 可以先在一个平台上开始对话，向另一个可信工作区发布一条聚焦的交接消息，之后再把结果报告回来。这不是实时镜像：每个平台各自保留自己的线程（thread）、会话和受众。
+
+## 开始之前 [#before-you-start]
+
+你需要：
+
+- 一个已连接到两个消息平台的在线 Agent；
+- 两个获准交换相关信息的工作区；
+- 一个能在目标对话中发帖的机器人；以及
+- 一条明确的规则，规定哪些内容可以离开来源端。
+
+两端由同一个 Agent 负责。如果由两个不同的 Agent 分担工作，请改用 [Agent 间委派](/build-your-team/agents/multi-agent-work-modes#agent-to-agent-delegation)。
+
+## 1. 连接两个平台 [#1-connect-both-platforms]
+
+打开 Agent，在**集成**下添加每个聊天集成。只把目标端机器人邀请或添加到它应当触达的频道或聊天中。
+
+在第一次交接之前，在**设置 → 机器人**下核实目标工作区、服务器或租户。熟悉的频道名称并不足以作为依据：两个工作区可能都有 `#incidents`。
+
+## 2. 确认目标 [#2-confirm-the-destination]
+
+在发送任何内容之前，先让 Agent 列出它能触达的目标：
+
+```text
+List the incident channels you can reach through our approved internal bots.
+Do not send a message yet.
+```
+
+Telegram 机器人只能列出 Agent 已经观察到的聊天，因此请先在目标聊天中启动机器人。在任何平台上，机器人都仍然需要在那里查看和发帖的权限。
+
+## 3. 发起一次聚焦的交接 [#3-start-a-focused-handoff]
+
+说明可信的目标以及确切可以共享的内容：
+
+```text
+Hand this incident off to our approved Slack #incidents channel.
+
+- Post a new top-level message.
+- Include the symptoms, what I already tried, and the open question.
+- Do not copy names, credentials, or unrelated messages from this DM.
+- Ask the team for a decision.
+- When they reply, send a concise result back here.
+```
+
+在目标端发布一条新的顶层消息会创建一个关联的目标会话。人工回复在那里继续，Agent 可以把所要求的结果报告回来源端。发到一个无关的已有线程中不会形成同样清晰的交接边界。
+
+## 4. 让规则可复用 [#4-make-the-rule-reusable]
+
+如果交接是例行工作，请在 Agent 的**描述**中添加一段简短的策略：
+
+```text
+When moving work between messaging platforms:
+1. Use only approved workspaces.
+2. Stop and ask if the destination cannot be verified.
+3. Share a concise handoff, not the full source transcript.
+4. Never copy secrets or private-message details without approval.
+5. Keep the source and destination as separate conversations.
+6. Report only the requested result back to the source.
+```
+
+## 哪些内容保持分离 [#what-stays-separate]
+
+- **信任**：机器人能触达并不意味着每个工作区或参与者都已获准。
+- **会话**：来源端和目标端仍然是彼此关联但相互独立的会话。
+- **访问**：每个平台执行自己的机器人和对话权限。
+- **线程**：回复留在写下它们的地方，除非 Agent 刻意报告回去。
+- **身份**：一个平台上的账号不会被假定为另一个平台上的同一个人。
+
+好的交接是在可信的团队工作区之间转移内部事件、把私信升级到团队频道，或发布经批准的摘要。避免跨不同信任级别的例行交接，也避免自动双向镜像，后者会造成重复消息、归属不清和泄露风险。
+
+连接平台见[集成概览](/connect-automate/integrations-overview)，查看两端的情况见[会话](/operate-govern/sessions)。
