@@ -71,6 +71,6 @@ pnpm build --channel prod && pnpm run deploy
 
 Page feedback ("How is this guide?") is posted to this repository's GitHub Discussions by a GitHub App
 with Discussions write access, installed on this repository only. Each Worker needs its secrets:
-`GITHUB_APP_ID` and `GITHUB_APP_PRIVATE_KEY` (the key in PKCS#8 form). `prod` posts to the
-"Docs Feedback" category and `test` to "Docs Feedback (test)". Without the secrets the site still
-works; feedback is only logged.
+`GITHUB_APP_ID` and `GITHUB_APP_PRIVATE_KEY` (the key in PKCS#8 form). Both channels post to the
+"Docs Feedback" category, one thread per page; a thread from `test` carries a `(test)` prefix in its
+title. Without the secrets the site still works; feedback is only logged.

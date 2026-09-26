@@ -8,8 +8,9 @@ import { channel } from '@/lib/channel'
 
 export const repo = 'docs'
 export const owner = 'agentconnect-md'
-// Each channel has its own category, since both serve the same paths; nothing posted names the channel's host.
-export const DocsCategory = channel.id === 'prod' ? 'Docs Feedback' : `Docs Feedback (${channel.id})`
+// Both channels post to one category; a thread from another channel says so in its title, since both serve the same paths.
+export const DocsCategory = 'Docs Feedback'
+const titlePrefix = channel.id === 'prod' ? '' : `(${channel.id}) `
 
 let instance: Octokit | undefined
 
@@ -90,7 +91,7 @@ async function createDiscussionThread(pageId: string, body: string) {
 
   if (!category) throw new Error(`Please create a "${DocsCategory}" category in GitHub Discussion`)
 
-  const title = `Feedback for ${pageId}`
+  const title = `${titlePrefix}Feedback for ${pageId}`
   const queryResult: {
     search: {
       nodes: { id: string; title: string; url: string; category: { id: string } }[]
@@ -104,7 +105,6 @@ async function createDiscussionThread(pageId: string, body: string) {
             }
           }`)
 
-  // Titles repeat across channels, so the page's thread is the one in this channel's category.
   const discussion = queryResult.search.nodes.find((item) => item.title === title && item.category.id === category.id)
 
   if (discussion) {
