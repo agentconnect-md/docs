@@ -17,12 +17,14 @@ export function ApiFacts({ lang }: { lang: string }) {
             <code>{`${channel.apiUrl}${PATH_PREFIX}`}</code>
           </td>
         </tr>
-        <tr>
-          <th>{s.release}</th>
-          <td>
-            <a href={releaseUrl}>{channel.release.tag}</a>
-          </td>
-        </tr>
+        {channel.release && (
+          <tr>
+            <th>{s.release}</th>
+            <td>
+              <a href={releaseUrl(channel.release.tag)}>{channel.release.tag}</a>
+            </td>
+          </tr>
+        )}
         <tr>
           <th>{s.document}</th>
           <td>

@@ -1,16 +1,14 @@
 #!/usr/bin/env node
-// Materializes one channel into .generated/: its release's OpenAPI document, bound to its API, and the
+// Materializes one channel into .generated/: the OpenAPI document its API serves, bound to that API, and the
 // channel the build serves. The docs themselves are read from content/docs as they are.
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
-import { APP_REPOSITORY, resolveChannel } from './lib/channels.mjs'
-import { bindOpenapi, releaseOpenapi } from './lib/openapi.mjs'
-import { resolveRelease } from './lib/release.mjs'
+import { OPENAPI_PATH_PREFIX, resolveChannel } from './lib/channels.mjs'
+import { bindOpenapi, fetchOpenapi } from './lib/openapi.mjs'
 
 export const SITE = resolve(import.meta.dirname, '..')
 const GENERATED = join(SITE, '.generated')
-const CACHE = join(SITE, '.cache')
 
 export function loadEnv() {
   for (const file of ['.env.local', '.env']) {
@@ -24,25 +22,26 @@ function writeJson(file, value) {
   writeFileSync(join(GENERATED, file), JSON.stringify(value, null, 2) + '\n')
 }
 
-export function prepare({ channelId }) {
+export async function prepare({ channelId }) {
   const channel = resolveChannel(channelId)
-  const release = resolveRelease({ repository: APP_REPOSITORY, line: channel.releaseLine, pinned: process.env.DOCS_RELEASE })
-  const { spec, meta } = releaseOpenapi({ release, repository: APP_REPOSITORY, cacheDir: CACHE })
+  const spec = await fetchOpenapi(channel)
+  // The API reports the release it runs; until every environment does, DOCS_RELEASE names it, or the label is left out.
+  const release = spec.info?.['x-agentconnect-release'] ?? process.env.DOCS_RELEASE ?? null
 
-  writeJson('openapi.json', bindOpenapi(spec, { apiUrl: channel.apiUrl, release }))
+  writeJson('openapi.json', bindOpenapi(spec, { apiUrl: channel.apiUrl, pathPrefix: OPENAPI_PATH_PREFIX, release }))
   writeJson('channel.json', {
     id: channel.id,
     label: channel.label,
     apiUrl: channel.apiUrl,
     consoleUrl: channel.consoleUrl,
-    release: meta
+    release: release ? { tag: release } : null
   })
-  console.log(`prepared ${channel.id}: release ${release.tag}`)
+  console.log(`prepared ${channel.id}: ${Object.keys(spec.paths).length} paths${release ? `, release ${release}` : ''}`)
   return { channel }
 }
 
 if (import.meta.main) {
   const { values } = parseArgs({ options: { channel: { type: 'string' } } })
   loadEnv()
-  prepare({ channelId: values.channel ?? process.env.DOCS_CHANNEL ?? 'test' })
+  await prepare({ channelId: values.channel ?? process.env.DOCS_CHANNEL ?? 'test' })
 }

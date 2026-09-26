@@ -8,8 +8,6 @@ Thumbs.db
 /.generated/
 /.source/
 
-# release checkouts and generated OpenAPI documents, keyed by tag
-/.cache/
 
 # build output
 /.next/

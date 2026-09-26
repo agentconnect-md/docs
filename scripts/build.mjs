@@ -9,7 +9,7 @@ const { values } = parseArgs({ options: { channel: { type: 'string' } } })
 loadEnv()
 const channelId = values.channel ?? process.env.DOCS_CHANNEL
 if (!channelId) throw new Error('Pass --channel test|prod')
-prepare({ channelId })
+await prepare({ channelId })
 
 function run(script, args, env = {}) {
   const result = spawnSync(process.execPath, [join(SITE, 'node_modules', script), ...args], {

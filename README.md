@@ -27,14 +27,15 @@ Each build is one channel, bound to one environment and one release line:
 | `prod`  | `release` | the latest formal release (`vX.Y.Z`)        | the production API   |
 
 `main` is where documentation is written and reviewed; `release` is fast-forwarded to it when the
-documentation for a production release ships. `scripts/prepare.mjs` resolves the channel's release from
-the application repository's tags, generates that tag's OpenAPI document with the release pipeline's
-own generator (cached per tag in `.cache/`), points its `servers` at the channel's API and records the
-tag in `info.x-agentconnect-release`. The same document is served at `/docs/openapi.json`, and "Send"
-in the API playground goes through `/docs/api/proxy`, which forwards only to the channel's own API.
+documentation for a production release ships. `scripts/prepare.mjs` reads the OpenAPI document the
+channel's API serves, so the reference is exactly what that environment runs, then rewrites its paths
+to the public prefix, points its `servers` at the channel's API and records the release the API reports
+in `info.x-agentconnect-release`. The same document is served at `/docs/openapi.json`, and "Send" in
+the API playground goes through `/docs/api/proxy`, which forwards only to the channel's own API.
 
 Production origins are public and built in; every other channel's origins come from the environment
-(`.env.example` lists them) and are never committed. `DOCS_RELEASE` pins a channel to an exact tag.
+(`.env.example` lists them) and are never committed, and a build never prints them. `DOCS_RELEASE`
+supplies the release label while an API does not report one.
 
 ## Local preview
 
@@ -47,11 +48,8 @@ pnpm dev                     # test channel at http://localhost:3001/docs, live-
 pnpm build --channel test    # the channel's Worker in .open-next/
 pnpm preview -- --env test   # that Worker locally, in workerd
 pnpm typecheck
-pnpm test                    # release resolution
+pnpm test                    # binding the OpenAPI document to a channel
 ```
-
-The first build of a release clones the application repository at its tag and installs the
-Control Plane's dependencies to generate the document, which takes about a minute.
 
 ## Deploying
 
@@ -60,9 +58,10 @@ Control Plane's dependencies to generate the document, which takes about a minut
 routes live with the deployment, not in this repository.
 
 A push to `main` deploys `test` and a push to `release` deploys `prod`
-(`.github/workflows/deploy.yml`). The workflow needs `CLOUDFLARE_API_TOKEN` and
-`CLOUDFLARE_ACCOUNT_ID`, plus the test channel's `DOCS_TEST_API_URL` and `DOCS_TEST_CONSOLE_URL`, as
-Actions secrets. The same commands work from a checkout:
+(`.github/workflows/deploy.yml`); the deployment side also rebuilds a channel after deploying to its
+environment, with a `repository_dispatch` of type `test-deployed` or `prod-promoted`. The workflow needs
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, plus the test channel's `DOCS_TEST_API_URL` and
+`DOCS_TEST_CONSOLE_URL`, as Actions secrets. The same commands work from a checkout:
 
 ```bash
 pnpm build --channel test && pnpm run deploy -- --env test

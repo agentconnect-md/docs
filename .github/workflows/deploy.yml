@@ -2,9 +2,8 @@ name: Deploy
 
 # main is the test channel and release the prod channel. A push builds the branch it lands on, and
 # the deployment side rebuilds a channel when its environment changes, through a repository_dispatch:
-# `test-deployed` rebuilds test against the candidate it carries, `prod-promoted` rebuilds prod. Prod
-# always binds to DOCS_PROD_RELEASE, the version the deployment side reports production runs, so the
-# reference never runs ahead of the production API.
+# `test-deployed` for test, `prod-promoted` for prod. A build reads the channel's OpenAPI document
+# from its API, so the reference is always what that environment serves.
 on:
   push:
     branches: [main, release]
@@ -22,47 +21,36 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     environment: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
     env:
       DOCS_CHANNEL: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
+      # The release label while an API does not report one: the dispatch names it, prod falls back to the variable.
+      DOCS_RELEASE: ${{ github.event.client_payload.version || (github.ref_name == 'release' && vars.DOCS_PROD_RELEASE) || '' }}
     steps:
       - uses: actions/checkout@v5
         with:
           # A dispatch runs on the default branch; prod's content is the release branch.
           ref: ${{ env.DOCS_CHANNEL == 'prod' && 'release' || github.ref }}
-      - name: Pin the release
+      # The test channel's origins are configuration this public log may not show: the values are masked as
+      # secrets, and their hosts are masked here so an error naming only the host stays masked too.
+      - name: Mask the test channel's hosts
+        if: env.DOCS_CHANNEL == 'test'
         env:
-          PROD_RELEASE: ${{ vars.DOCS_PROD_RELEASE }}
-          DISPATCHED_RELEASE: ${{ github.event.client_payload.version }}
+          DOCS_TEST_API_URL: ${{ secrets.DOCS_TEST_API_URL }}
+          DOCS_TEST_CONSOLE_URL: ${{ secrets.DOCS_TEST_CONSOLE_URL }}
         run: |
-          case "$DOCS_CHANNEL" in
-            prod) RELEASE="$PROD_RELEASE" ;;
-            test) RELEASE="$DISPATCHED_RELEASE" ;;
-          esac
-          if [ "$DOCS_CHANNEL" = prod ] && [ -z "$RELEASE" ]; then
-            echo "::error::DOCS_PROD_RELEASE is not set; it names the version production runs."
-            exit 1
-          fi
-          if [ -n "$RELEASE" ]; then
-            if [[ ! "$RELEASE" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]]; then
-              echo "::error::'$RELEASE' is not a release tag."
-              exit 1
-            fi
-            echo "DOCS_RELEASE=$RELEASE" >> "$GITHUB_ENV"
-          fi
+          for url in "$DOCS_TEST_API_URL" "$DOCS_TEST_CONSOLE_URL"; do
+            host="${url#*://}"
+            host="${host%%/*}"
+            [ -n "$host" ] && echo "::add-mask::$host"
+          done
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # A release's document never changes, so the last run's cache saves regenerating it.
-      - uses: actions/cache@v4
-        with:
-          path: .cache/openapi
-          key: openapi-${{ github.run_id }}
-          restore-keys: openapi-
       - run: pnpm build
         env:
           DOCS_TEST_API_URL: ${{ secrets.DOCS_TEST_API_URL }}

@@ -5,7 +5,8 @@ export interface Channel {
   label: string
   apiUrl: string
   consoleUrl: string
-  release: { tag: string; commit: string; committedAt: string }
+  // The release the channel's API reports it runs; null until an environment reports one.
+  release: { tag: string } | null
 }
 
 // Written by scripts/prepare.mjs; a build is bound to exactly one channel.
@@ -14,6 +15,6 @@ export const channel = generated as Channel
 const APP = 'https://github.com/agentconnect-md/agentconnect'
 
 // Formal releases have release notes; a release candidate is only a tag.
-export const releaseUrl = channel.release.tag.includes('-rc.')
-  ? `${APP}/tree/${channel.release.tag}`
-  : `${APP}/releases/tag/${channel.release.tag}`
+export function releaseUrl(tag: string): string {
+  return tag.includes('-rc.') ? `${APP}/tree/${tag}` : `${APP}/releases/tag/${tag}`
+}

@@ -3,12 +3,20 @@ import { createOpenAPIPage } from 'fumadocs-openapi/ui'
 import { createCodeUsageGeneratorRegistry } from 'fumadocs-openapi/requests/generators'
 import { registerDefault } from 'fumadocs-openapi/requests/generators/all'
 import { DocsTitle, PageBreadcrumb } from 'fumadocs-ui/layouts/docs/page'
+import type { MediaAdapter } from 'fumadocs-openapi'
 
 const codeUsages = createCodeUsageGeneratorRegistry()
 registerDefault(codeUsages)
 
+// Picture uploads take the image itself as the body; the renderer knows no image types, so this sends and shows it raw.
+const image: MediaAdapter = {
+  encode: ({ body }) => body as BodyInit,
+  generateExample: (_data, ctx) => (ctx.lang === 'js' ? `const body = await fetch('./picture.png').then((res) => res.blob())` : undefined)
+}
+
 export const OpenAPIPage = createOpenAPIPage({
   codeUsages,
+  mediaAdapters: { 'image/png': image, 'image/jpeg': image, 'image/webp': image },
   content: {
     // Fumadocs' operation layout, with the page's breadcrumb, title and description moved into the operation's column,
     // so the column beside it holds only the request and response examples, from the top.

@@ -1,7 +1,6 @@
-// A channel is one published copy of the site, bound to one environment and one release line.
-// Production origins are public; every other channel's origins come from the environment only.
-
-export const APP_REPOSITORY = 'https://github.com/agentconnect-md/agentconnect.git'
+// A channel is one published copy of the site, bound to one environment: its API is where the
+// reference comes from and where "Send" goes. Production origins are public; every other channel's
+// origins come from the environment only.
 
 // Public prefix the API gateway exposes the Control Plane's /api/v1 routes under.
 export const OPENAPI_PATH_PREFIX = '/v1'
@@ -9,8 +8,6 @@ export const OPENAPI_PATH_PREFIX = '/v1'
 const DEFINITIONS = {
   prod: {
     label: 'Production',
-    // Formal releases only: vX.Y.Z.
-    releaseLine: 'stable',
     urls: {
       api: ['DOCS_PROD_API_URL', 'https://api.agentconnect.md'],
       console: ['DOCS_PROD_CONSOLE_URL', 'https://app.agentconnect.md']
@@ -18,8 +15,6 @@ const DEFINITIONS = {
   },
   test: {
     label: 'Test',
-    // Every release candidate, which is what the test environment runs.
-    releaseLine: 'rc',
     urls: {
       api: ['DOCS_TEST_API_URL'],
       console: ['DOCS_TEST_CONSOLE_URL']
@@ -45,7 +40,6 @@ export function resolveChannel(id, env = process.env) {
   return {
     id,
     label: def.label,
-    releaseLine: def.releaseLine,
     apiUrl: readUrl(env, def.urls.api),
     consoleUrl: readUrl(env, def.urls.console)
   }
