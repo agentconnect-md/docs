@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "slack",
+    "telegram",
+    "discord",
+    "lark-feishu",
+    "qq",
+    "bots"
+  ],
+  "title": "聊天平台"
+}

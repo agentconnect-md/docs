@@ -15,7 +15,10 @@ document. It deploys to Cloudflare Workers through OpenNext.
 A page's frontmatter carries its `title`, `description` and `icon`; icons are the names listed in
 `lib/icons.tsx`. Root-relative links (`/build-your-team/agents`) resolve within the site, and a
 `page.zh.mdx` beside `page.mdx` is its Chinese translation: a page without one is served in English
-with a notice.
+with a notice. A folder's `meta.zh.json` beside its `meta.json` carries the same `pages` with Chinese
+titles and separators. A translation keeps the English page's headings one to one, each ending in the
+English heading's id (`## 连接 Gitea [#connect-gitea]`), so `#anchor` links and the table of contents
+work in both languages; images, diagrams and code blocks stay as they are.
 
 ## Channels and branches
 

@@ -1,0 +1,15 @@
+{
+  "title": "自托管",
+  "root": true,
+  "pages": [
+    "index",
+    "---Docker Compose---",
+    "...docker-compose",
+    "---Kubernetes---",
+    "...kubernetes",
+    "---登录与集成---",
+    "...(sign-in-integrations)",
+    "---可选服务---",
+    "...(optional-services)"
+  ]
+}
