@@ -15,11 +15,13 @@ On the agent: **Integrations → Add integration → GitHub**.
 <Image src={imgGithubIntegration} alt="Choose a repository and GitHub trigger" width={640} />
 
 1. **Repository** — pick from repositories covered by the GitHub App that the signed-in person may use. Public repositories remain available for read-only setup; private repositories require a linked GitHub identity with access. Picking a repo the agent isn't authorized for opens the authorize step right there.
-2. **Listen for** — pull requests, issues, or both.
+2. **Listen for** — pull requests, issues, deployments, releases, or any mix; each one gets its own trigger.
 3. **Trigger when** — how eagerly the agent wakes up:
-   - **created** — when a PR or issue is opened, plus later explicit mentions in that selected family.
-   - **updated** — openings plus supported new revisions, labels, and replies. Closing, reopening, and body edits do not run the agent.
-   - **mention only** — when the assigned agent or GitHub App is @-mentioned. A native request for the App as PR reviewer is also explicit and can start matching PR reviewers.
+   - **opened** — when a PR or issue is opened, plus later explicit mentions in that selected family.
+   - **any update** — openings plus supported new revisions, labels, and replies. Closing, reopening, and body edits do not run the agent.
+   - **@-mention** — when the assigned agent or GitHub App is @-mentioned. A native request for the App as PR reviewer is also explicit and can start matching PR reviewers.
+
+   Deployments and releases have no thread to mention in. The agent runs when a deployment is **created** or on **any status** it reports, and when a release is **published** or on **any update** (every publish, edit or unpublish).
 
 ## Who may trigger an agent
 
@@ -82,7 +84,7 @@ AgentConnect never creates, renames or deletes these teams; they are yours to ma
 
 The agent page groups its GitHub integration as one card — one row per watched repository with:
 
-- event toggles and the trigger cadence select (**create / update / @-mention**),
+- event toggles and the trigger cadence select (**Opened / Any update / @-mention**),
 - recent deliveries (what fired, when, and the session it started),
 - **Add repository** to watch more repos with the same agent.
 

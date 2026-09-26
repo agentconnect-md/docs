@@ -79,11 +79,13 @@ On the agent: **Integrations → Add integration → Gitea**.
 
 A trigger rides an existing authorization and never creates one: the repository must already be the agent's [workspace](/build-your-team/agents/workspaces-and-repos) or one of its authorized additional repositories, or adding the watch is refused. It does not need to be on the Gitea card yet — making it the workspace or an additional repository puts it there.
 
-Choose the repository, what to listen for — **issues**, **pull requests**, or both — and how eagerly the agent wakes up:
+Choose the repository, what to listen for — **issues**, **pull requests**, **releases**, or any mix — and how eagerly the agent wakes up:
 
 - **opened** — when an issue or pull request is opened, plus later explicit mentions in that family.
 - **any update** — openings plus new revisions, replies and submitted reviews. Close, reopen and merge stay inert.
 - **@-mention** — when the agent (`@<agent-name>`, or `@<organization>/<agent-name>`) or the organization's Gitea bot is @-mentioned. Requesting the bot as a reviewer starts a turn whatever the cadence.
+
+The agent runs when a release is **published** or on **any update** (every publish or edit).
 
 <Image src={imgGiteaAgentCard} alt="An agent's Gitea card with one watched repository, showing the pull-request and issue families and their triggers" width={640} />
 

@@ -50,11 +50,13 @@ On the agent: **Integrations → Add integration → GitLab**.
 
 A trigger rides an existing authorization and never creates one: the project must already be the agent's workspace or one of its authorized additional repositories, or adding the watch is refused.
 
-Choose the project, what to listen for — issues, merge requests, or both — and how eagerly the agent wakes up:
+Choose the project, what to listen for — issues, merge requests, releases, or any mix — and how eagerly the agent wakes up:
 
-- **created** — when an issue or merge request is opened, plus later explicit mentions in that family.
-- **updated** — openings plus new revisions, labels and replies.
-- **mention only** — when the agent is @-mentioned.
+- **opened** — when an issue or merge request is opened, plus later explicit mentions in that family.
+- **any update** — openings plus new revisions, labels and replies.
+- **@-mention** — when the agent is @-mentioned.
+
+A release offers only **published**.
 
 <Image src={imgGitlabAgentCard} alt="An agent's GitLab card with three watched projects, each showing the merge-request family and its trigger" width={640} />
 

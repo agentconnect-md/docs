@@ -16,8 +16,8 @@ This is the layered-specialist pattern from [Multi-agent work modes](/build-your
 
 | Agent | Model profile | Trigger | PR review | Role |
 | --- | --- | --- | --- | --- |
-| `quick-review` | Fast and efficient | **updated** | **Brief** | Baseline correctness and regressions |
-| `deep-review` | Strong reasoning | **mention only** | **Details** | Architecture, security, migrations, operations |
+| `quick-review` | Fast and efficient | **any update** | **Brief** | Baseline correctness and regressions |
+| `deep-review` | Strong reasoning | **@-mention** | **Details** | Architecture, security, migrations, operations |
 
 ## Before you start
 
@@ -58,16 +58,16 @@ On `quick-review`, open **Integrations → Add integration → GitHub**:
 
 1. Select the repository.
 2. Under **Listen for**, select **Pull requests**.
-3. Set **Trigger when** to **updated**.
+3. Set **Trigger when** to **any update**.
 4. Set **PR review** to **Brief**.
 
 Repeat on `deep-review`, but choose:
 
 1. **Pull requests**;
-2. **mention only**; and
+2. **@-mention**; and
 3. **Details**.
 
-The **updated** cadence covers opened PRs, new revisions, and supported PR conversation events. Only revision-bearing events open an automatic review generation. If you only want the baseline review when a PR is first opened, choose **created** instead; later commits will then require an explicit mention.
+The **any update** cadence covers opened PRs, new revisions, and supported PR conversation events. Only revision-bearing events open an automatic review generation. If you only want the baseline review when a PR is first opened, choose **opened** instead; later commits will then require an explicit mention.
 
 ## 3. Run the workflow
 
@@ -98,7 +98,7 @@ AgentConnect Checks are currently informational rather than required branch-prot
 ## Important behavior
 
 - The visible mention must come from a current repository maintainer with `write` or `admin` permission. A comment authored by the GitHub App is rejected as a trigger, even if its text contains `@deep-review`; this prevents bot-to-bot loops. GitHub's native **Request review** control can also request the App, but it runs every matching reviewer rather than only `deep-review`.
-- A targeted `@deep-review` mention wins over the baseline reviewer's broader **updated** cadence for that delivery.
+- A targeted `@deep-review` mention wins over the baseline reviewer's broader **any update** cadence for that delivery.
 - Nobody has to remember the exact name. An organization team named `deep-review` makes `@<organization>/deep-review` autocomplete in the comment box and summon the same agent — see [Make the agent name autocomplete](/connect-automate/triggers-automation/github#make-the-agent-name-autocomplete).
 - **Re-run all checks** reruns the current AgentConnect review Checks in the App's suite. Use the individual Check action when you want only one reviewer.
 - PR bodies, diffs, and comments are untrusted input. Use conservative agent permissions, especially on public repositories, and run reviewers of outside contributions in `microsandbox` or Kubernetes ([execution environments](/operate-govern/sandboxing#choose-an-execution-environment)).
@@ -109,7 +109,7 @@ For automatic model escalation without a maintainer mention, use trusted agent-t
 
 | Symptom | Check |
 | --- | --- |
-| `@deep-review` does nothing | Exact agent name; `write`/`admin` author; **mention only** trigger |
+| `@deep-review` does nothing | Exact agent name; `write`/`admin` author; **@-mention** trigger |
 | Both reviewers run | Mention the agent, not the GitHub App |
 | No inline comments or verdict | **Details**; repository **write**; App `pull_requests:write` |
 | No informational Check | Check reporting and App `checks:write` |
