@@ -1,5 +1,5 @@
 'use client'
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'fumadocs-core/framework'
 import { Check, ChevronDown, Globe } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from 'fumadocs-ui/components/ui/popover'
 import { BASE_PATH } from '@/base-path.mjs'

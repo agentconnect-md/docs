@@ -1,6 +1,6 @@
 'use client'
 import Link from 'fumadocs-core/link'
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'fumadocs-core/framework'
 import { BookOpen, Code2, Server, type LucideIcon } from 'lucide-react'
 import { FullSearchTrigger, SearchTrigger } from 'fumadocs-ui/layouts/shared/slots/search-trigger'
 import { GitHubMark } from './brand-marks'
