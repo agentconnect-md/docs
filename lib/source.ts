@@ -34,7 +34,7 @@ function slugify(name: string): string {
 // The API section's own pages (its overview), written in MDX under content/api.
 const apiDocs = defineDocs({
   dir: 'content/api',
-  docs: { schema: pageSchema },
+  docs: { schema: pageSchema, postprocess: { includeProcessedMarkdown: true } },
   meta: { schema: metaSchema }
 })
 

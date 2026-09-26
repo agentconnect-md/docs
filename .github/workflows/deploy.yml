@@ -31,7 +31,7 @@ jobs:
       DOCS_API_URL: ${{ secrets.DOCS_API_URL || vars.DOCS_API_URL }}
       DOCS_CONSOLE_URL: ${{ secrets.DOCS_CONSOLE_URL || vars.DOCS_CONSOLE_URL }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           # A dispatch runs on the default branch; prod's content is the release branch.
           ref: ${{ env.DOCS_CHANNEL == 'prod' && 'release' || github.ref }}
@@ -44,8 +44,8 @@ jobs:
             host="${host%%/*}"
             [ -n "$host" ] && echo "::add-mask::$host"
           done
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm

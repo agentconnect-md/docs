@@ -5,6 +5,7 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layo
 import { ApiFacts } from '@/components/api-facts'
 import { OpenAPIPage } from '@/components/api-page'
 import { PageNav } from '@/components/page-nav'
+import { pageChrome } from '@/components/page-chrome'
 import { getMDXComponents } from '@/components/mdx'
 import { i18n } from '@/lib/i18n'
 import { pageScoped } from '@/lib/openapi-page'
@@ -35,15 +36,23 @@ export default async function Page({ params }: PageProps<'/[lang]/api/[[...slug]
   // The section's own MDX pages (the overview), with this build's endpoint facts available as <ApiFacts />.
   const MDX = page.data.body
   const fallback = lang !== i18n.defaultLanguage && !isTranslated(page, lang)
+  const chrome = pageChrome(page, lang, { hasToc: page.data.toc.length > 0, section: 'api' })
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full} footer={{ enabled: false }}>
+    <DocsPage
+      toc={page.data.toc}
+      full={page.data.full}
+      breadcrumb={{ includeSeparator: true }}
+      footer={{ enabled: false }}
+      tableOfContent={chrome.tableOfContent}
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
-      <div className="border-b pb-6" />
+      {chrome.headerRow}
       <DocsBody>
         {fallback && <Callout type="info">{t(lang).untranslated}</Callout>}
         <MDX components={getMDXComponents(lang, { ApiFacts: () => <ApiFacts lang={lang} /> })} />
       </DocsBody>
+      {chrome.bodyHelp}
       <PageNav />
     </DocsPage>
   )
