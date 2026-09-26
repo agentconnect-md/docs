@@ -1,0 +1,16 @@
+{
+  "title": "Guides",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "...getting-started",
+    "---Build Your Team---",
+    "...build-your-team",
+    "---Connect & Automate---",
+    "...connect-automate",
+    "---Operate & Govern---",
+    "...operate-govern",
+    "---How-to guides---",
+    "...how-to-guides"
+  ]
+}

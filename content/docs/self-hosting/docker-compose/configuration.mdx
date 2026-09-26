@@ -1,0 +1,214 @@
+---
+title: "Configuration"
+icon: Settings
+description: "Configure the Compose stack's images, ports, public URLs, bootstrap secrets, and secret storage through compose.env."
+---
+
+The default Docker Compose stack needs no configuration and stays on loopback. Use `compose.env` only for deployment topology and bootstrap secrets, then use Setup Server for [sign-in](/self-hosting/sign-in), [provider apps](/self-hosting/provider-apps), and deployment options.
+
+## Compose environment
+
+Copy the template only when you need overrides:
+
+```bash
+cp compose.env.example compose.env
+```
+
+Include it in every Compose command:
+
+```bash
+docker compose --env-file compose.env up -d
+```
+
+`compose.env` is gitignored. Keep it out of source control and unapproved backups.
+
+## Image versions
+
+| Variable                              | Default                   |
+| ------------------------------------- | ------------------------- |
+| `AGENTCONNECT_VERSION`                | `latest`                  |
+| `AGENTCONNECT_IMAGE_REGISTRY`         | `ghcr.io/agentconnect-md` |
+| `AGENTCONNECT_PRISMA_CLI_VERSION`     | `7.8.0-node24-r1`         |
+| `AGENTCONNECT_OPEN_CONNECTOR_VERSION` | `latest`                  |
+
+For reproducible deployments, pin an AgentConnect release:
+
+```dotenv
+AGENTCONNECT_VERSION=vX.Y.Z
+```
+
+Published application and migration images currently target `linux/amd64`.
+
+## Local ports
+
+| Service           | Variable                           | Default |
+| ----------------- | ---------------------------------- | ------- |
+| Web               | `AGENTCONNECT_WEB_PORT`            | `3000`  |
+| Control Plane     | `AGENTCONNECT_CP_PORT`             | `8080`  |
+| Relay             | `AGENTCONNECT_RELAY_PORT`          | `8090`  |
+| PostgreSQL        | `AGENTCONNECT_POSTGRES_PORT`       | `5432`  |
+| Connector gateway | `AGENTCONNECT_OPEN_CONNECTOR_PORT` | `3100`  |
+| Setup Server      | Fixed, loopback only               | `8091`  |
+| Logto sign-in     | Optional overlay                   | `3001`  |
+| Logto Console     | Optional overlay                   | `3002`  |
+
+`AGENTCONNECT_BIND_ADDRESS` defaults to `127.0.0.1` for Web, Control Plane, and Relay. PostgreSQL, the connector gateway, Setup Server, and the local Logto overlay remain loopback-only in the supplied Compose files.
+
+## Network and public URLs
+
+Containers use Docker service names internally. Browsers, daemons, provider callbacks, and links use these public origins:
+
+| Variable                        | Local default           |
+| ------------------------------- | ----------------------- |
+| `AGENTCONNECT_PUBLIC_WEB_URL`   | `http://localhost:3000` |
+| `AGENTCONNECT_PUBLIC_CP_URL`    | `http://localhost:8080` |
+| `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://localhost:8090` |
+| `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090`   |
+
+Do not add a trailing slash.
+
+For a remote daemon or network deployment, replace these defaults with reachable origins. Use HTTPS for browser and callback origins, and `wss://` for the daemon-facing Relay URL. A reverse proxy must preserve WebSocket upgrades for both Control Plane and Relay connections.
+
+Set the final public URLs before creating GitHub or Slack Apps. Setup derives their callback manifests from these values. If the URLs change later, recreate Setup Server with the same environment and Compose overrides before updating the provider Apps. For the base stack:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate setup-server
+```
+
+After updating the provider Apps, recreate the runtime services with the same environment and Compose overrides:
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane relay web
+```
+
+> Do not publish a no-auth stack or its default secrets. Compose is a single-host topology, not an HA deployment.
+
+## Setup Server
+
+Setup Server provides the browser-based AgentConnect Setup surface at [http://localhost:8091](http://localhost:8091). It is included in the base stack and always binds to loopback.
+
+Use it to:
+
+- bootstrap Logto sign-in;
+- create, adopt, check, or clear provider Apps;
+- store provider credentials without returning saved secret values; and
+- enable or disable the preset `agentconnect` agent.
+
+Saved changes are loaded when services start. Apply them with:
+
+```bash
+docker compose restart control-plane relay web
+```
+
+If Compose runs on another host, forward Setup Server instead of exposing it publicly:
+
+```bash
+ssh -L 8091:127.0.0.1:8091 operator@host.example
+```
+
+Then open `http://localhost:8091` locally.
+
+For the initial administrator and Logto Cloud or external Logto OSS setup, continue with [Sign-in](/self-hosting/sign-in).
+
+### Preset agent
+
+New organizations receive a built-in `agentconnect` agent by default. In Setup, open **Options**, clear **Enable preset Agents**, and save. This prevents future provisioning and backfills; it does not delete agents that already exist.
+
+## Database and bootstrap secrets
+
+PostgreSQL 18 stores data in the `agentconnect_postgres-data` volume. `docker compose down` preserves it; `docker compose down --volumes` deletes it.
+
+Replace these defaults before any network exposure:
+
+| Variable                         | Requirement                       |
+| -------------------------------- | --------------------------------- |
+| `AGENTCONNECT_POSTGRES_PASSWORD` | URL-safe characters               |
+| `AGENTCONNECT_API_KEY_PEPPER`    | At least 32 characters and stable |
+| `AGENTCONNECT_RELAY_TOKEN`       | At least 32 characters            |
+
+Generate a separate value for each secret:
+
+```bash
+openssl rand -hex 32
+```
+
+Rotating `AGENTCONNECT_API_KEY_PEPPER` invalidates existing daemon and personal API keys. Back up PostgreSQL before non-throwaway use.
+
+## Secret storage
+
+Secrets shown as write-only in AgentConnect or Setup still need encryption at rest. The default `SECRET_CIPHER=none` stores them as plaintext in PostgreSQL. Use HashiCorp Vault Transit for a production or network-exposed deployment.
+
+Create a Transit key and a policy that can encrypt and decrypt with it:
+
+```bash
+vault secrets enable transit
+vault write -f transit/keys/agentconnect-cp
+```
+
+```hcl
+path "transit/encrypt/agentconnect-cp" {
+  capabilities = ["update"]
+}
+
+path "transit/decrypt/agentconnect-cp" {
+  capabilities = ["update"]
+}
+```
+
+Pass the Vault settings to both Control Plane and Setup Server so they use the same cipher root:
+
+```yaml
+# compose.vault.yaml
+services:
+  control-plane:
+    environment: &vault
+      SECRET_CIPHER: vault-transit
+      VAULT_ADDR: ${VAULT_ADDR}
+      VAULT_TRANSIT_KEY: ${VAULT_TRANSIT_KEY:-agentconnect-cp}
+      VAULT_TRANSIT_MOUNT: ${VAULT_TRANSIT_MOUNT:-transit}
+      VAULT_TOKEN: ${VAULT_TOKEN}
+  setup-server:
+    environment: *vault
+```
+
+Use a policy-scoped token rather than a Vault root token, then recreate both services:
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
+  up -d --force-recreate control-plane setup-server
+```
+
+After taking a database backup, encrypt values that were previously stored as plaintext:
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
+  exec control-plane node dist/secrets/rewrap-cli.js
+```
+
+The command is resumable and can also be rerun after rotating the Transit key. Vault workload identity is supported through `VAULT_JWT_ROLE`, `VAULT_JWT_PATH`, and `VAULT_AUTH_MOUNT` instead of `VAULT_TOKEN`.
+
+## Private certificate authorities
+
+A GitLab or Gitea instance presenting a certificate from a private authority needs that authority's bundle readable **at a file path that exists inside each process**, including the agent sandbox. Point every runtime at it:
+
+| Variable              | Reached by                                        |
+| --------------------- | ------------------------------------------------- |
+| `NODE_EXTRA_CA_CERTS` | The Control Plane and the daemon (Node.js)        |
+| `SSL_CERT_FILE`       | Tools that read the OpenSSL default bundle        |
+| `SSL_CERT_DIR`        | The hashed-directory form of the same             |
+| `GIT_SSL_CAINFO`      | Git itself, for clone, fetch, and push            |
+
+A path that exists only on the host is not enough: an agent runs in a sandbox with its own filesystem view, so the bundle has to be mounted there too and the variables have to survive into the sandbox environment. Set them where the sandbox image and its environment are configured, not only on the host.
+
+The Relay never dials the instance — it only receives webhook deliveries — so it needs no bundle and no outbound access.
+
+## Production checklist
+
+- Pin release images.
+- Configure OIDC sign-in and an API Resource.
+- Replace every default secret and enable encrypted secret storage.
+- Set a connector encryption key if you use connectors, and back up its volume.
+- Put Web, Control Plane, Relay, and Logto behind HTTPS.
+- Preserve WebSocket upgrades.
+- Back up PostgreSQL and test restores.
+- Keep Setup Server, PostgreSQL, and the connector gateway off the public network.
