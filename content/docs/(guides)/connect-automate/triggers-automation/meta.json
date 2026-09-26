@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "github",
+    "gitlab",
+    "gitea",
+    "linear",
+    "webhooks",
+    "schedules"
+  ],
+  "title": "Workflows"
+}

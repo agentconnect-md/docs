@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "create-an-agent",
+    "multi-agent-work-modes",
+    "workspaces-and-repos",
+    "configure-an-agent",
+    "playground"
+  ],
+  "title": "Agents"
+}

@@ -1,0 +1,18 @@
+---
+title: "Daemons"
+icon: Server
+description: "Install and operate the runtime that runs your agents in your environment."
+---
+
+import imgDaemons from '@/public/images/daemons.png'
+
+A daemon runs agents in an environment you control, with access to the workspaces, tools, and credentials you choose.
+
+<Image src={imgDaemons} alt="The Infra page: AgentConnect Cloud, the connected daemons, and a daemon group" width={900} />
+
+- [Install the daemon](/build-your-team/daemons/install-the-daemon) and connect it to your AgentConnect organization.
+- [Manage daemons](/build-your-team/daemons/manage-daemons) to inspect status, capacity, and the agents assigned to each runtime.
+- [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) from the console or the host, and roll back a release that misbehaves.
+- [Daemon groups](/build-your-team/daemons/daemon-groups) keep an agent running when one machine goes down, and let its sessions run on more than one machine.
+- [Run agents on AgentConnect Cloud](/build-your-team/daemons/manage-daemons#agentconnect-cloud) instead of a machine you operate, with model usage priced at the provider's published rates.
+- [Sandbox agent runtimes](/operate-govern/sandboxing) on supported Linux machines, per agent or as a daemon-wide requirement.

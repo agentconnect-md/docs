@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "agents",
+    "variables-and-secrets",
+    "tools-and-skills",
+    "knowledge",
+    "daemons"
+  ],
+  "title": "Build Your Team"
+}

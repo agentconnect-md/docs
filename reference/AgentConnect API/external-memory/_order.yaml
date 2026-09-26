@@ -1,9 +1,0 @@
-- listmemoryplugininstallations
-- creatememoryplugininstallation
-- deletememoryplugininstallation
-- listexternalmemoryconnections
-- createexternalmemoryconnection
-- getexternalmemoryconnection
-- updateexternalmemoryconnection
-- deleteexternalmemoryconnection
-- rotateexternalmemoryconnectiongrant

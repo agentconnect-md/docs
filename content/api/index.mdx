@@ -1,0 +1,45 @@
+---
+title: "API overview"
+icon: CodeXml
+description: "Call the AgentConnect REST API with a personal API key — list agents, read sessions, drive schedules from scripts and CI."
+---
+
+import imgApiKey from '@/public/images/api-key.png'
+
+<ApiFacts />
+
+Everything the console does rides a REST API at `https://api.agentconnect.md` — and you can call it yourself. On [AgentConnect OSS](/self-hosting), the bundled stack serves the same API at `<your-control-plane-url>/api/v1`. A **personal API key** authenticates as *you*, with *your role*, in **one organization**.
+
+## Create a key
+
+<Image src={imgApiKey} alt="Create a personal API key" width={520} />
+
+**Profile → API keys → New key**:
+
+- **Organization** — the org this key is bound to.
+- **Name** — optional label ("ci-runner").
+- **Expires** — 30 / 60 / 90 days, 1 year, or never (90 days default).
+
+The key is displayed **exactly once** — copy it then. The list afterwards shows only the tail, expiry and last-used time.
+
+## Use it
+
+```bash
+curl https://api.agentconnect.md/v1/orgs \
+  -H "Authorization: Bearer $AGENTCONNECT_API_KEY"
+```
+
+Every resource is org-scoped under `/v1/orgs/{orgId}/…` — list agents, read session metadata and messages, manage schedules, trigger runs. Every operation is in the sidebar, each with a playground to send it from, and the raw OpenAPI document is linked in the table above.
+
+Since the key carries your role, a [Viewer](/operate-govern/permissions-overview/members-and-roles)'s key can read but not mutate — handy for dashboards.
+
+The same key also authenticates the [MCP connector](/connect-automate/mcp-connector) in headless clients — pass it as the `Authorization: Bearer` header instead of doing the browser OAuth flow.
+
+## Revoke
+
+**Revoke** kills a key immediately — anything still using it starts getting `401`s. Rotate by minting a new key first, moving your scripts, then revoking the old one.
+
+## Other credentials, for completeness
+
+- **Daemon keys** — minted by **Add daemon**, they authenticate a *machine*, not a person. Shown once in the install command; revoked when the daemon is deleted.
+- **Bot tokens** — belong to the chat platforms; see [Bots](/connect-automate/chat-platforms/bots).

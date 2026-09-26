@@ -1,0 +1,54 @@
+---
+title: "Operations"
+icon: Wrench
+description: "Upgrade the Helm release, clean up orphaned sandboxes, share a cluster between releases, and troubleshoot a deployment."
+---
+
+These tasks apply to a running Helm release. For the initial installation, see [Deploy with Helm](/self-hosting/kubernetes/deploy).
+
+## Upgrade
+
+Back up PostgreSQL and important workspace PVCs, choose the new release, and inspect its release notes. Helm does not upgrade CRDs from a chart's `crds/` directory, so apply the version-matched CRDs before upgrading the controller and application workloads:
+
+```bash
+export AGENTCONNECT_NEW_CHART_VERSION=X.Y.Z
+export AGENTCONNECT_CHART_DIR="$(mktemp -d)"
+
+helm pull oci://ghcr.io/agentconnect-md/charts/agentconnect \
+  --version "$AGENTCONNECT_NEW_CHART_VERSION" \
+  --untar \
+  --untardir "$AGENTCONNECT_CHART_DIR"
+
+kubectl apply --server-side \
+  -f "$AGENTCONNECT_CHART_DIR/agentconnect/crds/agent-sandbox.yaml"
+
+helm upgrade agentconnect \
+  oci://ghcr.io/agentconnect-md/charts/agentconnect \
+  --version "$AGENTCONNECT_NEW_CHART_VERSION" \
+  --namespace agentconnect \
+  --values agentconnect-values.yaml \
+  --wait \
+  --timeout 15m
+```
+
+The chart version already selects the matching application images. Leave `image.tag` and component tags empty unless you deliberately need a mixed-version deployment.
+
+## Orphan cleanup
+
+The daemon pool includes a scheduled reconciler for sandbox objects whose agents no longer exist. It defaults to dry-run mode. Review its summaries for an observation period before setting `daemonPool.reconciler.delete: true`: deleting an orphaned sandbox claim also deletes its workspace PVC and cannot be undone.
+
+## Shared-cluster controller ownership
+
+The `agent-sandbox` CRDs and controller are cluster-shared. A single AgentConnect release can own them on a dedicated cluster. If several AgentConnect releases share one cluster, manage the CRDs and controller once outside those releases, install each chart with `--skip-crds`, and set `installCRD: false`. Do not let several Helm releases compete for the same cluster-scoped controller stack.
+
+## Troubleshooting
+
+- **A pod stays in `ContainerCreating`:** check `kubectl describe pod`. The common causes are a missing `agentconnect-secrets` or `agentconnect-data-plane` Secret.
+- **Daemon pool members never become Ready:** inspect their logs and confirm the data-plane PostgreSQL URL, the `agent-sandbox` controller, and the runtime warm pool are healthy.
+- **Sandbox pods stay Pending:** verify the configured StorageClass, node architecture, capacity, node selectors, and tolerations.
+- **An HTTPRoute is not Accepted:** inspect its status and the Gateway listener's hostname, `sectionName`, and allowed route namespaces.
+- **The console shows no sign-in button after Setup:** its process caches the Control Plane's configuration snapshot at startup. Restart the console after the Control Plane is Ready.
+- **An agent reports that its runtime needs authentication:** no model credential reached it. Check the agent's and organization's variables, and `daemonPool.modelCredentials` if the install supplies one.
+- **The console returns `401` after sign-in:** verify that the Logto API Resource exactly matches the Control Plane audience; see [Sign-in](/self-hosting/sign-in#verify-the-setup).
+
+For the complete value reference and a control-plane-only installation example, see the chart's [README](https://github.com/agentconnect-md/agentconnect/tree/main/charts/agentconnect).
