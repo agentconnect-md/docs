@@ -4,7 +4,7 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
-import { OPENAPI_PATH_PREFIX, resolveChannel } from './lib/channels.mjs'
+import { resolveChannel } from './lib/channels.mjs'
 import { bindOpenapi, fetchOpenapi } from './lib/openapi.mjs'
 
 export const SITE = resolve(import.meta.dirname, '..')
@@ -28,7 +28,7 @@ export async function prepare({ channelId }) {
   // The release the API reports it runs; an API that reports none leaves the label out.
   const release = spec.info?.['x-agentconnect-release'] ?? null
 
-  writeJson('openapi.json', bindOpenapi(spec, { apiUrl: channel.apiUrl, pathPrefix: OPENAPI_PATH_PREFIX, release }))
+  writeJson('openapi.json', bindOpenapi(spec, { apiUrl: channel.apiUrl, release }))
   writeJson('channel.json', {
     id: channel.id,
     label: channel.label,

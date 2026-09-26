@@ -28,9 +28,9 @@ Each build is one channel, bound to one environment and one release line:
 
 `main` is where documentation is written and reviewed; `release` is fast-forwarded to it when the
 documentation for a production release ships. `scripts/prepare.mjs` reads the OpenAPI document the
-channel's API serves, so the reference is exactly what that environment runs, then rewrites its paths
-to the public prefix, points its `servers` at the channel's API and records the release the API reports
-in `info.x-agentconnect-release`. The same document is served at `/docs/openapi.json`, and "Send" in
+channel's API serves, so the reference is exactly what that environment runs, paths included, then
+points its `servers` at the channel's API and keeps the release the API reports in
+`info.x-agentconnect-release`. The same document is served at `/docs/openapi.json`, and "Send" in
 the API playground goes through `/docs/api/proxy`, which forwards only to the channel's own API.
 
 A channel's origins come from the environment the build runs in, `DOCS_API_URL` and

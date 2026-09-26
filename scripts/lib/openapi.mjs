@@ -15,12 +15,10 @@ export async function fetchOpenapi(channel) {
   return spec
 }
 
-/** Bind a document to a channel: its server is that channel's API, paths carry the public prefix, and the release is recorded. */
-export function bindOpenapi(spec, { apiUrl, pathPrefix, release }) {
-  // The Control Plane lists its own paths (/api/v1/...); a gateway exposes them under the public prefix.
-  const paths = Object.fromEntries(Object.entries(spec.paths).map(([path, item]) => [path.replace(/^\/api\/v1(?=\/|$)/, pathPrefix), item]))
+/** Bind a document to a channel: its server is that channel's API and the release is recorded; paths are the API's own. */
+export function bindOpenapi(spec, { apiUrl, release }) {
   const info = { ...spec.info }
   if (release) info['x-agentconnect-release'] = release
   else delete info['x-agentconnect-release']
-  return { ...spec, info, paths, servers: [{ url: apiUrl }] }
+  return { ...spec, info, servers: [{ url: apiUrl }] }
 }
