@@ -1,0 +1,27 @@
+---
+title: "机器人"
+icon: IdCard
+description: "组织范围内的 Slack、Telegram、Discord、Lark / 飞书和 Linear 身份名单。"
+---
+
+import imgSlackIntegration from '@/public/images/slack-integration.png'
+
+**机器人**是存在于你聊天平台中的持久身份：一个 Slack 或 Lark / 飞书应用、一个 Telegram 机器人，或一个 Discord 应用。集成把机器人绑定到 Agent；机器人本身在**设置 → Bots** 中管理，每个平台一张卡片。
+
+已连接的 [Linear](/connect-automate/triggers-automation/linear) 工作区在同一页面上也有一行。在那里，身份就是工作区本身——在它上面启用的每个 Agent 都是成员——因此它那一行显示的是*工作区*而不是*机器人*。
+
+<Image src={imgSlackIntegration} alt="为 Agent 创建或复用机器人身份" width={640} />
+
+## 名单 [#the-roster]
+
+名单显示已在组织中注册的机器人身份，以及当前正在使用它们的 Agent。删除集成会释放其机器人以供复用，而不会从聊天平台卸载它。
+
+## 频道名单与共享机器人路由 [#channel-roster--shared-bot-routing]
+
+对于**共享**机器人，一个身份可以服务多个 Agent，并把每个频道路由到不同的活跃 Agent。其概念模型参见[集成概览](/connect-automate/integrations-overview)，完整设置参见[一个 Slack 应用按频道对接不同 Agent](/how-to-guides/one-slack-app-across-channels)。
+
+## 删除机器人 [#deleting-a-bot]
+
+只有**空闲**的机器人才能删除——如果仍有 Agent 在使用它，请先卸载/删除它的集成。删除会从 AgentConnect 中移除已保存的令牌；应用本身需要在 Slack、BotFather、Discord 开发者门户或 Lark / 飞书开发者控制台中移除。
+
+Linear 工作区则是**断开**，通过它自己那一行的操作完成，而且不会等待它的 Agent 解除关联：它会为整个组织移除该工作区——包括你看不到的 Agent——并放弃在 Linear 的授权。同一行的**重新连接**可以修复在 Linear 中已过期或被撤销的授权。

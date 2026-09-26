@@ -1,0 +1,80 @@
+---
+title: "工作区与仓库"
+icon: FolderGit2
+description: "空白工作区与 GitHub 工作区、独立的会话工作树，以及仓库访问权限。"
+---
+
+import imgWorkspace from '@/public/images/workspace.png'
+
+每个 Agent 都有一个 **工作区**——它在 Daemon 上的工作目录。创建 Agent 时选择工作区来源，之后也可以从 **工作区** 标签页更改。
+
+<Image src={imgWorkspace} alt="一个基于 GitHub 的工作区：仓库、分支、已授权仓库和工作树" width={900} />
+
+## 从空白开始 [#from-scratch]
+
+Daemon 上的一个全新目录。Agent 创建的文件只存在于那台机器上，且不受版本控制。适合报告类 Agent、ChatOps，以及任何不从现有代码出发的工作。
+
+## 从 GitHub [#from-github]
+
+Daemon 克隆一个仓库和分支（可选择把 Agent 限定到某个子目录），Agent 在该检出中工作。
+
+要从列表中挑选仓库，请安装 **AgentConnect GitHub App**：
+
+1. 在 **添加 Agent → 从 GitHub** 中，点击 **安装 GitHub App**（或前往 **设置 → GitHub → 在 GitHub 安装**）。
+2. 在 GitHub 上选择账号以及要授权的仓库。
+3. 回到对话框，选择 **仓库** 和 **分支**，如果 Agent 应当位于某个子文件夹，请设置 **Agent 目录**，然后选择 **推送权限**：
+   - **只读**——Agent 可以拉取但不能推送。
+   - **读写**——Agent 可以向仓库推送。
+
+在 AgentConnect OSS 上，部署运维人员必须[先配置 GitHub App](/self-hosting/provider-apps#github-app)。没有 App 时，公开仓库仍然可以以只读方式克隆。
+
+## 从 GitLab [#from-gitlab]
+
+方式相同，只是来源是 GitLab 项目——可以在 GitLab.com 上，也可以在自管理实例上。选择 **从 GitLab**，选定项目、分支、Agent 目录和访问权限，Daemon 就会克隆它。
+
+无需安装 App：部署只需连接 GitLab 一次，当你第一次为某个 Agent 选择项目时，该 Agent 会在实例上获得自己的服务账号。参见 [GitLab](/connect-automate/triggers-automation/gitlab)。在 AgentConnect OSS 上，运维人员需要先[配置部署的 GitLab OAuth 应用](/self-hosting/provider-apps#gitlab)。
+
+## 从 Gitea [#from-gitea]
+
+方式相同，只是来源是 Gitea 仓库——可以在 gitea.com 上，也可以在自托管实例上。选择 **从 Gitea**，选定仓库、分支、Agent 目录和访问权限，Daemon 就会克隆它。
+
+同样无需安装 App：组织使用一个机器人用户的令牌连接 Gitea 一次，选择器就会列出该机器人管理的仓库。所有 Agent 共享这一个身份。参见 [Gitea](/connect-automate/triggers-automation/gitea)。在 AgentConnect OSS 上，运维人员需要先[把部署指向该实例](/self-hosting/provider-apps#gitea)。
+
+### 并发会话的工作树 [#worktrees-for-concurrent-sessions]
+
+新建的 GitHub Agent 默认启用 **工作树**。每个会话都会获得自己稳定的检出，因此并发的会话不会共享分支或文件状态。同一会话中后续的轮次会回到那个工作树。如果每个会话都应当刻意使用主检出，请关闭工作树。
+
+**工作区** 标签页可以在主检出和你有权读取的会话所属的工作树之间切换。会话工作树在控制台中只能浏览，并遵循 Daemon 的[会话保留策略](/operate-govern/sessions#retention-and-cleanup)。
+
+### 仓库凭证 [#repository-credentials]
+
+对于通过 App 安装的仓库，AgentConnect 提供限定于该仓库和你所选访问级别的短期凭证。Daemon 不会把长期有效的 Git 凭证保存到磁盘。移除仓库授权或卸载 GitHub App 会停止后续访问。
+
+## 工作区标签页 [#the-workspace-tab]
+
+Agent 的 **工作区** 标签页直接从它的 Daemon 读取文件。经授权的用户可以查看主工作区和可见的会话工作树、编辑空白工作区中的文件，或为主 GitHub 工作区拉取更新。当该 Daemon 离线时此视图不可用，因为文件只存在于那台机器上。
+
+## 更改工作区来源 [#change-the-workspace-source]
+
+使用工作区卡片上的 **编辑工作区**，可以在空白工作区和 GitHub 之间切换、选择另一个仓库或分支、更改工作目录，或更改读/写权限。
+
+更改来源类型、仓库或分支会 **替换 Daemon 本地的所有工作区文件**。在确认之前，请提交、推送、复制或以其他方式备份你需要的任何内容。只更改工作目录或访问级别会保留检出。
+
+## 授权其他仓库 [#additional-authorized-repositories]
+
+有时一个仓库并不够——评审 Agent 可能需要读取某个共享库，或在同级仓库中工作。在 Agent 的 **工作区** 标签页上，工作区卡片列出了 **其他仓库**：
+
+- **授权仓库** 可添加 **只读** 或 **读写** 访问权限。
+- 授权按 Agent 生效，且一键即可撤销。
+- 凭证始终限定在你列出的仓库范围内。
+
+默认情况下，Agent 的 GitHub 凭证止步于它自己的工作区仓库。
+
+每项授权还会选择它的 **检出** 方式——添加时位于访问权限旁边，之后则在 **编辑工作区** 中的对应行上：
+
+- **始终**（默认）：Daemon 会把该仓库作为 **次级根目录** 检出到工作区旁边，并交给每个会话的 Runtime，这样 Agent 就在本地读取和编辑这些文件，而不是通过网络访问。根目录会在第一个需要它的会话中克隆；克隆失败的根目录会在该会话中被略去，而不会导致会话失败。
+- **按需**：只提供凭证。不会预先检出任何内容；当 Agent 需要该仓库时，会把它克隆到会话被分配的目录中。适用于会话很少需要的仓库，这样会话就不必等待用不到的克隆。
+
+组织所有者还可以在 **编辑工作区** 中 **授权安装实例**。这样 Agent 就以同一个访问级别获得某个 GitHub App 安装实例所覆盖的全部仓库，包括之后新建的仓库。这些仓库是 **按需** 的：Agent 需要什么就克隆什么。如果某个仓库你还单独授权过，它会保留自己的访问权限和检出方式。仓库监听的信息性 Checks 仍然需要单独授权该仓库，而[监听整个安装实例](/connect-automate/triggers-automation/github#watch-every-repository-of-an-installation)则基于安装实例的授权来发布它们。
+
+**工作区** 标签页的文件浏览器可以在各个检出之间切换，而当代码托管平台评审的对象位于已授权仓库中时，评审会针对该仓库的精确检出运行。**只读** 授权即使文件已在磁盘上，仍然无法推送。

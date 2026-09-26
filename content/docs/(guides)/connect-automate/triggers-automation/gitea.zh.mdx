@@ -1,0 +1,152 @@
+---
+title: "Gitea"
+icon: Gitea
+description: "用一个机器人令牌连接 gitea.com 或你自己的实例，并由 Issue、Pull Request、评论和评审触发 Agent。"
+---
+
+import imgGiteaAddIntegration from '@/public/images/gitea-add-integration.png'
+import imgGiteaAgentCard from '@/public/images/gitea-agent-card.png'
+import imgGiteaIssueReplies from '@/public/images/gitea-issue-replies.png'
+import imgGiteaPrReview from '@/public/images/gitea-pr-review.png'
+
+Gitea 集成让 Agent **监视一个仓库**：Issue、Pull Request、评论和已提交的评审会成为会话，Agent 则以评论、正式评审和提交状态的形式回写。它在 **gitea.com** 和**自托管实例**上的工作方式相同——一个部署只连接其中之一，绝不会同时连接两者。
+
+GitHub 集成通过已安装的 App 行事，GitLab 为每个 Agent 提供独立的服务账号，而 Gitea 使用**每个组织一个机器人用户**。所有 Agent 在 Gitea 上做的一切——克隆、推送、评论、评审、提交状态——都归属于这一个用户，它的个人访问令牌是 AgentConnect 持有的唯一 Gitea 凭证。
+
+需要 Gitea **1.23 或更高版本**。**不支持** Forgejo 和 Codeberg：Forgejo 从 Gitea 1.22 分叉而来，在此集成所依赖的部分——令牌权限范围、行内评审评论、Webhook 请求头、事件词汇——上存在差异，因此 AgentConnect 会直接拒绝，而不是半残地工作。
+
+## 连接 Gitea [#connect-gitea]
+
+组织在**集成 → 代码托管平台 → Gitea → 连接 Gitea** 中连接一次 Gitea，方法是粘贴你创建的机器人用户的个人访问令牌。
+
+1. 在你的实例上创建一个**专用的机器人用户**——不是某个人的账号，也不是实例管理员。管理员会被读取为每个仓库的所有者，这会让下面的权限检查失去意义。
+2. 以该用户身份登录，打开 **Settings → Applications → Manage Access Tokens**。
+3. 生成一个恰好具有以下四个权限范围的令牌：
+
+   | 权限范围            | 用途                                                                 |
+   | ------------------- | -------------------------------------------------------------------- |
+   | `read:user`         | 读取机器人自身的身份，以及它所属的组织。                             |
+   | `write:repository`  | Webhook 管理、提交状态、评审和仓库读取。                             |
+   | `write:issue`       | Issue 和 Pull Request 上的评论和表情回应。                           |
+   | `read:organization` | 为仓库选择器列出组织的仓库。                                         |
+
+4. 把令牌粘贴到卡片中。AgentConnect 会在存储任何内容之前验证机器人的身份、版本下限和这四个权限范围中的每一个，并且会拒绝其用户已经是此部署上另一个组织的机器人的令牌。
+
+令牌以封存形式静态存储，任何 API 都不会返回它，只会以短期租约的形式通过 Daemon 已认证的连接送达 Daemon。它在设计上就是宽泛的：在已连接仓库中工作的 Agent 可以做机器人在那里能做的任何事情。要限定范围，请选择**机器人可以管理哪些仓库**，而不是拆分令牌。
+
+一个组织持有一个 Gitea 连接。如果需要换到另一个机器人用户，请断开连接后重新连接——替换令牌会保留同一个机器人。
+
+## 在每个仓库上给机器人 Admin 权限 [#give-the-bot-admin-on-each-repository]
+
+AgentConnect 会自行安装、修复、测试和移除每个仓库的 Webhook，而 Gitea 的 Webhook 路由要求仓库**管理**权限。因此，对于每一个你希望 Agent 在其中工作的仓库，都要给机器人 **Admin** 权限：
+
+- 按仓库：**Settings → Collaborators → Add collaborator**，权限选择 **Administrator**。
+- 按组织：创建一个具有 **Administrator** 单元权限的团队，然后把机器人加入该团队。
+
+Admin 权限还承载着 AgentConnect 用来授权贡献者的权限查询——Gitea 只会向该仓库的管理员回答另一个用户的权限——因此它不只是为了 Webhook。
+
+## 使用中的仓库 [#repositories-in-use]
+
+连接就绪后，仓库会在第一次被使用时加入组织：在**触发器**中选择它、把它设为某个 Agent 的**工作区**，或把它添加为某个 Agent 的**其他仓库**，AgentConnect 会在那次保存中把该仓库记录下来——它会出现在 Gitea 卡片上，状态为**就绪**。每个选择器都会列出机器人**当前管理**的仓库，并把尚未使用的仓库标记为*保存时添加*。没有出现的仓库说明需要授予权限，而不是 bug。
+
+托管的 Webhook 是一个单独的步骤，它跟随第一个触发器：一旦有已启用的触发器监听该仓库，AgentConnect 就会用该触发器的事件安装 Webhook、发送一次测试投递，并在 Relay 收到它时清除该行的警告。这次安装在触发器保存后立即运行，而不是在保存过程中。仅作为工作区或其他仓库使用的仓库没有 Webhook——它也不需要——在有触发器需要之前，它的行不会显示任何关于 Webhook 的信息。
+
+Gitea 卡片上的**添加仓库**可以在仓库首次使用之前先记录它。这是可选的，同样不会安装 Webhook：第一个已启用的触发器才会安装。
+
+多个 Agent 可以使用同一个仓库。它们共享该仓库的一个 Webhook，它订阅所有触发器监听事件的并集，并随着触发器——或持有它们的 Agent——被移除而再次收窄。移除最后一个触发器不会把仓库从卡片上移除：它会保留在那里，没有 Webhook，直到你亲自**移除**它。
+
+每个仓库行显示其状态，以及你可以对它做的三件事：
+
+| 状态                 | 含义                                                                                                                       |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **正在设置**         | 配置正在运行。                                                                                                             |
+| **就绪**             | 仓库已记录，机器人的 Admin 权限已确认。当触发器需要 Webhook 时，Webhook 也在这里安装并验证；警告会指出从未到达的测试投递。 |
+| **设置未完成**       | 机器人失去了 Admin 权限。会话仍然可以工作——评论、评审、状态和 Git 只需要 Write——但 Webhook 修复会停止，贡献者检查一律视为无权限。 |
+| **机器人访问已降级** | Gitea 拒绝了机器人令牌。请在连接上替换它，然后**修复**。                                                                   |
+| **移除未完成**       | 移除没有完成，因此 Webhook 可能仍在仓库上。                                                                                |
+
+- **修复**会重新运行配置——在有人手动删除了 Webhook 之后，或在你修好了行消息所指出的问题之后使用它。
+- **轮换 Webhook 签名密钥**会安装一个替换的 Webhook；一旦 Gitea 用新密钥投递了一个事件，旧的 Webhook 就会退役。
+- **移除**会删除 Gitea 上的托管 Webhook，并让 Agent 停止在那里应答。仓库的代码和历史不会有任何改变。只要还有触发器、Agent 工作区或其他仓库指向该仓库，移除就会被拒绝，并指出是哪一个——请先移除那些。
+
+测试投递从未到达的仓库会保持**就绪**状态，并带有关于出站 Webhook 允许列表的警告，这样被阻止的地址在设置时就能看到，而不是等到第一个 Pull Request 被漏掉之后。自托管实例请参见 [AgentConnect OSS 上的 Gitea](/self-hosting/provider-apps#gitea)。
+
+## 监视仓库 [#watch-a-repository]
+
+在 Agent 页面：**集成 → 添加集成 → Gitea**。
+
+<Image src={imgGiteaAddIntegration} alt="选择了 Gitea 的添加集成对话框：选择仓库，选择 Issue 或 Pull Request，以及 Agent 被唤醒的积极程度" width={560} />
+
+触发器依托已有的授权，从不创建授权：仓库必须已经是该 Agent 的[工作区](/build-your-team/agents/workspaces-and-repos)或其已授权的其他仓库之一，否则添加监视项会被拒绝。它不需要已经出现在 Gitea 卡片上——把它设为工作区或其他仓库就会把它放上去。
+
+选择仓库、监听对象——**Issue**、**Pull Request**、**Release** 或任意组合——以及 Agent 被唤醒的积极程度：
+
+- **创建时**——当 Issue 或 Pull Request 被创建时，以及之后在该类型中被明确提及时。
+- **任意更新**——创建，加上新修订、回复和已提交的评审。关闭、重新打开和合并不会触发。
+- **@ 提及**——当 Agent（`@<agent-name>` 或 `@<organization>/<agent-name>`）或组织的 Gitea 机器人被 @ 提及时。无论触发节奏如何，请求机器人作为评审者都会启动一轮工作。
+
+Agent 会在 Release **已发布**或有**任意更新**（每次发布或编辑）时运行。
+
+<Image src={imgGiteaAgentCard} alt="一个 Agent 的 Gitea 卡片，其中有一个被监视的仓库，显示 Pull Request 和 Issue 类型及其触发条件" width={640} />
+
+多个 Agent 可以监视同一个仓库。`@<agent-name>` 指向一个 Agent；机器人自己的用户名则广播给所有匹配的 Agent。
+
+<Image src={imgGiteaIssueReplies} alt="一个 Issue 通过同一个 Webhook 被两个 Agent 回答：每条回复都是机器人用户的一条评论，并署名写下它的那个 Agent" width={720} />
+
+在组织拥有的仓库上，`@<organization>/<agent-name>` 同样指向那一个 Agent。在 Gitea 的评论框中输入 `@` 时会提示组织的团队，但它没有办法提示 Agent 名称，因此创建一个名称与 Agent 完全一致的团队——是 `review-bot`，而不是“Review Bot”——就能把这个定向用户名变成一个提示项。Gitea 会向组织所有者和站点管理员提供所有团队，而对其他所有人只提供他们所属的团队，所以请把应该获得这个快捷方式的人加为成员。
+
+成员身份不会改变触发行为：AgentConnect 匹配的是你输入的文本，从不看团队成员，因此手动输入的 `@<organization>/<agent-name>` 无论如何都有效，而且不管团队存在与否，普通的 `@<agent-name>` 都继续有效。团队只存在于组织中，因此个人账号拥有的仓库没有可自动补全的内容——在那里请使用 `@<agent-name>`。
+
+由于 Gitea 的 Issue 和 Pull Request 共用同一个编号空间，会话以对象类型和编号共同作为键，因此 Issue 12 和 Pull Request 12 绝不会是同一个对话。
+
+### Gitea 评论中的评审 [#reviews-in-a-gitea-comment]
+
+Gitea 把一次已提交的评审作为一个事件投递，其中只携带摘要，不含任何行内评论信息——没有路径、行号或正文。AgentConnect 会在构建提示词之前通过 API 读取该评审的行内评论，因此评审会完整地到达 Agent。在 Gitea 上，评审提交之外单独留下的行内评论根本不会产生事件，所以也没有这样的触发器可配置。
+
+## 谁可以触发 Agent [#who-may-trigger-an-agent]
+
+AgentConnect 在事件发生的那一刻，通过 Gitea API 检查内容作者的**当前仓库权限**。只有 **Write 或更高**权限才能启动 Agent。权限更低、缺失或根本无法获取时，一律视为无权限——Agent 不会运行。
+
+来自 fork 的 Pull Request 本身不会启动 Agent。当前拥有 Write 或更高权限的协作者可以通过提及 Agent，或请求机器人作为评审者来请求第一轮工作。触发权限与 Agent 之后能做什么是两回事：评论、评审和推送仍然需要你授予该 Agent 的仓库授权。
+
+机器人自己的活动从不触发 Agent，只有一个刻意保留的例外：机器人创建的 Pull Request 仍然会进入评审，正是这一点让一个 Agent 可以评审另一个 Agent 的工作。
+
+## Agent 会做什么 [#what-the-agent-does]
+
+每个符合条件的事件都会在 Agent 的 Daemon 上启动一个会话，并以该事件作为上下文；这些会话会出现在[会话](/operate-govern/sessions)中，并链接回 Gitea。
+
+- **普通回复**——来自机器人用户的一条评论，发在 Issue 或 Pull Request 上。在回复出现之前，Gitea 的 `eyes` 表情回应会先在触发评论上确认这一轮工作已收到。
+- **评审**——在 Pull Request 监视项上展开 **PR 评审**，即可允许带行内评论的正式 `COMMENT` 评审、`REQUEST_CHANGES` 和 `APPROVE`。Gitea **每行只接受一条评论**，不支持范围：范围会折叠到其结束行，起始行记录在评论的第一行。
+- **运行状态**——Pull Request head 上的一个提交状态，context 为 `agentconnect/<agent-name>`，链接回控制台中的会话。除非运维人员把该 context 添加到分支保护的必需检查中，否则它不会阻止合并。
+
+<Image src={imgGiteaPrReview} alt="机器人用户在 Pull Request 上的一次 REQUEST_CHANGES 评审：先是摘要，然后是锚定到问题行的行内评论" width={800} />
+
+要让 Agent 在某个 Pull Request 上再次运行：在会话中写一条后续评论、推送新的修订，或重新请求机器人作为评审者。
+
+Git 访问使用提供给 Agent 沙箱的短期凭证：**没有任何 Gitea 凭证会被写入磁盘**。没有 Gitea 命令行包装器——Agent 通过 AgentConnect 的代码托管平台工具进行读写。
+
+## Gitea 拒绝的操作 [#what-gitea-refuses]
+
+Gitea 不允许 Pull Request 的作者批准它或对它请求修改。当 Pull Request 是机器人自己创建的——即一个 Agent 评审另一个 Agent 的工作——评审结论无法记录，因此 AgentConnect 会改为把同样的评审内容作为普通评审评论发布，并在会话中报告这次降级。没有任何内容会被悄悄丢弃。
+
+`COMMENT` 评审也从不会取代先前的 `REQUEST_CHANGES`：只有当该评审者提交新的批准或拒绝时，Gitea 才会清除其评审结论。
+
+## 替换令牌 [#replace-the-token]
+
+Gitea 不签发会过期的令牌，也无法在没有用户密码的情况下创建或撤销令牌，因此 AgentConnect 没有什么可以轮换的。替换是一个控制台操作：连接上的**替换令牌**会运行与连接时相同的检查，要求是**同一个机器人用户**，并原子地切换存储的密钥，使 Daemon 缓存清除旧值。
+
+**请你自己在 Gitea 中撤销旧令牌**——AgentConnect 做不到。而且由于令牌没有过期时间，也就没有可以提前预警的期限：令牌被拒绝就是产品得知问题的方式，此时连接上的每个仓库都会进入**机器人访问已降级**状态，直到你替换它。
+
+## 断开连接 [#disconnect]
+
+**断开连接**会先从 Gitea 移除每一个托管 Webhook，然后释放连接；Agent 会停止在它的仓库上应答。之后请在 Gitea 中撤销令牌。
+
+如果令牌已经被拒绝，某个仓库可能会停在**移除未完成**状态，其 Webhook 仍在 Gitea 上。请替换令牌后再次移除，或在 Gitea 中手动删除该 Webhook。
+
+## 自托管实例 [#self-hosted-instances]
+
+上述一切在你自己的实例上同样适用。不同之处在于运维工作，每个部署只需做一次：把部署指向该实例，并满足实例必须提供的条件（Gitea 1.23 或更高版本、一个 HTTPS 地址、受信任的证书，以及允许 Gitea 访问部署的出站 Webhook 允许列表）。这些全部记录在 [AgentConnect OSS 上的 Gitea](/self-hosting/provider-apps#gitea) 中。
+
+**没有需要注册的应用**：Gitea 的 OAuth 提供方不会增加任何自己的身份，因为用 OAuth 令牌执行的操作和用手动创建的令牌一样，都归属于授权用户。机器人用户及其令牌就是全部的身份。
+
+一旦存在 Gitea 状态，实例地址就固定了——存储的令牌、数字仓库 ID 和 Webhook ID 都不携带实例来源信息，因此重新指向会把一个实例的凭证发送给另一个实例。实例的任何信息都不需要在你的 Daemon 上配置：Daemon 会从它所服务的 Agent 那里获知。

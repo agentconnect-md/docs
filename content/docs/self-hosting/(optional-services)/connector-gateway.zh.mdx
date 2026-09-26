@@ -1,0 +1,86 @@
+---
+title: "连接器网关"
+icon: Cable
+description: "配置内置的连接器网关：它的运行时令牌、凭证加密、OAuth 提供方和目录过滤。"
+---
+
+该栈包含一个连接器网关，为[工具与技能](/build-your-team/tools-and-skills)中的**添加连接器**提供支持。浏览目录以及连接任何通过 API 密钥、自定义凭证或完全无需凭证进行授权的服务，都不需要额外配置。由于它自己的控制台和管理 API 没有身份验证，它只监听回环地址，绝不会发布到 Docker 主机之外。
+
+在 Kubernetes 上，chart 会为网关部署独立的持久卷，其加密密钥是 `agentconnect-secrets` Secret 中的 `OPEN_CONNECTOR_ENCRYPTION_KEY` 条目。下面的命令适用于 Compose 栈。
+
+不要设置 `OOMOL_CONNECT_ADMIN_TOKEN`。AgentConnect 调用网关时不带 bearer 令牌，设置了它会导致连接器目录无法加载。
+
+要求网关的操作 API 必须携带 bearer 令牌，请设置 `OOMOL_CONNECT_RUNTIME_TOKEN`。同一个值会同时配置网关和调用它的 Relay，因此运行时身份验证要么两端都开启，要么两端都关闭。
+
+这些设置是 Compose 环境变量值，而 `docker compose restart` 会沿用容器现有的环境。请重新创建这两个服务，新值才会生效：
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate open-connector relay
+```
+
+## 加密存储的连接器凭证 [#encrypt-stored-connector-credentials]
+
+网关把连接器凭证和 OAuth 客户端密钥保存在它自己的 SQLite 卷 `agentconnect_open-connector-data` 中。这是第二个凭证存储：`SECRET_CIPHER` 和 Vault Transit 都覆盖不到它。在连接任何真实服务之前，给它一个专属密钥，并在创建第一个连接之前就设置好该密钥：
+
+```dotenv
+OOMOL_CONNECT_ENCRYPTION_KEY=replace-with-a-stable-random-32-char-secret
+```
+
+像生成栈的其他密钥一样生成它：
+
+```bash
+openssl rand -hex 32
+```
+
+向已在运行的栈添加该密钥时，只有重新创建网关后才会生效：
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate open-connector
+```
+
+请把该卷和 PostgreSQL 一起备份。`docker compose down` 会保留它；`docker compose down --volumes` 会把它连同数据库一起删除。
+
+## OAuth 提供方 [#oauth-providers]
+
+过滤是按授权方式进行的，而不是按服务。在网关中配置某个服务的 OAuth 客户端之前，只有它的 OAuth 方式会被隐藏：同时接受 API 密钥、自定义凭证或无需身份验证的服务仍会留在目录中，并改为提供这些方式。默认栈中缺失的是那些只能通过 OAuth 授权的服务。
+
+要提供 OAuth，请在网关中配置它的客户端，并让提供方的重定向能够从浏览器到达网关。
+
+1. 为网关提供一个浏览器可访问的源地址，并把 AgentConnect 指向它：
+
+   ```dotenv
+   AGENTCONNECT_PUBLIC_OPEN_CONNECTOR_URL=https://connectors.example.test
+   ```
+
+2. 重新创建网关，使它根据新的源地址构建重定向 URI。仍在运行的网关会保留旧的源地址，它发出的授权请求将与你接下来注册的回调不匹配：
+
+   ```bash
+   docker compose --env-file compose.env up -d --force-recreate open-connector
+   ```
+
+3. 把该源地址上**仅** `/oauth/callback` 这一路径路由到网关。提供方会把浏览器重定向到那里以完成授权，这也是唯一必须公开的路径。
+4. 在提供方处注册 OAuth 客户端，使用 `<origin>/oauth/callback` 作为其重定向 URI。
+5. 通过本地端口打开网关控制台 [http://localhost:3100](http://localhost:3100)，为该服务保存客户端 ID 和密钥。
+
+> 网关控制台及其 `/api` 接口没有任何身份验证。绝不要把它们路由到公开源地址——一旦公开，任何人都能拿到你存储的连接器凭证。
+
+如果网关运行在另一台主机上，请转发端口而不是暴露它：
+
+```bash
+ssh -L 3100:127.0.0.1:3100 operator@host.example
+```
+
+## 收窄目录 [#narrow-the-catalog]
+
+| 变量                                | 默认值                             |
+| ----------------------------------- | ---------------------------------- |
+| `OPEN_CONNECTOR_PROVIDER_WHITELIST` | 未设置，表示所有服务               |
+| `OPEN_CONNECTOR_PROVIDER_BLOCKLIST` | 与 AgentConnect 自身集成重叠的服务 |
+
+两者都接受以逗号分隔的服务 ID，且屏蔽列表在白名单之后应用。默认的屏蔽列表会把 GitHub、Slack、Telegram、Discord 和 Lark / 飞书排除在连接器目录之外，因为 AgentConnect 直接集成了它们。只有当你确实希望两条路径都可用时才覆盖它。
+
+只有控制平面会读取这两个值，而且它需要重新创建而不是重启才能读到新值：
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane
+```

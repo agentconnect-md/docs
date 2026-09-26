@@ -1,0 +1,45 @@
+---
+title: "API 概览"
+icon: CodeXml
+description: "使用个人 API 密钥调用 AgentConnect REST API——列出 Agent、读取会话、在脚本和 CI 中驱动定时任务。"
+---
+
+import imgApiKey from '@/public/images/api-key.png'
+
+<ApiFacts />
+
+控制台所做的一切都建立在 `https://api.agentconnect.md` 的 REST API 之上——你也可以自己调用它。在 [AgentConnect OSS](/self-hosting) 上，内置栈在 `<your-control-plane-url>/api/v1` 提供同一套 API。**个人 API 密钥**以*你*的身份、带着*你的角色*、在**一个组织**中进行认证。
+
+## 创建密钥 [#create-a-key]
+
+<Image src={imgApiKey} alt="创建个人 API 密钥" width={520} />
+
+**个人资料 → API 密钥 → 新建密钥**：
+
+- **组织**——此密钥绑定的组织。
+- **名称**——可选的标签（“ci-runner”）。
+- **过期时间**——30 / 60 / 90 天、1 年或永不过期（默认 90 天）。
+
+密钥**只显示一次**——请当场复制。之后列表中只会显示密钥尾部、过期时间和最近使用时间。
+
+## 使用密钥 [#use-it]
+
+```bash
+curl https://api.agentconnect.md/v1/orgs \
+  -H "Authorization: Bearer $AGENTCONNECT_API_KEY"
+```
+
+所有资源都以组织为范围，位于 `/v1/orgs/{orgId}/…` 之下——列出 Agent、读取会话元数据和消息、管理定时任务、触发运行。每个操作都列在侧边栏中，并各自带有一个可以直接发送请求的调试面板；原始的 OpenAPI 文档链接在上方的表格里。
+
+由于密钥携带你的角色，[查看者](/operate-govern/permissions-overview/members-and-roles)的密钥只能读取而不能修改——很适合用于仪表盘。
+
+同一个密钥也可以在无头客户端中为 [MCP 连接器](/connect-automate/mcp-connector)认证——把它作为 `Authorization: Bearer` 头传入，而不必走浏览器 OAuth 流程。
+
+## 撤销 [#revoke]
+
+**撤销**会让密钥立即失效——仍在使用它的任何程序都会开始收到 `401`。轮换时请先创建新密钥，迁移你的脚本，然后再撤销旧密钥。
+
+## 其他凭证（补充说明） [#other-credentials-for-completeness]
+
+- **Daemon 密钥**——由**添加 Daemon** 生成，用于认证一台*机器*而不是一个人。只在安装命令中显示一次；删除 Daemon 时随之撤销。
+- **机器人令牌**——属于聊天平台；参见[机器人](/connect-automate/chat-platforms/bots)。

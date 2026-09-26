@@ -1,0 +1,100 @@
+---
+title: "简介"
+icon: House
+description: "无论工作在哪里发生，都能 @ 任意 Agent。"
+---
+
+import { BookOpen, Bot, MessagesSquare, Package, Plug, Rocket, Server, ShieldHalf, SlidersHorizontal, Star, Workflow, Wrench } from 'lucide-react'
+import imgConsoleHome from '@/public/images/console-home.png'
+
+AgentConnect 是一个开源平台，让团队与多个 AI Agent 在 Slack、Telegram、Discord、Lark、GitHub 和 GitLab 上协同工作。接入 Claude Code、Codex、Grok Build、DeepSeek、Pi 或任何 ACP 兼容的 Runtime，然后从对话、Pull Request、Issue、Webhook 或定时任务发起工作。
+
+为每个 Agent 指定一个角色，再选择它所需的 Runtime、模型、工作区、记忆、工具、技能、权限和机器。Agent 之间可以相互调用并记住学到的东西，而你的团队则在共享频道和同一个控制台中跟进这些工作。
+
+一个小型 Daemon 负责运行 Agent——可以在你自己运维的机器上，也可以在使用 AgentConnect Cloud 时运行在托管基础设施上。团队通过同一个控制台配置所有 Agent 和 Daemon、连接频道和触发器、控制访问权限，并跟进各自有权查看的工作。
+
+<div className="not-prose my-6 aspect-video overflow-hidden rounded-xl border">
+  <iframe className="size-full" src="https://www.youtube-nocookie.com/embed/KA7xHF5JbJc" title="AgentConnect in two minutes" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+</div>
+
+<Cards>
+  <Card title="快速开始" href="/getting-started/quickstart" icon={<Rocket />}>
+    连接 Daemon、配置 Agent，并完成团队设置
+  </Card>
+  <Card title="工作原理" href="/getting-started/how-it-works" icon={<Workflow />}>
+    了解 Daemon、可选的 Relay（中继）和控制平面
+  </Card>
+  <Card title="AgentConnect OSS" href="/self-hosting" icon={<Package />}>
+    使用 Docker Compose 或 Kubernetes 运行开源技术栈
+  </Card>
+  <Card title="在 GitHub 上为我们加星" href="https://github.com/agentconnect-md/agentconnect" icon={<Star />} external>
+    浏览 Apache-2.0 源码、提交 Issue，或为项目加星
+  </Card>
+</Cards>
+
+## 为什么选择 AgentConnect？ [#why-agentconnect]
+
+AI Agent 越来越擅长完成工作。更难的问题是让多个 Agent 与团队——以及彼此之间——良好协作。大多数 Agent 仍然像个人工具一样，活在某一个人的终端里：队友看不到 Agent 在做什么，无法接管会话，无法评审它的输出，而它积累的上下文也只停留在一台笔记本上。于是每个团队都在重复编写同样的胶水代码——消息频道、cron 任务、凭证处理、上下文拼接。
+
+AgentConnect 把这些胶水代码变成了一个平台：
+
+- **作为一个团队协作，不限 Runtime**。创建不同角色的 Agent 并让它们相互调用，同时人们在工作实际发生的对话中跟进进展。Claude Code、Codex、Grok Build、DeepSeek、Pi 以及任何其他 ACP 兼容的 Runtime 可以并行运行，更换其中一个并不需要重建围绕它的工作流。
+- **让工作留在它发生的地方**。将 Agent 关联到 Slack、Telegram、Discord 和 Lark 中的机器人，或关联到 GitHub 和 GitLab 上的仓库与工作流。
+- **为每项工作选择合适的 Agent**。独立配置每个 Agent 的 Runtime、模型、工作区、工具和机器。
+- **延续上下文**。为每个 Agent 提供自己的记忆和技能，并发布经过评审的[知识库](/build-your-team/knowledge)，让每个 Agent 都能按需查找。
+- **划定清晰的边界**。决定谁可以看到每个 Agent 和会话、它可以使用哪些仓库和工具，以及它可以调用哪些其他 Agent。
+- **保持掌控**。自托管这套 Apache-2.0 技术栈，把 Agent 执行和工作区留在你自己运维的环境中。
+
+## 组建你的 Agent 团队 [#build-your-agent-team]
+
+围绕团队已经在做的工作创建一组 Agent，然后把每一个连接到合适的平台和资源：
+
+1. **[创建 Agent](/build-your-team/agents/create-an-agent)**。为每个 Agent 指定角色、Runtime、模型、工作区和工具。
+2. **[连接你的平台](/connect-automate/integrations-overview)**。将 Agent 关联到团队使用的聊天平台中的机器人，或关联到 GitHub 和 GitLab 的仓库与事件。
+3. **[设定边界](/operate-govern/permissions-overview)**。选择谁可以看到每个 Agent 和会话、它可以使用哪些资源，以及它可以调用哪些其他 Agent。
+4. **[跟进工作](/operate-govern/sessions)**。从发起工作的对话或控制台中查看 Agent 的运行记录。
+
+<Image src={imgConsoleHome} alt="AgentConnect 首页，展示最近的会话、Agent 和定时运行" width={900} />
+
+## 基础功能 [#the-basics]
+
+<Cards>
+  <Card title="安装 Daemon" href="/build-your-team/daemons/install-the-daemon" icon={<Server />}>
+    在任何装有 Node 24.12+ 的 macOS、Linux 或 Windows 机器上运行 Agent
+  </Card>
+  <Card title="创建 Agent" href="/build-your-team/agents/create-an-agent" icon={<Bot />}>
+    选择角色、Runtime、模型和工作区
+  </Card>
+  <Card title="连接你的平台" href="/connect-automate/integrations-overview" icon={<Plug />}>
+    将 Agent 关联到机器人、仓库和事件源
+  </Card>
+  <Card title="配置 Agent" href="/build-your-team/agents/configure-an-agent" icon={<SlidersHorizontal />}>
+    编辑行为、输出、环境、记忆和 Agent 调用
+  </Card>
+  <Card title="工具与技能" href="/build-your-team/tools-and-skills" icon={<Wrench />}>
+    注册共享能力，并按 Agent 逐个启用
+  </Card>
+  <Card title="知识库" href="/build-your-team/knowledge" icon={<BookOpen />}>
+    发布经过评审的上下文，并管理外部记忆连接
+  </Card>
+  <Card title="权限" href="/operate-govern/permissions-overview" icon={<ShieldHalf />}>
+    控制角色、可见范围、仓库访问和 Agent 调用
+  </Card>
+  <Card title="会话" href="/operate-govern/sessions" icon={<MessagesSquare />}>
+    逐个工具调用地查看你有权访问的运行记录
+  </Card>
+</Cards>
+
+## 更进一步 [#go-further]
+
+当你的 Agent 开始工作之后，可以把 Agent、模型和频道组合成更高级的团队模式：
+
+- **分层进行快速与深度 PR 评审**。让一个快速模型评审每个 Pull Request，当改动需要更深入的分析时，再提及更强的评审者。[构建这个工作流](/how-to-guides/fast-and-deep-pr-reviews)。
+- **在多个频道中使用同一个 Slack 应用**。将每个频道路由到不同的 Agent，同时保持一个熟悉的 Slack 身份。[配置这种模式](/how-to-guides/one-slack-app-across-channels)。
+- **在可信的工作区之间交接对话**。当你控制或明确信任双方时，可以在消息平台之间转移工作。[查看这种模式](/how-to-guides/hand-off-conversations-across-messaging-platforms)。
+
+## 自托管或托管 [#self-hosted-or-hosted]
+
+[AgentConnect OSS](/self-hosting) 在你自己运维的基础设施中运行 Web 控制台、控制平面、Relay 和执行环境。本地评估可使用 Docker Compose，生产级的 Kubernetes 部署可使用[官方 Helm Chart](/self-hosting/kubernetes/deploy)。
+
+[AgentConnect Cloud](https://app.agentconnect.md) 是托管的管理控制台；注册、命名你的组织，你的 Agent 就可以在 Cloud 自带的资源池上运行，无需安装任何东西。在两种模式下你都可以把自己的机器作为 Daemon 接入；在 Cloud 上还可以[在托管基础设施上运行 Agent](/build-your-team/daemons/manage-daemons#agentconnect-cloud)，模型用量按提供方公布的价格计费。

@@ -1,0 +1,34 @@
+---
+title: "定时任务"
+icon: CalendarClock
+description: "按计时器运行 Agent——每日报告、夜间审计、周期性巡查——输出可以发布到频道，也可以只保留在会话中。"
+---
+
+import imgSchedulesList from '@/public/images/schedules-list.png'
+
+**定时任务**按 cron 节奏运行 Agent：每日部署报告、夜间依赖审计、周一早晨的分诊巡查。每次触发都会为 Agent 启动一个全新的会话，因此每次运行都可以在[会话](/operate-govern/sessions)中完整回放。
+
+![创建定时任务](/images/new-schedule.png)
+
+## 创建 [#create-one]
+
+**定时任务 → 新建定时任务**：
+
+- **名称**——例如 `weekly-deploy-report`。
+- **Agent**——由谁来运行。
+- **重复方式**——一个友好的构建器：**每小时 / 每天 / 工作日 / 每周**（选择星期 + 时间），或者用**自定义**填写原始的五字段 cron 表达式（`0 9 * * 1`）。
+- **时区**——用于计算定时任务的 IANA 时区，例如 `America/New_York` 或 `Asia/Shanghai`。新建的定时任务默认使用你浏览器的时区；即使 Agent 之后迁移到另一个区域的 Daemon，保存的时区仍然生效。
+- **提示词**——要执行的任务，像给人交代工作那样写：“*总结上周的部署和回滚，并把报告发送到 #deploys。”*
+- **目标集成**——可选。选择 Agent 的某个集成频道后，运行结果会发布到那里，后续回复以线程形式挂在其下。保持**无——仅保留在会话中**则为无头运行，你在会话中查看结果。
+- **可见范围**——组织中谁能看到这个定时任务（[详情](/operate-govern/permissions-overview/team-visibility)）。
+
+## 运行与查看定时任务 [#run-and-review-schedules]
+
+用**立即运行**来测试定时任务，无需等待下一次触发。每次运行都会记录其结果，并附带对应会话的链接。你也可以暂停定时任务而不删除它的配置。
+
+<Image src={imgSchedulesList} alt="定时任务列表，显示各自的 cron、上次运行、下次运行和开关" width={900} />
+
+## 说明 [#notes]
+
+- 定时任务在 Agent 的 Daemon 上触发；如果在计划时刻 Daemon 离线，该次触发会被跳过（运行记录列表就是你的审计线索）。
+- 因为每次运行都是全新的会话，提示词必须自成一体——长期背景请使用 Agent 的[记忆](/build-your-team/agents/configure-an-agent)。

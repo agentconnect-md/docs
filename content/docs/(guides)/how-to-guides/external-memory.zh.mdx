@@ -1,0 +1,66 @@
+---
+title: "Mem0 外部记忆"
+icon: Brain
+description: "把 Agent 连接到自托管的 Mem0，选择检索和记录策略，并验证记忆能跨会话生效。"
+---
+
+import imgExternalMemoryConnection from '@/public/images/external-memory-connection.png'
+import imgExternalMemoryPolicy from '@/public/images/external-memory-policy.png'
+
+外部记忆让 Agent 能在你自己运营的记忆服务中检索和保存持久记录。本指南使用 [Mem0 OSS](https://github.com/mem0ai/mem0) 搭配 AgentConnect 的第一方 Mem0 封装。
+
+## 开始之前 [#before-you-start]
+
+部署运维人员必须先完成[可选的 Mem0 配置](/self-hosting/external-memory)。然后你需要：
+
+- 一位组织所有者；
+- 一个能访问 Mem0 的在线 Daemon；以及
+- 部署时创建的 Mem0 API 密钥。
+
+## 1. 创建组织级连接 [#1-create-the-organization-connection]
+
+打开**知识库 → 外部记忆 → 添加连接**。
+
+选择已审核的 `ai.mem0.memory.oss — local:mem0-oss` 安装，输入所需的凭证以及任何非机密的 JSON 配置，然后选择**创建连接**。如果找不到已审核的安装，请先让部署运维人员完成 Mem0 设置。
+
+凭证保存后即为只写。
+
+<Image src={imgExternalMemoryConnection} alt="注册由运维人员批准的 Mem0 连接" width={560} />
+
+## 2. 绑定 Agent [#2-bind-an-agent]
+
+打开 Agent 的**记忆**标签页，选择**外部**，然后选择该连接。
+
+检索和记录可以分别选择：
+
+- **检索 → 每轮**在每一轮之前搜索 Mem0。
+- **检索 → 仅工具**让 Agent 只在需要时才搜索。
+- **记录 → 仅手动**只保存明确选定要记忆的内容。
+- **记录 → 每轮**在你确认数据边界后，把每一次投递的交流发送到 Mem0。
+
+除非 Agent 的工作流需要自动记录，否则建议从**每轮**检索和**仅手动**记录开始。
+
+<Image src={imgExternalMemoryPolicy} alt="选择外部记忆的检索和记录策略" width={900} />
+
+保存设置，并等待连接变为**就绪**，然后再让 Agent 带着外部记忆开始工作。
+
+## 3. 测试跨会话检索 [#3-test-recall-across-sessions]
+
+要快速做端到端测试，可以临时使用**记录 → 每轮**：
+
+1. 开始一段 Playground（控制台中显示为“试用”）对话并说：`Remember that production deploys require a change ticket and two reviewers.`
+2. 打开 Agent 的**记忆**标签页，找到新的记录。
+3. 用同一个 Agent 开始一段新的 Playground 对话并提问：`What do I need before a production deploy?`
+
+在**检索 → 每轮**下，新会话应当用到已存储的记录。记忆的范围限定于该 Agent，因此其他 Agent 不会自动获得它。
+
+## 连接状态 [#connection-status]
+
+| 状态 | 含义 |
+| --- | --- |
+| **连接中** | 正在等待兼容的在线 Daemon |
+| **无效** | 请检查连接错误和部署设置 |
+| **已降级** | 之前正常的连接暂时不可用 |
+| **就绪** | Agent 可以检索和记录记忆 |
+
+编辑连接会重新检查它。删除连接前请先解绑所有 Agent；从 AgentConnect 中删除连接不会删除 Mem0 中的记录。
