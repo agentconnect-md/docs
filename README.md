@@ -33,8 +33,9 @@ to the public prefix, points its `servers` at the channel's API and records the 
 in `info.x-agentconnect-release`. The same document is served at `/docs/openapi.json`, and "Send" in
 the API playground goes through `/docs/api/proxy`, which forwards only to the channel's own API.
 
-Production origins are public and built in; every other channel's origins come from the environment
-(`.env.example` lists them) and are never committed, and a build never prints them.
+A channel's origins come from the environment the build runs in, `DOCS_API_URL` and
+`DOCS_CONSOLE_URL` (`.env.example` lists them); the repository holds none, and a build never prints
+them. Another installation's channel sets the same two names.
 
 ## Local preview
 
@@ -58,9 +59,10 @@ routes live with the deployment, not in this repository.
 
 A push to `main` deploys `test` and a push to `release` deploys `prod`
 (`.github/workflows/deploy.yml`); the deployment side also rebuilds a channel after deploying to its
-environment, with a `repository_dispatch` of type `test-deployed` or `prod-promoted`. The workflow needs
-`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, plus the test channel's `DOCS_TEST_API_URL` and
-`DOCS_TEST_CONSOLE_URL`, as Actions secrets. The same commands work from a checkout:
+environment, with a `repository_dispatch` of type `test-deployed` or `prod-promoted`. Each channel is
+a GitHub environment of the same name holding its `DOCS_API_URL` and `DOCS_CONSOLE_URL`, as variables
+where the origins are public (`prod`) and as secrets where they are not (`test`); `CLOUDFLARE_API_TOKEN`
+and `CLOUDFLARE_ACCOUNT_ID` are repository secrets. The same commands work from a checkout:
 
 ```bash
 pnpm build --channel test && pnpm run deploy -- --env test

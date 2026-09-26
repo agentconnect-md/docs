@@ -4,6 +4,9 @@ name: Deploy
 # the deployment side rebuilds a channel when its environment changes, through a repository_dispatch:
 # `test-deployed` for test, `prod-promoted` for prod. A build reads the channel's OpenAPI document
 # from its API, so the reference is always what that environment serves.
+#
+# Each channel is a GitHub environment of the same name holding DOCS_API_URL and DOCS_CONSOLE_URL,
+# as variables where the origins are public and as secrets where they are not.
 on:
   push:
     branches: [main, release]
@@ -25,20 +28,18 @@ jobs:
     environment: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
     env:
       DOCS_CHANNEL: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
+      DOCS_API_URL: ${{ secrets.DOCS_API_URL || vars.DOCS_API_URL }}
+      DOCS_CONSOLE_URL: ${{ secrets.DOCS_CONSOLE_URL || vars.DOCS_CONSOLE_URL }}
     steps:
       - uses: actions/checkout@v5
         with:
           # A dispatch runs on the default branch; prod's content is the release branch.
           ref: ${{ env.DOCS_CHANNEL == 'prod' && 'release' || github.ref }}
-      # The test channel's origins are configuration this public log may not show: the values are masked as
-      # secrets, and their hosts are masked here so an error naming only the host stays masked too.
-      - name: Mask the test channel's hosts
-        if: env.DOCS_CHANNEL == 'test'
-        env:
-          DOCS_TEST_API_URL: ${{ secrets.DOCS_TEST_API_URL }}
-          DOCS_TEST_CONSOLE_URL: ${{ secrets.DOCS_TEST_CONSOLE_URL }}
+      # An origin held as a secret is masked as a whole; its host is masked here too, so an error
+      # naming only the host stays out of this public log.
+      - name: Mask the channel's hosts
         run: |
-          for url in "$DOCS_TEST_API_URL" "$DOCS_TEST_CONSOLE_URL"; do
+          for url in "$DOCS_API_URL" "$DOCS_CONSOLE_URL"; do
             host="${url#*://}"
             host="${host%%/*}"
             [ -n "$host" ] && echo "::add-mask::$host"
@@ -50,9 +51,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-        env:
-          DOCS_TEST_API_URL: ${{ secrets.DOCS_TEST_API_URL }}
-          DOCS_TEST_CONSOLE_URL: ${{ secrets.DOCS_TEST_CONSOLE_URL }}
       - run: |
           if [ "$DOCS_CHANNEL" = test ]; then set -- --env test; fi
           pnpm run deploy -- "$@"
