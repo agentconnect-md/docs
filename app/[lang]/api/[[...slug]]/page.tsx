@@ -38,7 +38,8 @@ export default async function Page({ params }: PageProps<'/[lang]/api/[[...slug]
   return (
     <DocsPage toc={page.data.toc} full={page.data.full} footer={{ enabled: false }}>
       <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription>{page.data.description}</DocsDescription>
+      <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
+      <div className="border-b pb-6" />
       <DocsBody>
         {fallback && <Callout type="info">{t(lang).untranslated}</Callout>}
         <MDX components={getMDXComponents(lang, { ApiFacts: () => <ApiFacts lang={lang} /> })} />
