@@ -25,8 +25,8 @@ function writeJson(file, value) {
 export async function prepare({ channelId }) {
   const channel = resolveChannel(channelId)
   const spec = await fetchOpenapi(channel)
-  // The API reports the release it runs; until every environment does, DOCS_RELEASE names it, or the label is left out.
-  const release = spec.info?.['x-agentconnect-release'] ?? process.env.DOCS_RELEASE ?? null
+  // The release the API reports it runs; an API that reports none leaves the label out.
+  const release = spec.info?.['x-agentconnect-release'] ?? null
 
   writeJson('openapi.json', bindOpenapi(spec, { apiUrl: channel.apiUrl, pathPrefix: OPENAPI_PATH_PREFIX, release }))
   writeJson('channel.json', {

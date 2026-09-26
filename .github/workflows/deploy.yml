@@ -25,8 +25,6 @@ jobs:
     environment: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
     env:
       DOCS_CHANNEL: ${{ (github.ref_name == 'release' || github.event.action == 'prod-promoted') && 'prod' || 'test' }}
-      # The release label while an API does not report one: the dispatch names it, prod falls back to the variable.
-      DOCS_RELEASE: ${{ github.event.client_payload.version || (github.ref_name == 'release' && vars.DOCS_PROD_RELEASE) || '' }}
     steps:
       - uses: actions/checkout@v5
         with:

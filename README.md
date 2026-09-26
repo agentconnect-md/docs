@@ -34,8 +34,7 @@ in `info.x-agentconnect-release`. The same document is served at `/docs/openapi.
 the API playground goes through `/docs/api/proxy`, which forwards only to the channel's own API.
 
 Production origins are public and built in; every other channel's origins come from the environment
-(`.env.example` lists them) and are never committed, and a build never prints them. `DOCS_RELEASE`
-supplies the release label while an API does not report one.
+(`.env.example` lists them) and are never committed, and a build never prints them.
 
 ## Local preview
 
