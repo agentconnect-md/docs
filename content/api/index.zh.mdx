@@ -29,6 +29,8 @@ import imgApiKey from '@/public/images/api-key.png'
 
 密钥只能在控制台中管理。API 密钥不能列出、创建或撤销密钥，也不能创建或删除组织；这些请求会返回 `403`。
 
+给组织自己运行的服务端用的密钥，签给[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)而不是你自己：**设置 → 服务账号 → 密钥**，选项相同，只是不用选组织。
+
 ## 使用密钥 [#use-it]
 
 ```bash

@@ -25,6 +25,12 @@ Use the organization switcher to move between organizations you belong to.
 
 An organization must always have at least one Owner, so its last Owner cannot be demoted or removed.
 
+## Service accounts
+
+A service account is a member for a server your organization runs, such as the backend of an Ask AI panel. It never signs in, so its keys keep working when the person who set it up leaves.
+
+**Settings → Service accounts** is Owner-only and separate from the member list. Create one with a name and a role, Collaborator or Viewer; a service account is never an Owner. Its address, for example `docs-bot-k3x9p2@sa.agentconnect.md`, never changes. **Keys** mints its [API keys](/api#create-a-key) with the same choices as a personal key, and each acts as the service account with its role. Sessions it opens are visible to the whole organization. Deleting it revokes its keys.
+
 ## Roles
 
 |                                                                                   | **Owner** | **Collaborator** | **Viewer** |
