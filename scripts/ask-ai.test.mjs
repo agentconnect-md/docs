@@ -3,8 +3,6 @@ import { test } from 'node:test'
 import {
   COOKIE_PREFIX,
   RELAY_RETRY_DELAY_MS,
-  TOKEN_MARGIN_MS,
-  TokenCache,
   createChatHandler,
   foldLocation,
   isNewConversation,
@@ -13,14 +11,14 @@ import {
   tabCookie
 } from '../lib/ask-ai.ts'
 
-const API = 'https://api.example.test/v1'
 const RELAY = 'https://relay.example.test'
+const CHAT_URL = `${RELAY}/ai-sdk/agents/agent-1/chat`
 const conv = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
 const CONV_A = conv(10)
 const CONV_B = conv(11)
 const TAB_A = 'a'.repeat(32)
 const TAB_B = 'b'.repeat(32)
-const CONFIG = { apiBase: API, apiKey: 'test-key', orgId: 'org-1', agentId: 'agent-1' }
+const CONFIG = { relayUrl: RELAY, apiKey: 'test-key', agentId: 'agent-1' }
 
 const user = (text, location) => ({
   id: `u-${text}`,
@@ -30,28 +28,14 @@ const user = (text, location) => ({
 const assistant = (text) => ({ id: `a-${text}`, role: 'assistant', parts: [{ type: 'text', text }] })
 const followUp = [user('q'), assistant('a'), user('q2')]
 
-// A fetch stub: token mints answer from `mints` in order (else a fresh id), relay turns answer `relay`; calls are recorded.
-function stubFetch({ mints = [], relay = () => sse() } = {}) {
+// A fetch stub for the relay: turns answer `relay` in order of calls; every call is recorded.
+function stubFetch({ relay = () => sse() } = {}) {
   const calls = []
-  let fresh = 100
   const fetch = async (url, init) => {
-    const body = init.body ? JSON.parse(init.body) : undefined
-    calls.push({ url, headers: init.headers, body })
-    if (url.endsWith('/webchat/token')) {
-      const next = mints.shift()
-      if (typeof next === 'number') return new Response('{}', { status: next })
-      const conversationId = next ?? body.conversationId ?? conv(fresh++)
-      const expiresAt = new Date(Date.now() + 300_000).toISOString()
-      return Response.json({ token: `tok-${conversationId}`, relayUrl: `${RELAY}/`, conversationId, expiresAt })
-    }
-    return relay()
+    calls.push({ url, headers: init.headers, body: JSON.parse(init.body) })
+    return relay(calls.length)
   }
-  return {
-    fetch,
-    calls,
-    mintCalls: () => calls.filter((c) => c.url.endsWith('/webchat/token')),
-    relayCalls: () => calls.filter((c) => c.url.startsWith(`${RELAY}/ai-sdk/chat/`))
-  }
+  return { fetch, calls, chats: () => calls.map((c) => c.body.id) }
 }
 
 function sse() {
@@ -59,6 +43,10 @@ function sse() {
     headers: { 'content-type': 'text/event-stream', 'x-vercel-ai-ui-message-stream': 'v1', 'x-other': 'dropped' }
   })
 }
+
+// The relay's refusal body, whose `reason` the route acts on.
+const refused = (status, reason) =>
+  Response.json({ error: 'Refused', statusCode: status, message: 'refused', reason }, { status })
 
 function chatRequest(messages, { tab = TAB_A, cookie } = {}) {
   return new Request('https://docs.example.test/docs/api/chat', {
@@ -73,7 +61,6 @@ function browser() {
   const jar = new Map()
   const header = () => [...jar].map(([name, value]) => `${name}=${value}`).join('; ')
   return {
-    jar,
     request: (tab, messages) => chatRequest(messages, { tab, cookie: header() }),
     receive(res) {
       const set = res.headers.get('set-cookie')
@@ -85,17 +72,24 @@ function browser() {
   }
 }
 
-const cookieFor = (tab, conversationId) => tabCookie(tab, conversationId, '/docs').split(';')[0]
-const conversationOf = (call) => call.url.split('/').at(-1)
+const cookieFor = (tab, chatId) => tabCookie(tab, chatId, '/docs').split(';')[0]
 
-function handler(stub, cache = new TokenCache(), extra = {}) {
-  return createChatHandler({ config: () => CONFIG, cookiePath: '/docs', fetch: stub.fetch, cache, delay: async () => {}, ...extra })
+function handler(stub, extra = {}) {
+  let next = 100
+  return createChatHandler({
+    config: () => CONFIG,
+    cookiePath: '/docs',
+    fetch: stub.fetch,
+    delay: async () => {},
+    newChatId: () => conv(next++),
+    ...extra
+  })
 }
 
 test('reads the three settings, or none when any is unset', () => {
-  const env = { AGENTCONNECT_API_KEY: 'k', AGENTCONNECT_ORG_ID: 'o', AGENTCONNECT_AGENT_ID: 'a' }
-  assert.deepEqual(readConfig(env, API), { apiBase: API, apiKey: 'k', orgId: 'o', agentId: 'a' })
-  assert.equal(readConfig({ ...env, AGENTCONNECT_AGENT_ID: '' }, API), null)
+  const env = { AGENTCONNECT_API_KEY: 'k', AGENTCONNECT_AGENT_ID: 'a', AGENTCONNECT_RELAY_URL: `${RELAY}/` }
+  assert.deepEqual(readConfig(env), { relayUrl: RELAY, apiKey: 'k', agentId: 'a' })
+  assert.equal(readConfig({ ...env, AGENTCONNECT_RELAY_URL: '' }), null)
 })
 
 test('a lone first question is a new conversation; anything with history resumes', () => {
@@ -115,7 +109,7 @@ test('each tab has its own HttpOnly, Secure cookie under the base path, and read
   assert.equal(readTabConversation(null, TAB_A), undefined)
 })
 
-test('a malformed conversation id in a tab cookie reads as absent', () => {
+test('a malformed chat id in a tab cookie reads as absent', () => {
   assert.equal(readTabConversation(`${COOKIE_PREFIX}${TAB_A}=not-a-uuid`, TAB_A), undefined)
   assert.equal(readTabConversation(`${COOKIE_PREFIX}${TAB_A}=${CONV_A}x`, TAB_A), undefined)
 })
@@ -128,17 +122,6 @@ test('folds the reader location into the last user message as one text part', ()
   const text = 'Reader is on https://docs.example.test/docs/bots\n\nHow do I add a bot?'
   assert.deepEqual(folded.messages[2].parts, [{ type: 'text', text }])
   assert.deepEqual(foldLocation({ messages: [user('plain')] }).messages[0].parts, [{ type: 'text', text: 'plain' }])
-})
-
-test('a cached token lives until its expiry minus the margin', () => {
-  let now = 1_000_000
-  const cache = new TokenCache(() => now)
-  cache.set({ token: 't', relayUrl: RELAY, conversationId: CONV_A, expiresAtMs: now + 60_000 })
-  assert.equal(cache.get(CONV_A)?.token, 't')
-  now += 60_000 - TOKEN_MARGIN_MS - 1
-  assert.equal(cache.get(CONV_A)?.token, 't')
-  now += 1
-  assert.equal(cache.get(CONV_A), undefined)
 })
 
 test('answers 503 when the feature is not configured', async () => {
@@ -158,126 +141,98 @@ test('a missing or malformed tab handle is a bad request', async () => {
   }
 })
 
-test('a first question mints a new conversation, binds the tab and streams the relay through', async () => {
-  const stub = stubFetch({ mints: [CONV_B] })
+test('a first question gets a chat id of its own, binds the tab and streams the relay through', async () => {
+  const stub = stubFetch()
   const res = await handler(stub)(chatRequest([user('q', '/docs/x')], { cookie: cookieFor(TAB_A, CONV_A) }))
   assert.equal(res.status, 200)
   assert.equal(res.headers.get('content-type'), 'text/event-stream')
   assert.equal(res.headers.get('x-vercel-ai-ui-message-stream'), 'v1')
   assert.equal(res.headers.get('x-other'), null)
-  assert.equal(res.headers.get('set-cookie'), tabCookie(TAB_A, CONV_B, '/docs'))
+  assert.equal(res.headers.get('set-cookie'), tabCookie(TAB_A, conv(100), '/docs'))
   assert.equal(await res.text(), 'data: {"type":"start"}\n\n')
 
-  const [mint, turn] = stub.calls
-  assert.equal(mint.url, `${API}/orgs/org-1/agents/agent-1/webchat/token`)
-  assert.equal(mint.headers.authorization, 'Bearer test-key')
-  assert.deepEqual(mint.body, {})
-  assert.equal(turn.url, `${RELAY}/ai-sdk/chat/${CONV_B}`)
-  assert.equal(turn.headers.authorization, `Bearer tok-${CONV_B}`)
-  assert.equal(turn.body.id, 'client-chosen')
+  const [turn] = stub.calls
+  assert.equal(turn.url, CHAT_URL)
+  assert.equal(turn.headers.authorization, 'Bearer test-key')
+  // The client's own id is replaced; the tab handle never leaves this route.
+  assert.equal(turn.body.id, conv(100))
   assert.equal('tab' in turn.body, false)
   assert.equal(turn.body.messages[0].parts[0].text, 'Reader is on /docs/x\n\nq')
 })
 
 test('two tabs keep their own conversations: A opens, B opens, A follows up', async () => {
-  const stub = stubFetch({ mints: [CONV_A, CONV_B] })
+  const stub = stubFetch()
   const post = handler(stub)
   const visitor = browser()
   visitor.receive(await post(visitor.request(TAB_A, [user('qa')])))
   visitor.receive(await post(visitor.request(TAB_B, [user('qb')])))
   const res = await post(visitor.request(TAB_A, [user('qa'), assistant('aa'), user('qa2')]))
   assert.equal(res.headers.get('set-cookie'), null)
-  assert.deepEqual(stub.relayCalls().map(conversationOf), [CONV_A, CONV_B, CONV_A])
+  assert.deepEqual(stub.chats(), [conv(100), conv(101), conv(100)])
 })
 
-test('first questions sent before either response keep both bindings: A, B, then B follows up', async () => {
-  const stub = stubFetch({ mints: [CONV_A, CONV_B] })
-  const post = handler(stub)
-  const visitor = browser()
-  // Both requests leave with the same empty jar; each response sets only its own tab's cookie, in either order.
-  const first = visitor.request(TAB_A, [user('qa')])
-  const second = visitor.request(TAB_B, [user('qb')])
-  const [resA, resB] = [await post(first), await post(second)]
-  visitor.receive(resB)
-  visitor.receive(resA)
-  await post(visitor.request(TAB_B, [user('qb'), assistant('ab'), user('qb2')]))
-  assert.deepEqual(stub.relayCalls().map(conversationOf), [CONV_A, CONV_B, CONV_B])
-  assert.equal(stub.mintCalls().length, 2)
-})
-
-test('a follow-up resumes the tab conversation and reuses its token', async () => {
+test('a follow-up continues the tab conversation without resetting its cookie', async () => {
   const stub = stubFetch()
-  const post = handler(stub)
   const cookie = `${cookieFor(TAB_B, CONV_B)}; ${cookieFor(TAB_A, CONV_A)}`
-  const first = await post(chatRequest(followUp, { cookie }))
-  assert.equal(first.headers.get('set-cookie'), null)
-  await post(chatRequest([...followUp, assistant('a2'), user('q3')], { cookie }))
-  assert.deepEqual(stub.mintCalls().map((c) => c.body), [{ conversationId: CONV_A }])
-  assert.deepEqual(stub.relayCalls().map(conversationOf), [CONV_A, CONV_A])
+  const res = await handler(stub)(chatRequest(followUp, { cookie }))
+  assert.equal(res.headers.get('set-cookie'), null)
+  assert.deepEqual(stub.chats(), [CONV_A])
 })
 
 test('a follow-up from a tab without a cookie starts a new conversation', async () => {
-  const stub = stubFetch({ mints: [CONV_A] })
+  const stub = stubFetch()
   const res = await handler(stub)(chatRequest(followUp, { cookie: cookieFor(TAB_B, CONV_B) }))
-  assert.deepEqual(stub.mintCalls().map((c) => c.body), [{}])
-  assert.equal(res.headers.get('set-cookie'), tabCookie(TAB_A, CONV_A, '/docs'))
+  assert.deepEqual(stub.chats(), [conv(100)])
+  assert.equal(res.headers.get('set-cookie'), tabCookie(TAB_A, conv(100), '/docs'))
 })
 
-for (const status of [404, 409]) {
-  test(`a resume answered ${status} opens a new conversation once, for that tab only`, async () => {
-    const stub = stubFetch({ mints: [status, conv(50)] })
-    const cookie = `${cookieFor(TAB_A, CONV_A)}; ${cookieFor(TAB_B, CONV_B)}`
-    const res = await handler(stub)(chatRequest(followUp, { cookie }))
-    assert.equal(res.status, 200)
-    assert.deepEqual(stub.mintCalls().map((c) => c.body), [{ conversationId: CONV_A }, {}])
-    assert.equal(res.headers.get('set-cookie'), tabCookie(TAB_A, conv(50), '/docs'))
-  })
-}
-
-test('other mint failures keep their status and do not retry', async () => {
-  const stub = stubFetch({ mints: [403] })
+test('a conversation whose agent moved is replaced by a new one, once', async () => {
+  const stub = stubFetch({ relay: (n) => (n === 1 ? refused(409, 'agent_moved') : sse()) })
   const res = await handler(stub)(chatRequest(followUp, { cookie: cookieFor(TAB_A, CONV_A) }))
-  assert.equal(res.status, 403)
-  assert.deepEqual(await res.json(), { error: 'mint_failed' })
-  assert.equal(stub.calls.length, 1)
+  assert.equal(res.status, 200)
+  assert.deepEqual(stub.chats(), [CONV_A, conv(100)])
+  assert.equal(res.headers.get('set-cookie'), tabCookie(TAB_A, conv(100), '/docs'))
+
+  const again = stubFetch({ relay: () => refused(409, 'agent_moved') })
+  const fresh = await handler(again)(chatRequest([user('q')]))
+  assert.equal(fresh.status, 409)
+  assert.equal(again.calls.length, 1)
 })
 
-test('a relay 409 stays 409; other relay errors keep their status', async () => {
-  const busy = await handler(stubFetch({ relay: () => new Response('busy', { status: 409 }) }))(chatRequest([user('q')]))
+test('a busy conversation stays 409; other relay errors keep their status', async () => {
+  const busy = await handler(stubFetch({ relay: () => refused(409, 'busy') }))(chatRequest([user('q')]))
   assert.equal(busy.status, 409)
   assert.deepEqual(await busy.json(), { error: 'busy' })
-  const failed = await handler(stubFetch({ relay: () => new Response('no', { status: 502 }) }))(chatRequest([user('q')]))
-  assert.equal(failed.status, 502)
-  assert.deepEqual(await failed.json(), { error: 'relay_failed' })
+  for (const status of [401, 403, 404, 502]) {
+    const res = await handler(stubFetch({ relay: () => new Response('no', { status }) }))(chatRequest([user('q')]))
+    assert.equal(res.status, status)
+    assert.deepEqual(await res.json(), { error: 'relay_failed' })
+  }
 })
 
-// The relay's refusal body: `reason` is the daemon's ack reason, or `no_agent` when delivery itself failed.
-const refused = (reason) => Response.json({ error: 'Service Unavailable', statusCode: 503, message: 'refused', reason }, { status: 503 })
-
 test('a not_holder refusal is retried once after a pause, then streamed', async () => {
-  const answers = [refused('not_holder'), sse()]
-  const stub = stubFetch({ relay: () => answers.shift() })
+  const stub = stubFetch({ relay: (n) => (n === 1 ? refused(503, 'not_holder') : sse()) })
   const waits = []
-  const res = await handler(stub, new TokenCache(), { delay: async (ms) => void waits.push(ms) })(chatRequest([user('q')]))
+  const res = await handler(stub, { delay: async (ms) => void waits.push(ms) })(chatRequest([user('q')]))
   assert.equal(res.status, 200)
   assert.equal(res.headers.get('x-vercel-ai-ui-message-stream'), 'v1')
-  assert.equal(stub.relayCalls().length, 2)
-  assert.deepEqual(stub.relayCalls()[0].body, stub.relayCalls()[1].body)
+  assert.equal(stub.calls.length, 2)
+  assert.deepEqual(stub.calls[0].body, stub.calls[1].body)
   assert.deepEqual(waits, [RELAY_RETRY_DELAY_MS])
 })
 
 test('a second not_holder refusal is answered as is', async () => {
-  const twice = stubFetch({ relay: () => refused('not_holder') })
+  const twice = stubFetch({ relay: () => refused(503, 'not_holder') })
   const res = await handler(twice)(chatRequest([user('q')]))
   assert.equal(res.status, 503)
   assert.deepEqual(await res.json(), { error: 'relay_failed' })
-  assert.equal(twice.relayCalls().length, 2)
+  assert.equal(twice.calls.length, 2)
 })
 
 test('a 503 that may follow a delivery, or any other status, is never retried', async () => {
   const answers = [
-    () => refused('no_agent'),
-    () => refused(undefined),
+    () => refused(503, 'no_agent'),
+    () => refused(503, undefined),
     () => new Response('down', { status: 503 }),
     () => new Response('no', { status: 409 }),
     () => new Response('no', { status: 502 })
@@ -285,11 +240,11 @@ test('a 503 that may follow a delivery, or any other status, is never retried', 
   for (const answer of answers) {
     const once = stubFetch({ relay: answer })
     await handler(once)(chatRequest([user('q')]))
-    assert.equal(once.relayCalls().length, 1)
+    assert.equal(once.calls.length, 1)
   }
 })
 
-test('a caller over its rate gets 429 before anything is minted or sent', async () => {
+test('a caller over its rate gets 429 before anything is sent', async () => {
   const stub = stubFetch()
   const seen = []
   const limit = async (request) => {
@@ -297,7 +252,7 @@ test('a caller over its rate gets 429 before anything is minted or sent', async 
     return false
   }
   const req = new Request(chatRequest([user('q')]), { headers: { 'content-type': 'application/json', 'cf-connecting-ip': '192.0.2.7' } })
-  const res = await handler(stub, new TokenCache(), { limit })(req)
+  const res = await handler(stub, { limit })(req)
   assert.equal(res.status, 429)
   assert.deepEqual(await res.json(), { error: 'rate_limited' })
   assert.deepEqual(seen, ['192.0.2.7'])
@@ -306,7 +261,7 @@ test('a caller over its rate gets 429 before anything is minted or sent', async 
 
 test('a caller within its rate goes through', async () => {
   const stub = stubFetch()
-  const res = await handler(stub, new TokenCache(), { limit: async () => true })(chatRequest([user('q')]))
+  const res = await handler(stub, { limit: async () => true })(chatRequest([user('q')]))
   assert.equal(res.status, 200)
-  assert.equal(stub.relayCalls().length, 1)
+  assert.equal(stub.calls.length, 1)
 })
