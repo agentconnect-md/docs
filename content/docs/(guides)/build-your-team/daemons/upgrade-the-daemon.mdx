@@ -4,6 +4,8 @@ icon: CircleArrowUp
 description: "Move a daemon to a new release from the console or the host, keep the CLI current, and roll back a bad upgrade."
 ---
 
+import imgDaemonUpgrade from '@/public/images/daemon-upgrade.png'
+
 A daemon host has two independently versioned pieces:
 
 | Piece | What it is | How it moves |
@@ -24,7 +26,9 @@ Releases live side by side under the daemon root, so a switch is a pointer move 
 
 ## Upgrade from the console
 
-An outdated daemon shows an **Update to \<version\>** badge on the **Infra** page. Open the daemon and use **Upgrade**.
+An outdated daemon shows an **Update to \<version\>** badge on the **Infra** page and on its own page. Click the badge, choose the target version, and confirm with **Upgrade**.
+
+<Image src={imgDaemonUpgrade} alt="The Upgrade daemon dialog, opened from the Update to badge on a daemon's page" width={720} />
 
 This needs the ordinary daemon edit permission: any Owner or Collaborator who can see the daemon. Viewers cannot.
 

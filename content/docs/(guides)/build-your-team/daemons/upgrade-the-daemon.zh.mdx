@@ -4,6 +4,8 @@ icon: CircleArrowUp
 description: "从控制台或主机把 Daemon 切换到新版本，保持 CLI 为最新，并回滚失败的升级。"
 ---
 
+import imgDaemonUpgrade from '@/public/images/daemon-upgrade.png'
+
 一台 Daemon 主机上有两个独立版本化的部分：
 
 | 部分 | 是什么 | 如何更新 |
@@ -24,7 +26,9 @@ description: "从控制台或主机把 Daemon 切换到新版本，保持 CLI �
 
 ## 从控制台升级 [#upgrade-from-the-console]
 
-版本过旧的 Daemon 会在**基础设施**页面上显示 **更新到 \<version\>** 徽标。打开该 Daemon 并使用**升级**。
+版本过旧的 Daemon 会在**基础设施**页面和它自己的页面上显示 **更新到 \<version\>** 徽标。点击徽标，选择目标版本，再点**升级**确认。
+
+<Image src={imgDaemonUpgrade} alt="从 Daemon 页面上的更新徽标打开的升级 Daemon 对话框" width={720} />
 
 这需要普通的 Daemon 编辑权限：任何能看到该 Daemon 的所有者或协作者都可以操作。查看者不能。
 
