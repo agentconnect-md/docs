@@ -109,6 +109,17 @@ async function reasonOf(response: Response): Promise<unknown> {
   }
 }
 
+// The daemon refusing an agent that is not running now; anything else is a plain failure.
+const OFFLINE_REASONS = new Set(['no_agent', 'paused', 'draining'])
+
+/** The code the panel words a refused turn by: its API's Decision gate declined it, a turn is running, or the agent is offline. */
+export function errorCode(status: number, reason: unknown): string {
+  if (status === 422 && reason === 'declined') return 'declined'
+  if (status === 409 && reason === 'busy') return 'busy'
+  if (status === 503 && typeof reason === 'string' && OFFLINE_REASONS.has(reason)) return 'offline'
+  return 'relay_failed'
+}
+
 export interface ChatHandlerOptions {
   config: () => AskAiConfig | null
   cookiePath: string
@@ -178,9 +189,9 @@ export function createChatHandler({
     const headers = new Headers({ 'cache-control': 'no-store' })
     if (chatId !== bound) headers.append('set-cookie', tabCookie(tab, chatId, cookiePath))
     if (!upstream.ok) {
-      const busy = upstream.status === 409 && (await reasonOf(upstream)) === 'busy'
+      const code = errorCode(upstream.status, await reasonOf(upstream))
       await upstream.body?.cancel()
-      return json(upstream.status, busy ? 'busy' : 'relay_failed', headers)
+      return json(upstream.status, code, headers)
     }
     for (const name of STREAM_HEADERS) {
       const value = upstream.headers.get(name)
