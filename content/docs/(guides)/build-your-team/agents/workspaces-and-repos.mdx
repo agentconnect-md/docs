@@ -5,10 +5,11 @@ description: "Scratch and GitHub workspaces, isolated session worktrees, and rep
 ---
 
 import imgWorkspace from '@/public/images/workspace.png'
+import imgWorkspaceAdditionalRepos from '@/public/images/workspace-additional-repos.png'
 
 Every agent has a **workspace** — its working directory on the daemon. Choose its source when creating the agent, or change it later from the **Workspace** tab.
 
-<Image src={imgWorkspace} alt="A GitHub-backed workspace: repository, branch, authorized repos, and the working tree" width={900} />
+<Image src={imgWorkspace} alt="A GitHub-backed workspace: repository, additional repos, branch, and the working tree" width={900} />
 
 ## From scratch
 
@@ -62,7 +63,7 @@ Changing the source type, repository, or branch **replaces all daemon-local work
 
 ## Additional authorized repositories
 
-Sometimes one repo isn't enough — a reviewer agent may need to read a shared library or work in a sibling repo. On the agent's **Workspace** tab, the Workspace card lists **Authorized repos**:
+Sometimes one repo isn't enough — a reviewer agent may need to read a shared library or work in a sibling repo. On the agent's **Workspace** tab, the repositories button beside the workspace source opens **Additional repos**:
 
 - **Authorize repository** adds either **Read only** access or **Read & write** access.
 - Grants are per-agent and revocable with one click.
@@ -70,11 +71,13 @@ Sometimes one repo isn't enough — a reviewer agent may need to read a shared l
 
 By default an agent's GitHub credentials stop at its own workspace repository.
 
+<Image src={imgWorkspaceAdditionalRepos} alt="Additional repos: All of acme on demand, acme/web always checked out, acme/docs on demand" width={900} />
+
 Each authorization also chooses its **Checkout**, beside its access when you add it and on its row in **Edit workspace** afterwards:
 
 - **Always** (the default): the daemon checks the repository out beside the workspace as a **secondary root** and hands it to every session's runtime, so the agent reads and edits those files locally instead of over the network. A root is cloned on the first session that needs it, and one that fails to clone is left out of that session rather than failing it.
 - **On demand**: credentials only. Nothing is checked out up front; when the agent needs the repository, it clones it into a directory the session is given. Use it for repositories a session rarely needs, so sessions don't wait on clones they won't use.
 
-An organization owner can also **Authorize an installation** in **Edit workspace**. The agent then gets every repository one GitHub App installation covers, including repositories created later, at one access level. Those repositories are **On demand**: the agent clones what it needs. A repository you also authorize on its own keeps its own access and checkout. A repository watch's informational Checks still need the repository authorized on its own, while a [watch of the whole installation](/connect-automate/triggers-automation/github#watch-every-repository-of-an-installation) publishes them on the installation's authorization.
+An organization owner can also pick **All of `<account>`** under **Authorize repository** to authorize a whole installation. The agent then gets every repository one GitHub App installation covers, including repositories created later, at one access level. Those repositories are **On demand**: the agent clones what it needs. A repository you also authorize on its own keeps its own access and checkout. A repository watch's informational Checks still need the repository authorized on its own, while a [watch of the whole installation](/connect-automate/triggers-automation/github#watch-every-repository-of-an-installation) publishes them on the installation's authorization.
 
 The **Workspace** tab's file browser moves between the checkouts, and a code-host review whose subject lives in an authorized repository runs against an exact checkout of it. A **Read only** grant still cannot push, even though its files are on disk.

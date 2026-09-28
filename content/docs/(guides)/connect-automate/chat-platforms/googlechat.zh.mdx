@@ -1,0 +1,61 @@
+---
+title: "Google Chat"
+icon: GoogleChat
+description: "连接一个 Google Chat 应用，让 Agent 回复私信和空间里的 @ 提及。"
+---
+
+Google Chat 集成把 Agent 连接到一个 Chat 应用，也就是一个启用了 Google Chat API 的 Google Cloud 项目。Google 只通过 HTTPS 回调投递 Chat 应用的事件，没有 socket 模式，所以部署需要一个公开的回调地址。AgentConnect Cloud 已经提供；自托管部署则必须先配置好公开的回调地址，和 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 的要求一样。
+
+如果自托管部署的管理员已经配置了[部署自带的 Chat 应用](/self-hosting/provider-apps#google-chat-deployment-app)，向导会先给出**使用部署自带的应用**，一键把它安装到这个 Agent 上。当前版本中一个应用只服务一个 Agent，所以部署自带的应用同一时间只能装在一个 Agent 上；第一个 Agent 的集成被移除之前，其他 Agent 安装会被拒绝。没有部署自带的应用，或者你选择了**使用自己的 Chat 应用**时，按下面的步骤创建并连接你自己的应用。
+
+## 创建应用 [#create-the-app]
+
+向导的**开始之前**一步列出了需要准备的东西：
+
+- 一个能配置 Chat 应用的 Google Workspace 账号。
+- 一个已启用 **Google Chat API** 的 Google Cloud 项目。
+- 该项目已启用 **Cloud Resource Manager API**。AgentConnect 通过它读取项目编号。
+- 同一项目中一个具有 **Browser** 角色的服务账号，以及它的 JSON 密钥。密钥必须在 Chat 应用自己的项目中创建；来自其他项目的密钥会被拒绝。
+
+然后在 Google Cloud 控制台中打开 **APIs & Services → Google Chat API → Configuration**：
+
+1. 设置应用的名称、头像和描述，并启用互动功能。
+2. 在 **Functionality** 下勾选 **Receive 1:1 messages** 和 **Join spaces and group conversations**。
+3. 在 **Connection settings** 下，把 **HTTP endpoint URL** 设为向导显示的值，即部署的公开回调源地址加上 `/googlechat/events`，例如 `https://relay.example.test/googlechat/events`；再把 **Authentication audience** 设为 **Project Number**。
+4. 在 **Visibility** 下，选择 Workspace 域中可以使用该应用的人员和群组。私有应用不需要在 Marketplace 上架，上架是可选的。
+5. 点击 **Save**。
+
+## 连接 [#connect-it]
+
+在你的 Agent 上，打开**集成 → 添加集成 → Google Chat**。粘贴服务账号密钥 JSON，向导会从中填入**项目 ID**。**项目编号**可以不填：AgentConnect 会自己查出来，填了则会核对。然后点击**连接**。
+
+AgentConnect 会先向 Google 验证密钥，再保存；每次尝试之后都会清空密钥输入框。被拒绝时，提示会直接说明该怎么改：项目不对、密钥来自其他项目、Cloud Resource Manager API 未启用、缺少 Browser 角色，或 Chat API 尚未配置。
+
+连接之后，向导会显示三个状态：
+
+- **已保存**——Google 已接受该密钥。
+- **已连接**——回调地址已生效，Agent 已在线。
+- **已添加**——该应用已在某个空间或私聊中。
+
+然后测试一下：给应用发一条私信，或者把它添加到一个空间并 @ 提及它。
+
+## 使用 [#use-it]
+
+- **私信**——直接给应用发消息，每条消息都会送达 Agent。回复以流式方式送达，最后编辑成最终内容。
+- **空间**——把应用添加到空间并 **@ 提及**它。Agent 会在该消息所在的话题中回复。Google 只把提及了应用的空间消息投递给它，话题内的回复也是如此：没有提及应用的话题回复不会送达，Agent 也就无法回答。因此空间的触发条件只有 **@ 提及**、**按决策**和**关闭**，没有**所有消息**。
+- **格式**——Agent 的 Markdown 按 Google Chat 支持的子集渲染：粗体、斜体、删除线、行内代码、代码块、列表和链接。标题显示为粗体行，图片显示为链接，表格显示为等宽文本块。较长的回复会拆成多条消息。
+- **提问**——Agent 需要你输入时，会在对话里发一张卡片：每个选项一个按钮，或是一个带 **Confirm** 的简短表单。能看到卡片的人都可以回答，回答后卡片会显示结果。点 **Dismiss** 即拒绝回答。
+
+当前版本不支持：双向的附件、对话框、群组私信、Google Chat 斜杠命令，以及表情回应。
+
+关于停止、取消、排队以及更改支持的会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+
+## 控制台中的可见性 [#visibility-in-the-console]
+
+与应用的**私信**只对发送者本人可见：没有人能在控制台中打开这个会话，因为 Google Chat 身份没有与控制台账号关联。**空间**中的对话对整个组织可见，无论空间里有谁。
+
+## 说明 [#notes]
+
+- 一个 Chat 应用绑定一个 Agent，一个 Google Cloud 项目只容纳一个 Chat 应用。删除集成会释放该应用以供复用（下次选择**使用已有机器人**）。
+- 在**集成 → 消息应用 → Google Chat** 中粘贴新的服务账号密钥即可轮换密钥。部署自带的应用的密钥则在 Setup Server 中管理：在那里保存新密钥后，到持有该应用的 Agent 上再点一次**使用部署自带的应用**，已安装的应用才会换成当前密钥；请在吊销旧密钥之前完成这一步。
+- 应用所在的空间会列在该集成下。私聊在收到第一条消息后出现，以对方的名字命名。

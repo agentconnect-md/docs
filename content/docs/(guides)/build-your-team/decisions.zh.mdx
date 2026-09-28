@@ -1,0 +1,121 @@
+---
+title: "决策"
+icon: Route
+description: "用 Jev 对一条消息问一个问题，再由频道、机器人、仓库或 Agent 根据答案行动。"
+---
+
+import imgDecisionEditor from '@/public/images/decision-editor.png'
+import imgDecisionChannelRules from '@/public/images/decision-channel-rules.png'
+import imgDecisionSharedBotRouting from '@/public/images/decision-shared-bot-routing.png'
+import imgDecisionRuntime from '@/public/images/decision-runtime.png'
+import imgDecisionChain from '@/public/images/decision-chain.png'
+
+**决策**（Decision）针对一条收到的消息问一个问题，并返回一个有类型的答案：**是 / 否**、你定义的某个类别，或者一个分数。决策只定义问题；答案带来什么结果，由使用它的地方决定：频道可以回复或保持安静，共享机器人可以把新对话路由给专家 Agent，仓库可以挑选评审者，Agent 可以为新会话选择 Runtime 和模型。
+
+决策由 TypeSafe 的判断模型 [Jev](https://docs.typesafe.ai/introduction) 评估。Jev 不生成文本，而是为每个可能的答案给出概率，一般不到一秒就能返回。评估在服务该 Agent 的 Daemon 上运行，不会开启会话，答案本身也不授予任何权限。
+
+## 配置 Provider [#set-up-the-provider]
+
+评估在哪里运行，决定了费用怎么算：
+
+- **AgentConnect Cloud。** 运行在 Cloud 托管基础设施上的 Agent 无需任何配置即可评估决策。每次评估按 TypeSafe 公布的价格从组织的余额中扣除，与其他[云端模型用量](/build-your-team/daemons/manage-daemons#pricing)相同。
+- **你自己的 Daemon**，包括所有[自托管](/self-hosting)部署。由组织所有者打开**基础设施 → Provider keys**，为 **TypeSafe (Jev)** 添加 API key。**连接设置**可以改用其他端点或添加额外的请求头。
+
+配置了 key 后始终优先使用它，Cloud 上的 Agent 也不例外，这些评估不从余额中扣费。key 只能写入不能读回：控制平面把它和部署中其他只写密钥存放在一起，只在服务你某个 Agent 的 Daemon 进行评估时交给该 Daemon。自托管部署只有在配置了[密钥加密](/self-hosting/docker-compose/configuration#secret-storage)之后才会对这些密钥做静态加密；默认会以明文存放在 PostgreSQL 中。保存 key 时不会校验它；在决策编辑器里运行一个示例即可确认。
+
+## 创建决策 [#create-a-decision]
+
+打开**决策**，选择**添加决策**。空页面会提供现成的示例——Needs reply、Spam、Support category、Issue type、PR focus、PR author 和 Task complexity——添加后可以随意修改。
+
+也可以在只有一个 Agent 的 [Playground 对话](/build-your-team/agents/playground#configure-agentconnect-from-a-conversation)中描述想问的问题，让 Agent 替你起草决策。批准之后，在这里打开它，用示例试运行。
+
+<Image src={imgDecisionEditor} alt="决策编辑器：一个选项问题及其判定标准，以及用示例试运行得到的每个答案的概率" width={900} />
+
+| 字段 | 作用 |
+| --- | --- |
+| **名称** | 决策在各处显示的名字 |
+| **Provider · 模型** | 使用的 Jev 模型：**Jev 1.13**、**Jev latest** 或 **Jev preview** |
+| **问题类型** | **选项**返回你定义的某个 key，**布尔值**返回是或否，**评分**返回你刻度上的一个数，可以带小数 |
+| **指令** | 问题本身。写明指的是哪条消息，例如“最新一条消息”；对话中更早的消息会自动带上 |
+| **判定标准** | 每个答案的含义：2–32 个选项 key、是与否，或 2–10 个有序的评分等级 |
+| **可见性** | **所有人**，或**指定成员**及组织所有者 |
+
+**用示例试运行**会真实地评估一段示例对话。选择它的**运行位置**（Daemon），填入一些**对话历史**，写好**当前消息**，然后点**运行**，就能看到每个答案的概率、所用模型以及发送了多少上下文。预览只解释答案。这个答案会不会唤醒 Agent，取决于使用该决策的地方所设的规则，每个地方都有自己的预览。
+
+一个决策可以在多处复用。它的**最近评估**卡片列出所有使用它的地方以及每处最近的答案。修改问题会影响所有这些地方。如果修改判定标准后，某处的规则指向了已经不存在的答案，那里会显示**需要复核**，并在有人修复之前停止评估。仍在使用中的决策不能删除。
+
+## 在哪里使用决策 [#where-to-use-a-decision]
+
+| 位置 | 在哪里设置 | 答案决定什么 |
+| --- | --- | --- |
+| [聊天频道](#respond-in-a-channel) | Agent 的**集成**标签页 → 频道行 → **添加决策** | Agent 是否回复 |
+| [共享机器人](#route-a-shared-bot) | **集成** → 共享机器人 → **默认分发** → **或按决策选择** | 哪些 Agent 接手新对话 |
+| [Issue 和 Pull Request](#pick-agents-for-issues-and-pull-requests) | Agent 的 GitHub、GitLab 或 Gitea 事件行 → **添加决策** | 哪些关注该仓库的 Agent 接手 |
+| [Agent 的 Runtime](#choose-a-runtime-and-model) | **编辑** Agent → **Runtime** → **按决策** | 每个新会话的 Runtime 和模型 |
+| [Agent 的工具](#let-an-agent-ask) | Agent → **工具与技能** → **Decisions** | 由 Agent 自己决定如何使用答案 |
+
+频道、共享机器人、仓库和 Runtime 还可以[串联决策](#chain-decisions)，在第一个问题之后再问第二个。
+
+### 在频道中回复 [#respond-in-a-channel]
+
+**按决策**是与 **@ 提及**、**所有消息**、**关闭**并列的一种频道触发条件。它适用于所有聊天平台的频道和群组对话，以及 Linear 的团队行；一对一私信仍然只有**开启 / 关闭**。在频道行上选择**添加决策**，选中决策，然后设置**触发条件**：
+
+- **布尔值**——是、否，或两者都选。
+- **选项**——哪些答案应该唤醒 Agent，每个答案有各自的最低概率。只要任一选中的答案达到其最低概率，就触发 Agent 一次，即使它不是概率最高的答案。
+- **评分**——刻度上的一个**从** / **到**区间。
+
+<Image src={imgDecisionChannelRules} alt="频道的按决策规则：technical 至少 30% 时触发，试运行的消息会触发 Agent" width={560} />
+
+每条新的顶层消息都会被判断，包括 @ 提及该 Agent 的消息：提及只确定哪个 Agent 可以回复。Agent 已加入的线程中的回复会直接继续，不再重新评估。被跳过的消息不会启动任何东西，但它会留在对话历史中，之后的评估和 Agent 都能读到。**试一条消息**会按你正在编辑的规则，显示一条示例消息是**会触发**还是会被跳过。
+
+### 路由共享机器人 [#route-a-shared-bot]
+
+使用 HTTP 回调、服务多个 Agent 的[共享 Slack 机器人](/how-to-guides/one-slack-app-across-channels)，可以按对话而不是按频道选择 Agent。在**集成**页面展开该机器人，打开某个频道的**默认分发**，选择**或按决策选择**。每条规则把一个答案交给该机器人的某个 Agent，或设为**不触发**；没有规则命中时由**否则**处理，可选**使用默认 Agent** 或**不触发**。
+
+- 对于选项问题，每条答案达到最低概率的规则都会命中，所以一条消息可以同时引入多个 Agent。每个 Agent 只会启动一次。命中的**不触发**规则不会取消其他命中的规则。
+- 只有没有指定任何 Agent 的新对话才按规则路由。提及或已建立的线程保留原来的 Agent，但仍会被判断：跳过依然生效。
+- **路由已暂停**会停止路由覆盖的所有频道中的新投递，包括提及和线程回复。正在运行的轮次会继续。
+- **试一条消息**会打开**测试路由**，可以在保存前预览新对话、明确提及或已建立线程三种情况。
+
+<Image src={imgDecisionSharedBotRouting} alt="共享机器人的按决策规则：billing 和 technical 达到 30% 时分别路由给对应 Agent，测试消息同时命中两条" width={640} />
+
+### 为 Issue 和 Pull Request 挑选 Agent [#pick-agents-for-issues-and-pull-requests]
+
+当多个 Agent 关注同一个仓库时，决策可以选择由哪些 Agent 接手每个 Issue 或 Pull Request（GitLab 上是 Merge Request）。在 Agent 的 [GitHub](/connect-automate/triggers-automation/github)、[GitLab](/connect-automate/triggers-automation/gitlab) 或 [Gitea](/connect-automate/triggers-automation/gitea) 集成中，在 Issue 或 Pull Request 事件行上选择**添加决策**。规则属于仓库和事件类型，所有关注该仓库的 Agent 共用一套，修改它需要对所有这些 Agent 都有编辑权限。
+
+决策会读取标题、描述和讨论，对 Pull Request 还会在可用时读取提交和 diff。每次更新都会被判断，事件行自身的触发条件不再生效。提及也不能指定 Agent：被提及的事件同样会被判断，以决策的选择为准。**否则**可以把事件交给所有关注的 Agent（与没有决策时一样），也可以谁都不给。如果决策需要复核或已不可用，该仓库上新的 Issue 和 Pull Request 会被暂扣，直到有人修复规则或停止使用该决策。
+
+### 选择 Runtime 和模型 [#choose-a-runtime-and-model]
+
+在 Agent 的**编辑**对话框中，把 **Runtime** 从**固定**切换为**按决策**。每条规则把一个答案映射到一个 Provider 和模型，并各自带有推理强度、审批和快速模式设置；**兜底 Provider 和模型**负责其余情况。对于选项问题，达到阈值且概率最高的规则胜出。
+
+评审 Agent 可以借此做跨模型评审，用 **PR author** 示例即可：Claude 写的 Pull Request 交给 Codex 模型评审，Codex 或 Grok 写的交给 Claude 模型评审。
+
+<Image src={imgDecisionRuntime} alt="用 PR author 决策按决策选择 Runtime：Claude 写的 Pull Request 用 gpt-5.5，Codex 或 Grok 写的用 opus，兜底为 sonnet" width={620} />
+
+决策在会话开始时评估一次，使用触发消息；Issue 和 Pull Request 还会带上它们的主题和历史。已有会话保持开始时的 Runtime 和模型。**试用样例**可以演示规则会如何匹配，不会真正运行评估。
+
+### 让 Agent 自己提问 [#let-an-agent-ask]
+
+在 Agent 的**工具与技能 → Decisions** 卡片中挂上决策，Agent 就能在一个轮次中自行评估它们，例如先给工单分类，再决定如何处理。上下文由 Agent 在调用时提供。答案只是供 Agent 参考的信息，不会给它任何原本没有的权限。
+
+### 串联决策 [#chain-decisions]
+
+有些问题分两步问更容易。比如支持 Agent 只在技术问题且发送者情绪激动时回复：先用 **Support category**，当 **technical** 命中后，再用 **Customer frustration** 判断是否在 2 到 3 之间。在频道规则的**命中条件**或**否则**旁，或在共享机器人、仓库、Runtime 规则的任意一行旁，选择**继续判断下一个 Decision**，然后在弹出的面板里设置下一个决策自己的条件。
+
+<Image src={imgDecisionChain} alt="频道的按决策规则：technical 达到 50% 后继续判断 Customer frustration 决策" width={560} />
+
+接续的步骤会显示为一个标签，点击它即可编辑该步骤。一条链最多包含八个决策，所有步骤共用一个五秒的时限，因此每多一步，Agent 开始前的等待就更长一些。
+
+## 决策无法给出答案时 [#when-a-decision-cannot-answer]
+
+当 Provider 出错或超时、没有可用的 key 或余额、或者 Daemon 已满负荷时，评估为**评估不可用**。评估不可用永远不会被当作“否”或“跳过”：
+
+| 位置 | 实际会发生什么 |
+| --- | --- |
+| 聊天频道 | 消息照常交给 Agent，就像该频道被触发一样 |
+| 共享机器人 | 已被指定或正在继续的 Agent 保留该消息；新对话交给该频道的默认 Agent，即使**否则**设为**不触发** |
+| Issue 和 Pull Request | 所有关注的 Agent 都会接手该事件，与没有决策时一样 |
+| Runtime | 会话使用兜底 Provider 和模型启动 |
+
+完全无法运行决策的位置会在对应行上说明原因：**等待同步**、**需要复核**、**Daemon 离线**、**不受支持**（需要升级 Daemon 或 Relay）或**访问已撤销**。

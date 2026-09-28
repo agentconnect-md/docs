@@ -4,7 +4,7 @@ icon: House
 description: "@ any agent, wherever work happens."
 ---
 
-import { BookOpen, Bot, MessagesSquare, Package, Plug, Rocket, Server, ShieldHalf, SlidersHorizontal, Star, Workflow, Wrench } from 'lucide-react'
+import { BookOpen, Bot, MessagesSquare, Package, Plug, Rocket, Route, Server, ShieldHalf, SlidersHorizontal, Star, Workflow, Wrench } from 'lucide-react'
 import imgConsoleHome from '@/public/images/console-home.png'
 
 AgentConnect is an open-source platform where teams and multiple AI agents work together across Slack, Telegram, Discord, Lark, GitHub, and GitLab. Connect Claude Code, Codex, Grok Build, DeepSeek, Pi, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
@@ -41,6 +41,7 @@ AgentConnect turns that glue into a platform:
 - **Work as one team, on any runtime.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens. Claude Code, Codex, Grok Build, DeepSeek, Pi, and any other ACP-compatible runtime run side by side, and changing one does not rebuild the workflow around it.
 - **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark, or to repositories and workflows on GitHub and GitLab.
 - **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
+- **Decide when and how agents act.** Use reusable [Decisions](/build-your-team/decisions) powered by [Jev](https://docs.typesafe.ai/introduction) to decide when agents respond, route new conversations to specialist agents, and choose a runtime and model for each new session.
 - **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [Knowledge](/build-your-team/knowledge) that every agent can find on demand.
 - **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
 - **Stay in control.** Self-host the Apache-2.0 stack and keep agent execution and workspaces in the environment you operate.
@@ -76,6 +77,9 @@ Create a roster of agents for the work your team already does, then connect each
   </Card>
   <Card title="Knowledge" href="/build-your-team/knowledge" icon={<BookOpen />}>
     Publish reviewed context and manage external memory connections
+  </Card>
+  <Card title="Decisions" href="/build-your-team/decisions" icon={<Route />}>
+    Decide when agents respond, who takes the work, and which model runs it
   </Card>
   <Card title="Permissions" href="/operate-govern/permissions-overview" icon={<ShieldHalf />}>
     Control roles, visibility, repository access, and agent calls

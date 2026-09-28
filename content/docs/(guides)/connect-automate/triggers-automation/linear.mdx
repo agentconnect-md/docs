@@ -94,11 +94,11 @@ When a step needs permission the agent cannot grant itself, the feed gets a card
 
 ## Manage the connection
 
-| Action              | Where                                    | Effect                                                                                 |
-| ------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
-| **Unlink an agent** | The agent's Linear card                  | That agent leaves the workspace. The workspace and every other agent stay.             |
-| **Reconnect**       | The agent's card, or **Settings → Bots** | Re-authorizes the workspace after a grant expires or is revoked.                        |
-| **Disconnect**      | **Settings → Bots** only                 | Ends the workspace for the whole organization and revokes the authorization at Linear. |
+| Action              | Where                                                           | Effect                                                                                 |
+| ------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Unlink an agent** | The agent's Linear card                                         | That agent leaves the workspace. The workspace and every other agent stay.             |
+| **Reconnect**       | The agent's card, or **Integrations → Messaging apps → Linear** | Re-authorizes the workspace after a grant expires or is revoked.                       |
+| **Disconnect**      | **Integrations → Messaging apps → Linear** only                 | Ends the workspace for the whole organization and revokes the authorization at Linear. |
 
 Disconnect is deliberately not offered beside a single agent's membership: it would let one member end everyone else's access.
 

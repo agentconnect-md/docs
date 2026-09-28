@@ -1,0 +1,110 @@
+---
+title: "安装 Daemon"
+icon: Download
+description: "把 AgentConnect Daemon 装到任意一台机器上——一条命令试用，再一条命令让它常驻。"
+---
+
+import imgAddDaemon from '@/public/images/add-daemon.png'
+
+Daemon 是 AgentConnect 位于机器一侧的那一半：它托管你的 Agent，通过 ACP 驱动它们的 Runtime，并持有所有平台连接。本页介绍如何把它装到一台机器上并让它持续运行。
+
+## 环境要求 [#requirements]
+
+- **macOS、Linux 或 Windows**。后台服务模式使用 launchd 或 systemd；在 Windows 上请在前台运行 Daemon。沙箱隔离（`srt`、`microsandbox`）仅支持 Linux；在其他系统上 Agent 以 `host` 策略运行。
+- **Node.js 24.12 或更新版本**——使用 [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli)，这是稳定的入口，负责为你安装、启动和升级 Daemon。
+- 机器上至少安装并登录了一个 Agent Runtime——例如 Claude Code（`claude`）或 Codex（`codex`）。Daemon 会**自动检测 Runtime**（通过 [ACP 注册表](https://agentclientprotocol.com)从机器上已安装的启动器中识别），并把检测到的内容——Runtime、版本、模型——上报到控制台。
+- **仅需出站网络**。Daemon 主动连接你配置的控制平面和聊天平台。它从不监听公开端口，因此在 NAT 后面的笔记本电脑上也能正常运行。
+- **可选的 Linux 沙箱隔离**：Daemon 默认提供所有执行策略，但只有在满足各自要求时才会让对应策略可用。SRT 需要 `bubblewrap`、`ripgrep`、`socat` 和非特权用户命名空间；在 Ubuntu 24.04 及更新版本上，请先[为 bubblewrap 允许用户命名空间](/operate-govern/sandboxing#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap)。microsandbox 需要 KVM 和 vsock 访问权限。设置方法见[沙箱隔离](/operate-govern/sandboxing)，登录支持见[凭证保护](/operate-govern/sandboxing/credential-protection)。
+
+## 连接一台机器 [#connect-a-machine]
+
+在新建的组织中，引导设置会直接显示连接命令。如果你跳过了引导设置，请打开 **基础设施 → 添加 Daemon**。两种方式都会签发一个一次性密钥，并显示要在目标机器上运行的完整命令：
+
+```bash
+npx -y @agentconnect.md/cli run --api-url <your-control-plane-ws-url> --api-key <one-time-key>
+```
+
+从控制台复制这条命令（密钥**只显示一次**）并运行。Daemon 上线后页面会自动继续。**Run** 命令使用提供的凭证在前台启动 Daemon。CLI 首次使用时会下载合适的 Daemon 版本，然后注册它并开始发送心跳。
+
+<Image src={imgAddDaemon} alt="使用示例值连接你的 Daemon" width={640} />
+
+## 让它常驻运行 [#run-it-permanently]
+
+`agentconnect run` 会一直停留在前台——适合第一次试用，但不适合要为团队提供服务的机器。把“添加 Daemon”对话框切换到**安装为服务**，改为复制其中的 `login` 命令：
+
+```bash
+# Verifies the key and saves it, then offers to install and start the service.
+npx -y @agentconnect.md/cli login --api-url <your-control-plane-ws-url> --api-key <one-time-key>
+```
+
+如果你已经用 `login` 完成了认证，也可以单独安装并启动服务：
+
+```bash
+npx -y @agentconnect.md/cli install-service   # register launchd / systemd service
+npx -y @agentconnect.md/cli up                # start it
+```
+
+请以拥有该服务的操作系统用户身份安装并登录 Agent Runtime；修改该用户的 Runtime 安装或 `PATH` 之后，请重启 Daemon。
+
+### Runtime 登录会带来什么 [#what-a-runtime-sign-in-brings]
+
+登录一个 Runtime 后，它的 Agent 就能访问该提供方的模型。对某些 Runtime 来说，登录还会一并带来绑定在该云账号上的工具——邮件、聊天、文件、Issue 跟踪器，它们会以登录者的身份行事，在任何以该身份认证的机器上都是如此。AgentConnect 在启动 Runtime 时会关闭这些工具，因此 Agent 得到的是你分配给它的 MCP 服务器加上 Runtime 自身的本地配置，不会从登录中额外获得任何东西。模型访问不受影响。
+
+每个 Runtime 都是通过它自己公开的专用开关来关闭这些工具的，而这个开关只从某个版本起才存在——请保持 Runtime 为最新版本，否则旧版本会悄悄保留其账号工具。如果某个 Runtime 继承了账号工具却没有安全的关闭开关，或者 AgentConnect 无法识别它，Daemon 会在日志中说明。
+
+在个人机器上，你可以允许这些工具。在 `config.json` 中设置以下内容并重启：
+
+```json
+{
+  "security": {
+    "isolateAccountApps": false
+  }
+}
+```
+
+该设置作用于整个 Daemon 及其上的所有 Runtime，因此那里的每个 Agent 都可以使用其 Runtime 所登录身份的账号工具。我们有意不提供按 Agent 设置的版本——这是主机所有者的决定，而不是 Agent 的编辑者可以打开的开关。
+
+用以下命令管理服务：
+
+| 命令 | 作用 |
+| --- | --- |
+| `npx -y @agentconnect.md/cli status` | 显示服务状态、PID 和日志文件路径 |
+| `npx -y @agentconnect.md/cli up` / `down` / `restart` | 启动 / 停止 / 重启后台服务 |
+| `npx -y @agentconnect.md/cli uninstall-service` | 停止并移除服务 |
+| `npx -y @agentconnect.md/cli run` | 在前台运行（忽略服务） |
+| `npx -y @agentconnect.md/cli upgrade --restart` | 升级、重启、健康检查并在失败时回滚——见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon) |
+
+## 磁盘上有哪些内容 [#what-lands-on-disk]
+
+Daemon 拥有的所有内容都位于一个根目录下，默认是 `~/.agentconnect`：
+
+```
+~/.agentconnect/
+├── config.json          # control-plane URL + key, daemon identity
+├── agents/              # one directory per agent: config + workspace
+├── state/local.sqlite   # local state (sessions, queues)
+├── logs/daemon.log      # daemon log
+├── run/                 # runtime sockets
+├── versions/            # installed daemon releases
+├── current              # active daemon release
+└── versions.json        # release channel and upgrade history
+```
+
+常用的 CLI 和 Daemon 运行参数：
+
+| 参数 | 含义 |
+| --- | --- |
+| `--root <dir>` | 更改根目录（`AGENTCONNECT_ROOT`） |
+| `--config <path>` | 使用另一个 `config.json` |
+| `--api-url <url>` / `--api-key <key>` | 为 `run` 或 `login` 设置控制平面凭证 |
+| `--agents-dir <dir>` | 更改 Agent 目录 |
+| `--max-agents <n>` | 限制此 Daemon 最多托管多少个 Agent |
+| `--log-level <level>` | `trace` `debug` `info` `warn` `error` |
+| `--require-sandbox` | 拒绝未沙箱隔离的会话（等同于 `sandbox.host: false`） |
+
+## 须知 [#good-to-know]
+
+- **更新**：CLI 会把已安装的 Daemon 版本保存在 Daemon 根目录下。运行 `npx -y @agentconnect.md/cli upgrade --restart`，或在控制台中使用**升级**，即可在健康检查和失败自动回滚的保护下切换版本。见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
+- **沙箱隔离**：在受支持的 Linux Daemon 上，每个 Agent 的**执行策略**决定它的隔离边界。Daemon 也可以拒绝未沙箱隔离的会话，并在没有任何策略可运行时拒绝启动。把它当作生产环境保障之前，请先阅读[沙箱隔离](/operate-govern/sandboxing)。
+- **控制平面临时中断不会中止已建立的工作**。现有会话和平台连接会继续保持，直到 Daemon 重新连接。
+- **多台机器**：你可以添加任意数量的 Daemon——一台性能强劲的工作站跑重型 Agent，一台笔记本电脑做实验。之后你可以在兼容的在线 Daemon 之间移动 Agent；见[管理 Daemon](/build-your-team/daemons/manage-daemons)。

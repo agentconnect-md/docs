@@ -1,0 +1,18 @@
+---
+title: "Daemon"
+icon: Server
+description: "安装并运维在你自己的环境中运行 Agent 的 Runtime。"
+---
+
+import imgDaemons from '@/public/images/daemons.png'
+
+Daemon 在你掌控的环境中运行 Agent，并且只能访问你选定的工作区、工具和凭证。
+
+<Image src={imgDaemons} alt="基础设施页面：AgentConnect Cloud、已连接的 Daemon 和一个 Daemon 组" width={900} />
+
+- [安装 Daemon](/build-your-team/daemons/install-the-daemon)，并把它连接到你的 AgentConnect 组织。
+- [管理 Daemon](/build-your-team/daemons/manage-daemons)，查看状态、容量以及分配到每个 Runtime 上的 Agent。
+- [升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)，从控制台或主机上进行，并回滚行为异常的版本。
+- [Daemon 组](/build-your-team/daemons/daemon-groups)让 Agent 在一台机器宕机时继续运行，并让它的会话可以在多台机器上运行。
+- [在 AgentConnect Cloud 上运行 Agent](/build-your-team/daemons/manage-daemons#agentconnect-cloud)，而不是在你自己运维的机器上，模型用量按提供方公布的价格计费。
+- [为 Agent Runtime 启用沙箱](/operate-govern/sandboxing)，在受支持的 Linux 机器上按 Agent 设置，或作为 Daemon 级的强制要求。

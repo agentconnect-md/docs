@@ -1,7 +1,7 @@
 ---
 title: "Provider apps"
 icon: Handshake
-description: "Register the deployment's GitHub, GitLab, Gitea, Linear, Slack, and Lark / Feishu apps in Setup Server."
+description: "Register the deployment's GitHub, GitLab, Gitea, Linear, Slack, Google Chat, and Lark / Feishu apps in Setup Server."
 ---
 
 Setup Server owns the apps that identify your deployment to code hosts and chat platforms. Each card shows the exact callbacks to register and stores the credentials write-only. Set the final public URLs before creating an app: Setup derives its callbacks from those values.
@@ -126,6 +126,16 @@ Setup can create one deployment Slack App for the built-in `agentconnect` agent 
 4. Restart Control Plane and Relay.
 
 Setup builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google for the local bootstrap.
+
+## Google Chat deployment app
+
+The **Google Chat** card, below the **Google** card, configures one Chat app for the whole deployment. Agents install it from their Google Chat wizard with **Use the deployment app**; any agent can still connect its own Chat app instead, as described in [Google Chat](/connect-automate/chat-platforms/googlechat).
+
+1. Configure the deployment's public callback endpoint. Google delivers Chat events over HTTPS callbacks only, so the card requires it.
+2. Create the Chat app in Google Cloud as described in [Create the app](/connect-automate/chat-platforms/googlechat#create-the-app). Copy the **HTTP endpoint URL** and the **Authentication audience** (**Project Number**) the card shows into the app's configuration.
+3. In Setup, open **Google Chat**, enter the **Project ID**, the optional **Project number**, and the **Service-account key JSON**, then choose **Save Google Chat app**.
+
+Setup validates the project and key with Google the same way the agent wizard does, and stores the key write-only. Every agent's Google Chat wizard then offers the app as **Use the deployment app**. One app serves one agent in this version, so it is installed on one agent at a time; another agent is refused until the first one's integration is removed. The app's key is managed here, not in the console. Saving a new key does not update the app already installed on an agent: run **Use the deployment app** again on that agent, which re-stamps it with the current key, before revoking the old key.
 
 ## Lark and Feishu tenant Apps
 

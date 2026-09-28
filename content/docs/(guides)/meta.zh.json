@@ -1,0 +1,16 @@
+{
+  "title": "指南",
+  "root": true,
+  "pages": [
+    "---入门---",
+    "...getting-started",
+    "---组建团队---",
+    "...build-your-team",
+    "---连接与自动化---",
+    "...connect-automate",
+    "---运维与治理---",
+    "...operate-govern",
+    "---操作指南---",
+    "...how-to-guides"
+  ]
+}

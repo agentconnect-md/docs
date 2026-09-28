@@ -1,0 +1,94 @@
+---
+title: "关联账号"
+icon: Link
+description: "在一个 AgentConnect 个人资料上使用多种登录方式，并准确了解每个提供方身份会影响哪些权限检查。"
+---
+
+import imgSocialSignInMethods from '@/public/images/social-sign-in-methods.png'
+
+一个 AgentConnect 个人资料可以使用多种社交登录方式。AgentConnect Cloud 目前提供 **GitHub**、**Google** 和 **Slack**。自托管部署还可以按照[登录](/self-hosting/sign-in#lark-and-feishu-identities)中的说明额外配置 **Lark** 和**飞书**身份。
+
+关联另一个提供方会给同一个个人资料增加一种登录方式，并在支持的情况下提供一个用于特定权限检查的提供方专属身份。它**不会**把各提供方合并成一个权限池。
+
+打开头像菜单 → **个人资料**，找到**登录方式**。
+
+<Image src={imgSocialSignInMethods} alt="多种登录方式关联到同一个 AgentConnect 个人资料" width={760} />
+
+## 关联账号 [#link-an-account]
+
+在某个提供方旁选择**关联**并完成其授权流程。GitHub 和 Google 不需要所有权验证码。Slack 和标准 OAuth 连接器可能会先要求输入发送到当前个人资料已验证主邮箱的验证码；在自托管部署上，请向运维人员确认是否配置了邮箱验证。
+
+关联后，你可以通过任何已关联的提供方登录，进入同一个 AgentConnect 个人资料、组织、成员关系和个人设置。
+
+已经属于另一个 AgentConnect 个人资料的提供方账号不能再关联到这个个人资料。AgentConnect 会拒绝关联，两个个人资料都保持不变。
+
+## 解除关联 [#unlink-an-account]
+
+在已连接的提供方旁选择**解除关联**。你必须至少保留一种社交登录方式，因此最后一个已关联的提供方无法移除。
+
+解除关联只会移除该登录方式及其提供方专属身份：
+
+- 移除 **GitHub** 不会卸载 GitHub App，也不会删除现有的 Agent 和仓库授权。该个人资料仍然可以以只读方式选择公开仓库，但在重新关联 GitHub 之前，无法验证私有仓库或写入访问权限，也无法读取同步的私有仓库会话。公开仓库会话不受影响。
+- 移除 **Google** 只会移除一种登录选项，不涉及任何提供方专属权限。
+- 移除 **Slack** 会立即把该工作区身份从授权中移除。现有的 Slack 会话记录不会被删除，但依赖这一匹配的私有私信和 Slack 范围内的共享会话将不再可见。重新关联同一个工作区身份可以让它们再次可见，而无需重写会话。
+- 移除 **Lark** 或**飞书**只会移除该地区身份。匹配的私有私信和按成员关系限定的会话在重新关联同一身份之前不再可见。
+
+## 关联永远不会改变什么 [#what-linking-never-changes]
+
+关联或解除关联某个提供方不会改变：
+
+- AgentConnect 个人资料 ID；
+- 组织成员关系或角色；
+- Agent、Daemon、定时任务、工具或技能的[团队可见范围](/operate-govern/permissions-overview/team-visibility)；
+- 现有的资源共享授权；或
+- 其他提供方的权限。
+
+有一个例外值得了解：对于受限 Agent，如果某人已经在该 Agent 的共享受众中，并且已在同一工作区关联了自己的 Slack 身份，那么该 Agent 与此人的 **1:1 Slack 私信**会以普通私信的默认值初始化，而不是关闭。两个条件必须同时满足——受众中未关联身份的成员，以及已关联身份但不在受众中的人，都会让对话保持关闭——而且它只适用于 Slack 上的 1:1 私信，绝不适用于频道或群组私信。该规则会在关联完成或受众扩大时重新评估，它绝不会重新打开编辑者刻意关闭的对话，也绝不会关闭任何对话。受限 Agent 的其他一切，包括频道访问，仍然以关闭状态开始。
+
+关联也不会合并两个 AgentConnect 个人资料、安装 GitHub App、授权仓库或安装聊天机器人。仍然适用的边界见[权限](/operate-govern/permissions-overview)。
+
+## 每个提供方带来什么 [#what-each-provider-adds]
+
+| 提供方 | 带来 | 不带来 |
+| --- | --- | --- |
+| **GitHub** | 登录，以及用于设置和会话检查的 GitHub 身份 | App 安装或仓库访问权限 |
+| **Google** | 登录 | 提供方专属授权 |
+| **Slack** | 登录，以及一个用于会话检查的工作区身份 | 机器人安装或跨工作区身份 |
+| **Lark** | 登录，以及用于受支持会话检查的地区身份 | 机器人安装或飞书身份 |
+| **飞书** | 登录，以及用于受支持会话检查的地区身份 | 机器人安装或 Lark 身份 |
+
+已关联的 Slack 身份可以匹配私有 Slack 私信会话的所有者，并在组织启用**遵循 Slack 访问权限**时用于对话检查。已关联的 Lark 或飞书身份在其 Logto 记录包含提供方的跨应用 `union_id` 时，对其聊天的作用方式相同。因此，关联匹配的账号可以让现有会话变得可见；解除关联则会移除该提供方的匹配。见[会话可见范围](/operate-govern/permissions-overview/session-visibility#session-access)。
+
+### 两项 GitHub 策略以不同方式使用该身份 [#two-github-policies-use-the-identity-differently]
+
+- **按用户的仓库授权**在仓库设置期间检查已登录的人。没有关联 GitHub 身份也可以以只读方式选择公开仓库。私有仓库需要一个拥有访问权限的已关联身份，而**读写**始终要求已关联的 GitHub 用户拥有 `write` 或 `admin` 权限。
+- **遵循 GitHub 访问权限**控制谁可以读取由 GitHub 触发的会话。公开仓库会话不需要关联身份；私有仓库会话需要一个当前拥有仓库访问权限的已关联 GitHub 个人资料。
+
+仓库选择器和 GitHub 事件集成仍然要求部署的 GitHub App 覆盖该仓库。公开仓库也可以在没有 App 的情况下作为匿名只读工作区使用。无论是关联本身还是这两项策略，都不会单独授予仓库访问权限。
+
+GitHub Webhook 授权又是另一回事：AgentConnect 检查 Issue、Pull Request 或评论作者当前的仓库权限。已登录控制台用户所关联的 GitHub 账号不会授予其他 GitHub 作者触发 Agent 的权限。见 [GitHub](/connect-automate/triggers-automation/github)。
+
+## 检查始终针对特定提供方 [#checks-stay-provider-specific]
+
+| 权限检查 | AgentConnect 使用的身份 |
+| --- | --- |
+| GitHub 设置或私有仓库会话 | 已关联的 GitHub 个人资料 |
+| Slack 私信或共享对话 | 已关联的 Slack 工作区个人资料 |
+| Lark 或飞书对话 | 已关联的地区个人资料；开启“遵循访问权限”时为当前成员关系 |
+
+关联多种方式可以让一个 AgentConnect 个人资料满足多项相互独立的检查，但不能让一个提供方替代另一个。Google 仍然只是一种没有提供方专属授权的登录方式，而公开的 GitHub 会话仍然对每个组织成员可用，与所属 Agent 的团队可见范围无关。
+
+AgentConnect 不会跨提供方或提供方工作区创建更宽泛的权限并集。不要假设：
+
+- 一个社交账号可以证明对另一个提供方会话的所有权；
+- 一个提供方可以满足另一个提供方的仓库或对话门槛；
+- 一个 Slack 身份在每个工作区中都代表同一个用户，或者一个应用范围内的 Lark 或飞书身份能直接匹配每个机器人应用；或
+- 关联任何提供方会扩大组织访问权限或资源可见范围。
+
+## AgentConnect OSS 设置 [#agentconnect-oss-setup]
+
+AgentConnect OSS 默认不启用社交登录。要提供关联账号功能，请在 Setup 中引导设置基于 Logto 的登录，在那里启用要显示的登录方式，并创建对应的 Logto 连接器。启用 OIDC 登录后，个人资料卡片才会出现。
+
+运维人员还必须启用 Logto 账号关联、配置提供方身份查询，并为需要所有权验证码的提供方提供邮件投递。本地无认证模式不会推断关联的提供方身份。
+
+完整的设置步骤见[登录](/self-hosting/sign-in#link-additional-social-accounts)。

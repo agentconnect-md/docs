@@ -1,0 +1,57 @@
+---
+title: "工作原理"
+icon: Workflow
+description: "Agent 执行始终留在你运维的 Daemon 上，由控制平面协调所有 Daemon。"
+---
+
+import imgHowAgentconnectWorks from '@/public/images/how-agentconnect-works.svg'
+
+AgentConnect 围绕一条架构规则构建：**控制平面不在实时消息路径上**。Agent 执行发生在你运维环境中的 Daemon 内部。平台入站流量直接到达该 Daemon，或经由可选的 Relay（中继）到达。
+
+<Image src={imgHowAgentconnectWorks} alt="AgentConnect 的频道和事件到达运行在 Daemon 上的 Agent，而控制平面通过独立的控制路径进行协调" width={920} />
+
+## 四个组成部分 [#the-four-pieces]
+
+**Daemon** 是一个小型进程，运行在你的笔记本、工作站、虚拟机或其他机器上。它：
+
+- 主动向外连接控制平面、Relay（在使用时），以及 Slack Socket Mode、Telegram、Discord 和 Lark / 飞书长连接等直连聊天传输；
+- 通过 [ACP](https://agentclientprotocol.com) 启动并驱动已安装的 Agent Runtime，例如 Claude Code 和 Codex；
+- 拥有 Agent 的工作目录、Git 检出和会话记录。
+
+**Relay** 是可选的公网入口。它终结基于回调的 Slack 和 Lark / 飞书流量、GitHub、GitLab 和通用 Webhook、[Linear](/connect-automate/triggers-automation/linear) Agent 事件，以及 Webchat（[Playground](/build-your-team/agents/playground) 背后的浏览器传输），然后把请求转发给拥有它的 Daemon。它不会持久存储消息内容。
+
+**控制平面** 管理认证、组织、权限、Agent 放置、集成、定时任务和控制元数据。它还存储明确批准的[知识库和托管技能](/build-your-team/knowledge)，并协调所有 Daemon。
+
+**控制台** 是配置和观察的界面。当你打开会话记录、工具结果、记忆视图或工作区文件时，它会从拥有这些内容的 Daemon 读取，而不会把内容主体持久化到控制平面。
+
+## 数据存放在哪里 [#what-lives-where]
+
+| 数据 | 存储方 |
+| --- | --- |
+| 实时消息和 Agent 活动 | Daemon；Relay 转发回调 |
+| 会话记录和工具结果 | 所属 Daemon |
+| 工作区和 Git 检出 | 所属 Daemon |
+| Runtime 凭证 | Daemon 所在机器 |
+| 机器人令牌和租户密钥 | 控制平面密钥存储 |
+| 控制元数据 | 控制平面 |
+| 已批准的知识库和技能 | 控制平面 |
+
+经授权的会话记录、工具结果、记忆和工作区读取，都是按需从所属 Daemon 获取的。控制平面不会持久化这些响应。静态密钥的保护程度取决于部署的密钥存储配置。
+
+## 为优雅降级而设计 [#built-to-degrade-gracefully]
+
+由于 Daemon 拥有执行过程和本地会话状态，已建立的会话和本地定时任务可以在控制平面临时故障期间继续运行。新的分配、配置变更和控制台读取会在重新连接后恢复。
+
+如果某个 Daemon 离线，它的 Agent 也随之离线。控制平面仍能显示已存储的会话元数据，但该 Daemon 拥有的会话记录和工作区内容在它恢复之前无法获取。
+
+## 组织与访问 [#organizations-and-access]
+
+一切都归属于某个组织。成员身份和角色构成外层边界，然后 AgentConnect 再评估目标资源：团队可见范围保护 Agent 等资源，而每个会话的元数据和会话记录都有各自独立的受众。Agent 之间的调用使用独立的入站和出站策略。请从[权限概览](/operate-govern/permissions-overview)开始了解。
+
+当相应的提供方可用时，一个人可以把[多种登录方式关联](/how-to-guides/linked-accounts)到同一个个人资料。AgentConnect Cloud 目前提供 GitHub、Google 和 Slack。自托管部署还可以添加 Lark 和飞书作为登录方式。这些关联身份随后可以参与对应的会话访问权限检查。
+
+## 托管方式 [#hosting-choices]
+
+同一套架构既支持由你运维完整技术栈的 [AgentConnect OSS](/self-hosting)，也支持管理控制台以托管方式提供的 AgentConnect Cloud。在两种情况下，Agent 和工作区都由 Daemon 运行。本页描述的是运行在你接入并运维的机器上的 Daemon；在 AgentConnect Cloud 上，Agent 也可以改为放置在[托管基础设施](/build-your-team/daemons/manage-daemons#agentconnect-cloud)上，由 AgentConnect 为其运维 Daemon 环境。
+
+AgentConnect OSS 的认证是可选的，默认使用本地无认证模式。在把它暴露到 localhost 之外之前，请先配置[使用 Logto 的生产环境登录](/self-hosting/sign-in)。

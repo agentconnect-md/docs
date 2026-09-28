@@ -24,6 +24,7 @@ On your agent, open **Integrations → Add integration → QQ**, paste the AppID
 - **Private chat** — message the bot directly. Replies stream in as the agent works, formatted as Markdown.
 - **Groups** — add the bot to a QQ group and **@-mention** it. Everyone in the group shares that group's conversation with the agent; ordinary group chatter the bot is not mentioned in is not part of it.
 - **Images** — send the bot a PNG, JPEG, or WEBP image, and an agent can share images from its workspace back. Other file types are not supported yet.
+- **Questions** — when the agent needs you to pick an option, such as whether a private chat may save to the agent's shared memory, it sends the options numbered. Quote that message and reply with the number; in a group, also @-mention the bot.
 
 See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing supported session settings.
 
@@ -33,4 +34,4 @@ See [In-conversation commands](/connect-automate/integrations-overview#in-conver
 - QQ limits how many replies a bot may send for one incoming message. In a group, the agent acknowledges the request, posts bounded progress, and then the answer; if the answer does not fit, AgentConnect says so and keeps the full text in the session.
 - QQ replies must answer a message the bot received, so the console cannot send into a QQ conversation, and an agent cannot open one on its own.
 - One QQ bot binds to one agent. Deleting the integration frees the bot for reuse (**Use an existing bot** next time).
-- Rotate the AppSecret under **Settings → Bots → QQ → Update secret**. The bot's conversations are unchanged.
+- Rotate the AppSecret under **Integrations → Messaging apps → QQ → Update secret**. The bot's conversations are unchanged.

@@ -1,0 +1,69 @@
+---
+title: "Agent 可见范围"
+icon: Network
+description: "控制 Agent 之间协作图的两个方向。"
+---
+
+import imgAgentVisibilityDefault from '@/public/images/agent-visibility-default.png'
+import imgAgentTopology from '@/public/images/agent-topology.png'
+
+Agent 可以把工作委派给其他 Agent。**Agent 可见范围**控制允许哪些 Agent 之间的调用。它在发现阶段强制执行，并在投递时再次执行。
+
+请把它理解为*这个 Agent 能看到哪些 Agent*：这项策略的主语是 Agent，而不是人。这正是它与另外两条权限轴的区别，后两者决定的都是**人**可以触达什么。
+
+<Image src={imgAgentVisibilityDefault} alt="组织设置中的默认 Agent 可见性" width={760} />
+
+这与[团队可见范围](/operate-govern/permissions-overview/team-visibility)不同，后者控制哪些**人**可以看到某个 Agent。
+
+## 两个方向 [#two-directions]
+
+每个 Agent 都有两项相互独立的策略：
+
+| 方向 | 控制台中的问题 | 用途 |
+| --- | --- | --- |
+| 入站 | **哪些 Agent 可以调用此 Agent**？| 允许的调用者 |
+| 出站 | **此 Agent 可以调用哪些 Agent**？| 允许的受委派方 |
+
+每个方向可以是：
+
+- **所有 Agent**，即默认值；或
+- **已选择**，附带一份明确的对等 Agent 列表。
+
+空的已选择列表表示在该方向上不允许任何对等 Agent。
+
+## 新建 Agent 的默认值 [#defaults-for-new-agents]
+
+默认情况下，组织创建的新 Agent 在两个方向上都是**所有 Agent**，因此它们可以发现并调用组织中任何本来可被调用的对等 Agent。
+
+组织所有者可以更改**默认 Agent 可见性**，它在**设置**页面上有自己的卡片：
+
+- **所有 Agent**让未来的 Agent 在两个方向上都对组织中的每个 Agent 开放。
+- **隔离**让未来的 Agent 在两个方向上都以**已选择**且列表为空的状态开始。在配置之前，它们不会发现任何对等 Agent，也不接受任何对等 Agent 的调用。
+
+该设置只适用于更改之后创建的 Agent。它绝不会改写现有 Agent 的策略，而且**添加 Agent → 访问权限**部分可以在创建前覆盖任一方向。
+
+## 如何判定一次调用 [#how-a-call-is-decided]
+
+要让 Agent A 调用 Agent B，以下条件必须全部成立：
+
+1. A 和 B 属于同一个组织。
+2. A 的出站策略允许 B。
+3. B 的入站策略允许 A。
+
+这两项策略取交集。把 B 加入 A 的出站列表不会绕过 B 的入站限制，把 A 加入 B 的入站列表也不会扩大 A 的出站范围。
+
+例如，可以允许一个规划者调用 `frontend` 和 `backend`，而 `payments` 只接受来自另一个独立的故障协调者的调用。除非两边都做出更改，否则规划者无法发现或调用 `payments`。
+
+## 组织范围的发现 [#organization-scoped-discovery]
+
+Agent 可以在整个组织内发现策略允许的对等 Agent，并把工作委派给它们。这些 Agent 不需要共享同一个 Slack 频道或其他聊天集成，甚至不需要在同一个 Daemon 上。没有任何聊天集成的 Agent 仍然可以被发现和调用。
+
+面向人的[团队可见范围](/operate-govern/permissions-overview/team-visibility)是一条独立的边界。对部分组织成员隐藏某个 Agent 不会改变有方向的 Agent 间调用图，允许一次 Agent 调用也不会把任何一方的控制台资源暴露给更多人。
+
+## 配置方法 [#configure-it]
+
+在创建或编辑 Agent 时，在 Agent 的**访问权限 → Agent 可见性**部分设置这两项策略。Agent 详情页会显示策略允许的入站和出站对等 Agent，Agents 页面则以图形方式展示已配置的调用图。
+
+<Image src={imgAgentTopology} alt="Agents 页面上的拓扑视图，显示已配置的调用图" width={900} />
+
+有关委派与路由、分层专家和扇出相结合的用法，请参阅[多 Agent 工作模式](/build-your-team/agents/multi-agent-work-modes#agent-to-agent-delegation)。

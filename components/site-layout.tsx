@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import type * as PageTree from 'fumadocs-core/page-tree'
 import { DocsLayout } from 'fumadocs-ui/layouts/docs'
 import { Sidebar, SidebarProvider, useSidebar } from 'fumadocs-ui/layouts/docs/slots/sidebar'
+import { AskAi } from '@/components/ai/ask-ai'
 import { MenuTrigger, MobileSections } from '@/components/sidebar-parts'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteNav } from '@/components/site-nav'
@@ -41,6 +42,8 @@ export async function SiteLayout({ lang, tree, children }: { lang: string; tree:
           banner: <MobileSections key="sections" tabs={tabs} />
         }}
       >
+        {/* Fumadocs' Ask AI placement: the panel takes the TOC's column, the trigger floats bottom right. */}
+        <AskAi labels={s.askAi} />
         {children}
       </DocsLayout>
       <SiteFooter lang={lang} labels={s.footer} />

@@ -1,0 +1,47 @@
+---
+title: "外部记忆"
+icon: Brain
+description: "部署 Mem0 OSS，并在每个需要使用持久外部记忆的 Daemon 上注册它的包装器。"
+---
+
+Mem0 不是 AgentConnect Compose 栈的一部分。没有它 AgentConnect 也能正常工作。只有当 Agent 需要使用由你自己运营的持久外部记忆时，才部署 Mem0。
+
+1. 启动 [Mem0 OSS](https://docs.mem0.ai/open-source/setup)，并确保每个参与的 Daemon 都能访问它的 API。
+2. 在每台参与的 Daemon 机器上，检出对应版本的 AgentConnect 并构建官方包装器。此示例把源码放在 `/opt/agentconnect`，与下面的配置保持一致：
+
+```bash
+git clone https://github.com/agentconnect-md/agentconnect.git /opt/agentconnect
+cd /opt/agentconnect
+git checkout vX.Y.Z
+corepack enable
+pnpm install --frozen-lockfile
+pnpm --filter @agentconnect.md/memory-plugin-mem0 build
+```
+
+3. 在每个 Daemon 的 `~/.agentconnect/config.json` 中把该包装器加入允许列表：
+
+```json
+{
+  "version": 1,
+  "memoryPlugins": {
+    "mem0-oss": {
+      "command": "node",
+      "args": ["/opt/agentconnect/packages/memory-plugin-mem0/dist/cli.js"],
+      "env": [
+        { "name": "MEM0_DIALECT", "value": "oss" },
+        { "name": "MCP_TRANSPORT", "value": "stdio" },
+        { "name": "MEM0_OSS_BASE_URL", "value": "http://127.0.0.1:8888" }
+      ],
+      "secretEnv": { "apiKey": "MEM0_API_KEY" }
+    }
+  }
+}
+```
+
+根据你的部署调整包装器路径和 Mem0 地址，然后重启 Daemon：
+
+```bash
+npx -y @agentconnect.md/cli restart
+```
+
+接下来参照[将 Mem0 OSS 用作外部记忆](/how-to-guides/external-memory)创建组织级连接并把它绑定到 Agent。

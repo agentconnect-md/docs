@@ -1,0 +1,93 @@
+---
+title: "快速开始"
+icon: Rocket
+description: "创建你的组织，选择 Agent 的运行位置，并把团队带入工作已经在发生的工具中。"
+---
+
+import imgLogin from '@/public/images/login.png'
+import imgAddDaemon from '@/public/images/add-daemon.png'
+import imgOnboardingChecklist from '@/public/images/onboarding-checklist.png'
+
+AgentConnect 会为新组织打开一个引导设置流程。它只问一个真正需要回答的问题——你的 Agent 应该在哪里运行——其余内容都放在一个 **开始使用** 清单里，这个清单会跟随你进入控制台。
+
+## 开始之前 [#before-you-start]
+
+你需要：
+
+- 能访问 [AgentConnect Cloud](https://app.agentconnect.md) 或一个 [AgentConnect OSS](/self-hosting) 部署。
+- 仅 Daemon 路径需要：一台供 Agent 使用的机器——装有 **Node.js 24.12+** 的 macOS、Linux 或 WSL——并且其上至少安装并完成认证了一个 Runtime，例如 [Claude Code](https://docs.anthropic.com/en/docs/claude-code)、Codex 或其他 ACP 兼容的 Runtime。
+
+## 1. 登录 [#1-sign-in]
+
+打开 [AgentConnect Cloud](https://app.agentconnect.md)，或你自托管部署的 Web URL。
+
+Cloud 支持 GitHub、Google 和 Slack 登录。自托管部署可以通过 Logto 选择自己的提供方。默认的本地 OSS 技术栈不启用认证，会直接打开控制台。
+
+<Image src={imgLogin} alt="AgentConnect 登录页面" width={680} />
+
+## 2. 创建你的组织 [#2-create-your-organization]
+
+登录只会创建你的个人资料，而不是组织。选择一个 URL 名称——由小写字母、数字和连字符组成——如果需要，再选择一个显示名称；显示名称默认与 URL 名称相同。如果你是要加入队友的组织，打开他们的协作者邀请链接即可跳过这一步。
+
+## 3. 选择 Agent 的运行位置 [#3-choose-where-agents-run]
+
+引导设置接着会询问 **选择运行位置**，你的回答决定了是否有东西需要安装：
+
+- **云端**（在带有 Daemon 池的自托管部署上显示为 **集群**）——Agent 运行在部署方已经在运维的基础设施上。无需安装，引导设置到此结束。Cloud 会为你提供免费额度作为起点。
+- **Daemon**——使用你自己的机器和你自己的提供方凭证。选择此项会增加下面的连接步骤。
+
+只有所有者会看到这个引导设置，而且每个组织只运行一次：**完成** 和 **跳过** 都会将其标记为已完成，已经拥有 Daemon 的组织也不会再看到它。
+
+## 4. 连接你的 Daemon [#4-connect-your-daemon]
+
+这一步属于 **Daemon** 路径；如果你选择了资源池，请直接跳到清单部分。
+
+Daemon 在你运维的环境中运行 Agent。它会检测该机器上安装的 Runtime，把工作区和凭证保留在本机，并主动向外连接到 AgentConnect。
+
+引导页面会为你生成一条一次性连接命令。原样复制这条命令，在目标机器上运行，并让它保持运行。页面会等待该 Daemon，并在它上线后自动继续。
+
+<Image src={imgAddDaemon} alt="使用示例值连接你的 Daemon" width={640} />
+
+首次运行时，前台命令是最合适的方式。若要让 Daemon 在注销或重启后继续运行，请参阅[安装 Daemon](/build-your-team/daemons/install-the-daemon)。
+
+## 5. 设置内置 Agent [#5-set-up-the-built-in-agent]
+
+每个新组织都包含一个内置的 **AgentConnect** Agent。Daemon 上线后：
+
+1. 从该 Daemon 检测到的 Runtime 中选择一个。
+2. 如果该 Runtime 支持选择模型，再选一个模型。
+3. 选择 **保存并继续**。
+
+Daemon 已经预先选好。你可以跳过这一步，之后从清单或该 Agent 的设置中再回来完成。
+
+## 6. 完成团队设置 [#6-finish-the-team-setup]
+
+引导设置随后会把你交给 **开始使用** 清单。它以悬浮胶囊按钮的形式常驻在控制台中，点击后展开抽屉面板，一次引导你完成一步。它会帮助你：
+
+- 连接 Daemon——**仅当部署没有可运行 Agent 的资源池时**，因此 Cloud 上永远不会显示这一步；
+- 将内置 Agent 连接到 Slack；
+- 连接 GitHub 并分配仓库；
+- 当你的登录方式尚未提供 GitHub 身份时，关联你的 GitHub 账号；
+- 开始一次对话；
+- 在启用了认证时邀请团队成员；以及
+- 检查会话访问策略。
+
+清单反映组织的当前状态，因此在其他地方完成的工作会被自动勾选，而你所在的步骤会为整个组织记住。**暂时跳过** 只会在当前设备上隐藏胶囊按钮；可以从账号菜单重新打开它。
+
+<Image src={imgOnboardingChecklist} alt="已完成的“开始使用”清单，其中内置的 AgentConnect Agent 已展开" width={780} />
+
+## 7. 开始工作 [#7-start-working]
+
+使用 **开始首次对话** 打开首页，或者从 Slack、GitHub 或其他已连接的平台发起。选择适合这项工作的一个或多个 Agent，然后发送提示词。产生的工作会出现在 **会话** 下，受其可见范围和你的权限约束。
+
+## 如果你跳过了引导设置 [#if-you-skipped-setup]
+
+从控制台打开 **开始使用**，即可继续同一份清单。你也可以使用 **基础设施 → 添加 Daemon** 和内置 AgentConnect Agent 的设置，手动完成 Daemon 路径的各个步骤。
+
+## 下一步 [#whats-next]
+
+- [连接平台](/connect-automate/integrations-overview)——将 Agent 关联到 Slack、Telegram、Discord、Lark / 飞书、GitHub、GitLab、Linear 及其他触发器。
+- [创建 Agent](/build-your-team/agents/create-an-agent)——添加拥有不同角色、Runtime、模型和工作区的专项 Agent。
+- [权限](/operate-govern/permissions-overview)——控制 Agent、会话、仓库以及 Agent 之间的访问。
+- [工作原理](/getting-started/how-it-works)——了解 Daemon、可选的 Relay（中继）和控制平面。
+- [AgentConnect OSS](/self-hosting)——使用 Docker Compose 或 Kubernetes 运行开源技术栈。

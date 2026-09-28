@@ -1,0 +1,93 @@
+---
+title: "会话"
+icon: ScrollText
+description: "查看 Agent 的运行记录、检查会话记录，并了解会话数据存放在哪里。"
+---
+
+import imgSessionDetail from '@/public/images/session-detail.png'
+import imgSessionsList from '@/public/images/sessions-list.png'
+
+**会话**是每一次 Agent 运行的黑匣子，不论这次运行来自 Slack 线程（thread）、GitHub 事件、Linear 委派、Webhook、定时任务还是 Playground（控制台中显示为“试用”）。列表中包含的是各个[会话可见对象](/operate-govern/permissions-overview/session-visibility)所允许的工作。Agent 的团队可见范围单独控制对该 Agent 的访问，不会隐藏你有权读取的会话。
+
+<Image src={imgSessionDetail} alt="一条会话记录，其中 Agent 的计划、文件编辑和工具输出已展开" width={900} />
+
+## 查找会话 [#find-a-session]
+
+使用会话列表按 Agent 或来源查找工作，并从定时运行追溯到创建它们的定时任务。当一个你可读的会话属于你本来看不到的 Agent 时，其 Agent 名称仍可作为普通的筛选标签使用，而不是链接。当多个 Agent 参与同一个受支持的对话时，列表会把它们的会话归为一行。
+
+<Image src={imgSessionsList} alt="会话列表，可按 Agent、集成、频道或触发器筛选" width={900} />
+
+## 查看一次运行 [#review-a-run]
+
+每个会话都会记录其来源、Agent、参与者、Daemon、Runtime 和模型，以及持续时间、Token 用量、成本（如可用）和工具活动。在提供方提供相关信息时，会话会链接回原始对话。
+
+会话会为其执行配置保存快照：页头反映的是这次运行*实际使用*的配置，即使你之后已经重新配置了该 Agent。
+
+### 会话记录 [#the-transcript]
+
+会话记录将消息、推理、计划、工具调用和文件编辑分开呈现。工具活动包含可用的输入和输出，文件更改附有 diff，因此你可以了解 Agent 是如何得出结果的。
+
+## 当运行请求权限时 [#when-a-run-asks-for-permission]
+
+根据 Agent 的权限模式，Runtime 可能会在一个回合中途停下来，在行动之前先询问。该回合会暂停等待，直到有人做出决定；这个决定可以在三个地方做出：
+
+- **在控制台中**。任何可以编辑该 Agent 的人都可以决定，包括不在其指定成员列表中的组织所有者。使用 Agent 页面，或者在会话可见对象允许你打开时使用会话页面。通知铃铛会显示一条未读的**需要审批**项目，指向正在等待的会话，并在等待结束后将其标记为已解决。
+- **在 Slack 私信中**。当某位有权决定的人已经[关联了自己的 Slack 账号](/how-to-guides/linked-accounts)时，Agent 会通过私信把同一张卡片发给其中一人，附带指向会话和发起这项工作的消息的链接。在那里做出的决定与在控制台中做出的决定是同一个决定，控制台会记录是谁做出的。
+- **在对话中**。仅当 Agent 的**允许在聊天中更改**设置开启且会话位于 Slack 时。卡片会发布到工作正在进行的地方，因此任何能看到该对话的人都可以点击它——这也是为什么这一项需要主动开启。
+
+默认情况下，对话中会收到一条简短通知，说明有一项审批正在等待，需要由 Agent 的编辑者来允许。[Linear](/connect-automate/triggers-automation/linear) 会话会把同样的提示发布到 Issue 的活动动态中，并附上指向控制台的链接。
+
+对于 Slack 私信通知，AgentConnect 只选择一位接收者。在符合条件的 Slack 工作区内，它会按以下顺序检查这些候选人：
+
+1. 发送触发该回合的消息的人。
+2. 会话所有者。
+3. 对于可见范围为指定成员的 Agent，其明确指定的成员，按保存的顺序。
+4. Agent 的创建者。
+
+每位候选人都必须是当前的组织成员、能够编辑该 Agent，并且在该工作区中拥有已关联的 Slack 身份。所有者即使未被指定也符合条件，但仅凭所有者身份并不会把他们加入接收者列表。只有当上述顺序选中所有者时，所有者才会收到私信。
+
+当接收者点击时，AgentConnect 会重新检查编辑权限和已关联的 Slack 身份。如果无法确定符合条件的接收者，审批仍会在控制台中可用，对话中也会保留等待通知。
+
+## 当多个 Agent 共享一个对话时 [#when-several-agents-share-a-conversation]
+
+每个 Agent 仍然在自己的会话中运行，拥有各自的配置和权限。在多 Agent 的 Playground 或受支持的 IM 对话中，控制台会把这些参与者会话呈现为一个对话，标注各自的活动并合并当前用量。这适用于 Slack、Telegram、Discord、Lark 和飞书对话。
+
+这种分组只是会话之上的一个视图，不是新的权限边界。你只能看到各会话可见对象允许的参与者工作，其中也包括来自页面对你隐藏的 Agent 的可读工作。有关让多个 Agent 协同工作的方式，请参阅[多 Agent 工作模式](/build-your-team/agents/multi-agent-work-modes)。
+
+## 会话记录存放在哪里 [#where-transcripts-live]
+
+控制平面存储会话元数据，例如标题、状态、时间戳和 Token 总量。会话记录中的消息和工具内容则保留在运行该会话的 Daemon 上。
+
+当有权限的人打开会话记录时，控制台会从所属 Daemon 读取它，而不会把正文持久化到控制平面。Daemon 离线时元数据仍可保持可见，但其会话记录要等到 Daemon 恢复后才能加载。
+
+## 保留与清理 [#retention-and-cleanup]
+
+每个 Daemon 默认将已完成的会话内容保留 **7 天**。添加或编辑 Daemon 时，使用**过期会话**选择一个常用的时间窗口、输入自定义天数，或无限期保留会话。
+
+保留期过后，Daemon 会删除会话记录、工具详情以及为该会话创建的任何 Git 工作树。会话元数据仍保留在控制平面中，因此会话仍会出现在列表里，并清楚地显示其内容已被保留策略删除。
+
+活动中的会话不会被移除。当会话工作树中包含未提交的工作或尚未推送到远程的提交时，AgentConnect 也会保留该工作树。
+
+## 会话可见对象 [#session-audience]
+
+对于直接管理的会话，当其匹配到的所有者可以更改可见对象时，页头会显示**所有人 / 私密**。绑定提供方的会话则可以在组织于**设置 → 会话访问权限**下启用相应设置后，改为遵循 **Slack 成员**、**飞书 / Lark 成员**或 **GitHub 成员**。将会话设为私密会立即隐藏会话记录，还可能改变之后的记忆捕获；收紧之前请先阅读[会话可见范围](/operate-govern/permissions-overview/session-visibility)。
+
+## 跨平台交接保持独立 [#cross-platform-handoffs-stay-separate]
+
+对话分组不会合并不同的平台或线程。跨平台交接会在源平台上保留一个会话，并在目标平台上启动一个关联的会话。回复会留在写下它们的地方，除非 Agent 有意把结果带回去。
+
+请参阅[在受信任的工作区之间交接对话](/how-to-guides/hand-off-conversations-across-messaging-platforms)，其中有一个从 Telegram 到 Slack 的示例和一条可复用的 Agent 指令。
+
+## Agent 之间的交接 [#agent-to-agent-handoffs]
+
+委派的工作在一个关联的子会话中运行，并继承父会话的可见对象。如果你在该可见对象之内，即使无法打开目标 Agent，也可以打开这个子会话。Agent 名称只作为不可点击的会话上下文显示，不会额外增加任何对 Agent 配置或工作区的访问权限。
+
+## 实时会话 [#live-sessions]
+
+正在运行的会话会就地更新，对于你可以继续的会话，会话页面会提供一个输入框：
+
+- **Playground 和 webchat** 会话一如既往地在浏览器中继续。
+- **聊天平台**会话——Slack 线程、Telegram 或 Discord 聊天、Lark / 飞书对话——会接收你在控制台中输入的消息，并先把它镜像到原始线程中，让那里的人看到是什么改变了 Agent 的上下文。Agent 的回复遵循该会话自身的输出模式。
+- 由 **GitHub、GitLab、Webhook 或定时任务**事件启动的会话只能在控制台中继续。不会向 Pull Request、Issue 或事件来源发布任何内容。
+
+继续会话属于写操作，因此查看者永远无法继续，私密会话也只属于拥有它的人。除此之外，它遵循会话的可见对象，并且要求所属 Agent 对你可见、其 Daemon 在线。缺少其中任何一项时，输入框不会出现，而是会说明原因。

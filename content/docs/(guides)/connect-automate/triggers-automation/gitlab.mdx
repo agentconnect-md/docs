@@ -58,6 +58,8 @@ Choose the project, what to listen for — issues, merge requests, releases, or 
 
 A release offers only **published**.
 
+When several agents watch the same project, **Add decision** on an issue or merge request row lets a [Decision](/build-your-team/decisions#pick-agents-for-issues-and-pull-requests) pick which of them take each one.
+
 <Image src={imgGitlabAgentCard} alt="An agent's GitLab card with three watched projects, each showing the merge-request family and its trigger" width={640} />
 
 ## Who may trigger an agent
@@ -68,7 +70,7 @@ Only a member with **Developer or higher** on the target project can start an ag
 
 > This is stricter than the GitHub integration, which accepts the triage role. GitLab's Reporter role carries no merge-request authority, so the bar sits at Developer.
 
-A merge request from outside the project does not start an agent on its own. A current Developer-or-higher member can request the first turn by mentioning the agent explicitly. Trigger permission is separate from what the agent may do afterwards: comments, reviews and pushes still require the repository authorization you gave the agent.
+A merge request from outside the project does not start an agent on its own. A current Developer-or-higher member can request the first turn by mentioning the agent explicitly. To let someone below Developer start an agent, add them under **Trusted users** in a watch's settings; the list works as on [GitHub](/connect-automate/triggers-automation/github#trusted-users) and is the only way below Developer. Trigger permission is separate from what the agent may do afterwards: comments, reviews and pushes still require the repository authorization you gave the agent.
 
 ## What the agent does
 

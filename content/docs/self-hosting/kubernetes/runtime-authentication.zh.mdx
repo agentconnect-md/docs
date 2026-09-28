@@ -1,0 +1,78 @@
+---
+title: "Runtime 认证"
+icon: FingerprintPattern
+description: "为 Kubernetes 中的 Runtime 提供 API 密钥和模型端点，同时用于模型发现和 Agent 会话。"
+---
+
+Daemon 池会在探测沙箱中启动每个已安装的 Runtime，以读取其模型。该探测没有 Agent 身份，因此无法读取组织或 Agent 的密钥。一个安装实例范围内共用的 Secret 可以同时为探测和 Agent 会话提供 API 密钥。对于无人值守的 Runtime，请使用 API 密钥认证；交互式 OAuth 登录无法在池探测中完成。
+
+## 选择 Runtime 镜像 [#choose-the-runtime-image]
+
+Chart 默认的 `runtime-sandbox` 镜像包含 Claude Code、Codex 和 DeepSeek Harness。已发布的 `runtime-sandbox-full` 镜像还包含 OpenCode、Qwen Code 和其他 ACP Runtime：
+
+```yaml
+daemonPool:
+  runtime:
+    repository: ghcr.io/agentconnect-md/runtime-sandbox-full
+```
+
+Chart 会附加所选的 AgentConnect 发布标签。使用 `daemonPool.runtime.image` 可以固定完整的镜像引用。更改镜像会重新启动 Runtime 发现。
+
+## 用 Secret 配置任意 Runtime [#configure-any-runtime-with-a-secret]
+
+1. 选择一个模型提供方并获取 API 密钥。查阅该 Runtime 的官方文档，了解其 API 密钥环境变量、支持的模型 ID 和端点格式。例如，参见 [Qwen Code 认证](https://github.com/QwenLM/qwen-code/blob/main/docs/users/configuration/auth.md)、[OpenCode 提供方](https://opencode.ai/docs/providers)和 [DeepSeek 的 API 根地址](https://api-docs.deepseek.com/guides/harness)。
+2. 把密钥、端点以及所有 Runtime 配置放进 AgentConnect Release 命名空间中的一个 Kubernetes Secret。不要把密钥放进 Helm values。
+3. 在 `daemonPool.runtimeEnvironment.runtimes` 下，把每个 Runtime 的环境变量映射到一个 Secret 条目。使用镜像上报的 Runtime ID。Chart 只把指定名称的条目投射进 Daemon；在探测和会话启动时，它只向每个 Runtime 发送其自身映射的变量。
+4. 升级 Helm Release。映射发生变化会滚动重启 Daemon 池并重新运行探测。更改 Secret 的值之后，请重启 Daemon 池，使其环境和探测得到刷新。
+
+例如，使用 DeepSeek 的 OpenAI 兼容 API 的安装实例可以在其 Secret 中放入这些条目：
+
+| Secret 条目 | 值 |
+| --- | --- |
+| `PROVIDER_API_KEY` | 你的 DeepSeek API 密钥 |
+| `PROVIDER_BASE_URL` | `https://api.deepseek.com` |
+| `QWEN_MODEL` | `deepseek-flash` |
+| `OPENCODE_CONFIG_CONTENT` | `{"model":"deepseek/deepseek-flash","provider":{"deepseek":{"options":{"baseURL":"https://api.deepseek.com"}}}}` |
+
+然后引用这些条目，而无需把它们的值复制进 Helm：
+
+```yaml
+daemonPool:
+  runtime:
+    repository: ghcr.io/agentconnect-md/runtime-sandbox-full
+  runtimeEnvironment:
+    existingSecret: agentconnect-model-credentials
+    runtimes:
+      qwen-code:
+        OPENAI_API_KEY: PROVIDER_API_KEY
+        OPENAI_BASE_URL: PROVIDER_BASE_URL
+        OPENAI_MODEL: QWEN_MODEL
+      opencode:
+        DEEPSEEK_API_KEY: PROVIDER_API_KEY
+        OPENCODE_CONFIG_CONTENT: OPENCODE_CONFIG_CONTENT
+```
+
+Qwen Code 会根据 `OPENAI_API_KEY` 选择其 OpenAI 兼容的 API 密钥认证。OpenCode 会根据 `OPENCODE_CONFIG_CONTENT` 选择 `deepseek` 提供方和模型，并从环境中读取 `DEEPSEEK_API_KEY`。这里展示的端点和模型遵循 [DeepSeek 当前的 API 文档](https://api-docs.deepseek.com/guides/harness)；如果使用其他服务，请参考你所选提供方的文档。这两个 Runtime 都不需要浏览器登录或已保存的 OAuth 账号。
+
+OpenCode 的 `model` 设置只是选择默认模型；它不限制提供方列表。要启用更多提供方，请把每个提供方的真实 API 密钥放进 Secret，并把其变量加入 `opencode` 映射。例如，为 [Anthropic](https://opencode.ai/docs/providers#anthropic) 映射 `ANTHROPIC_API_KEY`，或为 [OpenCode Zen](https://opencode.ai/docs/zen) 映射 `OPENCODE_API_KEY`。模型出现在目录中并不代表账号就能调用它；请用该提供方的 API 密钥发起一次请求来验证。
+
+当 `daemonPool.modelCredentials.existingSecret` 已经指向同一个 Secret 时，可以省略 `runtimeEnvironment.existingSecret`。每个映射指向的是 Secret 的**条目名称**，而不是内联的值。缺失或为空的条目会让 Daemon 在启动时停止，而不是在没有预期凭证的情况下静默探测。Runtime 映射会覆盖同名的 Agent 级变量；对于内置模型转换和已签发会话密钥所写入的变量，它们保留原有的优先级。
+
+## 内置模型凭证对与其他来源 [#built-in-model-pairs-and-other-sources]
+
+Chart 还支持用 `daemonPool.modelCredentials.existingSecret` 进行内置的凭证转换：
+
+| Runtime | 令牌条目 | 基础 URL 条目 |
+| --- | --- | --- |
+| Claude Code | `ANTHROPIC_MODEL_TOKEN` | `ANTHROPIC_MODEL_BASE_URL` |
+| Codex | `OPENAI_MODEL_TOKEN` | `OPENAI_MODEL_BASE_URL` |
+| DeepSeek Harness | `DEEPSEEK_MODEL_TOKEN` | `DEEPSEEK_MODEL_BASE_URL` |
+| OpenCode | `MODEL_TOKEN` | `MODEL_BASE_URL` |
+
+`MODEL_TOKEN` 和 `MODEL_BASE_URL` 是这些已识别 Runtime 的共享回退。Runtime 专用的凭证对会整体替换共享的凭证对。Daemon 会在探测和启动时把每个凭证对转换为对应 Runtime 的配置；它不会为 Qwen Code 或任意 Runtime 转换凭证对。对于这些 Runtime，以及密钥和 URL 之外的设置（例如模型选择或提供方配置），请使用 `runtimeEnvironment`。
+
+`modelEgress.clients` 是面向受支持客户端的另一个安装实例范围的来源。Chart 拒绝将它与 `modelCredentials.existingSecret` 组合使用，也拒绝在 `daemonPool.extraEnv` 中再次设置内置凭证对。组织和 Agent 的[变量与密钥](/build-your-team/variables-and-secrets)会到达它们的 Agent 会话，但不会到达独立的池探测。**基础设施 → Provider keys** 是面向受支持提供方消费者的组织级连接；它们不是 ACP Runtime 的凭证。
+
+对于 Codex 网关，请使用 `OPENAI_MODEL_TOKEN` 和 `OPENAI_MODEL_BASE_URL`，并填入该网关的 Codex 兼容 API 根地址。Daemon 会同时配置 Codex 的提供方 URL 和 API 密钥。当端点直接是 DeepSeek 时，使用其[文档中的 API 根地址](https://api-docs.deepseek.com/guides/responses_api/)，即 `https://api.deepseek.com`。
+
+要在部署完成后确认发现结果，请查看 Daemon 池的探测完成日志，并在控制台中检查该 Runtime 的模型选择器。即使镜像中已安装了某个 Runtime，如果它的 API 密钥、模型 ID 或端点有误，其选择器仍然可能为空。

@@ -3,7 +3,8 @@
     "integrations-overview",
     "chat-platforms",
     "triggers-automation",
-    "mcp-connector"
+    "mcp-connector",
+    "agent-chat-api"
   ],
   "title": "Connect & Automate"
 }

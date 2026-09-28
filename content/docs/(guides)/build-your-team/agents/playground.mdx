@@ -16,9 +16,15 @@ Playground creates a real session on the agent's daemon, using the same runtime,
 
 You can change supported runtime settings for the next turn without altering the agent's saved configuration, and interrupt a turn when needed.
 
-### Ask the built-in AgentConnect agent
+## Configure AgentConnect from a conversation
 
-In a private Home conversation with the built-in **AgentConnect** agent, you can also ask about your current setup or request supported configuration changes. The agent acts with your current organization permissions, and the console asks you to approve a change before it is applied.
+In a Playground conversation with a single agent, that agent can read your setup and make changes for you with the same tools as the [MCP connector](/connect-automate/mcp-connector). It acts as you, so your role and [visibility](/operate-govern/permissions-overview) apply. Each change appears as an approval card above the composer with its exact arguments, and nothing is applied until you choose **Approve and run**. The agent is then told the result and continues.
+
+Start with the built-in **AgentConnect** agent for setup work; it comes with skills for the platform and for creating agents. Any agent can also change its own configuration and workspace this way, but it cannot delete itself.
+
+These tools are not available in a conversation with several agents. Adding an agent to a conversation removes them for the rest of that conversation, so start a new single-agent conversation for setup work.
+
+The agent never asks for credentials in chat. To create an agent, connect an integration or code host, or add a secret, MCP server, or skill, it opens the matching console dialog, prefilled where it can, for you to finish. Trying a [Decision](/build-your-team/decisions) on a sample message is not available here; use **Try with an example** in the Decision editor.
 
 ## Work with several agents
 

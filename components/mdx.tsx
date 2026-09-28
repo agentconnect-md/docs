@@ -5,12 +5,23 @@ import { localePath } from '@/lib/i18n'
 import { Mermaid } from './mermaid'
 
 const DefaultLink = defaultMdxComponents.a
+const DefaultCard = defaultMdxComponents.Card
 
-// Pages link to site paths (/getting-started/…, /api); keep a translated page's links in its language.
+// A site path (/getting-started/…, /api) keeps a translated page's language; anything else is left alone.
+function localizeHref(lang: string, href: string | undefined): string | undefined {
+  return href?.startsWith('/') && !href.startsWith('//') ? localePath(lang, href) : href
+}
+
+// Pages link to site paths; plain links and Cards alike stay in the page's language.
 function localizedLink(lang: string) {
   return function LocalizedLink({ href, ...props }: ComponentProps<'a'>) {
-    const local = href?.startsWith('/') && !href.startsWith('//') ? localePath(lang, href) : href
-    return <DefaultLink href={local} {...props} />
+    return <DefaultLink href={localizeHref(lang, href)} {...props} />
+  }
+}
+
+function localizedCard(lang: string) {
+  return function LocalizedCard({ href, ...props }: ComponentProps<typeof DefaultCard>) {
+    return <DefaultCard href={localizeHref(lang, href)} {...props} />
   }
 }
 
@@ -21,6 +32,7 @@ export function getMDXComponents(lang = 'en', components?: MDXComponents) {
     Image: defaultMdxComponents.img,
     Mermaid,
     a: localizedLink(lang),
+    Card: localizedCard(lang),
     ...components
   } satisfies MDXComponents
 }

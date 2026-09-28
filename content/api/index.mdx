@@ -18,9 +18,16 @@ Everything the console does rides a REST API at `https://api.agentconnect.md` �
 
 - **Organization** — the org this key is bound to.
 - **Name** — optional label ("ci-runner").
+- **Permission** — what the key may call:
+  - **Full access** — everything your role allows.
+  - **Read-only** — `GET` routes, plus the [MCP connector](/connect-automate/mcp-connector)'s read tools.
+  - **Agent chat** — only the chat token mint, for the selected agents; see [Agent chat API](/connect-automate/agent-chat-api).
+- **Agents** — **All agents** or **Selected agents**. The selection matters only for Agent chat.
 - **Expires** — 30 / 60 / 90 days, 1 year, or never (90 days default).
 
 The key is displayed **exactly once** — copy it then. The list afterwards shows only the tail, expiry and last-used time.
+
+Through the API, `POST /v1/me/keys` takes the same choices as `permission` (`full`, the default; `read`; or `agent:chat`) and `agents` (`"all"` or a list of agent ids).
 
 ## Use it
 

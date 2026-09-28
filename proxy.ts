@@ -27,12 +27,12 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  // Route handlers (search, the playground proxy), build assets, images, icons, Markdown and the OpenAPI document are
+  // Route handlers (search, the playground proxy, chat), build assets, images, icons, Markdown and the OpenAPI document are
   // language-neutral; the API Reference beside them under /api is not. Directory names end in a slash so guide paths
   // that merely start with them (/api-mcp/…) still get a language.
   // Matchers get the base path prepended, and the second one needs a character after it, so the root is listed too.
   matcher: [
     '/',
-    '/((?!api/search|api/proxy|_next/static/|_next/image|images/|llms\\.mdx/|llms\\.txt|openapi\\.json|favicon\\.ico|icon\\.svg|apple-icon\\.png).*)'
+    '/((?!api/search|api/proxy|api/chat|_next/static/|_next/image|images/|llms\\.mdx/|llms\\.txt|openapi\\.json|favicon\\.ico|icon\\.svg|apple-icon\\.png).*)'
   ]
 }

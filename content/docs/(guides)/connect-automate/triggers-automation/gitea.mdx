@@ -87,6 +87,8 @@ Choose the repository, what to listen for — **issues**, **pull requests**, **r
 
 The agent runs when a release is **published** or on **any update** (every publish or edit).
 
+When several agents watch the same repository, **Add decision** on an issue or pull request row lets a [Decision](/build-your-team/decisions#pick-agents-for-issues-and-pull-requests) pick which of them take each one.
+
 <Image src={imgGiteaAgentCard} alt="An agent's Gitea card with one watched repository, showing the pull-request and issue families and their triggers" width={640} />
 
 Several agents may watch the same repository. `@<agent-name>` targets one agent; the bot's own handle broadcasts to every matching agent.
@@ -107,7 +109,7 @@ Gitea delivers a submitted review as one event carrying the summary and nothing 
 
 AgentConnect checks the **current repository permission** of whoever wrote the content, through the Gitea API, at the moment of the event. Only **Write or higher** can start an agent. Permission that is lower, missing or simply unavailable fails closed — the agent does not run.
 
-A pull request from a fork does not start an agent on its own. A current Write-or-higher collaborator can request the first turn by mentioning the agent, or by requesting the bot as a reviewer. Trigger permission is separate from what the agent may do afterwards: comments, reviews and pushes still require the repository authorization you gave the agent.
+A pull request from a fork does not start an agent on its own. A current Write-or-higher collaborator can request the first turn by mentioning the agent, or by requesting the bot as a reviewer. To let someone below Write start an agent, add them under **Trusted users** in a watch's settings; the list works as on [GitHub](/connect-automate/triggers-automation/github#trusted-users) and is the only way below Write. Trigger permission is separate from what the agent may do afterwards: comments, reviews and pushes still require the repository authorization you gave the agent.
 
 The bot's own activity never triggers an agent, with one deliberate exception: a pull request the bot opened still enters review, which is what lets one agent review another's work.
 

@@ -15,7 +15,10 @@ document. It deploys to Cloudflare Workers through OpenNext.
 A page's frontmatter carries its `title`, `description` and `icon`; icons are the names listed in
 `lib/icons.tsx`. Root-relative links (`/build-your-team/agents`) resolve within the site, and a
 `page.zh.mdx` beside `page.mdx` is its Chinese translation: a page without one is served in English
-with a notice.
+with a notice. A folder's `meta.zh.json` beside its `meta.json` carries the same `pages` with Chinese
+titles and separators. A translation keeps the English page's headings one to one, each ending in the
+English heading's id (`## 连接 Gitea [#connect-gitea]`), so `#anchor` links and the table of contents
+work in both languages; images, diagrams and code blocks stay as they are.
 
 ## Channels and branches
 
@@ -28,9 +31,9 @@ Each build is one channel, bound to one environment and one release line:
 
 `main` is where documentation is written and reviewed; `release` is fast-forwarded to it when the
 documentation for a production release ships. `scripts/prepare.mjs` reads the OpenAPI document the
-channel's API serves, so the reference is exactly what that environment runs, then rewrites its paths
-to the public prefix, points its `servers` at the channel's API and records the release the API reports
-in `info.x-agentconnect-release`. The same document is served at `/docs/openapi.json`, and "Send" in
+channel's API serves, so the reference is exactly what that environment runs, paths included, then
+points its `servers` at the channel's API and keeps the release the API reports in
+`info.x-agentconnect-release`. The same document is served at `/docs/openapi.json`, and "Send" in
 the API playground goes through `/docs/api/proxy`, which forwards only to the channel's own API.
 
 A channel's origins come from the environment the build runs in, `DOCS_API_URL` and
@@ -74,3 +77,29 @@ with Discussions write access, installed on this repository only. Each Worker ne
 `GITHUB_APP_ID` and `GITHUB_APP_PRIVATE_KEY` (the key in PKCS#8 form). Both channels post to the
 "Docs Feedback" category, one thread per page; a thread from `test` carries a `(test)` prefix in its
 title. Without the secrets the site still works; feedback is only logged.
+
+## Ask AI
+
+The "Ask AI" panel on every page is answered by an AgentConnect agent. `/docs/api/chat` holds the
+credentials, opens one conversation per open panel (each with an HttpOnly cookie holding its id) and streams
+the agent's reply from the channel's relay; the browser never sees the key or a token. Each Worker
+needs three secrets:
+
+| Name                    | What it is                                                             |
+| ----------------------- | ---------------------------------------------------------------------- |
+| `AGENTCONNECT_API_KEY`  | an API key with the `agent:chat` permission, limited to the docs agent |
+| `AGENTCONNECT_ORG_ID`   | the id of the organization that owns the agent                         |
+| `AGENTCONNECT_AGENT_ID` | the docs agent's id                                                    |
+
+```bash
+pnpm exec wrangler secret put AGENTCONNECT_API_KEY --env test   # test; without --env for prod
+```
+
+Without them the route answers 503 and the panel says Ask AI is unavailable. For `pnpm dev`, put them
+in `.env.local`. OpenNext embeds `.env.local` in a Worker built from a checkout, so leave them out of it
+when deploying from one.
+
+Each Worker's `ASK_AI_LIMIT` binding in `wrangler.jsonc` allows 5 questions a minute per visitor IP,
+counted per Cloudflare location; over it the route answers 429. `pnpm dev` has no Worker context, so
+nothing is limited there. A relay 503 whose reason is `not_holder`, the agent's daemon reconnecting during a
+deployment, is retried once after two seconds; any other 503 may follow a delivery and is not retried.

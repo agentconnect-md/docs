@@ -97,7 +97,7 @@ AgentConnect Checks block merging only when the repository requires one. [Requir
 
 ## Important behavior
 
-- The visible mention must come from a current repository maintainer with `write` or `admin` permission. A comment authored by the GitHub App is rejected as a trigger, even if its text contains `@deep-review`; this prevents bot-to-bot loops. GitHub's native **Request review** control can also request the App, but it runs every matching reviewer rather than only `deep-review`.
+- The visible mention must come from a current repository maintainer with `triage`, `write` or `admin` permission, or from a [trusted user](/connect-automate/triggers-automation/github#trusted-users). A comment authored by the GitHub App is rejected as a trigger, even if its text contains `@deep-review`; this prevents bot-to-bot loops. GitHub's native **Request review** control can also request the App, but it runs every matching reviewer rather than only `deep-review`.
 - A targeted `@deep-review` mention wins over the baseline reviewer's broader **any update** cadence for that delivery.
 - Nobody has to remember the exact name. An organization team named `deep-review` makes `@<organization>/deep-review` autocomplete in the comment box and summon the same agent — see [Make the agent name autocomplete](/connect-automate/triggers-automation/github#make-the-agent-name-autocomplete).
 - **Re-run all checks** reruns the current AgentConnect review Checks in the App's suite. Use the individual Check action when you want only one reviewer.
@@ -109,7 +109,7 @@ For automatic model escalation without a maintainer mention, use trusted agent-t
 
 | Symptom | Check |
 | --- | --- |
-| `@deep-review` does nothing | Exact agent name; `write`/`admin` author; **@-mention** trigger |
+| `@deep-review` does nothing | Exact agent name; `triage`/`write`/`admin` or trusted author; **@-mention** trigger |
 | Both reviewers run | Mention the agent, not the GitHub App |
 | No inline comments or verdict | **Details**; repository **write**; App `pull_requests:write` |
 | No informational Check | Check reporting and App `checks:write` |

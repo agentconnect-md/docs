@@ -1,0 +1,172 @@
+---
+title: "Agent chat API"
+icon: BotMessageSquare
+description: "Put an agent behind your own chat UI — an Ask AI panel on a docs site or a support widget — through a small server-side proxy."
+---
+
+The agent chat API puts an agent behind any chat UI built on the [AI SDK](https://ai-sdk.dev)'s `useChat` (UI message stream protocol v1). Each turn is one HTTP POST, answered as a server-sent event stream. A small proxy you run on your server holds the API key; the browser never sees the key or a token.
+
+Typical uses are an "Ask AI" panel on a documentation site or a support widget. The Ask AI panel on this site works this way.
+
+It takes three steps:
+
+1. Create an API key limited to agent chat.
+2. For each conversation, your proxy exchanges the key for a short-lived token.
+3. For each turn, your proxy forwards the `useChat` request with that token and streams the reply back.
+
+## Create a key
+
+**Profile → API keys → New key**:
+
+- **Permission** — **Agent chat**.
+- **Agents** — **Selected agents**, then pick the agent.
+
+This key can call exactly one route, the token mint below, and only for the selected agents; every other request answers `403`. Like any [API key](/api#create-a-key), it is shown once and expires after 90 days by default.
+
+Through the REST API, send `POST /v1/me/keys`:
+
+```json
+{ "orgId": "<orgId>", "name": "docs-site", "permission": "agent:chat", "agents": ["<agentId>"] }
+```
+
+`agents` may also be `"all"`.
+
+## Mint a token
+
+Mint a token for each conversation with the key:
+
+```bash
+curl -X POST "https://api.agentconnect.md/v1/orgs/$ORG_ID/agents/$AGENT_ID/webchat/token" \
+  -H "Authorization: Bearer $AGENTCONNECT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+The body `{}` opens a new conversation; `{ "conversationId": "<uuid>" }` continues one. The response:
+
+```json
+{ "token": "…", "relayUrl": "…", "conversationId": "…", "expiresAt": "…" }
+```
+
+The token lives 5 minutes (`expiresAt`). Reuse it for that conversation's turns until then, and mint again after. Continuing an unknown conversation answers `404`; `409` means the agent moved and the conversation has to be opened again. In both cases, start a new conversation.
+
+On [AgentConnect OSS](/self-hosting), the same route is at `<control-plane-url>/api/v1/orgs/…`.
+
+## Send a turn
+
+Send `POST {relayUrl}/ai-sdk/chat/{conversationId}` with `Authorization: Bearer <token>` and the `useChat` request body unchanged (`{ id, messages, trigger, … }`):
+
+```bash
+curl -N -X POST "$RELAY_URL/ai-sdk/chat/$CONVERSATION_ID" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"id":"chat-1","trigger":"submit-message","messages":[{"id":"m1","role":"user","parts":[{"type":"text","text":"How do I install the daemon?"}]}]}'
+```
+
+The response is `text/event-stream` with the header `x-vercel-ai-ui-message-stream: v1`. Its parts follow the AI SDK protocol, and the stream ends with `[DONE]`.
+
+- The relay reads only the text parts of the last user message. The agent's session already holds the history, so earlier messages, file parts and `data-*` parts are ignored.
+- A turn can run for minutes. A keepalive comment arrives every 15 seconds.
+- A request body may be up to 4 MiB, and a turn's text up to 128 KiB. Larger requests answer `413`.
+- One turn runs at a time in a conversation. A second POST while one is running answers `409`.
+
+When the agent's daemon refuses a turn, the status arrives before any stream:
+
+| Status | Meaning |
+| --- | --- |
+| `409` | A turn is still running in this conversation. |
+| `503` | The agent is offline, paused or draining. |
+| `404` | The conversation no longer exists. |
+| `502` | Any other refusal. |
+
+### What the stream carries
+
+| Part | Content |
+| --- | --- |
+| `text-*` | The agent's reply. |
+| `reasoning-*` | The agent's thinking. |
+| `data-tool` | Tool activity: title and status only. |
+| `data-plan` | The agent's plan. |
+| `data-notice` | Status notices, such as "Starting sandbox…". |
+| `message-metadata` | The session title. |
+
+A client that renders only text shows only the reply. `stop()` in `useChat` aborts only the fetch: the turn still finishes, and its output lands in the session's transcript in the console. An interrupted stream cannot be resumed yet.
+
+## Run the proxy
+
+The proxy sits between `useChat` and AgentConnect. It should:
+
+- Map each visitor, and each open tab, to a conversation id, for example in an HttpOnly cookie. Never trust the chat `id` the client sends.
+- Treat a request whose history holds a single user message as a new conversation. `useChat` clears its history on the client without telling the server.
+- Forward the response body and the `content-type` and `x-vercel-ai-ui-message-stream` headers unchanged.
+- Rate-limit visitors. AgentConnect limits turns per conversation, not per visitor.
+
+A minimal Next.js route handler, `app/api/chat/route.ts`, with one conversation per browser:
+
+```ts
+const API = 'https://api.agentconnect.md/v1'
+const { AGENTCONNECT_API_KEY, AGENTCONNECT_ORG_ID, AGENTCONNECT_AGENT_ID } = process.env
+type Minted = { token: string; relayUrl: string; conversationId: string; expiresAt: string }
+const tokens = new Map<string, Minted>()
+
+async function mint(conversationId?: string): Promise<Minted> {
+  const cached = conversationId ? tokens.get(conversationId) : undefined
+  if (cached && Date.parse(cached.expiresAt) - 30_000 > Date.now()) return cached
+  const res = await fetch(`${API}/orgs/${AGENTCONNECT_ORG_ID}/agents/${AGENTCONNECT_AGENT_ID}/webchat/token`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${AGENTCONNECT_API_KEY}`, 'content-type': 'application/json' },
+    body: JSON.stringify(conversationId ? { conversationId } : {})
+  })
+  if (!res.ok) throw Object.assign(new Error(`token mint failed: ${res.status}`), { status: res.status })
+  const minted = (await res.json()) as Minted
+  tokens.set(minted.conversationId, minted)
+  return minted
+}
+
+export async function POST(req: Request) {
+  const body = await req.json()
+  const userTurns = body.messages.filter((m: { role: string }) => m.role === 'user').length
+  const bound = req.headers.get('cookie')?.match(/(?:^|;\s*)chat_conversation=([0-9a-f-]{36})/)?.[1]
+  // A lone first question starts over; an unknown (404) or moved (409) conversation does too. Any other failure surfaces.
+  const reopen = (err: { status?: number }) => (err.status === 404 || err.status === 409 ? mint() : Promise.reject(err))
+  const { token, relayUrl, conversationId } =
+    userTurns > 1 && bound ? await mint(bound).catch(reopen) : await mint()
+
+  const upstream = await fetch(`${relayUrl}/ai-sdk/chat/${conversationId}`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+    signal: req.signal
+  })
+  const headers = new Headers({ 'cache-control': 'no-store' })
+  for (const name of ['content-type', 'x-vercel-ai-ui-message-stream']) {
+    const value = upstream.headers.get(name)
+    if (value) headers.set(name, value)
+  }
+  headers.append('set-cookie', `chat_conversation=${conversationId}; Path=/; HttpOnly; Secure; SameSite=Lax`)
+  return new Response(upstream.body, { status: upstream.status, headers })
+}
+```
+
+On the client, point `useChat`'s transport at the route (`new DefaultChatTransport({ api: '/api/chat' })`).
+
+This site's own proxy, in the [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) repository, adds a cookie per open tab, a bounded token cache and error mapping: see [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts) and [`app/api/chat/route.ts`](https://github.com/agentconnect-md/docs/blob/main/app/api/chat/route.ts). Its panel is the Fumadocs AI search component.
+
+## Sessions and safety
+
+A conversation opened this way is an ordinary webchat session of the key's owner. In the console it is [private](/operate-govern/permissions-overview/session-visibility) to that user, and its source shows the key. Its usage is metered on the agent like any other turn; see [Billing & usage](/operate-govern/billing-and-usage).
+
+<Callout type="warn">
+The agent receives untrusted input on every turn. Configure it for that:
+
+- Give it no [secrets](/build-your-team/variables-and-secrets) and no write access to repositories.
+- Run it in a [sandbox](/operate-govern/sandboxing) that isolates untrusted input: `microsandbox` or Kubernetes.
+- Keep it in an organization whose members may read those transcripts.
+</Callout>
+
+## Troubleshooting
+
+- **`403` "limited to agent:chat"** — an Agent chat key reached a route other than the token mint. Check the URL, and that the proxy sends the key you meant.
+- **`404` "agent not found" on the mint** — the key's agent selection does not include this agent.
+- **`409` on a turn** — a turn is still running in this conversation. Wait for it to finish, or start a new conversation.
+- **`503` right after a deployment** — the agent's daemon is reconnecting. Retry.

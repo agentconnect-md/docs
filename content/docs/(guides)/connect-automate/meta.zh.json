@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "integrations-overview",
+    "chat-platforms",
+    "triggers-automation",
+    "mcp-connector",
+    "agent-chat-api"
+  ],
+  "title": "连接与自动化"
+}

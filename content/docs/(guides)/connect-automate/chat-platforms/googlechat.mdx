@@ -1,0 +1,61 @@
+---
+title: "Google Chat"
+icon: GoogleChat
+description: "Connect a Google Chat app so an agent answers direct messages and @mentions in spaces."
+---
+
+A Google Chat integration connects an agent to a Chat app: a Google Cloud project with the Google Chat API enabled. Google delivers a Chat app's events over HTTPS callbacks only — there is no socket mode — so the deployment needs a public callback endpoint. AgentConnect Cloud provides one; a self-hosted deployment must have its public callback endpoint configured, as for [Linear](/connect-automate/triggers-automation/linear#before-you-connect).
+
+On a self-hosted deployment where an administrator has configured the [deployment's Chat app](/self-hosting/provider-apps#google-chat-deployment-app), the wizard leads with **Use the deployment app**, which installs that app on the agent in one click. One app serves one agent in this version, so the deployment app is installed on one agent at a time; another agent is refused until the first one's integration is removed. Otherwise, or with **Use your own Chat app**, create and connect your own app as below.
+
+## Create the app
+
+The wizard's **Before you start** step lists what you need:
+
+- A Google Workspace account that can configure Chat apps.
+- A Google Cloud project with the **Google Chat API** enabled.
+- The **Cloud Resource Manager API** enabled in that project. AgentConnect reads the project's number through it.
+- A service account in that same project with the **Browser** role, and a JSON key for it. Create the key in the Chat app's own project; a key from another project is refused.
+
+Then, in the Google Cloud console, open **APIs & Services → Google Chat API → Configuration**:
+
+1. Set the app's name, avatar, and description, and enable interactive features.
+2. Under **Functionality**, select **Receive 1:1 messages** and **Join spaces and group conversations**.
+3. Under **Connection settings**, set **HTTP endpoint URL** to the value the wizard shows — the deployment's public callback origin followed by `/googlechat/events`, such as `https://relay.example.test/googlechat/events` — and set **Authentication audience** to **Project Number**.
+4. Under **Visibility**, choose the people and groups in your Workspace domain who may use the app. A private app needs no Marketplace listing; listing it is optional.
+5. Click **Save**.
+
+## Connect it
+
+On your agent, open **Integrations → Add integration → Google Chat**. Paste the service-account key JSON, and the wizard fills in the **Project ID** from it. The **Project number** is optional: AgentConnect looks it up, and checks it if you enter one. Click **Connect**.
+
+AgentConnect validates the key with Google before saving it, and clears the key field after every attempt. A refusal names its fix: the wrong project, a key from another project, the Cloud Resource Manager API disabled, the Browser role missing, or the Chat API not configured.
+
+After connecting, the wizard shows three states:
+
+- **Saved** — Google accepted the key.
+- **Connected** — the callback endpoint is live and the agent is online.
+- **Added** — the app is in a space or a direct conversation.
+
+Then test it: send the app a direct message, or add it to a space and mention it.
+
+## Use it
+
+- **Direct messages** — message the app directly; every message reaches the agent. Replies stream in and are edited into their final form.
+- **Spaces** — add the app to a space and **@-mention** it. The agent replies in the same thread as the message. Google delivers a space message to the app only when it mentions the app, replies inside a thread included: a thread reply without the mention is never delivered, so the agent cannot answer it. For the same reason, a space's trigger offers **@-mention**, **By decision**, or **Off**, and no **any message** option.
+- **Formatting** — the agent's Markdown is rendered in Google Chat's supported subset: bold, italic, strikethrough, inline code, code blocks, lists, and links. Headings render as bold lines, images as links, and tables as monospace blocks. Long replies are split across messages.
+- **Questions** — when the agent needs your input, it posts a card in the conversation: a button per option, or a short form with **Confirm**. Anyone who can see the card can answer it, and it updates to show the answer. **Dismiss** declines the question.
+
+Not supported in this version: attachments in either direction, dialogs, group direct messages, Google Chat slash commands, and reactions.
+
+See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing supported session settings.
+
+## Visibility in the console
+
+A **direct message** with the app stays private to the person who sent it: no one can open that session in the console, because Google Chat identities are not linked to console accounts. Conversations in a **space** are visible to the organization, whoever is in the space.
+
+## Notes
+
+- One Chat app binds to one agent, and a Google Cloud project holds one Chat app. Deleting the integration frees the app for reuse (**Use an existing bot** next time).
+- Rotate the key under **Integrations → Messaging apps → Google Chat** by pasting a new service-account key. The deployment app's key is managed in the Setup Server instead: after saving a new key there, run **Use the deployment app** again on the agent that holds the app, which re-stamps the installed app with the current key, and do that before revoking the old key.
+- Spaces the app belongs to appear under the integration. A direct conversation appears after its first message, named after the person.

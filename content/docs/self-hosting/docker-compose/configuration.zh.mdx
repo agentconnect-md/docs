@@ -1,0 +1,214 @@
+---
+title: "配置"
+icon: Settings
+description: "通过 compose.env 配置 Compose 服务栈的镜像、端口、公开 URL、引导密钥和密钥存储。"
+---
+
+默认的 Docker Compose 服务栈无需配置，并且只监听回环地址。`compose.env` 只用于部署拓扑和引导密钥，然后用 Setup Server 来配置[登录](/self-hosting/sign-in)、[提供方应用](/self-hosting/provider-apps)和部署选项。
+
+## Compose 环境变量 [#compose-environment]
+
+只有在需要覆盖默认值时才复制模板：
+
+```bash
+cp compose.env.example compose.env
+```
+
+在每条 Compose 命令中都带上它：
+
+```bash
+docker compose --env-file compose.env up -d
+```
+
+`compose.env` 已被 gitignore。不要把它纳入源码管理或未经批准的备份。
+
+## 镜像版本 [#image-versions]
+
+| 变量 | 默认值 |
+| --- | --- |
+| `AGENTCONNECT_VERSION` | `latest` |
+| `AGENTCONNECT_IMAGE_REGISTRY` | `ghcr.io/agentconnect-md` |
+| `AGENTCONNECT_PRISMA_CLI_VERSION` | `7.8.0-node24-r1` |
+| `AGENTCONNECT_OPEN_CONNECTOR_VERSION` | `latest` |
+
+为获得可复现的部署，请固定到某个 AgentConnect 发布版本：
+
+```dotenv
+AGENTCONNECT_VERSION=vX.Y.Z
+```
+
+已发布的应用镜像和迁移镜像目前面向 `linux/amd64`。
+
+## 本地端口 [#local-ports]
+
+| 服务 | 变量 | 默认值 |
+| --- | --- | --- |
+| Web | `AGENTCONNECT_WEB_PORT` | `3000` |
+| 控制平面 | `AGENTCONNECT_CP_PORT` | `8080` |
+| Relay | `AGENTCONNECT_RELAY_PORT` | `8090` |
+| PostgreSQL | `AGENTCONNECT_POSTGRES_PORT` | `5432` |
+| 连接器网关 | `AGENTCONNECT_OPEN_CONNECTOR_PORT` | `3100` |
+| Setup Server | 固定，仅回环地址 | `8091` |
+| Logto 登录 | 可选叠加配置 | `3001` |
+| Logto Console | 可选叠加配置 | `3002` |
+
+`AGENTCONNECT_BIND_ADDRESS` 对 Web、控制平面和 Relay 默认为 `127.0.0.1`。在提供的 Compose 文件中，PostgreSQL、连接器网关、Setup Server 和本地 Logto 叠加配置始终只监听回环地址。
+
+## 网络与公开 URL [#network-and-public-urls]
+
+容器之间在内部使用 Docker 服务名。浏览器、Daemon、提供方回调和链接则使用下列公开源地址：
+
+| 变量 | 本地默认值 |
+| --- | --- |
+| `AGENTCONNECT_PUBLIC_WEB_URL` | `http://localhost:3000` |
+| `AGENTCONNECT_PUBLIC_CP_URL` | `http://localhost:8080` |
+| `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://localhost:8090` |
+| `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090` |
+
+不要添加末尾斜杠。
+
+对于远程 Daemon 或网络部署，请把这些默认值替换为可达的源地址。浏览器和回调源地址使用 HTTPS，面向 Daemon 的 Relay URL 使用 `wss://`。反向代理必须为控制平面和 Relay 连接保留 WebSocket 升级。
+
+在创建 GitHub 或 Slack 应用之前，先设定最终的公开 URL。Setup 会根据这些值推导出它们的回调清单。如果之后 URL 发生变化，请先用同样的环境变量和 Compose 覆盖文件重新创建 Setup Server，再更新提供方应用。对于基础服务栈：
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate setup-server
+```
+
+更新提供方应用之后，用同样的环境变量和 Compose 覆盖文件重新创建各运行时服务：
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate control-plane relay web
+```
+
+> 不要把无认证的服务栈或其默认密钥发布到网络上。Compose 是单主机拓扑，不是高可用部署。
+
+## Setup Server [#setup-server]
+
+Setup Server 在 [http://localhost:8091](http://localhost:8091) 提供基于浏览器的 AgentConnect Setup 界面。它包含在基础服务栈中，并且始终绑定到回环地址。
+
+用它来：
+
+- 引导 Logto 登录；
+- 创建、接管、检查或清除提供方应用；
+- 存储提供方凭证，且不会返回已保存的密钥值；以及
+- 启用或禁用预设的 `agentconnect` Agent。
+
+保存的更改会在服务启动时加载。用以下命令使其生效：
+
+```bash
+docker compose restart control-plane relay web
+```
+
+如果 Compose 运行在另一台主机上，请转发 Setup Server，而不是把它公开暴露：
+
+```bash
+ssh -L 8091:127.0.0.1:8091 operator@host.example
+```
+
+然后在本地打开 `http://localhost:8091`。
+
+关于初始管理员以及 Logto Cloud 或外部 Logto OSS 的设置，请继续阅读[登录](/self-hosting/sign-in)。
+
+### 预设 Agent [#preset-agent]
+
+新组织默认会获得一个内置的 `agentconnect` Agent。在 Setup 中打开**选项**，取消勾选**启用预设 Agent**，然后保存。这会阻止后续的自动创建和回填；它不会删除已经存在的 Agent。
+
+## 数据库与引导密钥 [#database-and-bootstrap-secrets]
+
+PostgreSQL 18 把数据存储在 `agentconnect_postgres-data` 卷中。`docker compose down` 会保留它；`docker compose down --volumes` 会删除它。
+
+在任何网络暴露之前，请替换这些默认值：
+
+| 变量 | 要求 |
+| --- | --- |
+| `AGENTCONNECT_POSTGRES_PASSWORD` | URL 安全字符 |
+| `AGENTCONNECT_API_KEY_PEPPER` | 至少 32 个字符且保持不变 |
+| `AGENTCONNECT_RELAY_TOKEN` | 至少 32 个字符 |
+
+为每个密钥分别生成一个值：
+
+```bash
+openssl rand -hex 32
+```
+
+轮换 `AGENTCONNECT_API_KEY_PEPPER` 会使现有的 Daemon 和个人 API 密钥失效。在非临时用途之前请先备份 PostgreSQL。
+
+## 密钥存储 [#secret-storage]
+
+在 AgentConnect 或 Setup 中显示为只写的密钥仍然需要静态加密。默认的 `SECRET_CIPHER=none` 会把它们以明文存储在 PostgreSQL 中。对于生产或暴露在网络上的部署，请使用 HashiCorp Vault Transit。
+
+创建一个 Transit 密钥，以及一条可以用它加密和解密的策略：
+
+```bash
+vault secrets enable transit
+vault write -f transit/keys/agentconnect-cp
+```
+
+```hcl
+path "transit/encrypt/agentconnect-cp" {
+  capabilities = ["update"]
+}
+
+path "transit/decrypt/agentconnect-cp" {
+  capabilities = ["update"]
+}
+```
+
+把 Vault 设置同时传给控制平面和 Setup Server，让它们使用同一个加密根：
+
+```yaml
+# compose.vault.yaml
+services:
+  control-plane:
+    environment: &vault
+      SECRET_CIPHER: vault-transit
+      VAULT_ADDR: ${VAULT_ADDR}
+      VAULT_TRANSIT_KEY: ${VAULT_TRANSIT_KEY:-agentconnect-cp}
+      VAULT_TRANSIT_MOUNT: ${VAULT_TRANSIT_MOUNT:-transit}
+      VAULT_TOKEN: ${VAULT_TOKEN}
+  setup-server:
+    environment: *vault
+```
+
+使用受策略限制的令牌而不是 Vault 根令牌，然后重新创建这两个服务：
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
+  up -d --force-recreate control-plane setup-server
+```
+
+在做好数据库备份之后，加密此前以明文存储的值：
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
+  exec control-plane node dist/secrets/rewrap-cli.js
+```
+
+该命令可以断点续跑，也可以在轮换 Transit 密钥之后重新运行。Vault 工作负载身份可以通过 `VAULT_JWT_ROLE`、`VAULT_JWT_PATH` 和 `VAULT_AUTH_MOUNT` 来使用，以替代 `VAULT_TOKEN`。
+
+## 私有证书颁发机构 [#private-certificate-authorities]
+
+如果 GitLab 或 Gitea 实例出示的是由私有证书颁发机构签发的证书，就需要让该机构的证书包**在每个进程内部都存在的文件路径**上可读，包括 Agent 沙箱。让每个 Runtime 都指向它：
+
+| 变量 | 由谁读取 |
+| --- | --- |
+| `NODE_EXTRA_CA_CERTS` | 控制平面和 Daemon（Node.js） |
+| `SSL_CERT_FILE` | 读取 OpenSSL 默认证书包的工具 |
+| `SSL_CERT_DIR` | 同上的哈希目录形式 |
+| `GIT_SSL_CAINFO` | Git 本身，用于克隆、拉取和推送 |
+
+只存在于宿主机上的路径是不够的：Agent 在拥有独立文件系统视图的沙箱中运行，因此证书包也必须挂载到沙箱里，而且这些变量必须传递到沙箱环境中。请在配置沙箱镜像及其环境的地方设置它们，而不是只在宿主机上设置。
+
+Relay 从不主动连接该实例——它只接收 Webhook 投递——因此它不需要证书包，也不需要出站访问。
+
+## 生产环境检查清单 [#production-checklist]
+
+- 固定发布镜像版本。
+- 配置 OIDC 登录和 API Resource。
+- 替换所有默认密钥，并启用加密的密钥存储。
+- 如果使用连接器，设置连接器加密密钥，并备份其卷。
+- 把 Web、控制平面、Relay 和 Logto 放在 HTTPS 之后。
+- 保留 WebSocket 升级。
+- 备份 PostgreSQL 并测试恢复。
+- 让 Setup Server、PostgreSQL 和连接器网关远离公共网络。

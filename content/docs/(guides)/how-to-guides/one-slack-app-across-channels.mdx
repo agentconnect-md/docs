@@ -50,7 +50,7 @@ For example:
 Start with the built-in app:
 
 1. On the built-in `agentconnect` agent, choose **Integrations → Add integration → Slack → Add to Slack** and approve the workspace installation. Skip this step if it is already connected.
-2. Open **Settings → Bots → Slack**.
+2. Open **Integrations → Messaging apps → Slack**.
 3. Turn on **Sharable** for the built-in AgentConnect bot.
 
 The Cloud app already uses HTTP delivery, so there is no callback URL, signing secret, or transport to configure.
@@ -87,7 +87,7 @@ Do not create another Slack App. Every connected agent now uses the same Slack b
 
 ## 4. Assign each channel
 
-Open **Settings → Bots → Slack** and expand the shared bot. For each channel, choose its **Default dispatch** agent.
+Open **Integrations → Messaging apps → Slack** and expand the shared bot. For each channel, choose its **Default dispatch** agent. To choose the agent per conversation instead, pick **Or pick by decision** and route with a [Decision](/build-your-team/decisions#route-a-shared-bot).
 
 Then set the channel trigger from any connected agent's Slack integration. The trigger belongs to this shared bot and channel, so AgentConnect replicates the same effective setting across every member-agent row:
 

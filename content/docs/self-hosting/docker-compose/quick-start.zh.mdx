@@ -1,0 +1,145 @@
+---
+title: "快速开始"
+icon: Rocket
+description: "使用 Docker Compose 启动 AgentConnect OSS 服务栈，并在你自己的机器上连接一个 Daemon。"
+---
+
+Docker Compose 服务栈在一台机器上运行 AgentConnect 供本地评估，Daemon 则运行在你自己管理的机器上。如需集群部署，请前往[使用 Helm 部署](/self-hosting/kubernetes/deploy)。
+
+## 开始之前 [#before-you-start]
+
+你需要：
+
+- Docker Desktop、OrbStack 或 Docker Engine；
+- Docker Compose v2（`docker compose version`）；以及
+- Git。
+
+已发布的 AgentConnect 镜像目前面向 `linux/amd64`。Docker Desktop 和 OrbStack 可以在 Apple Silicon 上通过模拟运行它们。
+
+## 1. 启动服务栈 [#1-start-the-stack]
+
+```bash
+git clone https://github.com/agentconnect-md/agentconnect.git
+cd agentconnect
+docker compose up -d --pull always
+```
+
+如果你想从检出的代码构建镜像而不是拉取已发布的镜像，运行 `docker compose up -d --build`。`compose.yaml` 中的每个服务都带有构建定义，构建出的镜像会使用服务栈已经引用的标签。构建目标与已发布镜像一样是 `linux/amd64`，因此在 Apple Silicon 上是模拟运行的，速度较慢。
+
+首次运行会启动 PostgreSQL 18，应用数据库迁移，初始化本地的无认证组织，并启动各应用服务。它不会添加任何示例数据。内置的 `agentconnect` Agent 默认启用，可以在 [Setup](/self-hosting/docker-compose/configuration#setup-server) 中禁用。
+
+检查服务栈：
+
+```bash
+docker compose ps --all
+```
+
+`postgres`、`control-plane`、`relay`、`setup-server` 和 `web` 应处于运行状态。`migration-files` 和 `migrate` 应显示 `Exited (0)`；它们是已成功完成的一次性任务。
+
+## 2. 打开 AgentConnect [#2-open-agentconnect]
+
+打开 [http://localhost:3000](http://localhost:3000)。
+
+默认服务栈把端口绑定到 `127.0.0.1`，并且登录处于禁用状态。请让这种模式只在本地使用。
+
+你可以直接检查各服务的探针：
+
+```bash
+curl http://localhost:8080/readyz
+curl http://localhost:8090/readyz
+```
+
+## 3. 连接 Daemon [#3-connect-a-daemon]
+
+Compose 服务栈有意不在容器中运行 Daemon。把它留在宿主机上，Agent 就能访问本地仓库、Runtime 启动器以及已有的 Claude 或 Codex 认证。
+
+在 Web 控制台中：
+
+1. 打开**基础设施**，选择**添加 Daemon**。
+2. 复制一次性命令。
+3. 在需要承载 Agent 的机器上原样运行该命令。
+
+Daemon 通过出站连接接入控制平面和 Relay（中继）。如果它运行在另一台机器上，请先配置宿主机可达的 URL；参见[网络与公开 URL](/self-hosting/docker-compose/configuration#network-and-public-urls)。
+
+## 引导式设置 [#guided-setup]
+
+在本地服务栈之外——登录、公开 URL、提供方应用以及生产环境加固——一条引导式路径会很有帮助。仓库自带一个设置技能，位于 `.claude/skills/agentconnect-setup`，同时也在 `.agents/skills` 下提供，以便 Claude Code、Codex 和其他 Agent 框架能识别它：在检出的代码目录中打开你的编码 Agent，让它设置 AgentConnect，它就会把本页和各部署页面当作交互式教程来执行，在继续之前验证每个检查点。它绝不会要求你把密钥粘贴到聊天中。
+
+下面各节以手动方式覆盖同样的内容，无论你是否使用该技能，它们都是参考依据。
+
+## 可选：添加本地登录 [#optional-add-local-sign-in]
+
+仓库包含一个 Logto OSS 叠加配置（overlay），无需配置 DNS 或 TLS 即可评估真实的登录：
+
+```bash
+docker compose -f compose.yaml -f compose.logto.yaml up -d
+```
+
+然后打开：
+
+- Setup：[http://localhost:8091](http://localhost:8091)
+- Logto Console：[http://localhost:3002](http://localhost:3002)
+- AgentConnect：[http://localhost:3000](http://localhost:3000)
+
+继续阅读[登录](/self-hosting/sign-in)，并使用 Google 作为最短的本地登录路径。本地叠加配置在同一个 PostgreSQL 服务中使用单独的 Logto 数据库，并且仍然绑定到回环地址。
+
+使用叠加配置时，在后续的 `up`、`pull` 和 `down` 命令中都要保留这两个 `-f` 参数。
+
+对于托管的生产环境登录，请跳过叠加配置，改为连接 [Logto Cloud 租户](/self-hosting/sign-in#logto-cloud)。
+
+## 日志与更新 [#logs-and-updates]
+
+跟踪服务栈日志：
+
+```bash
+docker compose logs -f
+```
+
+拉取最新镜像并应用迁移：
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+如果你创建了 `compose.env`，请在每条命令中加上 `--env-file compose.env`。把 `AGENTCONNECT_VERSION` 固定到某个发布标签，以获得可复现的部署。
+
+## 停止或重置 [#stop-or-reset]
+
+停止服务栈并保留其数据库：
+
+```bash
+docker compose down
+```
+
+删除数据库并恢复为空安装：
+
+```bash
+docker compose down --volumes
+```
+
+> 这会永久删除 Compose 数据库中的控制平面和 Setup Server 数据。Daemon 本地的工作区和会话记录不在此卷中，不会被删除。
+
+## 服务栈包含哪些组件 [#what-the-stack-includes]
+
+| 组件 | 位置 | 用途 |
+| --- | --- | --- |
+| Web 控制台 | Docker | 配置并跟进工作 |
+| 控制平面 | Docker | 认证与协调数据 |
+| Relay | Docker | 公开回调入口 |
+| Setup Server | Docker，仅回环地址 | 配置部署的认证与提供方 |
+| PostgreSQL | Docker | 持久化部署和控制平面数据 |
+| Logto OSS | 可选叠加配置 | 本地登录 |
+| Daemon | 宿主机或另一台机器 | 运行 Agent 并保存本地数据 |
+
+包含 Relay 是为了让 GitHub、Webhook、网页聊天和 HTTP 机器人回调无需改动服务栈即可工作。Slack Socket Mode、Telegram、Discord 和 Lark / 飞书的直连仍然在 Daemon 与各自的提供方之间运行。
+
+## 部署边界 [#deployment-boundary]
+
+自带的 Compose 拓扑适用于本地评估和单主机部署。在把它发布到网络之前，请配置真实的登录、替换默认密钥、使用 TLS、备份 PostgreSQL，并为 WebSocket 提供反向代理支持。
+
+## 下一步 [#next]
+
+- [配置](/self-hosting/docker-compose/configuration)
+- [登录](/self-hosting/sign-in)
+- [将 Daemon 安装为服务](/build-your-team/daemons/install-the-daemon)

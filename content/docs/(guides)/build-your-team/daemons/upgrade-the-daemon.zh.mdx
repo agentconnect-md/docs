@@ -1,0 +1,143 @@
+---
+title: "升级 Daemon"
+icon: CircleArrowUp
+description: "从控制台或主机把 Daemon 切换到新版本，保持 CLI 为最新，并回滚失败的升级。"
+---
+
+一台 Daemon 主机上有两个独立版本化的部分：
+
+| 部分 | 是什么 | 如何更新 |
+| --- | --- | --- |
+| **CLI**——`@agentconnect.md/cli`，即 `agentconnect` 命令 | 稳定的入口：服务生命周期、登录、版本管理 | 一个 npm 包，由你在主机上更新 |
+| **Daemon 版本** | 托管 Agent、驱动 Runtime 并持有平台连接的实际载荷 | 由 CLI 下载到 Daemon 根目录，并通过 `current` 指针选定 |
+
+几乎所有升级都是 Daemon 版本的升级。CLI 可以长期保持不变，因为新的 Daemon 命令会被委托给 Daemon 执行，不需要配套的 CLI 版本。
+
+各个版本并排存放在 Daemon 根目录下，因此切换版本只是移动指针并重启，而不是重新安装：
+
+```
+~/.agentconnect/
+├── versions/            # installed daemon releases
+├── current              # the active release
+└── versions.json        # release channel and the rollback target
+```
+
+## 从控制台升级 [#upgrade-from-the-console]
+
+版本过旧的 Daemon 会在**基础设施**页面上显示 **更新到 \<version\>** 徽标。打开该 Daemon 并使用**升级**。
+
+这需要普通的 Daemon 编辑权限：任何能看到该 Daemon 的所有者或协作者都可以操作。查看者不能。
+
+控制平面只发送目标版本——注册表、包和下载都由主机上的 CLI 在本地完成。随后 Daemon 安装目标版本、切换 `current`、排空当前工作并以计划内的重启退出码退出，然后由它的服务管理器启动新版本。Daemon 在重新就绪之前会显示**升级中**。
+
+只有当 Daemon 重新连接并上报了所请求的版本时，升级才会被记录为成功，因此旧版本重新启动不会被误认为升级已完成。每个 Daemon 同一时间只允许一个生命周期操作。
+
+有两个限制值得了解：
+
+- **远程升级没有进程级的自动回滚**。一旦旧 Daemon 退出，恢复就是主机侧的工作——见[回滚](#roll-back)。本地的 `upgrade --restart` 则会自行回滚。
+- **控制台只在 Daemon 在线时提供升级**。离线或卡住的 Daemon 必须从主机升级，或者通过 [API 参考](/api)中的升级端点（`POST /v1/orgs/{orgId}/daemons/{id}/upgrade`）排队升级。排队的升级会在 Daemon 下一次完成认证连接时、在完整启动之前被执行，这正是恢复一个始终无法就绪的 Daemon 的方式。早于该机制的旧版 Daemon 需要在线连接或主机侧升级。
+
+## 在主机上升级以服务方式安装的 Daemon [#upgrade-a-service-installed-daemon-on-the-host]
+
+对于[以服务方式安装](/build-your-team/daemons/install-the-daemon#run-it-permanently)的 Daemon，一条命令即可完成整个流程：
+
+```bash
+npx -y @agentconnect.md/cli upgrade --restart
+```
+
+它会解析所选通道上的最新版本，安装它，切换 `current`，重启服务，然后对结果做健康检查，检查失败时回滚。
+
+健康检查有意设计为进程级：它在几秒钟内对服务进行采样，只有当 Daemon 以同一个稳定的 PID 运行时才算通过，这样可以捕获崩溃循环。它并不能证明 Daemon 已连上控制平面——控制台中的 Daemon 状态是更可靠的信号，所以升级一个已连接的 Daemon 之后，也请到控制台确认。
+
+两种需要了解的变化：
+
+- **不带 `--restart`** 时，只切换 `current`，正在运行的 Daemon 不受影响；新版本在它下次重启时生效。当你想先准备好切换、再自行选择重启时机时，这很有用。
+- **未安装服务**时，`--restart` 会报告没有可重启的对象，并保持新版本为选定状态。前台运行的 `agentconnect run` 会在下次重新启动时应用它。
+
+确认结果：
+
+```bash
+npx -y @agentconnect.md/cli version list   # channel, installed releases, current, previous
+npx -y @agentconnect.md/cli status         # service state, PID, log path
+```
+
+如果主机上运行着多个 Daemon 服务，请给每条命令都加上 `--instance <name>`，让它作用于该实例的服务和 Daemon 根目录，而不是默认实例。
+
+### 选择版本或通道 [#choose-a-version-or-a-channel]
+
+```bash
+npx -y @agentconnect.md/cli upgrade --to <version> --restart   # a specific release
+npx -y @agentconnect.md/cli upgrade --channel rc --restart     # switch to prereleases
+```
+
+通道会保存在 Daemon 根目录中，并成为后续升级的默认值，因此 `--channel` 是切换轨道，而不是一次性的选择。可用的两个通道是 `stable` 和 `rc`。
+
+若要在不让主机立即切换的情况下金丝雀验证某个版本，可以先安装、稍后再激活：
+
+```bash
+npx -y @agentconnect.md/cli version install <version>   # download only; current is unchanged
+npx -y @agentconnect.md/cli version use <version>       # switch current, without restarting
+npx -y @agentconnect.md/cli restart                     # apply it
+```
+
+每个 Daemon 根目录都保存着它安装过的每个版本的独立副本，因此同一台主机上的一个实例可以金丝雀验证某个版本，而其他实例继续留在旧版本上。
+
+### 旧版本 [#old-releases]
+
+每次安装和升级之后都会清理版本存储，默认总共保留三个版本。当前活动版本和回滚目标始终受保护。传入 `--keep <n>` 可更改保留数量，`--keep 0` 则保留全部。
+
+清理是尽力而为的，并且在 Daemon 运行期间会跳过，因为运行中的 Daemon 会持续从启动它的那个包中加载文件。被报告为已保留的版本会由之后的 `version prune` 回收。
+
+## 回滚 [#roll-back]
+
+本地执行的 `upgrade --restart` 如果健康检查失败，会自动切回上一个版本并重启，同时把这次回滚报告为失败。
+
+其他情况下，请手动回滚：
+
+```bash
+npx -y @agentconnect.md/cli version list          # `previous` is the rollback target
+npx -y @agentconnect.md/cli version use <version>
+npx -y @agentconnect.md/cli restart
+```
+
+在交互式终端中前台运行的 `agentconnect run` 会自行处理这种情况：当 Daemon 启动失败时，它会提议切回上一个版本，或者重新下载通道上的最新版本以防已安装的包损坏，然后重试。以服务方式运行时永远不会提示——它的服务管理器必须看到真实的退出码。
+
+## 升级 CLI [#upgrade-the-cli]
+
+`npx` 每次运行时都会解析包，所以当你想确保没有复用缓存中的旧版 CLI 时，请明确指定 `@latest`：
+
+```bash
+npx -y @agentconnect.md/cli@latest version list
+```
+
+在运行服务的机器上，请改为全局安装 CLI。这样 CLI 在磁盘上就有了稳定的路径，这对服务定义很重要：
+
+```bash
+npm install -g @agentconnect.md/cli@latest
+agentconnect status
+```
+
+CLI 需要 **Node.js 24.12 或更新版本**——与 Daemon 的最低要求相同。
+
+### CLI 或 Node 位置变动后重新安装服务 [#reinstall-the-service-after-the-cli-or-node-moves]
+
+服务管理着 CLI，而 CLI 管理着 Daemon。服务定义记录的是**安装服务时存在的 Node 可执行文件和 CLI 入口路径**，之后不会重新解析这两者。但它每次启动时都会重新解析 `current`，这就是 Daemon 升级完全不需要更改服务的原因。
+
+因此，凡是会移动这两个路径的操作之后，都要重新安装服务——升级 Node 或更换 Node 版本管理器，或者把 CLI 安装到了不同路径（尤其是从入口位于 npx 缓存中的 `npx` 改为全局安装）：
+
+请用你希望服务今后使用的那个 CLI 来运行，因为它记录的正是这个入口路径：
+
+```bash
+agentconnect install-service   # rewrites the definition in place
+agentconnect restart           # `up` if the service is currently stopped
+```
+
+对同一实例重复安装是幂等的。`install-service` 只写入服务定义，不会启动任何东西。
+
+过期的服务定义通常表现为 Node 升级后服务无法启动，或者 npx 缓存被清理后服务失效。`agentconnect status` 会打印日志路径，可以据此确认。
+
+## 须知 [#good-to-know]
+
+- **升级会在宽限期内排空工作**。Daemon 停止接受新的轮次，并给进行中的工作一个有限的完成窗口——普通本地工作默认 25 秒——然后取消剩余的工作并停止其 Runtime。升级不是突然终止，但长时间运行的轮次仍可能被中断，所以请相应地选择时间窗口。Daemon 在重新启动期间会短暂不可达。
+- **也请保持 Runtime 为最新**。主机上的 Agent Runtime 由它们各自的工具升级，而不是由 Daemon 升级。AgentConnect 的一些保护措施依赖于只有较新 Runtime 版本才提供的开关——见 [Runtime 登录会带来什么](/build-your-team/daemons/install-the-daemon#what-a-runtime-sign-in-brings)。更改 Runtime 安装或服务用户的 `PATH` 之后，请重启 Daemon。
+- **Kubernetes 安装的升级方式不同**。安装级的 Daemon 池随其 Helm release 一起升级，而不是用这些命令。见 [Kubernetes 运维](/self-hosting/kubernetes/operations#upgrade)。

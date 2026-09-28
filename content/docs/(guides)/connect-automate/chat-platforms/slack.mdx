@@ -67,7 +67,7 @@ If Slack reports changed scopes, reinstall the App once before copying the Bot U
 
 ## Keep the app's permissions current
 
-Slack grants permissions when the app is installed, so a release that adds a capability can leave an existing installation short of a scope. AgentConnect names the ones that are missing instead of failing quietly: open **Settings → Bots → Slack** and use **Refresh Slack app** on the bot's row.
+Slack grants permissions when the app is installed, so a release that adds a capability can leave an existing installation short of a scope. AgentConnect names the ones that are missing instead of failing quietly: open **Integrations → Messaging apps → Slack** and use **Refresh Slack app** on the bot's row.
 
 - When AgentConnect can update the app for you, it syncs the manifest and asks you to **reinstall the workspace** so Slack grants the added scopes.
 - When it cannot — a manifest install, or an app AgentConnect does not administer — it points you at the app's **OAuth & Permissions** page in Slack to add the listed scopes, then reinstall.
@@ -85,8 +85,8 @@ Self-hosted deployments show the built-in **Add to Slack** path only after the o
 
 AgentConnect generally recommends one bot identity per agent. If your team deliberately wants one Slack identity to behave differently across channels, make the bot sharable and dispatch each channel to a different agent:
 
-1. Open **Settings → Bots → Slack** and turn on **Sharable** for the bot.
+1. Open **Integrations → Messaging apps → Slack** and turn on **Sharable** for the bot.
 2. On each additional agent, choose **Integrations → Add integration → Slack → Use an existing bot** and select it.
-3. Back in **Settings → Bots**, expand the bot and choose each channel's **Default dispatch** agent.
+3. Back in **Integrations → Messaging apps → Slack**, expand the bot and choose each channel's **Default dispatch** agent.
 
 See [One Slack app with different agents by channel](/how-to-guides/one-slack-app-across-channels) for the full pattern.

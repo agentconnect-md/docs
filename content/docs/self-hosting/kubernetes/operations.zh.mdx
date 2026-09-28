@@ -1,0 +1,54 @@
+---
+title: "运维"
+icon: Wrench
+description: "升级 Helm Release、清理孤立的沙箱、在多个 Release 之间共享集群，以及排查部署问题。"
+---
+
+这些任务适用于正在运行的 Helm Release。关于首次安装，参见[使用 Helm 部署](/self-hosting/kubernetes/deploy)。
+
+## 升级 [#upgrade]
+
+备份 PostgreSQL 和重要的工作区 PVC，选择新的发布版本，并查看其发布说明。Helm 不会从 Chart 的 `crds/` 目录升级 CRD，因此在升级控制器和应用工作负载之前，请先应用与版本匹配的 CRD：
+
+```bash
+export AGENTCONNECT_NEW_CHART_VERSION=X.Y.Z
+export AGENTCONNECT_CHART_DIR="$(mktemp -d)"
+
+helm pull oci://ghcr.io/agentconnect-md/charts/agentconnect \
+  --version "$AGENTCONNECT_NEW_CHART_VERSION" \
+  --untar \
+  --untardir "$AGENTCONNECT_CHART_DIR"
+
+kubectl apply --server-side \
+  -f "$AGENTCONNECT_CHART_DIR/agentconnect/crds/agent-sandbox.yaml"
+
+helm upgrade agentconnect \
+  oci://ghcr.io/agentconnect-md/charts/agentconnect \
+  --version "$AGENTCONNECT_NEW_CHART_VERSION" \
+  --namespace agentconnect \
+  --values agentconnect-values.yaml \
+  --wait \
+  --timeout 15m
+```
+
+Chart 版本已经选定了匹配的应用镜像。除非你有意需要混合版本的部署，否则请让 `image.tag` 和各组件的标签保持为空。
+
+## 孤立对象清理 [#orphan-cleanup]
+
+Daemon 池包含一个定时运行的调谐器，用于处理其 Agent 已不存在的沙箱对象。它默认以 dry-run（试运行）模式运行。在设置 `daemonPool.reconciler.delete: true` 之前，请先在一段观察期内查看它的摘要：删除孤立的沙箱 claim 也会删除其工作区 PVC，且无法撤销。
+
+## 共享集群中的控制器归属 [#shared-cluster-controller-ownership]
+
+`agent-sandbox` CRD 和控制器是集群共享的。在专用集群上，单个 AgentConnect Release 可以拥有它们。如果多个 AgentConnect Release 共享一个集群，请在这些 Release 之外统一管理 CRD 和控制器，用 `--skip-crds` 安装每个 Chart，并设置 `installCRD: false`。不要让多个 Helm Release 争抢同一个集群范围的控制器栈。
+
+## 故障排查 [#troubleshooting]
+
+- **Pod 一直处于 `ContainerCreating`**：查看 `kubectl describe pod`。常见原因是缺少 `agentconnect-secrets` 或 `agentconnect-data-plane` Secret。
+- **Daemon 池成员始终无法变为 Ready**：检查它们的日志，并确认数据平面的 PostgreSQL URL、`agent-sandbox` 控制器和 Runtime 预热池都处于健康状态。
+- **沙箱 Pod 一直处于 Pending**：检查配置的 StorageClass、节点架构、容量、节点选择器和容忍度。
+- **HTTPRoute 未被 Accepted**：查看其状态，以及 Gateway 监听器的主机名、`sectionName` 和允许的路由命名空间。
+- **Setup 之后控制台不显示登录按钮**：控制台进程在启动时缓存了控制平面的配置快照。请在控制平面变为 Ready 之后重启控制台。
+- **Agent 报告其 Runtime 需要认证**：没有任何模型凭证到达它。请检查该 Agent 和组织的变量，如果安装实例提供了 `daemonPool.modelCredentials`，也一并检查。
+- **登录后控制台返回 `401`**：确认 Logto 的 API Resource 与控制平面的 audience 完全一致；参见[登录](/self-hosting/sign-in#verify-the-setup)。
+
+完整的 values 参考和仅安装控制平面的示例，参见 Chart 的 [README](https://github.com/agentconnect-md/agentconnect/tree/main/charts/agentconnect)。
