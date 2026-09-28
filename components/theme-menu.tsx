@@ -25,7 +25,7 @@ export function ThemeMenu({ className }: { className?: string }) {
 
   return (
     <Popover>
-      <PopoverTrigger className={className ?? 'ac-nav-icon'} aria-label={labels.label} data-theme-toggle="">
+      <PopoverTrigger openOnHover delay={100} className={className ?? 'ac-nav-icon'} aria-label={labels.label} data-theme-toggle="">
         <Icon className="size-4.5" />
       </PopoverTrigger>
       <PopoverContent align="end" sideOffset={6} className="flex w-40 flex-col p-1 text-sm">

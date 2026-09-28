@@ -429,13 +429,36 @@ export function useAISearchContext() {
   return use(Context)!
 }
 
+// How far the site footer reaches into the viewport, so the floating trigger can ride above it.
+function useFooterOverlap() {
+  const [overlap, setOverlap] = useState(0)
+
+  useEffect(() => {
+    const footer = document.querySelector('.ac-footer')
+    if (!footer) return
+    const update = () => setOverlap(Math.max(0, window.innerHeight - footer.getBoundingClientRect().top))
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
+  return overlap
+}
+
 // The whole panel as the site mounts it: Fumadocs' floating trigger beside the panel.
 export function AskAi({ labels }: { labels: AskAiLabels }) {
+  const footerOverlap = useFooterOverlap()
+
   return (
     <AISearch labels={labels}>
       <AISearchPanel />
       <AISearchTrigger
         position="float"
+        style={footerOverlap > 0 ? { bottom: `calc(var(--spacing) * 4 + ${footerOverlap}px)` } : undefined}
         className={cn(buttonVariants({ variant: 'secondary', className: 'rounded-2xl text-fd-muted-foreground' }))}
       >
         <MessageCircleIcon className="size-4.5" />
