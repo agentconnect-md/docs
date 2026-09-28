@@ -1,7 +1,7 @@
 ---
 title: "Gitea"
 icon: Gitea
-description: "用一个机器人令牌连接 gitea.com 或你自己的实例，并由 Issue、Pull Request、评论和评审触发 Agent。"
+description: "用一个机器人令牌连接 gitea.com 或你自己的 Gitea、Forgejo 实例，并由 Issue、Pull Request、评论和评审触发 Agent。"
 ---
 
 import imgGiteaAddIntegration from '@/public/images/gitea-add-integration.png'
@@ -13,7 +13,7 @@ Gitea 集成让 Agent **监视一个仓库**：Issue、Pull Request、评论和�
 
 GitHub 集成通过已安装的 App 行事，GitLab 为每个 Agent 提供独立的服务账号，而 Gitea 使用**每个组织一个机器人用户**。所有 Agent 在 Gitea 上做的一切——克隆、推送、评论、评审、提交状态——都归属于这一个用户，它的个人访问令牌是 AgentConnect 持有的唯一 Gitea 凭证。
 
-需要 Gitea **1.23 或更高版本**。**不支持** Forgejo 和 Codeberg：Forgejo 从 Gitea 1.22 分叉而来，在此集成所依赖的部分——令牌权限范围、行内评审评论、Webhook 请求头、事件词汇——上存在差异，因此 AgentConnect 会直接拒绝，而不是半残地工作。
+需要 Gitea **1.23 或更高版本**，或 Forgejo **15 或更高版本**。Forgejo 实例（包括 Codeberg）的用法与 Gitea 完全相同：API、令牌和 Webhook 都一致，本页内容同样适用。
 
 ## 连接 Gitea [#connect-gitea]
 
@@ -147,7 +147,7 @@ Gitea 不签发会过期的令牌，也无法在没有用户密码的情况下�
 
 ## 自托管实例 [#self-hosted-instances]
 
-上述一切在你自己的实例上同样适用。不同之处在于运维工作，每个部署只需做一次：把部署指向该实例，并满足实例必须提供的条件（Gitea 1.23 或更高版本、一个 HTTPS 地址、受信任的证书，以及允许 Gitea 访问部署的出站 Webhook 允许列表）。这些全部记录在 [AgentConnect OSS 上的 Gitea](/self-hosting/provider-apps#gitea) 中。
+上述一切在你自己的实例上同样适用。不同之处在于运维工作，每个部署只需做一次：把部署指向该实例，并满足实例必须提供的条件（Gitea 1.23 或更高版本，或 Forgejo 15 或更高版本；一个 HTTPS 地址、受信任的证书，以及允许 Gitea 访问部署的出站 Webhook 允许列表）。这些全部记录在 [AgentConnect OSS 上的 Gitea](/self-hosting/provider-apps#gitea) 中。
 
 **没有需要注册的应用**：Gitea 的 OAuth 提供方不会增加任何自己的身份，因为用 OAuth 令牌执行的操作和用手动创建的令牌一样，都归属于授权用户。机器人用户及其令牌就是全部的身份。
 
