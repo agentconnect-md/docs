@@ -81,15 +81,15 @@ title. Without the secrets the site still works; feedback is only logged.
 ## Ask AI
 
 The "Ask AI" panel on every page is answered by an AgentConnect agent. `/docs/api/chat` holds the
-credentials, opens one conversation per open panel (each with an HttpOnly cookie holding its id) and streams
-the agent's reply from the channel's relay; the browser never sees the key or a token. Each Worker
+key, opens one conversation per open panel (each with an HttpOnly cookie holding the chat id it chose) and
+streams the agent's reply from the relay's agent chat API; the browser never sees the key. Each Worker
 needs three secrets:
 
 | Name                    | What it is                                                             |
 | ----------------------- | ---------------------------------------------------------------------- |
-| `AGENTCONNECT_API_KEY`  | an API key with the `agent:chat` permission, limited to the docs agent |
-| `AGENTCONNECT_ORG_ID`   | the id of the organization that owns the agent                         |
-| `AGENTCONNECT_AGENT_ID` | the docs agent's id                                                    |
+| `AGENTCONNECT_API_KEY`   | an API key with the `agent:chat` permission, limited to the docs agent |
+| `AGENTCONNECT_AGENT_ID`  | the docs agent's id                                                    |
+| `AGENTCONNECT_RELAY_URL` | the channel's relay origin, which serves the agent chat API            |
 
 ```bash
 pnpm exec wrangler secret put AGENTCONNECT_API_KEY --env test   # test; without --env for prod

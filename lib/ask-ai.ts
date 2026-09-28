@@ -1,18 +1,10 @@
 // Ask AI: the chat route's logic, kept free of Next and path aliases so `node --test` can import it as is.
 
 export interface AskAiConfig {
-  // The channel's REST base, e.g. https://api.example.test/v1.
-  apiBase: string
-  apiKey: string
-  orgId: string
-  agentId: string
-}
-
-export interface Minted {
-  token: string
+  // The channel's relay origin, e.g. https://relay.example.test.
   relayUrl: string
-  conversationId: string
-  expiresAtMs: number
+  apiKey: string
+  agentId: string
 }
 
 interface ChatPart {
@@ -32,12 +24,9 @@ export interface ChatBody {
   [key: string]: unknown
 }
 
-// One cookie per panel tab, `ac_ask_ai_<handle>`, so overlapping responses never overwrite another tab's binding.
+// One cookie per panel tab, `ac_ask_ai_<handle>`, holding the chat id this route chose, so overlapping responses never overwrite another tab's binding.
 export const COOKIE_PREFIX = 'ac_ask_ai_'
-// A token is reused until this long before it expires, so a turn never starts on one about to lapse.
-export const TOKEN_MARGIN_MS = 30_000
 const COOKIE_MAX_AGE_S = 24 * 60 * 60
-const CACHE_LIMIT = 1000
 const CONVERSATION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 // A panel's random handle, checked strictly before it becomes part of a cookie name.
 const TAB = /^[0-9a-f]{32}$/
@@ -60,12 +49,12 @@ export function isTabHandle(value: unknown): value is string {
 }
 
 /** The three settings from the environment, or null when any is unset and the feature is off. */
-export function readConfig(env: Record<string, string | undefined>, apiBase: string): AskAiConfig | null {
+export function readConfig(env: Record<string, string | undefined>): AskAiConfig | null {
   const apiKey = env.AGENTCONNECT_API_KEY
-  const orgId = env.AGENTCONNECT_ORG_ID
   const agentId = env.AGENTCONNECT_AGENT_ID
-  if (!apiKey || !orgId || !agentId) return null
-  return { apiBase, apiKey, orgId, agentId }
+  const relayUrl = env.AGENTCONNECT_RELAY_URL?.replace(/\/+$/, '')
+  if (!apiKey || !agentId || !relayUrl) return null
+  return { relayUrl, apiKey, agentId }
 }
 
 /** The conversation this tab's own cookie binds it to, if well-formed; other tabs' cookies are never read. */
@@ -108,46 +97,16 @@ export function foldLocation(body: ChatBody): ChatBody {
   return { ...body, messages: messages.map((m, i) => (i === index ? folded : m)) }
 }
 
-/** Tokens per conversation, per isolate; a miss just mints again. */
-export class TokenCache {
-  private readonly entries = new Map<string, Minted>()
-  private readonly now: () => number
-
-  constructor(now: () => number = Date.now) {
-    this.now = now
-  }
-
-  get(conversationId: string): Minted | undefined {
-    const entry = this.entries.get(conversationId)
-    if (!entry) return undefined
-    if (entry.expiresAtMs - TOKEN_MARGIN_MS > this.now()) return entry
-    this.entries.delete(conversationId)
-    return undefined
-  }
-
-  set(minted: Minted): void {
-    this.entries.delete(minted.conversationId)
-    this.entries.set(minted.conversationId, minted)
-    // Maps iterate in insertion order, so the first key is the least recently minted.
-    while (this.entries.size > CACHE_LIMIT) this.entries.delete(this.entries.keys().next().value!)
-  }
-
-  delete(conversationId: string): void {
-    this.entries.delete(conversationId)
-  }
-}
-
-class UpstreamError extends Error {
-  readonly status: number
-
-  constructor(status: number) {
-    super(`upstream ${status}`)
-    this.status = status
-  }
-}
-
 function json(status: number, error: string, headers?: HeadersInit): Response {
   return Response.json({ error }, { status, headers })
+}
+
+async function reasonOf(response: Response): Promise<unknown> {
+  try {
+    return ((await response.clone().json()) as { reason?: unknown }).reason
+  } catch {
+    return undefined
+  }
 }
 
 export interface ChatHandlerOptions {
@@ -156,40 +115,21 @@ export interface ChatHandlerOptions {
   // Resolves false when this caller is over its rate; absent, nothing is limited.
   limit?: (request: Request) => Promise<boolean>
   fetch?: typeof fetch
-  cache?: TokenCache
   delay?: (ms: number) => Promise<void>
+  newChatId?: () => string
 }
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
-/** The `/api/chat` POST handler: mint or reuse a conversation token, then stream the relay's turn straight through. */
+/** The `/api/chat` POST handler: the key and the tab's chat id go to the relay's chat API, and its turn streams straight through. */
 export function createChatHandler({
   config,
   cookiePath,
   limit,
   fetch: fetcher = fetch,
-  cache = new TokenCache(),
-  delay = sleep
+  delay = sleep,
+  newChatId = () => crypto.randomUUID()
 }: ChatHandlerOptions) {
-  async function mint(cfg: AskAiConfig, conversationId?: string): Promise<Minted> {
-    const url = `${cfg.apiBase}/orgs/${encodeURIComponent(cfg.orgId)}/agents/${encodeURIComponent(cfg.agentId)}/webchat/token`
-    const response = await fetcher(url, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${cfg.apiKey}`, 'content-type': 'application/json' },
-      body: JSON.stringify(conversationId ? { conversationId } : {})
-    })
-    if (!response.ok) throw new UpstreamError(response.status)
-    const body = (await response.json()) as { token: string; relayUrl: string; conversationId: string; expiresAt: string }
-    const minted = {
-      token: body.token,
-      relayUrl: body.relayUrl.replace(/\/+$/, ''),
-      conversationId: body.conversationId,
-      expiresAtMs: Date.parse(body.expiresAt)
-    }
-    cache.set(minted)
-    return minted
-  }
-
   return async function POST(request: Request): Promise<Response> {
     const cfg = config()
     if (!cfg) return json(503, 'disabled')
@@ -206,60 +146,41 @@ export function createChatHandler({
     const { tab, ...forward } = body
     if (!isTabHandle(tab)) return json(400, 'bad_request')
 
-    // The client's chat id is never trusted; a tab's conversation is the one its HttpOnly cookie binds it to.
+    // The client's chat id is never trusted; a tab's conversation is the chat id its HttpOnly cookie holds.
     const bound = readTabConversation(request.headers.get('cookie'), tab)
-    let minted: Minted
-    let rebound = false
-    try {
-      if (!bound || isNewConversation(body.messages)) {
-        minted = await mint(cfg)
-        rebound = true
-      } else {
-        const cached = cache.get(bound)
-        if (cached) minted = cached
-        else {
-          try {
-            minted = await mint(cfg, bound)
-          } catch (err) {
-            // An unknown conversation, or one whose agent moved, is replaced by a new one, once.
-            if (!(err instanceof UpstreamError) || (err.status !== 404 && err.status !== 409)) throw err
-            minted = await mint(cfg)
-            rebound = true
-          }
-        }
-      }
-    } catch (err) {
-      if (err instanceof UpstreamError) return json(err.status, 'mint_failed')
-      return json(502, 'unreachable')
-    }
-
-    const headers = new Headers({ 'cache-control': 'no-store' })
-    if (rebound) headers.append('set-cookie', tabCookie(tab, minted.conversationId, cookiePath))
-
-    const payload = JSON.stringify(foldLocation(forward))
+    let chatId = !bound || isNewConversation(body.messages) ? newChatId() : bound
+    const folded = foldLocation(forward)
     const send = () =>
-      fetcher(`${minted.relayUrl}/ai-sdk/chat/${encodeURIComponent(minted.conversationId)}`, {
+      fetcher(`${cfg.relayUrl}/ai-sdk/agents/${encodeURIComponent(cfg.agentId)}/chat`, {
         method: 'POST',
-        headers: { authorization: `Bearer ${minted.token}`, 'content-type': 'application/json' },
-        body: payload,
+        headers: { authorization: `Bearer ${cfg.apiKey}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ ...folded, id: chatId }),
         signal: request.signal
       })
     let upstream: Response
     try {
       upstream = await send()
+      // A conversation whose agent moved is replaced by a new one, once.
+      if (upstream.status === 409 && chatId === bound && (await reasonOf(upstream)) === 'agent_moved') {
+        await upstream.body?.cancel()
+        chatId = newChatId()
+        upstream = await send()
+      }
       if (upstream.status === 503 && !request.signal.aborted && (await isRetryableRefusal(upstream.clone()))) {
         await upstream.body?.cancel()
         await delay(RELAY_RETRY_DELAY_MS)
         upstream = await send()
       }
     } catch {
-      return json(502, 'unreachable', headers)
+      return json(502, 'unreachable')
     }
 
+    const headers = new Headers({ 'cache-control': 'no-store' })
+    if (chatId !== bound) headers.append('set-cookie', tabCookie(tab, chatId, cookiePath))
     if (!upstream.ok) {
-      if (upstream.status === 401) cache.delete(minted.conversationId)
+      const busy = upstream.status === 409 && (await reasonOf(upstream)) === 'busy'
       await upstream.body?.cancel()
-      return json(upstream.status, upstream.status === 409 ? 'busy' : 'relay_failed', headers)
+      return json(upstream.status, busy ? 'busy' : 'relay_failed', headers)
     }
     for (const name of STREAM_HEADERS) {
       const value = upstream.headers.get(name)

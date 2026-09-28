@@ -1,8 +1,6 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { BASE_PATH } from '@/base-path.mjs'
 import { createChatHandler, readConfig } from '@/lib/ask-ai'
-import { channel } from '@/lib/channel'
-import { OPENAPI_PATH_PREFIX } from '@/scripts/lib/channels.mjs'
 
 interface RateLimiter {
   limit(options: { key: string }): Promise<{ success: boolean }>
@@ -17,9 +15,9 @@ function limiter(): RateLimiter | undefined {
   }
 }
 
-// Ask AI: the key, org and agent are Worker secrets read per request, like the feedback App's; unset, the route answers 503.
+// Ask AI: the key, agent and relay origin are Worker secrets read per request, like the feedback App's; unset, the route answers 503.
 export const POST = createChatHandler({
-  config: () => readConfig(process.env, `${channel.apiUrl}${OPENAPI_PATH_PREFIX}`),
+  config: () => readConfig(process.env),
   cookiePath: BASE_PATH,
   limit: async (request) => {
     const binding = limiter()
