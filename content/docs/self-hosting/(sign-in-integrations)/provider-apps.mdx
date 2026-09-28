@@ -1,0 +1,136 @@
+---
+title: "Provider apps"
+icon: Handshake
+description: "Register the deployment's GitHub, GitLab, Gitea, Linear, Slack, and Lark / Feishu apps in Setup Server."
+---
+
+Setup Server owns the apps that identify your deployment to code hosts and chat platforms. Each card shows the exact callbacks to register and stores the credentials write-only. Set the final public URLs before creating an app: Setup derives its callbacks from those values.
+
+## GitHub App
+
+Configure the deployment GitHub App when agents need private repositories, repository-scoped Git credentials, or GitHub issue and pull-request triggers.
+
+1. Set the final Web, Control Plane, and Relay public URLs.
+2. In Setup, open **GitHub** and choose **Create GitHub App**. The manifest flow fills the current callbacks, events, and permissions.
+3. If you use an existing App, save its identity and secrets, then choose **Check match**.
+4. Restart Control Plane and Relay.
+5. In AgentConnect, open **Settings → GitHub**, install the App, and select its repositories.
+
+The generated App requests:
+
+| Scope                                                           | Access         |
+| --------------------------------------------------------------- | -------------- |
+| Metadata and email addresses                                    | Read           |
+| Contents, issues, pull requests, Actions, Checks, and workflows | Read and write |
+
+AgentConnect narrows each installation token to one authorized repository and the agent's repository grant. Installation owners still choose which repositories are available.
+
+GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Setup can create the App for sign-in and repository installation but leaves webhook delivery disabled until you provide HTTPS ingress.
+
+See [GitHub](/connect-automate/triggers-automation/github) for triggers, reviews, and repository behavior.
+
+## GitLab
+
+Configure the deployment's GitLab OAuth application when agents need GitLab projects — on GitLab.com or on one self-managed instance; a deployment addresses one or the other, never both. The application is AgentConnect's **administration identity** on the instance: project discovery, the agents' service accounts, and webhook management. It is not the identity agents act as.
+
+1. In Setup, open **GitLab**. For a self-managed instance, put its address in **Instance base URL** (empty means GitLab.com; a path prefix and a non-default port are both supported and preserved). Setup probes what you typed: only an unusable URL blocks the save — an unreachable host, an untrusted certificate, or a response that is not a GitLab API root are reported as warnings, because Setup and the Control Plane need not sit in the same network position.
+2. Setup displays the exact **Redirect URI** and **Scopes** to register. GitLab has no API for creating OAuth applications, so this part happens on GitLab: in **User settings → Applications**, a group's **Settings → Applications**, or **Admin → Applications** for an instance-wide one, add an application whose redirect URI is _exactly_ that value, keep **Confidential** selected, and grant those scopes. GitLab shows the secret once.
+3. Paste the **Application ID** and **Secret** into Setup and choose **Save GitLab application**.
+4. Restart the Control Plane, then the console and Relay, which cache what it serves.
+5. In the console, **Integrations → Code hosts → Connect GitLab**, and authorize an account with the authority below.
+
+Until GitLab state exists you can change all of this freely, including **Clear configuration**. Once projects, tokens, or connections exist, the instance address is fixed: they carry no instance provenance, so retargeting would send one instance's credentials to another.
+
+### Self-managed instance requirements
+
+| Requirement               | Why                                                                                                                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GitLab 18.11 or later** | Group service accounts reached every tier, Community Edition included, at 18.11. Below that AgentConnect refuses to provision rather than guess.                                 |
+| **HTTPS, one address**    | Clone URLs, OAuth redirects, and GitLab's own `web_url` values only agree if there is a single address. Split internal/external addressing belongs in DNS.                       |
+| **A trusted certificate** | There is no skip-verify option at any layer. A private authority is supported by [installing its bundle](/self-hosting/docker-compose/configuration#private-certificate-authorities) where every process and sandbox can read it. |
+| **Reachable ingress**     | GitLab refuses to deliver webhooks to the local network by default; if your AgentConnect ingress resolves to a private address, the integration looks installed and stays quiet. |
+
+Creating each agent's service account needs authority no GitLab API reports, so it is checked the first time a project is set up, not in advance. On GitLab.com that is a top-level-group **Owner**. On a self-managed instance, either is enough:
+
+- **Any tier, including Community Edition** — connect an **instance administrator**. On an instance with **Admin Mode** enabled, administrator API actions need a token scope AgentConnect does not request, so the delegation setting below is the only path there.
+- **Premium or Ultimate** — turn on **Allow top-level group Owners to create service accounts** under **Admin → Settings → General**, and connect a top-level group Owner.
+
+Nothing about the instance has to be configured on your daemons: a daemon learns it from the agent it is serving, and clones from it on that basis.
+
+## Gitea
+
+Point the deployment at a Gitea instance when agents need Gitea repositories — gitea.com or one self-hosted instance; a deployment addresses one or the other, never both. There is **no application to register**. Gitea's OAuth provider would add no identity of its own — an operation made with an OAuth token is attributed to the authorizing user, exactly as with a token that user generated by hand — so the integration uses a bot user's personal access token directly.
+
+That leaves the deployment exactly one value to own:
+
+1. In Setup, open **Gitea** and put the instance address in **Instance base URL**. Empty means gitea.com; a path prefix (`https://gitea.example.test/gitea`) and a non-default port are both supported and preserved everywhere.
+2. Setup probes what you typed and applies the version floor. Only an unusable URL or an instance below **Gitea 1.23** blocks the save — an unreachable host, an untrusted certificate chain, or a response that is not a Gitea API root are reported as warnings, because Setup and the Control Plane need not sit in the same network position.
+3. Restart the Control Plane.
+
+**The bot user and its token are not deployment state.** Each organization creates its own bot user, gives it Admin on the repositories its agents will work in, and pastes that user's token in the console under **Integrations → Code hosts → Gitea**; see [Gitea](/connect-automate/triggers-automation/gitea). An operator never handles the token.
+
+Until Gitea state exists the address can be changed freely. Once repositories, tokens, or connections exist it is fixed: the stored token, numeric repository IDs, and webhook IDs carry no instance provenance, so retargeting would send one instance's credentials to another. Remove every Gitea repository and disconnect the bot first.
+
+### Self-hosted instance requirements
+
+| Requirement                 | Why                                                                                                                                                                                                                   |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Gitea 1.23 or later**     | The release where the scoped-token model and the review-request webhook are both stable. `GET /api/v1/version` answers without a token, so the floor is checked when the URL is saved and again at every connection.   |
+| **HTTPS, one address**      | Clone URLs, the repository addresses agents are given, and Gitea's own `html_url` values only agree if there is a single address. Split internal/external addressing belongs in DNS.                                   |
+| **A trusted certificate**   | There is no skip-verify option at any layer. A private authority is supported by [installing its bundle](/self-hosting/docker-compose/configuration#private-certificate-authorities).                                                                            |
+| **HTTP Git enabled**        | Clone, fetch, and push all run over HTTPS with the bot's token. SSH remotes and plain HTTP are outside the contract.                                                                                                  |
+| **Reachable Relay address** | Gitea refuses webhook deliveries to private addresses by default, and the refusal happens at delivery rather than at creation — see below.                                                                            |
+
+Forgejo and Codeberg are not supported: Forgejo forked from Gitea 1.22, diverges in the token scopes, inline-comment shape, webhook headers, and event vocabulary this integration depends on, and its version string parses below the floor.
+
+An instance that drops below the floor after repositories are already set up keeps serving them — existing sessions and credentials work, and only new setup and token replacement are refused.
+
+### Let Gitea reach the webhook endpoint
+
+Gitea refuses webhook deliveries to loopback and private addresses by default, through `ALLOWED_HOST_LIST` under `[webhook]` in `app.ini`, which inherits from `[security]`. The refusal happens at **delivery** time, not at creation: the webhook installs cleanly and then stays silent.
+
+So the Relay address Gitea posts to has to be reachable from the instance, or the operator names it in the allowlist:
+
+```ini
+[webhook]
+ALLOWED_HOST_LIST = relay.example.test
+```
+
+The value accepts host names, CIDR ranges, and the built-in groups (`private`, `loopback`, `external`, `*`); prefer naming the one host over opening a whole group. Restart Gitea after editing `app.ini`.
+
+AgentConnect fires a test delivery as the last step of adding a repository and waits for it to arrive. One that never does leaves the repository **ready with a warning** naming this setting, so a blocked address is visible at setup time rather than after the first missed pull request. Fix the allowlist, then press **Repair** on the repository row — or simply wait for the first real delivery, which clears the warning too.
+
+## Linear
+
+Configure the deployment's Linear OAuth application when agents should work issues delegated to them in Linear. One application serves every organization and every connected workspace; no organization or agent ever holds Linear credentials.
+
+Both halves of the flow are public: the Control Plane terminates the OAuth callback and the Relay terminates Linear's webhooks, so both public URLs must be HTTPS before Setup will save the application.
+
+1. In Setup, open **Linear**. It shows the exact **Callback URL** and **Webhook URL** to register.
+2. Linear has no API for creating OAuth applications, so create it by hand. In Linear, open **Settings → API → OAuth applications** and add one application under your own product name and icon, with that callback URL. Enable webhooks, check **Agent session events**, and point them at the webhook URL Setup displays.
+3. Make the application **public** if workspaces other than the one that created it will connect it. Linear does not review it, and listing it in Linear's integration directory is optional.
+4. Paste the **Client ID**, **Client secret**, and **Webhook signing secret** into Setup and choose **Save Linear application**.
+5. Restart the Control Plane and Relay.
+
+The console's Linear surface reports that Linear is not set up until those credentials exist. Once they do, a workspace is connected from an agent's **Integrations → Add integration → Linear**; see [Linear](/connect-automate/triggers-automation/linear).
+
+Rotating the signing secret is a deployment action: save the new value in Setup, and every connected workspace is re-stamped with it. Deliveries can fail for a few seconds during the change, and Linear retries them.
+
+## Slack deployment App
+
+Setup can create one deployment Slack App for the built-in `agentconnect` agent and optional Slack sign-in. This does not replace the recommended per-agent bot integrations described in [Slack](/connect-automate/chat-platforms/slack).
+
+1. Configure reachable HTTPS Logto, Web, Control Plane, and Relay origins.
+2. Create a temporary Slack App configuration token when Setup prompts for one.
+3. Open **Slack** in Setup and choose **Create Slack App**.
+4. Restart Control Plane and Relay.
+
+Setup builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google for the local bootstrap.
+
+## Lark and Feishu tenant Apps
+
+The **Lark** and **Feishu** cards configure one regional Login App as the deployment's tenant anchor. AgentConnect uses it to accept multiple bot Apps only when they belong to the same trusted workspace; the Login App is not an AgentConnect chat bot.
+
+Choose **Create Lark App** / **Create Feishu App**, or save existing credentials. For an existing App, enable and publish the provider permission named **Obtain tenant information** (`tenant:tenant:readonly`). Restart Control Plane after saving.
+
+Bot setup and delivery modes are documented in [Lark / Feishu](/connect-automate/chat-platforms/lark-feishu).

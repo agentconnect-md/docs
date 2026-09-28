@@ -1,0 +1,56 @@
+{
+  "name": "agentconnect-docs-site",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=24.12.0"
+  },
+  "scripts": {
+    "prepare:channel": "node scripts/prepare.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare deploy",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node --test --test-concurrency=1 scripts/*.test.mjs"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@floating-ui/react-dom": "^2.1.9",
+    "@fumadocs/language": "^0.2.6",
+    "@octokit/auth-app": "^8.3.1",
+    "@octokit/core": "^7.0.8",
+    "@opennextjs/cloudflare": "^1.20.6",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.3.3",
+    "fumadocs-core": "^16.15.14",
+    "fumadocs-mdx": "^15.4.3",
+    "fumadocs-openapi": "^12.0.2",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@^16.15.14",
+    "lucide-react": "^1.47.0",
+    "mermaid": "^12.0.0",
+    "next": "^16.3.5",
+    "next-themes": "^0.4.6",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "shiki": "^4.4.3",
+    "unist-util-visit": "^5.1.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/mdast": "^4.0.4",
+    "@types/mdx": "^2.0.14",
+    "@types/node": "^24.12.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "gray-matter": "^4.0.3",
+    "mdast-util-mdx-jsx": "^3.2.0",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.139.0",
+    "yaml": "^2.9.1"
+  }
+}

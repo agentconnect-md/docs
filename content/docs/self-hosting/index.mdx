@@ -1,0 +1,32 @@
+---
+title: "Overview"
+icon: House
+description: "Run the open-source AgentConnect stack on your own infrastructure with Docker Compose or the official Helm chart."
+---
+
+import { Container, ShipWheel } from 'lucide-react'
+
+AgentConnect OSS is the open-source, self-hosted AgentConnect stack. Choose Docker Compose for a local evaluation with daemons on your own machines, or the official Helm chart for a production-shaped deployment with agents running in isolated Kubernetes sandboxes.
+
+The source is available in the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect).
+
+<Cards>
+  <Card title="Docker Compose" href="/self-hosting/docker-compose/quick-start" icon={<Container />}>
+    Start the stack on one machine and connect a daemon on the host
+  </Card>
+  <Card title="Kubernetes" href="/self-hosting/kubernetes/deploy" icon={<ShipWheel />}>
+    Install the Helm chart and let the cluster own agent execution and workspaces
+  </Card>
+</Cards>
+
+## What is configured where
+
+| Surface                      | Owns                                                                                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `compose.env` or Helm values | Images, ports, public URLs, database secrets, Vault, connectors, and Logto endpoints                                  |
+| Setup Server                 | Logto browser auth, GitHub, GitLab, Gitea, Linear, Slack, Google, Lark / Feishu tenant apps, and deployment options |
+| AgentConnect console         | Organizations, agents, integrations, environments, tools, and skills                                                 |
+
+Setup Server is the supported configuration surface for browser authentication, provider apps, displayed sign-in methods, and preset-agent behavior. It saves deployment settings and write-only provider secrets in PostgreSQL. It ships with both topologies and never gets a public route: Compose binds it to loopback, and the chart gives it no Service, so you reach it from your workstation. [Sign-in](/self-hosting/sign-in) and [Provider apps](/self-hosting/provider-apps) cover what it configures.
+
+Agent execution remains daemon-local. The Control Plane stores coordination data rather than message bodies, attachment bytes, workspaces, or live agent-session streams. See [How it works](/getting-started/how-it-works).

@@ -1,0 +1,15 @@
+{
+  "title": "Self-hosting",
+  "root": true,
+  "pages": [
+    "index",
+    "---Docker Compose---",
+    "...docker-compose",
+    "---Kubernetes---",
+    "...kubernetes",
+    "---Sign-in & integrations---",
+    "...(sign-in-integrations)",
+    "---Optional services---",
+    "...(optional-services)"
+  ]
+}

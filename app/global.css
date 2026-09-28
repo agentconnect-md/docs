@@ -1,0 +1,325 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+@import 'fumadocs-openapi/css/preset.css';
+
+/* Typefaces and colors are the console's design tokens (packages/web globals.css): cool greys, magenta as the accent. */
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --color-fd-background: #fafbfc;
+  --color-fd-foreground: #1a212b;
+  --color-fd-muted: #f4f6f8;
+  --color-fd-muted-foreground: #6f7b8a;
+  --color-fd-popover: #ffffff;
+  --color-fd-popover-foreground: #1a212b;
+  --color-fd-card: #ffffff;
+  --color-fd-card-foreground: #1a212b;
+  --color-fd-border: #e4e8ed;
+  --color-fd-primary: #c62a78;
+  --color-fd-primary-foreground: #ffffff;
+  --color-fd-secondary: #f4f6f8;
+  --color-fd-secondary-foreground: #1a212b;
+  --color-fd-accent: #eceff3;
+  --color-fd-accent-foreground: #1a212b;
+  --color-fd-ring: rgba(198, 42, 120, 0.32);
+}
+
+/* The console's plum dark theme; the accent lightens the way its brand text does, so it reads on the dark surfaces. */
+.dark {
+  --color-fd-background: #17101f;
+  --color-fd-foreground: #edeff3;
+  --color-fd-muted: #211829;
+  --color-fd-muted-foreground: #a6afbc;
+  --color-fd-popover: #211829;
+  --color-fd-popover-foreground: #edeff3;
+  --color-fd-card: #211829;
+  --color-fd-card-foreground: #edeff3;
+  --color-fd-border: #2a2137;
+  --color-fd-primary: #e97bb0;
+  --color-fd-primary-foreground: #17101f;
+  --color-fd-secondary: #271d34;
+  --color-fd-secondary-foreground: #edeff3;
+  --color-fd-accent: #2f2440;
+  --color-fd-accent-foreground: #edeff3;
+  --color-fd-ring: rgba(198, 42, 120, 0.42);
+}
+
+/* neutral.css tunes the dark sidebar's greys; these keep it on the plum surfaces. */
+.dark #nd-sidebar {
+  --color-fd-muted: #271d34;
+  --color-fd-secondary: #2f2440;
+  --color-fd-muted-foreground: #a6afbc;
+}
+
+:root {
+  --ac-nav-h: 0px;
+  --ac-brand: #c62a78;
+  --ac-brand-hover: #a82165;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}
+
+/* Fumadocs offsets its sticky parts by --fd-banner-height; our header sits in that slot. */
+:root {
+  --fd-banner-height: var(--ac-nav-h);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --ac-nav-h: 3.5rem;
+  }
+}
+
+/* Component classes sit in a layer so Tailwind utilities (md:hidden, flex-1) still win. */
+@layer components {
+  .ac-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  /* The header: section tabs, a dark Star button and the magenta primary; it tightens below 1024px. */
+  .ac-nav {
+    height: var(--ac-nav-h);
+    align-items: center;
+    gap: 2.5rem;
+    padding-inline: 1.25rem;
+    border-bottom: 1px solid var(--color-fd-border);
+    background: color-mix(in oklab, var(--color-fd-background) 88%, transparent);
+    backdrop-filter: saturate(140%) blur(8px);
+  }
+
+  /* Tabs fill the header's height so the active one's underline sits on the header's bottom border. */
+  .ac-nav-tabs {
+    display: flex;
+    align-self: stretch;
+    gap: 1.75rem;
+  }
+
+  @media (max-width: 1023px) {
+    .ac-nav {
+      gap: 1.5rem;
+    }
+
+    .ac-nav-tabs {
+      gap: 1.1rem;
+    }
+  }
+
+  .ac-nav-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-fd-muted-foreground);
+    transition: color 0.15s;
+  }
+
+  .ac-nav-tab:hover {
+    color: var(--color-fd-foreground);
+  }
+
+  /* The same weight as the other tabs, so switching tabs never shifts them; colour and underline mark it. */
+  .ac-nav-tab[data-active='true'] {
+    color: var(--color-fd-foreground);
+  }
+
+  .ac-nav-tab[data-active='true']::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--ac-brand);
+  }
+
+  .ac-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2rem;
+    min-width: 2rem;
+    padding-inline: 0.4rem;
+    border-radius: 0.5rem;
+    color: var(--color-fd-muted-foreground);
+  }
+
+  .ac-nav-icon:hover {
+    background: var(--color-fd-accent);
+    color: var(--color-fd-foreground);
+  }
+
+  .ac-btn-github,
+  .ac-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.125rem;
+    padding-inline: 0.85rem;
+    border-radius: 7px;
+    font-size: 0.84375rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ac-btn-github {
+    background: #171515;
+    color: #fff;
+  }
+
+  .ac-btn-github:hover {
+    background: #000;
+  }
+
+  .dark .ac-btn-github {
+    background: #edeff3;
+    color: #11161d;
+  }
+
+  .dark .ac-btn-github:hover {
+    background: #fff;
+  }
+
+  .ac-btn-primary {
+    margin-inline-start: 0.25rem;
+    background: var(--ac-brand);
+    color: #fff;
+    box-shadow:
+      0 1px 2px rgba(138, 26, 83, 0.18),
+      0 6px 16px rgba(198, 42, 120, 0.22);
+  }
+
+  .ac-btn-primary:hover {
+    background: var(--ac-brand-hover);
+  }
+
+  .ac-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--color-fd-border);
+    font-size: 0.8125rem;
+    color: var(--color-fd-muted-foreground);
+  }
+
+  .ac-footer a:hover {
+    color: var(--color-fd-foreground);
+  }
+
+  .ac-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.25rem;
+  }
+
+  .ac-footer-divider {
+    width: 1px;
+    height: 1rem;
+    background: var(--color-fd-border);
+  }
+
+  /* Desktop: one short row of text; narrow screens may wrap. */
+  @media (min-width: 768px) {
+    .ac-footer {
+      height: 2.5rem;
+      padding-block: 0;
+    }
+  }
+
+  /* Phones: still one row, with the site links on the left and community plus language on the right. */
+  @media (max-width: 767px) {
+    .ac-footer {
+      flex-wrap: nowrap;
+      gap: 1rem;
+      padding-block: 0.75rem;
+    }
+
+    .ac-footer-links {
+      flex-wrap: nowrap;
+      gap: 1rem;
+    }
+
+    .ac-footer-divider {
+      display: none;
+    }
+  }
+}
+
+/* Desktop: brand and search live in the header, so the sidebar drops its copies. */
+@media (min-width: 768px) {
+  #nd-sidebar > div:first-child > div:first-child:has(> a[href]) > a[href],
+  #nd-sidebar [data-search-full],
+  #nd-sidebar [data-search] {
+    display: none;
+  }
+}
+
+/* Mobile menu: a full-screen panel under the top bar, whose menu button closes it, instead of a side drawer. */
+#nd-sidebar-mobile {
+  inset: calc(var(--fd-docs-row-1, 0px) + var(--fd-header-height, 3.5rem)) 0 0 0;
+  width: 100%;
+  max-width: none;
+  border-inline-start: 0;
+  box-shadow: none;
+}
+
+#nd-sidebar-mobile[data-state='open'] {
+  animation: ac-menu-in 160ms ease-out;
+}
+
+#nd-sidebar-mobile[data-state='closed'] {
+  animation: ac-menu-out 120ms ease-in forwards;
+}
+
+/* The panel covers the page, so the blurred overlay and the drawer's own close row have nothing to do. */
+div:has(+ #nd-sidebar-mobile),
+#nd-sidebar-mobile > div:first-child > div:first-child {
+  display: none;
+}
+
+@keyframes ac-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes ac-menu-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+#nd-page {
+  scroll-margin-top: calc(var(--fd-banner-height) + 1rem);
+}
+
+/* A page without headings keeps the column's actions and footer, not an empty "On this page". */
+#nd-toc.ac-toc-empty > h3,
+#nd-toc.ac-toc-empty > h3 + * {
+  display: none;
+}
+
+/* Page images are centred in the column, as the docs have always laid them out. */
+.prose img {
+  display: block;
+  margin-inline: auto;
+}
