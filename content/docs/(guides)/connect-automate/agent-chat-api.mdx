@@ -1,77 +1,75 @@
 ---
 title: "Agent chat API"
 icon: BotMessageSquare
-description: "Put an agent behind your own chat UI — an Ask AI panel on a docs site or a support widget — through a small server-side proxy."
+description: "Put an agent behind your own chat UI, such as an Ask AI panel on a docs site or a support widget, with an API key and the AI SDK."
 ---
 
-The agent chat API puts an agent behind any chat UI built on the [AI SDK](https://ai-sdk.dev)'s `useChat` (UI message stream protocol v1). Each turn is one HTTP POST, answered as a server-sent event stream. A small proxy you run on your server holds the API key; the browser never sees the key or a token.
-
-Typical uses are an "Ask AI" panel on a documentation site or a support widget. The Ask AI panel on this site works this way.
+The agent chat API puts an agent behind any chat UI built on the [AI SDK](https://ai-sdk.dev)'s `useChat` (UI message stream protocol v1). Each turn is one HTTP POST with your API key, answered as a server-sent event stream. The Ask AI panel on this site works this way.
 
 It takes three steps:
 
-1. Create an API key limited to agent chat.
-2. For each conversation, your proxy exchanges the key for a short-lived token.
-3. For each turn, your proxy forwards the `useChat` request with that token and streams the reply back.
+1. Add the API to the agent.
+2. Create a key limited to agent chat.
+3. Post turns to the chat endpoint with the key.
 
-## Create a key
+## Add the API to the agent [#add-the-api]
 
-Create it for a [service account](/operate-govern/permissions-overview/members-and-roles#service-accounts) under **Settings → Service accounts → Keys**, so it does not depend on any one person, or for yourself under **Profile → API keys**. Either way:
+An agent accepts API calls only after its owner adds the API. Open the agent, then **Integrations → Add integration**, pick **API** under **Workflow**, choose **AI SDK UI** and click **Add API**.
 
-- **Permission** — **Agent chat**.
-- **Agents** — **Selected agents**, then pick the agent.
+![Add the API to an agent](/images/add-api.png)
 
-This key can call exactly one route, the token mint below, and only for the selected agents; every other request answers `403`. Like any [API key](/api#create-a-key), it is shown once and expires after 90 days by default.
+The agent's Integrations tab now shows an **API** card. Its **Quickstart** shows the chat endpoint for this agent, examples for curl, Node and the browser, and the keys that reach the agent. Removing the API stops the agent accepting calls within a minute; keys that cover it stay valid for other agents.
 
-## Mint a token
+![The API card's Quickstart](/images/api-quickstart.png)
 
-Mint a token for each conversation with the key:
+## Create a key [#create-a-key]
+
+Click **Create key** in the Quickstart, or create one for a [service account](/operate-govern/permissions-overview/members-and-roles#service-accounts) under **Settings → Service accounts → Keys**, so it does not depend on any one person, or for yourself under **Profile → API keys**. Either way:
+
+- **Permission**: **Agent chat**.
+- **Agents**: **Selected agents**, then pick the agent.
+
+An Agent chat key works only on the chat endpoint, and only for the selected agents that have added the API; the Control Plane's REST API refuses it. Like any [API key](/api#create-a-key), it is shown once and expires after 90 days by default. Revoking it stops it within a minute.
+
+## Send a turn [#send-a-turn]
+
+Copy the chat endpoint from the Quickstart. Send `POST` to it with `Authorization: Bearer <key>` and the `useChat` request body (`{ id, messages, trigger, … }`):
 
 ```bash
-curl -X POST "https://api.agentconnect.md/v1/orgs/$ORG_ID/agents/$AGENT_ID/webchat/token" \
+curl -N "$CHAT_URL" \
   -H "Authorization: Bearer $AGENTCONNECT_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{}'
+  -d '{"id":"chat-1","messages":[{"id":"m1","role":"user","parts":[{"type":"text","text":"How do I install the daemon?"}]}]}'
 ```
 
-The body `{}` opens a new conversation; `{ "conversationId": "<uuid>" }` continues one. The response:
+The chat endpoint is `<relay-url>/ai-sdk/agents/<agent-id>/chat`. On [AgentConnect OSS](/self-hosting), the relay URL is your relay's public URL.
 
-```json
-{ "token": "…", "relayUrl": "…", "conversationId": "…", "expiresAt": "…" }
-```
+The body's `id`, 1 to 128 characters, names the conversation:
 
-The token lives 5 minutes (`expiresAt`). Reuse it for that conversation's turns until then, and mint again after. Continuing an unknown conversation answers `404`; `409` means the agent moved and the conversation has to be opened again. In both cases, start a new conversation.
-
-On [AgentConnect OSS](/self-hosting), the same route is at `<control-plane-url>/api/v1/orgs/…`.
-
-## Send a turn
-
-Send `POST {relayUrl}/ai-sdk/chat/{conversationId}` with `Authorization: Bearer <token>` and the `useChat` request body unchanged (`{ id, messages, trigger, … }`):
-
-```bash
-curl -N -X POST "$RELAY_URL/ai-sdk/chat/$CONVERSATION_ID" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"id":"chat-1","trigger":"submit-message","messages":[{"id":"m1","role":"user","parts":[{"type":"text","text":"How do I install the daemon?"}]}]}'
-```
+- The first turn with a new `id` opens a conversation; the same `id` continues it. `useChat` generates an `id` per chat and sends it on every turn.
+- Conversations belong to the key's owner. The same `id` sent with another member's key is a different conversation.
+- The relay reads only the text parts of the last user message. The agent's session already holds the history, so earlier messages, file parts and `data-*` parts are ignored.
 
 The response is `text/event-stream` with the header `x-vercel-ai-ui-message-stream: v1`. Its parts follow the AI SDK protocol, and the stream ends with `[DONE]`.
 
-- The relay reads only the text parts of the last user message. The agent's session already holds the history, so earlier messages, file parts and `data-*` parts are ignored.
 - A turn can run for minutes. A keepalive comment arrives every 15 seconds.
-- A request body may be up to 4 MiB, and a turn's text up to 128 KiB. Larger requests answer `413`.
-- One turn runs at a time in a conversation. A second POST while one is running answers `409`.
+- A request body may be up to 4 MiB, and a turn's text up to 128 KiB.
+- One turn runs at a time in a conversation.
 
-When the agent's daemon refuses a turn, the status arrives before any stream:
+Refusals arrive as a status before any stream, with a JSON body whose `reason` names the machine-readable cause where there is one:
 
 | Status | Meaning |
 | --- | --- |
-| `409` | A turn is still running in this conversation. |
+| `400` | No `id`, or no user message with text. |
+| `401` | The key is unknown, revoked or expired. |
+| `403` | The key is not an Agent chat or full key, or the agent has not added the API (`api_disabled`). |
+| `404` | The key's agent selection does not include this agent, or you cannot see it. |
+| `409` | A turn is still running in this conversation (`busy`), or the agent moved since the conversation ran (`agent_moved`); start a new conversation for the latter. |
+| `413` | The body or the turn's text is too large. |
+| `422` | The API's Decision gate declined the turn (`declined`). |
 | `503` | The agent is offline, paused or draining. |
-| `404` | The conversation no longer exists. |
-| `502` | Any other refusal. |
 
-### What the stream carries
+### What the stream carries [#what-the-stream-carries]
 
 | Part | Content |
 | --- | --- |
@@ -84,67 +82,68 @@ When the agent's daemon refuses a turn, the status arrives before any stream:
 
 A client that renders only text shows only the reply. `stop()` in `useChat` aborts only the fetch: the turn still finishes, and its output lands in the session's transcript in the console. An interrupted stream cannot be resumed yet.
 
-## Run the proxy
+## From Node [#from-node]
 
-The proxy sits between `useChat` and AgentConnect. It should:
-
-- Map each visitor, and each open tab, to a conversation id, for example in an HttpOnly cookie. Never trust the chat `id` the client sends.
-- Treat a request whose history holds a single user message as a new conversation. `useChat` clears its history on the client without telling the server.
-- Forward the response body and the `content-type` and `x-vercel-ai-ui-message-stream` headers unchanged.
-- Rate-limit visitors. AgentConnect limits turns per conversation, not per visitor.
-
-A minimal Next.js route handler, `app/api/chat/route.ts`, with one conversation per browser:
+The AI SDK's `DefaultChatTransport` sends turns and parses the stream. It needs AI SDK 5 or later (`npm i ai`):
 
 ```ts
-const API = 'https://api.agentconnect.md/v1'
-const { AGENTCONNECT_API_KEY, AGENTCONNECT_ORG_ID, AGENTCONNECT_AGENT_ID } = process.env
-type Minted = { token: string; relayUrl: string; conversationId: string; expiresAt: string }
-const tokens = new Map<string, Minted>()
+import { DefaultChatTransport } from 'ai'
 
-async function mint(conversationId?: string): Promise<Minted> {
-  const cached = conversationId ? tokens.get(conversationId) : undefined
-  if (cached && Date.parse(cached.expiresAt) - 30_000 > Date.now()) return cached
-  const res = await fetch(`${API}/orgs/${AGENTCONNECT_ORG_ID}/agents/${AGENTCONNECT_AGENT_ID}/webchat/token`, {
-    method: 'POST',
-    headers: { authorization: `Bearer ${AGENTCONNECT_API_KEY}`, 'content-type': 'application/json' },
-    body: JSON.stringify(conversationId ? { conversationId } : {})
-  })
-  if (!res.ok) throw Object.assign(new Error(`token mint failed: ${res.status}`), { status: res.status })
-  const minted = (await res.json()) as Minted
-  tokens.set(minted.conversationId, minted)
-  return minted
-}
+const transport = new DefaultChatTransport({
+  api: process.env.CHAT_URL,
+  headers: { Authorization: `Bearer ${process.env.AGENTCONNECT_API_KEY}` }
+})
+const stream = await transport.sendMessages({
+  trigger: 'submit-message',
+  chatId: 'chat-1', // the conversation; send the same id again to continue it
+  messageId: undefined,
+  abortSignal: undefined,
+  messages: [{ id: '1', role: 'user', parts: [{ type: 'text', text: 'How do I install the daemon?' }] }]
+})
+for await (const chunk of stream) if (chunk.type === 'text-delta') process.stdout.write(chunk.delta)
+```
 
+## From a browser [#from-a-browser]
+
+A browser must not hold the key, so put a route on your own server in front of the chat endpoint. It adds the key and forwards `useChat`'s request unchanged. A Next.js route handler, `app/api/chat/route.ts`:
+
+```ts
 export async function POST(req: Request) {
-  const body = await req.json()
-  const userTurns = body.messages.filter((m: { role: string }) => m.role === 'user').length
-  const bound = req.headers.get('cookie')?.match(/(?:^|;\s*)chat_conversation=([0-9a-f-]{36})/)?.[1]
-  // A lone first question starts over; an unknown (404) or moved (409) conversation does too. Any other failure surfaces.
-  const reopen = (err: { status?: number }) => (err.status === 404 || err.status === 409 ? mint() : Promise.reject(err))
-  const { token, relayUrl, conversationId } =
-    userTurns > 1 && bound ? await mint(bound).catch(reopen) : await mint()
-
-  const upstream = await fetch(`${relayUrl}/ai-sdk/chat/${conversationId}`, {
+  const upstream = await fetch(process.env.CHAT_URL!, {
     method: 'POST',
-    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-    body: JSON.stringify(body),
+    headers: { Authorization: `Bearer ${process.env.AGENTCONNECT_API_KEY}`, 'Content-Type': 'application/json' },
+    body: await req.text(),
     signal: req.signal
   })
-  const headers = new Headers({ 'cache-control': 'no-store' })
-  for (const name of ['content-type', 'x-vercel-ai-ui-message-stream']) {
-    const value = upstream.headers.get(name)
-    if (value) headers.set(name, value)
-  }
-  headers.append('set-cookie', `chat_conversation=${conversationId}; Path=/; HttpOnly; Secure; SameSite=Lax`)
-  return new Response(upstream.body, { status: upstream.status, headers })
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: { 'Content-Type': 'text/event-stream', 'x-vercel-ai-ui-message-stream': 'v1' }
+  })
 }
 ```
 
-On the client, point `useChat`'s transport at the route (`new DefaultChatTransport({ api: '/api/chat' })`).
+On the page, point `useChat` at it (`ai` and `@ai-sdk/react`, AI SDK 5 or later):
 
-This site's own proxy, in the [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) repository, adds a cookie per open tab, a bounded token cache and error mapping: see [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts) and [`app/api/chat/route.ts`](https://github.com/agentconnect-md/docs/blob/main/app/api/chat/route.ts). Its panel is the Fumadocs AI search component.
+```tsx
+'use client'
+import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
 
-## Sessions and safety
+export default function Chat() {
+  const { messages, sendMessage } = useChat({ transport: new DefaultChatTransport({ api: '/api/chat' }) })
+  // Render messages, and call sendMessage({ text }) on submit.
+}
+```
+
+Every visitor's conversations belong to the key's owner, and a visitor reaches only the conversations its own chat ids name; `useChat`'s ids are random. Rate-limit visitors on your route, since AgentConnect limits turns per conversation, not per visitor.
+
+This site's own route, in the [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) repository, goes further: it chooses the chat id itself and keeps it in an HttpOnly cookie per open tab, and starts a new conversation when the panel is cleared. See [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts).
+
+## Gate turns by a Decision [#decision-gate]
+
+The API card's **Add decision** gives the API the same rules a channel's **By decision** has: the agent answers a call only when the [Decision](/build-your-team/decisions) matches the call's message, and the endpoint answers `422` otherwise. A call whose Decision cannot be evaluated is answered as if there were no gate. **Recent evaluations** in the rules shows each call the gate judged and why; only members who can edit the agent see it.
+
+## Sessions and safety [#sessions-and-safety]
 
 A conversation opened this way is an ordinary webchat session of the key's owner, and its source shows the key. A service account's session is visible to the whole organization; a personal key's is [private](/operate-govern/permissions-overview/session-visibility) to that user. Its usage is metered on the agent like any other turn; see [Billing & usage](/operate-govern/billing-and-usage).
 
@@ -156,9 +155,10 @@ The agent receives untrusted input on every turn. Configure it for that:
 - Keep it in an organization whose members may read those transcripts.
 </Callout>
 
-## Troubleshooting
+## Troubleshooting [#troubleshooting]
 
-- **`403` "limited to agent:chat"** — an Agent chat key reached a route other than the token mint. Check the URL, and that the proxy sends the key you meant.
-- **`404` "agent not found" on the mint** — the key's agent selection does not include this agent.
-- **`409` on a turn** — a turn is still running in this conversation. Wait for it to finish, or start a new conversation.
-- **`503` right after a deployment** — the agent's daemon is reconnecting. Retry.
+- **`403` "this agent does not accept API calls"**: add the API to the agent (above).
+- **`403` "this API key cannot chat with agents"**: the key's permission is **Read-only**. Create an Agent chat key.
+- **`404` "agent not found"**: the key's agent selection does not include this agent.
+- **`409` on a turn**: a turn is still running in this conversation. Wait for it to finish, or use a new chat `id`.
+- **`503` right after a deployment**: the agent's daemon is reconnecting. Retry.

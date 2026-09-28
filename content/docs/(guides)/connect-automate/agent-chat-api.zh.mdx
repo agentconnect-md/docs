@@ -1,152 +1,151 @@
 ---
 title: "Agent 对话 API"
 icon: BotMessageSquare
-description: "通过一个服务端小代理，把 Agent 接到你自己的聊天界面上——文档站的 Ask AI 面板，或者客服窗口。"
+description: "用一个 API 密钥和 AI SDK，把 Agent 接到你自己的聊天界面上，比如文档站的 Ask AI 面板或客服窗口。"
 ---
 
-Agent 对话 API 可以把 Agent 接到任何基于 [AI SDK](https://ai-sdk.dev) `useChat` 的聊天界面上（UI message stream 协议 v1）。每一轮对话是一次 HTTP POST，回复以 server-sent events 流返回。API 密钥放在你服务器上运行的一个小代理里；浏览器既拿不到密钥，也拿不到 token。
-
-常见用法是文档站上的 “Ask AI” 面板或客服窗口。本站的 Ask AI 面板就是这样实现的。
+Agent 对话 API 可以把 Agent 接到任何基于 [AI SDK](https://ai-sdk.dev) `useChat` 的聊天界面上（UI message stream 协议 v1）。每一轮对话是一次带 API 密钥的 HTTP POST，回复以 server-sent events 流返回。本站的 Ask AI 面板就是这样实现的。
 
 一共三步：
 
-1. 创建一个仅限 Agent 对话的 API 密钥。
-2. 每个会话开始时，代理用密钥换取一个短期 token。
-3. 每一轮对话，代理带着这个 token 转发 `useChat` 的请求，再把回复流式传回浏览器。
+1. 给 Agent 添加 API。
+2. 创建一个仅限 Agent 对话的密钥。
+3. 用密钥向对话接口发送每一轮对话。
+
+## 给 Agent 添加 API [#add-the-api]
+
+Agent 的所有者添加 API 之后，Agent 才接受 API 调用。打开 Agent，进入 **集成 → 添加集成**，在 **工作流** 下选 **API**，选择 **AI SDK UI**，点 **添加 API**。
+
+![给 Agent 添加 API](/images/add-api.png)
+
+之后 Agent 的集成页会出现一张 **API** 卡片。它的 **快速开始** 里有这个 Agent 的对话接口、curl / Node / 浏览器三种示例，以及能访问这个 Agent 的密钥。移除 API 后，Agent 在一分钟内停止接受调用；覆盖它的密钥对其他 Agent 仍然有效。
+
+![API 卡片的快速开始](/images/api-quickstart.png)
 
 ## 创建密钥 [#create-a-key]
 
-在 **设置 → 服务账号 → 密钥**里为[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)创建，这样它不依赖任何一个人；也可以在 **个人资料 → API 密钥**里为自己创建。两种方式的选项相同：
+在快速开始里点 **创建密钥**；也可以在 **设置 → 服务账号 → 密钥** 里为[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)创建，这样它不依赖任何一个人；或者在 **个人资料 → API 密钥** 里为自己创建。选项都一样：
 
-- **权限**——**Agent 对话**。
-- **Agent**——**指定 Agent**，然后选中这个 Agent。
+- **权限**：**Agent 对话**。
+- **Agent**：**指定 Agent**，然后选中这个 Agent。
 
-这种密钥只能调用一个接口，也就是下面的 token 签发接口，而且只对选中的 Agent 有效；其他任何请求都返回 `403`。和所有 [API 密钥](/api#create-a-key)一样，它只显示一次，默认 90 天后过期。
-
-## 签发 token [#mint-a-token]
-
-每个会话用密钥签发一个 token：
-
-```bash
-curl -X POST "https://api.agentconnect.md/v1/orgs/$ORG_ID/agents/$AGENT_ID/webchat/token" \
-  -H "Authorization: Bearer $AGENTCONNECT_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{}'
-```
-
-请求体 `{}` 开启一个新会话；`{ "conversationId": "<uuid>" }` 继续已有会话。响应为：
-
-```json
-{ "token": "…", "relayUrl": "…", "conversationId": "…", "expiresAt": "…" }
-```
-
-token 有效期 5 分钟（`expiresAt`）。在此之前，这个会话的每一轮都复用它，过期后重新签发。继续一个不存在的会话返回 `404`；`409` 表示 Agent 已迁移，这个会话需要重新开启。两种情况都开启新会话即可。
-
-在 [AgentConnect OSS](/self-hosting) 上，同一接口位于 `<control-plane-url>/api/v1/orgs/…`。
+Agent 对话密钥只能用于对话接口，而且只对选中并已添加 API 的 Agent 有效；控制平面的 REST API 不接受它。和所有 [API 密钥](/api#create-a-key)一样，它只显示一次，默认 90 天后过期。吊销后一分钟内失效。
 
 ## 发送一轮对话 [#send-a-turn]
 
-发送 `POST {relayUrl}/ai-sdk/chat/{conversationId}`，带上 `Authorization: Bearer <token>`，请求体就是 `useChat` 的原样请求（`{ id, messages, trigger, … }`）：
+从快速开始复制对话接口，向它发送 `POST`，带上 `Authorization: Bearer <密钥>` 和 `useChat` 的请求体（`{ id, messages, trigger, … }`）：
 
 ```bash
-curl -N -X POST "$RELAY_URL/ai-sdk/chat/$CONVERSATION_ID" \
-  -H "Authorization: Bearer $TOKEN" \
+curl -N "$CHAT_URL" \
+  -H "Authorization: Bearer $AGENTCONNECT_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"id":"chat-1","trigger":"submit-message","messages":[{"id":"m1","role":"user","parts":[{"type":"text","text":"How do I install the daemon?"}]}]}'
+  -d '{"id":"chat-1","messages":[{"id":"m1","role":"user","parts":[{"type":"text","text":"How do I install the daemon?"}]}]}'
 ```
 
-响应为 `text/event-stream`，带有 `x-vercel-ai-ui-message-stream: v1` 头。各个 part 遵循 AI SDK 协议，流以 `[DONE]` 结束。
+对话接口是 `<relay-url>/ai-sdk/agents/<agent-id>/chat`。在 [AgentConnect OSS](/self-hosting) 上，relay URL 是你的 relay 的公开地址。
 
-- relay 只读取最后一条用户消息的文本 part。Agent 的会话本身已保存历史，所以更早的消息、文件 part 和 `data-*` part 都会被忽略。
-- 一轮对话可能持续几分钟，期间每 15 秒会收到一条 keepalive 注释。
-- 请求体最大 4 MiB，一轮的文本最大 128 KiB，超出返回 `413`。
-- 一个会话同一时间只运行一轮。上一轮还在运行时再次 POST，返回 `409`。
+请求体里的 `id`（1 到 128 个字符）标识会话：
 
-Agent 所在的 Daemon 拒绝这一轮时，状态码会在任何流之前返回：
+- 用一个新的 `id` 发出的第一轮会开启会话，之后用同一个 `id` 继续。`useChat` 为每个对话生成一个 `id`，每一轮都会带上。
+- 会话属于密钥的所有者。用另一位成员的密钥发送同一个 `id`，是另一个会话。
+- Relay 只读取最后一条用户消息里的文本部分。Agent 的会话里已经有历史，所以更早的消息、文件部分和 `data-*` 部分都会被忽略。
+
+响应是 `text/event-stream`，带响应头 `x-vercel-ai-ui-message-stream: v1`。其中的各部分遵循 AI SDK 协议，流以 `[DONE]` 结束。
+
+- 一轮对话可能持续几分钟，每 15 秒会收到一条保活注释。
+- 请求体最大 4 MiB，一轮的文本最大 128 KiB。
+- 一个会话同一时间只运行一轮。
+
+拒绝会在流开始之前以状态码返回，JSON 响应体的 `reason` 在有机器可读原因时给出原因：
 
 | 状态码 | 含义 |
 | --- | --- |
-| `409` | 这个会话还有一轮在运行。 |
+| `400` | 没有 `id`，或者没有带文本的用户消息。 |
+| `401` | 密钥未知、已吊销或已过期。 |
+| `403` | 密钥不是 Agent 对话密钥或完全访问密钥，或者 Agent 还没有添加 API（`api_disabled`）。 |
+| `404` | 密钥选中的 Agent 不包含这个 Agent，或者你看不到它。 |
+| `409` | 这个会话还有一轮在运行（`busy`），或者自上次对话以来 Agent 已迁移（`agent_moved`）；后一种情况请开启新会话。 |
+| `413` | 请求体或这一轮的文本过大。 |
+| `422` | API 的决策门拒绝了这一轮（`declined`）。 |
 | `503` | Agent 离线、已暂停或正在排空。 |
-| `404` | 会话已不存在。 |
-| `502` | 其他拒绝。 |
 
-### 流中包含什么 [#what-the-stream-carries]
+### 流里有什么 [#what-the-stream-carries]
 
-| Part | 内容 |
+| 部分 | 内容 |
 | --- | --- |
 | `text-*` | Agent 的回复。 |
 | `reasoning-*` | Agent 的思考过程。 |
-| `data-tool` | 工具调用：只有标题和状态。 |
+| `data-tool` | 工具活动：只有标题和状态。 |
 | `data-plan` | Agent 的计划。 |
-| `data-notice` | 状态提示，例如 “Starting sandbox…”。 |
+| `data-notice` | 状态提示，比如 “Starting sandbox…”。 |
 | `message-metadata` | 会话标题。 |
 
-只渲染文本的客户端只会显示回复。`useChat` 的 `stop()` 只中止 fetch：这一轮仍会跑完，输出写入控制台里这个会话的记录。中断的流目前还不能续传。
+只渲染文本的客户端只会显示回复。`useChat` 的 `stop()` 只会中止这次请求：这一轮仍会跑完，输出会进入控制台里这个会话的记录。中断的流暂时无法恢复。
 
-## 运行代理 [#run-the-proxy]
+## 在 Node 中调用 [#from-node]
 
-代理位于 `useChat` 和 AgentConnect 之间，需要做到：
-
-- 把每个访客、每个打开的标签页对应到一个会话 id，例如存在 HttpOnly cookie 里。不要信任客户端发来的 chat `id`。
-- 历史中只有一条用户消息的请求，视为新会话。`useChat` 在客户端清空历史时不会通知服务端。
-- 原样转发响应体，以及 `content-type` 和 `x-vercel-ai-ui-message-stream` 两个头。
-- 按访客限流。AgentConnect 只按会话限制并发，不按访客限流。
-
-一个最小的 Next.js 路由处理器 `app/api/chat/route.ts`，每个浏览器一个会话：
+AI SDK 的 `DefaultChatTransport` 负责发送每一轮并解析流，需要 AI SDK 5 或更高版本（`npm i ai`）：
 
 ```ts
-const API = 'https://api.agentconnect.md/v1'
-const { AGENTCONNECT_API_KEY, AGENTCONNECT_ORG_ID, AGENTCONNECT_AGENT_ID } = process.env
-type Minted = { token: string; relayUrl: string; conversationId: string; expiresAt: string }
-const tokens = new Map<string, Minted>()
+import { DefaultChatTransport } from 'ai'
 
-async function mint(conversationId?: string): Promise<Minted> {
-  const cached = conversationId ? tokens.get(conversationId) : undefined
-  if (cached && Date.parse(cached.expiresAt) - 30_000 > Date.now()) return cached
-  const res = await fetch(`${API}/orgs/${AGENTCONNECT_ORG_ID}/agents/${AGENTCONNECT_AGENT_ID}/webchat/token`, {
-    method: 'POST',
-    headers: { authorization: `Bearer ${AGENTCONNECT_API_KEY}`, 'content-type': 'application/json' },
-    body: JSON.stringify(conversationId ? { conversationId } : {})
-  })
-  if (!res.ok) throw Object.assign(new Error(`token mint failed: ${res.status}`), { status: res.status })
-  const minted = (await res.json()) as Minted
-  tokens.set(minted.conversationId, minted)
-  return minted
-}
+const transport = new DefaultChatTransport({
+  api: process.env.CHAT_URL,
+  headers: { Authorization: `Bearer ${process.env.AGENTCONNECT_API_KEY}` }
+})
+const stream = await transport.sendMessages({
+  trigger: 'submit-message',
+  chatId: 'chat-1', // the conversation; send the same id again to continue it
+  messageId: undefined,
+  abortSignal: undefined,
+  messages: [{ id: '1', role: 'user', parts: [{ type: 'text', text: 'How do I install the daemon?' }] }]
+})
+for await (const chunk of stream) if (chunk.type === 'text-delta') process.stdout.write(chunk.delta)
+```
 
+## 在浏览器中调用 [#from-a-browser]
+
+浏览器不能拿到密钥，所以要在你自己的服务器上、对话接口前面放一个路由。它加上密钥，把 `useChat` 的请求原样转发。Next.js 的路由处理器 `app/api/chat/route.ts`：
+
+```ts
 export async function POST(req: Request) {
-  const body = await req.json()
-  const userTurns = body.messages.filter((m: { role: string }) => m.role === 'user').length
-  const bound = req.headers.get('cookie')?.match(/(?:^|;\s*)chat_conversation=([0-9a-f-]{36})/)?.[1]
-  // A lone first question starts over; an unknown (404) or moved (409) conversation does too. Any other failure surfaces.
-  const reopen = (err: { status?: number }) => (err.status === 404 || err.status === 409 ? mint() : Promise.reject(err))
-  const { token, relayUrl, conversationId } =
-    userTurns > 1 && bound ? await mint(bound).catch(reopen) : await mint()
-
-  const upstream = await fetch(`${relayUrl}/ai-sdk/chat/${conversationId}`, {
+  const upstream = await fetch(process.env.CHAT_URL!, {
     method: 'POST',
-    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-    body: JSON.stringify(body),
+    headers: { Authorization: `Bearer ${process.env.AGENTCONNECT_API_KEY}`, 'Content-Type': 'application/json' },
+    body: await req.text(),
     signal: req.signal
   })
-  const headers = new Headers({ 'cache-control': 'no-store' })
-  for (const name of ['content-type', 'x-vercel-ai-ui-message-stream']) {
-    const value = upstream.headers.get(name)
-    if (value) headers.set(name, value)
-  }
-  headers.append('set-cookie', `chat_conversation=${conversationId}; Path=/; HttpOnly; Secure; SameSite=Lax`)
-  return new Response(upstream.body, { status: upstream.status, headers })
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: { 'Content-Type': 'text/event-stream', 'x-vercel-ai-ui-message-stream': 'v1' }
+  })
 }
 ```
 
-客户端把 `useChat` 的 transport 指向这个路由（`new DefaultChatTransport({ api: '/api/chat' })`）。
+页面上让 `useChat` 指向这个路由（`ai` 和 `@ai-sdk/react`，AI SDK 5 或更高版本）：
 
-本站自己的代理在 [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) 仓库中，另外做了按标签页区分的 cookie、有上限的 token 缓存和错误映射：见 [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts) 和 [`app/api/chat/route.ts`](https://github.com/agentconnect-md/docs/blob/main/app/api/chat/route.ts)。面板用的是 Fumadocs 的 AI 搜索组件。
+```tsx
+'use client'
+import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
+
+export default function Chat() {
+  const { messages, sendMessage } = useChat({ transport: new DefaultChatTransport({ api: '/api/chat' }) })
+  // Render messages, and call sendMessage({ text }) on submit.
+}
+```
+
+所有访客的会话都属于密钥的所有者，访客只能访问自己的 chat id 所对应的会话；`useChat` 生成的 id 是随机的。请在你的路由上对访客限流，AgentConnect 只按会话限制并发，不按访客限流。
+
+本站自己的路由在 [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) 仓库里，做得更多一些：chat id 由它自己生成，按打开的标签页存进 HttpOnly cookie，面板清空后开启新会话。见 [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts)。
+
+## 用决策筛选对话 [#decision-gate]
+
+API 卡片上的 **添加决策** 给 API 加上和频道 **按决策** 相同的规则：只有当[决策](/build-your-team/decisions)匹配调用的消息时 Agent 才回答，否则接口返回 `422`。决策无法评估的调用按没有决策门处理。规则里的 **最近评估** 列出决策判断过的每次调用及原因，只有能编辑这个 Agent 的成员可以看到。
 
 ## 会话与安全 [#sessions-and-safety]
 
-这样开启的会话是密钥所有者的普通 webchat 会话，来源显示为这个密钥。服务账号的会话对整个组织可见；个人密钥的会话对该用户[私密](/operate-govern/permissions-overview/session-visibility)。用量和其他对话一样计入这个 Agent；见[账单与用量](/operate-govern/billing-and-usage)。
+这样开启的会话是密钥所有者的一个普通 webchat 会话，来源显示为这个密钥。服务账号的会话对整个组织可见；个人密钥的会话对该用户[私有](/operate-govern/permissions-overview/session-visibility)。用量和其他对话一样计入 Agent；见[账单与用量](/operate-govern/billing-and-usage)。
 
 <Callout type="warn">
 Agent 每一轮收到的都是不可信输入。请据此配置它：
@@ -158,7 +157,8 @@ Agent 每一轮收到的都是不可信输入。请据此配置它：
 
 ## 故障排查 [#troubleshooting]
 
-- **`403` “limited to agent:chat”**——Agent 对话密钥被发到了 token 签发接口之外的接口。检查 URL，以及代理发送的是不是你想用的密钥。
-- **签发时 `404` “agent not found”**——密钥选中的 Agent 不包含这个 Agent。
-- **发送一轮时 `409`**——这个会话还有一轮在运行。等它结束，或开启新会话。
-- **部署后立即出现 `503`**——Agent 所在的 Daemon 正在重连。重试即可。
+- **`403` “this agent does not accept API calls”**：给 Agent 添加 API（见上文）。
+- **`403` “this API key cannot chat with agents”**：密钥的权限是 **只读**。创建一个 Agent 对话密钥。
+- **`404` “agent not found”**：密钥选中的 Agent 不包含这个 Agent。
+- **发送一轮时 `409`**：这个会话还有一轮在运行。等它结束，或换一个新的 chat `id`。
+- **部署后立即出现 `503`**：Agent 所在的 Daemon 正在重连。重试即可。
