@@ -23,14 +23,6 @@ Agent 对话 API 可以把 Agent 接到任何基于 [AI SDK](https://ai-sdk.dev)
 
 这种密钥只能调用一个接口，也就是下面的 token 签发接口，而且只对选中的 Agent 有效；其他任何请求都返回 `403`。和所有 [API 密钥](/api#create-a-key)一样，它只显示一次，默认 90 天后过期。
 
-通过 REST API 创建时，发送 `POST /v1/me/keys`：
-
-```json
-{ "orgId": "<orgId>", "name": "docs-site", "permission": "agent:chat", "agents": ["<agentId>"] }
-```
-
-`agents` 也可以是 `"all"`。
-
 ## 签发 token [#mint-a-token]
 
 每个会话用密钥签发一个 token：

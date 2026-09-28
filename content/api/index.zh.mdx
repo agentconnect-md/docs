@@ -27,7 +27,7 @@ import imgApiKey from '@/public/images/api-key.png'
 
 密钥**只显示一次**——请当场复制。之后列表中只会显示密钥尾部、过期时间和最近使用时间。
 
-通过 API 创建时，`POST /v1/me/keys` 用 `permission`（`full`，默认；`read`；或 `agent:chat`）和 `agents`（`"all"` 或 Agent id 列表）表达同样的选择。
+密钥只能在控制台中管理。API 密钥不能列出、创建或撤销密钥，也不能创建或删除组织；这些请求会返回 `403`。
 
 ## 使用密钥 [#use-it]
 

@@ -27,7 +27,7 @@ Everything the console does rides a REST API at `https://api.agentconnect.md` â€
 
 The key is displayed **exactly once** â€” copy it then. The list afterwards shows only the tail, expiry and last-used time.
 
-Through the API, `POST /v1/me/keys` takes the same choices as `permission` (`full`, the default; `read`; or `agent:chat`) and `agents` (`"all"` or a list of agent ids).
+Keys are managed only from the console. An API key cannot list, create or revoke keys, nor create or delete an organization; those requests answer `403`.
 
 ## Use it
 

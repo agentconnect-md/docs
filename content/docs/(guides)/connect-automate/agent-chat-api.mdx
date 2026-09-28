@@ -23,14 +23,6 @@ It takes three steps:
 
 This key can call exactly one route, the token mint below, and only for the selected agents; every other request answers `403`. Like any [API key](/api#create-a-key), it is shown once and expires after 90 days by default.
 
-Through the REST API, send `POST /v1/me/keys`:
-
-```json
-{ "orgId": "<orgId>", "name": "docs-site", "permission": "agent:chat", "agents": ["<agentId>"] }
-```
-
-`agents` may also be `"all"`.
-
 ## Mint a token
 
 Mint a token for each conversation with the key:
