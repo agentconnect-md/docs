@@ -16,7 +16,7 @@ It takes three steps:
 
 ## Create a key
 
-**Profile → API keys → New key**:
+Create it for a [service account](/operate-govern/permissions-overview/members-and-roles#service-accounts) under **Settings → Service accounts → Keys**, so it does not depend on any one person, or for yourself under **Profile → API keys**. Either way:
 
 - **Permission** — **Agent chat**.
 - **Agents** — **Selected agents**, then pick the agent.
@@ -146,7 +146,7 @@ This site's own proxy, in the [`agentconnect-md/docs`](https://github.com/agentc
 
 ## Sessions and safety
 
-A conversation opened this way is an ordinary webchat session of the key's owner. In the console it is [private](/operate-govern/permissions-overview/session-visibility) to that user, and its source shows the key. Its usage is metered on the agent like any other turn; see [Billing & usage](/operate-govern/billing-and-usage).
+A conversation opened this way is an ordinary webchat session of the key's owner, and its source shows the key. A service account's session is visible to the whole organization; a personal key's is [private](/operate-govern/permissions-overview/session-visibility) to that user. Its usage is metered on the agent like any other turn; see [Billing & usage](/operate-govern/billing-and-usage).
 
 <Callout type="warn">
 The agent receives untrusted input on every turn. Configure it for that:

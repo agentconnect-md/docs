@@ -16,7 +16,7 @@ Agent 对话 API 可以把 Agent 接到任何基于 [AI SDK](https://ai-sdk.dev)
 
 ## 创建密钥 [#create-a-key]
 
-**个人资料 → API 密钥 → 新建密钥**：
+在 **设置 → 服务账号 → 密钥**里为[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)创建，这样它不依赖任何一个人；也可以在 **个人资料 → API 密钥**里为自己创建。两种方式的选项相同：
 
 - **权限**——**Agent 对话**。
 - **Agent**——**指定 Agent**，然后选中这个 Agent。
@@ -146,7 +146,7 @@ export async function POST(req: Request) {
 
 ## 会话与安全 [#sessions-and-safety]
 
-这样开启的会话是密钥所有者的普通 webchat 会话。它在控制台中对该用户[私密](/operate-govern/permissions-overview/session-visibility)，来源显示为这个密钥。用量和其他对话一样计入这个 Agent；见[账单与用量](/operate-govern/billing-and-usage)。
+这样开启的会话是密钥所有者的普通 webchat 会话，来源显示为这个密钥。服务账号的会话对整个组织可见；个人密钥的会话对该用户[私密](/operate-govern/permissions-overview/session-visibility)。用量和其他对话一样计入这个 Agent；见[账单与用量](/operate-govern/billing-and-usage)。
 
 <Callout type="warn">
 Agent 每一轮收到的都是不可信输入。请据此配置它：
