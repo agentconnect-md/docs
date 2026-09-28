@@ -1,7 +1,7 @@
 ---
 title: "Gitea"
 icon: Gitea
-description: "Connect gitea.com or your own instance with one bot token, and trigger agents from issues, pull requests, comments and reviews."
+description: "Connect gitea.com or your own Gitea or Forgejo instance with one bot token, and trigger agents from issues, pull requests, comments and reviews."
 ---
 
 import imgGiteaAddIntegration from '@/public/images/gitea-add-integration.png'
@@ -13,7 +13,7 @@ A Gitea integration makes an agent **watch a repository**: issues, pull requests
 
 Where the GitHub integration acts through an installed App and GitLab gives each agent its own service account, Gitea uses **one bot user per organization**. Everything every agent does on Gitea — clone, push, comment, review, commit status — is attributed to that one user, and its personal access token is the only Gitea credential AgentConnect holds.
 
-Gitea **1.23 or later** is required. Forgejo and Codeberg are **not supported**: Forgejo forked from Gitea 1.22 and differs in the parts this integration depends on — token scopes, inline review comments, webhook headers, the event vocabulary — so AgentConnect refuses it rather than half-working.
+Gitea **1.23 or later** or Forgejo **15 or later** is required. A Forgejo instance, Codeberg included, works exactly like Gitea: it serves the same API, tokens and webhooks, and everything on this page applies to it unchanged.
 
 ## Connect Gitea
 
@@ -147,7 +147,7 @@ If the token is already rejected, a repository can park in **removal incomplete*
 
 ## Self-hosted instances
 
-Everything above works the same on your own instance. What differs is operator work, done once per deployment: pointing the deployment at the instance, and satisfying what the instance must provide (Gitea 1.23 or later, one HTTPS address, a trusted certificate, and an outbound webhook allowlist that lets Gitea reach the deployment). All of it lives in [Gitea on AgentConnect OSS](/self-hosting/provider-apps#gitea).
+Everything above works the same on your own instance. What differs is operator work, done once per deployment: pointing the deployment at the instance, and satisfying what the instance must provide (Gitea 1.23 or later or Forgejo 15 or later, one HTTPS address, a trusted certificate, and an outbound webhook allowlist that lets Gitea reach the deployment). All of it lives in [Gitea on AgentConnect OSS](/self-hosting/provider-apps#gitea).
 
 There is **no application to register**: Gitea's OAuth provider would add no identity of its own, since an operation made with an OAuth token is attributed to the authorizing user exactly as a hand-made token is. The bot user and its token are the whole identity.
 
