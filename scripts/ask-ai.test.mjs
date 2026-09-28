@@ -4,6 +4,7 @@ import {
   COOKIE_PREFIX,
   RELAY_RETRY_DELAY_MS,
   createChatHandler,
+  errorCode,
   foldLocation,
   isNewConversation,
   readConfig,
@@ -208,6 +209,18 @@ test('a busy conversation stays 409; other relay errors keep their status', asyn
     assert.equal(res.status, status)
     assert.deepEqual(await res.json(), { error: 'relay_failed' })
   }
+})
+
+test('a declined turn and an offline agent get codes of their own, so the panel can word them', async () => {
+  const declined = await handler(stubFetch({ relay: () => refused(422, 'declined') }))(chatRequest([user('q')]))
+  assert.equal(declined.status, 422)
+  assert.deepEqual(await declined.json(), { error: 'declined' })
+  for (const reason of ['no_agent', 'paused', 'draining']) {
+    const res = await handler(stubFetch({ relay: () => refused(503, reason) }))(chatRequest([user('q')]))
+    assert.deepEqual(await res.json(), { error: 'offline' }, reason)
+  }
+  assert.equal(errorCode(422, undefined), 'relay_failed')
+  assert.equal(errorCode(503, 'not_holder'), 'relay_failed')
 })
 
 test('a not_holder refusal is retried once after a pause, then streamed', async () => {

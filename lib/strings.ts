@@ -33,6 +33,8 @@ const en = {
       disabled: 'Ask AI is not available right now.',
       busy: 'Still answering your previous question. Try again when it finishes.',
       rateLimited: 'Too many questions in a short time. Try again in a minute.',
+      declined: 'I can only help with questions about AgentConnect.',
+      offline: 'The assistant is offline right now. Try again later.',
       failed: 'Something went wrong. Please try again.'
     }
   }
@@ -74,6 +76,8 @@ const zh: Strings = {
       disabled: '问 AI 暂时不可用。',
       busy: '上一个问题还在回答中，请等它结束后再试。',
       rateLimited: '提问太频繁，请一分钟后再试。',
+      declined: '我只能回答和 AgentConnect 相关的问题。',
+      offline: '助手暂时离线，请稍后再试。',
       failed: '出错了，请重试。'
     }
   }

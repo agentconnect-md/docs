@@ -253,14 +253,20 @@ function Message({ message, pending, ...props }: { message: ChatUIMessage; pendi
 }
 
 // The route answers `{ error }` codes; `useChat` surfaces the body as the error message.
-function errorText(error: Error, labels: AskAiLabels): string {
-  let code: unknown
+function errorCode(error: Error): unknown {
   try {
-    code = (JSON.parse(error.message) as { error?: unknown }).error
-  } catch {}
+    return (JSON.parse(error.message) as { error?: unknown }).error
+  } catch {
+    return undefined
+  }
+}
+
+function errorText(error: Error, labels: AskAiLabels): string {
+  const code = errorCode(error)
   if (code === 'disabled') return labels.errors.disabled
   if (code === 'busy') return labels.errors.busy
   if (code === 'rate_limited') return labels.errors.rateLimited
+  if (code === 'offline') return labels.errors.offline
   return labels.errors.failed
 }
 
@@ -277,6 +283,16 @@ export function AISearch({ labels, children }: { labels: AskAiLabels; children: 
     id: 'search',
     transport: new DefaultChatTransport({ api: `${BASE_PATH}/api/chat`, body: { tab } })
   })
+  // A question the docs agent's Decision declined is answered in the conversation, so it stays under the question it refused.
+  const { error, setMessages, clearError } = chat
+  useEffect(() => {
+    if (!error || errorCode(error) !== 'declined') return
+    setMessages((messages) => [
+      ...messages,
+      { id: crypto.randomUUID(), role: 'assistant', parts: [{ type: 'text', text: labels.errors.declined }] }
+    ])
+    clearError()
+  }, [error, setMessages, clearError, labels])
 
   return <Context value={useMemo(() => ({ chat, open, setOpen, labels }), [chat, open, labels])}>{children}</Context>
 }
