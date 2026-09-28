@@ -75,7 +75,7 @@ GitHub Webhook 需要一个可访问的 HTTPS Relay。在默认的本地 HTTP �
 
 | 要求                     | 原因                                                                                                                                                                   |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Gitea 1.23 或更高版本，或 Forgejo 15 或更高版本** | Gitea 1.23 是限定范围的令牌模型和评审请求 Webhook 都趋于稳定的版本；Forgejo 15 是 Forgejo 仍在维护的最早版本线。Forgejo 会先报告自己的版本（`15.0.9+gitea-1.22.0`），版本下限读取的就是这个数字。`GET /api/v1/version` 无需令牌即可响应，因此版本下限会在保存 URL 时检查，并在每次连接时再次检查。 |
+| **Gitea 1.23 或更高版本，或 Forgejo 15 或更高版本** | 从 Gitea 1.23 起，Pull Request 评论的 Webhook 才包含 Pull Request 本身，在 Pull Request 中提及 Agent 以及由评论发起的评审都依赖它；Forgejo 15 是 Forgejo 仍在维护的最早版本线。Forgejo 会先报告自己的版本（`15.0.9+gitea-1.22.0`），版本下限读取的就是这个数字。`GET /api/v1/version` 无需令牌即可响应，因此版本下限会在保存 URL 时检查，并在每次连接时再次检查。 |
 | **HTTPS，单一地址**      | 克隆 URL、提供给 Agent 的仓库地址以及 Gitea 自身的 `html_url` 值只有在只有一个地址时才能一致。内外网地址拆分应当在 DNS 层解决。                                        |
 | **受信任的证书**         | 任何层都没有跳过验证的选项。私有 CA 可以通过[安装其证书包](/self-hosting/docker-compose/configuration#private-certificate-authorities)来支持。                          |
 | **启用 HTTP Git**        | 克隆、拉取和推送全部通过 HTTPS 并使用机器人的令牌进行。SSH 远程仓库和明文 HTTP 不在约定范围内。                                                                        |
