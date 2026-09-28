@@ -8,20 +8,27 @@ The agent chat API puts an agent behind any chat UI built on the [AI SDK](https:
 
 Typical uses are an "Ask AI" panel on a documentation site or a support widget. The Ask AI panel on this site works this way.
 
-It takes three steps:
+It takes four steps:
 
-1. Create an API key limited to agent chat.
-2. For each conversation, your proxy exchanges the key for a short-lived token.
-3. For each turn, your proxy forwards the `useChat` request with that token and streams the reply back.
+1. Add the API to the agent.
+2. Create an API key limited to agent chat.
+3. For each conversation, your proxy exchanges the key for a short-lived token.
+4. For each turn, your proxy forwards the `useChat` request with that token and streams the reply back.
+
+## Add the API to the agent
+
+An agent accepts API calls only after you add the API to it. On the agent's **Integrations** tab, choose **Add integration**, then **API** under **Workflow**, pick **AI SDK UI**, and choose **Add API**.
+
+The agent's **API** card then lists the protocol. Its **Quickstart** shows this deployment's endpoints, a proxy snippet, and the Agent chat keys that reach the agent. Removing the API from the card stops the agent accepting calls: new tokens are refused at once, and a token already in use within its five-minute lifetime.
 
 ## Create a key
 
-Create it for a [service account](/operate-govern/permissions-overview/members-and-roles#service-accounts) under **Settings → Service accounts → Keys**, so it does not depend on any one person, or for yourself under **Profile → API keys**. Either way:
+Choose **Create key** in the Quickstart: it opens the key dialog set to Agent chat on this agent, and its **Owner** is you or, for an organization owner, a [service account](/operate-govern/permissions-overview/members-and-roles#service-accounts), so the key does not depend on any one person. You can also create it under **Settings → Service accounts → Keys** or **Profile → API keys**. Either way:
 
 - **Permission** — **Agent chat**.
 - **Agents** — **Selected agents**, then pick the agent.
 
-This key can call exactly one route, the token mint below, and only for the selected agents; every other request answers `403`. Like any [API key](/api#create-a-key), it is shown once and expires after 90 days by default.
+This key can call exactly one route, the token mint below, and only for the selected agents that have added the API; every other request answers `403`. Like any [API key](/api#create-a-key), it is shown once and expires after 90 days by default.
 
 ## Mint a token
 
@@ -62,10 +69,11 @@ The response is `text/event-stream` with the header `x-vercel-ai-ui-message-stre
 - A request body may be up to 4 MiB, and a turn's text up to 128 KiB. Larger requests answer `413`.
 - One turn runs at a time in a conversation. A second POST while one is running answers `409`.
 
-When the agent's daemon refuses a turn, the status arrives before any stream:
+When the turn is refused, the status arrives before any stream:
 
 | Status | Meaning |
 | --- | --- |
+| `403` | The agent has not added the API (`api_disabled`). |
 | `409` | A turn is still running in this conversation. |
 | `503` | The agent is offline, paused or draining. |
 | `404` | The conversation no longer exists. |
@@ -158,6 +166,7 @@ The agent receives untrusted input on every turn. Configure it for that:
 
 ## Troubleshooting
 
+- **`403` "this agent does not accept API calls"** — on the mint or a turn, the agent has not added the API, or it was removed. [Add it](#add-the-api-to-the-agent) under the agent's Integrations.
 - **`403` "limited to agent:chat"** — an Agent chat key reached a route other than the token mint. Check the URL, and that the proxy sends the key you meant.
 - **`404` "agent not found" on the mint** — the key's agent selection does not include this agent.
 - **`409` on a turn** — a turn is still running in this conversation. Wait for it to finish, or start a new conversation.

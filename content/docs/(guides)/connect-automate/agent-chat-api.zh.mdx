@@ -8,20 +8,27 @@ Agent 对话 API 可以把 Agent 接到任何基于 [AI SDK](https://ai-sdk.dev)
 
 常见用法是文档站上的 “Ask AI” 面板或客服窗口。本站的 Ask AI 面板就是这样实现的。
 
-一共三步：
+一共四步：
 
-1. 创建一个仅限 Agent 对话的 API 密钥。
-2. 每个会话开始时，代理用密钥换取一个短期 token。
-3. 每一轮对话，代理带着这个 token 转发 `useChat` 的请求，再把回复流式传回浏览器。
+1. 给 Agent 添加 API。
+2. 创建一个仅限 Agent 对话的 API 密钥。
+3. 每个会话开始时，代理用密钥换取一个短期 token。
+4. 每一轮对话，代理带着这个 token 转发 `useChat` 的请求，再把回复流式传回浏览器。
+
+## 给 Agent 添加 API [#add-the-api-to-the-agent]
+
+Agent 只有添加了 API 才接受 API 调用。在 Agent 的 **集成** 标签页选择 **添加集成**，在 **工作流** 下选 **API**，选中 **AI SDK UI**，再点 **添加 API**。
+
+之后 Agent 的 **API** 卡片会列出这个协议。卡片上的 **快速开始** 给出本部署的接口地址、一段代理示例代码，以及能调用这个 Agent 的 Agent 对话密钥。在卡片上移除 API 后，Agent 不再接受调用：新 token 立即被拒绝，正在使用的 token 在其 5 分钟有效期内失效。
 
 ## 创建密钥 [#create-a-key]
 
-在 **设置 → 服务账号 → 密钥**里为[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)创建，这样它不依赖任何一个人；也可以在 **个人资料 → API 密钥**里为自己创建。两种方式的选项相同：
+在快速开始里点 **创建密钥**：它会打开已设为这个 Agent 的 Agent 对话权限的密钥对话框，**所有者** 可以是你自己，组织所有者还可以选[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)，这样密钥不依赖任何一个人。也可以在 **设置 → 服务账号 → 密钥** 或 **个人资料 → API 密钥** 里创建。两种方式的选项相同：
 
 - **权限**——**Agent 对话**。
 - **Agent**——**指定 Agent**，然后选中这个 Agent。
 
-这种密钥只能调用一个接口，也就是下面的 token 签发接口，而且只对选中的 Agent 有效；其他任何请求都返回 `403`。和所有 [API 密钥](/api#create-a-key)一样，它只显示一次，默认 90 天后过期。
+这种密钥只能调用一个接口，也就是下面的 token 签发接口，而且只对选中且已添加 API 的 Agent 有效；其他任何请求都返回 `403`。和所有 [API 密钥](/api#create-a-key)一样，它只显示一次，默认 90 天后过期。
 
 ## 签发 token [#mint-a-token]
 
@@ -62,10 +69,11 @@ curl -N -X POST "$RELAY_URL/ai-sdk/chat/$CONVERSATION_ID" \
 - 请求体最大 4 MiB，一轮的文本最大 128 KiB，超出返回 `413`。
 - 一个会话同一时间只运行一轮。上一轮还在运行时再次 POST，返回 `409`。
 
-Agent 所在的 Daemon 拒绝这一轮时，状态码会在任何流之前返回：
+这一轮被拒绝时，状态码会在任何流之前返回：
 
 | 状态码 | 含义 |
 | --- | --- |
+| `403` | Agent 没有添加 API（`api_disabled`）。 |
 | `409` | 这个会话还有一轮在运行。 |
 | `503` | Agent 离线、已暂停或正在排空。 |
 | `404` | 会话已不存在。 |
@@ -158,6 +166,7 @@ Agent 每一轮收到的都是不可信输入。请据此配置它：
 
 ## 故障排查 [#troubleshooting]
 
+- **`403` “this agent does not accept API calls”**——签发或发送一轮时，这个 Agent 没有添加 API，或者已被移除。在 Agent 的集成里[添加](#add-the-api-to-the-agent)即可。
 - **`403` “limited to agent:chat”**——Agent 对话密钥被发到了 token 签发接口之外的接口。检查 URL，以及代理发送的是不是你想用的密钥。
 - **签发时 `404` “agent not found”**——密钥选中的 Agent 不包含这个 Agent。
 - **发送一轮时 `409`**——这个会话还有一轮在运行。等它结束，或开启新会话。
