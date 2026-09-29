@@ -129,13 +129,17 @@ Setup 会构建并检查当前的 Slack manifest，包括 OAuth、Events API 和
 
 ## Google Chat 部署应用 [#google-chat-deployment-app]
 
-**Google Chat** 卡片位于 **Google** 卡片下方，用来为整个部署配置一个 Chat 应用。Agent 在自己的 Google Chat 向导中选择**使用部署自带的应用**即可安装它；任何 Agent 也仍然可以改为连接自己的 Chat 应用，参见 [Google Chat](/connect-automate/chat-platforms/googlechat)。
+**Google Chat** 卡片位于 **Google** 卡片下方，用来为整个部署配置一个 Chat 应用。每个 Google Workspace 组织安装这个应用，再在 Google Chat 里自行完成连接，应用就会挂到其 AgentConnect 组织内置的 **AgentConnect** Agent 上，参见[连接部署自带的应用](/connect-automate/chat-platforms/googlechat#connect-the-deployments-app)。任何 Agent 也仍然可以改为连接自己的 Chat 应用。
 
-1. 配置部署的公开回调地址。Google 只通过 HTTPS 回调投递 Chat 事件，所以这张卡片要求先有它。
-2. 按照[创建应用](/connect-automate/chat-platforms/googlechat#create-the-app)在 Google Cloud 中创建 Chat 应用，并把卡片显示的 **HTTP endpoint URL** 和 **Authentication audience**（**Project Number**）填入应用配置。
-3. 在 Setup 中打开 **Google Chat**，填入**项目 ID**、可选的**项目编号**和**服务账号密钥 JSON**，然后选择**保存 Google Chat 应用**。
+1. 配置部署的公开回调地址，并通过 HTTPS 提供控制台。Google 只通过 HTTPS 回调投递 Chat 事件，组织自行连接时使用的页面也要求控制台是 HTTPS。
+2. 开启 [Google 登录](/self-hosting/sign-in#google-sign-in)。用户要用自己在 Google Chat 中使用的 Google 账号登录，才能连接他们的 Workspace。
+3. 按照[创建应用](/connect-automate/chat-platforms/googlechat#create-the-app)在 Google Cloud 中创建 Chat 应用，填入卡片显示的 **HTTP endpoint URL**，并添加 `/help` 斜杠命令。
+4. 在 Setup 中打开 **Google Chat**，填入**项目 ID**、可选的**项目编号**和**服务账号密钥 JSON**，然后选择**保存 Google Chat 应用**。
+5. 重启 AgentConnect。
 
-Setup 会像 Agent 向导一样向 Google 验证项目和密钥，并以只写方式保存密钥。之后每个 Agent 的 Google Chat 向导都会提供**使用部署自带的应用**。当前版本中一个应用只服务一个 Agent，所以它同一时间只能装在一个 Agent 上；第一个 Agent 的集成被移除之前，其他 Agent 安装会被拒绝。该应用的密钥在这里管理，而不是在控制台中。保存新密钥不会更新已经装在 Agent 上的应用：到那个 Agent 上再点一次**使用部署自带的应用**，它才会换成当前密钥；请在吊销旧密钥之前完成这一步。
+Setup 会像 Agent 向导一样向 Google 验证项目和密钥，并以只写方式保存密钥。该应用的密钥在这里管理，而不是在控制台中；保存新密钥并重启之后，所有已连接的 Workspace 都会使用新密钥，所以请在重启之后再吊销旧密钥。
+
+在 Google Workspace Marketplace 上公开发布之前，只有你自己的 Workspace 组织能安装这个应用。要让其他组织使用，请先发布它。打开 `google-chat` 功能开关后，内置 Agent 的 Google Chat 向导会链接到应用的 Marketplace 页面。
 
 ## Lark 和飞书租户应用 [#lark-and-feishu-tenant-apps]
 

@@ -14,7 +14,7 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 | [Telegram](/connect-automate/chat-platforms/telegram)         | 私信和群组消息                                  | 来自 @BotFather 的机器人令牌                      |
 | [Discord](/connect-automate/chat-platforms/discord)           | 频道、线程和私信                                | 机器人令牌；AgentConnect 会生成邀请链接           |
 | [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)   | 群组 @ 提及和一对一聊天                         | 一键应用配置，或 App ID + 密钥                    |
-| [Google Chat](/connect-automate/chat-platforms/googlechat)    | 空间中的 @ 提及和私信                           | Chat 应用的服务账号密钥，或部署自带的应用         |
+| [Google Chat](/connect-automate/chat-platforms/googlechat)    | 空间中的 @ 提及和私信                           | 从 Google Workspace Marketplace 安装的应用，或你自己 Chat 应用的服务账号密钥 |
 | [GitHub](/connect-automate/triggers-automation/github)        | 所监视仓库中的 Issue、PR 和评论                 | AgentConnect 的 GitHub App                        |
 | [GitLab](/connect-automate/triggers-automation/gitlab)        | 所监视项目中的 Issue、Merge Request 和评论      | 一个 OAuth 连接；每个 Agent 拥有自己的机器人      |
 | [Gitea](/connect-automate/triggers-automation/gitea)          | 所监视仓库中的 Issue、PR、评论和评审            | 每个组织一个机器人用户的令牌                      |
@@ -32,7 +32,7 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 - 删除集成会**释放机器人**而不是销毁它——可以通过**使用已有机器人**选择器把它复用给另一个 Agent。
 - 机器人在**集成 → 消息应用**中按组织统一管理：参见[机器人](/connect-automate/chat-platforms/bots)。
 
-平台卡片会根据 Agent 所在 Daemon 支持的能力启用。在 AgentConnect Cloud 上，Slack 和 Lark / 飞书提供引导式设置，Telegram 和 Discord 从机器人令牌开始，Google Chat 则从你自己的 Chat 应用的服务账号密钥开始。自托管的运维人员可以在各平台的设置中选择直接连接，或由 Relay（中继）承接的回调；Google Chat 只通过回调投递。
+平台卡片会根据 Agent 所在 Daemon 支持的能力启用。在 AgentConnect Cloud 上，Slack 和 Lark / 飞书提供引导式设置，Telegram 和 Discord 从机器人令牌开始，Google Chat 则为内置 Agent 从 Google Workspace Marketplace 安装 AgentConnect 应用，或用服务账号密钥连接你自己的 Chat 应用。自托管的运维人员可以在各平台的设置中选择直接连接，或由 Relay（中继）承接的回调；Google Chat 只通过回调投递。
 
 ## 绑定频道 [#binding-channels]
 
