@@ -64,4 +64,4 @@ AgentConnect 会先向 Google 验证密钥，再保存；每次尝试之后都�
 
 ## 自托管 [#self-hosting]
 
-自托管部署需要先配置好公开的回调地址，和 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 的要求一样。打开 `google-chat` 功能开关后，Google Chat 才会出现在集成选择列表中：Helm chart 默认关闭它（`features.googleChat`）；Docker Compose 则在 [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) 的 `FEATURE_FLAGS` 中加入 `google-chat`，然后重建 `web`。运维者还可以配置一个[部署自带的 Chat 应用](/self-hosting/provider-apps#google-chat-deployment-app)，通过各组织内置的 **AgentConnect** Agent 服务所有组织；这时该 Agent 的向导会先提供它，选择**改用你自己的 Google Chat 应用**即可按上面的步骤操作。
+自托管部署需要先配置好公开的回调地址，和 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 的要求一样。运维者还可以配置一个[部署自带的 Chat 应用](/self-hosting/provider-apps#google-chat-deployment-app)，通过各组织内置的 **AgentConnect** Agent 服务所有组织。
