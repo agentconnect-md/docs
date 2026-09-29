@@ -15,8 +15,14 @@ import {
 import { flushSync } from 'react-dom'
 import { Loader2, MessageCircleIcon, RefreshCw, Send, X } from 'lucide-react'
 import { useChat, type UseChatHelpers } from '@ai-sdk/react'
-import { DefaultChatTransport, type UIMessage } from 'ai'
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithApprovalResponses,
+  lastAssistantMessageIsCompleteWithToolCalls,
+  type UIMessage
+} from 'ai'
 import { BASE_PATH } from '@/base-path.mjs'
+import { openAgentQuestions } from '@/lib/ask-ai'
 import { cn } from '@/lib/cn'
 import type { Strings } from '@/lib/strings'
 import { buttonVariants } from '../ui/button'
@@ -281,7 +287,10 @@ export function AISearch({ labels, children }: { labels: AskAiLabels; children: 
   const [tab] = useState(tabHandle)
   const chat = useChat<ChatUIMessage>({
     id: 'search',
-    transport: new DefaultChatTransport({ api: `${BASE_PATH}/api/chat`, body: { tab } })
+    transport: new DefaultChatTransport({ api: `${BASE_PATH}/api/chat`, body: { tab } }),
+    // The answers below go back at once, so the turn carries on without them.
+    sendAutomaticallyWhen: (options) =>
+      lastAssistantMessageIsCompleteWithApprovalResponses(options) || lastAssistantMessageIsCompleteWithToolCalls(options)
   })
   // A question the docs agent's Decision declined is answered in the conversation, so it stays under the question it refused.
   const { error, setMessages, clearError } = chat
@@ -293,6 +302,17 @@ export function AISearch({ labels, children }: { labels: AskAiLabels; children: 
     ])
     clearError()
   }, [error, setMessages, clearError, labels])
+
+  // Nobody here answers the agent: its questions are dismissed and its tool approvals refused, which never reach its editors.
+  const { messages, status, addToolOutput, addToolApprovalResponse } = chat
+  useEffect(() => {
+    const last = messages.at(-1)
+    if (status !== 'ready' || last?.role !== 'assistant') return
+    const { dismiss, refuse } = openAgentQuestions(last.parts)
+    for (const toolCallId of dismiss)
+      void addToolOutput({ state: 'output-error', tool: 'agentconnect_ask' as never, toolCallId, errorText: 'unanswered' })
+    for (const id of refuse) void addToolApprovalResponse({ id, approved: false })
+  }, [messages, status, addToolOutput, addToolApprovalResponse])
 
   return <Context value={useMemo(() => ({ chat, open, setOpen, labels }), [chat, open, labels])}>{children}</Context>
 }

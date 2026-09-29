@@ -48,7 +48,7 @@ curl -N "$CHAT_URL" \
 
 - 用一个新的 `id` 发出的第一轮会开启会话，之后用同一个 `id` 继续。`useChat` 为每个对话生成一个 `id`，每一轮都会带上。
 - 会话属于密钥的所有者。用另一位成员的密钥发送同一个 `id`，是另一个会话。
-- Relay 只读取最后一条用户消息里的文本部分。Agent 的会话里已经有历史，所以更早的消息、文件部分和 `data-*` 部分都会被忽略。
+- Relay 只读取最后一条用户消息里的文本部分。Agent 的会话里已经有历史，所以更早的消息、文件部分和 `data-*` 部分都会被忽略。如果请求的最后一条消息是在回答 Agent 的提问，则会继续那一轮，见[提问与审批](#questions-and-approvals)。
 
 响应是 `text/event-stream`，带响应头 `x-vercel-ai-ui-message-stream: v1`。其中的各部分遵循 AI SDK 协议，流以 `[DONE]` 结束。
 
@@ -64,7 +64,7 @@ curl -N "$CHAT_URL" \
 | `401` | 密钥未知、已吊销或已过期。 |
 | `403` | 密钥不是 Agent 对话密钥或完全访问密钥，或者 Agent 还没有添加 API（`api_disabled`）。 |
 | `404` | 密钥选中的 Agent 不包含这个 Agent，或者你看不到它。 |
-| `409` | 这个会话还有一轮在运行（`busy`），或者自上次对话以来 Agent 已迁移（`agent_moved`）；后一种情况请开启新会话。 |
+| `409` | 这个会话还有一轮在运行（`busy`），自上次对话以来 Agent 已迁移（`agent_moved`），或者回答对应的那一轮已经结束（`turn_ended`）。遇到 `agent_moved` 请开启新会话。 |
 | `413` | 请求体或这一轮的文本过大。 |
 | `422` | API 的决策门拒绝了这一轮（`declined`）。 |
 | `503` | Agent 离线、已暂停或正在排空。 |
@@ -79,12 +79,32 @@ curl -N "$CHAT_URL" \
 | `data-plan` | Agent 的计划。 |
 | `data-notice` | 状态提示，比如 “Starting sandbox…”。 |
 | `message-metadata` | 会话标题。 |
+| `dynamic-tool` | Agent 的提问（`agentconnect_ask`）或工具审批（`agentconnect_approval`），见[提问与审批](#questions-and-approvals)。 |
 
 只渲染文本的客户端只会显示回复。`useChat` 的 `stop()` 只会中止这次请求：这一轮仍会跑完，输出会进入控制台里这个会话的记录。中断的流暂时无法恢复。
 
+## 提问与审批 [#questions-and-approvals]
+
+一轮对话可能会停在只有调用方能回答的地方：Agent 提了一个问题，或者它要运行的工具需要批准。流会把它作为一次工具调用（`dynamic-tool` 部分）交给你，并以结束原因 `tool-calls` 结束。这一轮会等你回答。
+
+| 工具 | 问什么 | 怎么回答 |
+| --- | --- | --- |
+| `agentconnect_ask` | 一个问题。`input.message` 是问题本身，`input` 里还有可选的 `options`、一个 `text` 或 `number` 输入、多个 `fields`，或者一个要打开的 `url`。 | 用 `addToolOutput` 回答：选中的值，多选时是一个列表，`fields` 时按字段各给一个值，`url` 则在打开后原样返回。`state: 'output-error'` 表示跳过这个问题。 |
+| `agentconnect_approval` | 批准一次工具调用。`input.tool` 是工具名，`input.detail` 是一行摘要，比如要执行的命令。 | `addToolApprovalResponse({ id, approved })`。 |
+
+把回答作为下一次请求发出。把 `sendAutomaticallyWhen` 设为 `lastAssistantMessageIsCompleteWithToolCalls` 或 `lastAssistantMessageIsCompleteWithApprovalResponses`，`useChat` 就会自动发出。Relay 会继续同一轮，剩下的回复流进同一条 assistant 消息。每个工具调用的 `callProviderMetadata` 标明它属于哪一轮，所以要把流生成的 assistant 消息原样发回。
+
+拒绝审批会立即生效，Agent 的编辑者看不到这个请求。批准则要看密钥：如果密钥的所有者本来就能在控制台里批准，也就是能编辑这个 Agent 的人持有的**完全访问**密钥，批准直接生效；用其他密钥批准时，请求会交给 Agent 的编辑者在控制台里处理，这一轮等他们决定。公开站点可以在代码里拒绝所有审批，访客就永远不会打扰到编辑者；本站的 Ask AI 面板就是这样做的。
+
+一轮对话不会一直等下去：
+
+- 10 分钟没有回答，这一轮会被取消。
+- 不回答而是发了新消息，这一轮会被取消，新消息开启自己的一轮。
+- 回答的那一轮已经结束时，返回 `409` 和 `turn_ended`。
+
 ## 在 Node 中调用 [#from-node]
 
-AI SDK 的 `DefaultChatTransport` 负责发送每一轮并解析流，需要 AI SDK 5 或更高版本（`npm i ai`）：
+AI SDK 的 `DefaultChatTransport` 负责发送每一轮并解析流，需要 AI SDK 6 或更高版本（`npm i ai`）：
 
 ```ts
 import { DefaultChatTransport } from 'ai'
@@ -122,7 +142,7 @@ export async function POST(req: Request) {
 }
 ```
 
-页面上让 `useChat` 指向这个路由（`ai` 和 `@ai-sdk/react`，AI SDK 5 或更高版本）：
+页面上让 `useChat` 指向这个路由（`ai` 和 `@ai-sdk/react`，AI SDK 6 或更高版本）：
 
 ```tsx
 'use client'
@@ -161,4 +181,5 @@ Agent 每一轮收到的都是不可信输入。请据此配置它：
 - **`403` “this API key cannot chat with agents”**：密钥的权限是 **只读**。创建一个 Agent 对话密钥。
 - **`404` “agent not found”**：密钥选中的 Agent 不包含这个 Agent。
 - **发送一轮时 `409`**：这个会话还有一轮在运行。等它结束，或换一个新的 chat `id`。
+- **回答时 `409` `turn_ended`**：那一轮等了 10 分钟没等到回答，或者被新消息取代了。请发一条新消息重新提问。
 - **部署后立即出现 `503`**：Agent 所在的 Daemon 正在重连。重试即可。

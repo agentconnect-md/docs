@@ -48,7 +48,7 @@ The body's `id`, 1 to 128 characters, names the conversation:
 
 - The first turn with a new `id` opens a conversation; the same `id` continues it. `useChat` generates an `id` per chat and sends it on every turn.
 - Conversations belong to the key's owner. The same `id` sent with another member's key is a different conversation.
-- The relay reads only the text parts of the last user message. The agent's session already holds the history, so earlier messages, file parts and `data-*` parts are ignored.
+- The relay reads only the text parts of the last user message. The agent's session already holds the history, so earlier messages, file parts and `data-*` parts are ignored. A request whose last message answers the agent's questions continues its turn instead; see [Questions and approvals](#questions-and-approvals).
 
 The response is `text/event-stream` with the header `x-vercel-ai-ui-message-stream: v1`. Its parts follow the AI SDK protocol, and the stream ends with `[DONE]`.
 
@@ -64,7 +64,7 @@ Refusals arrive as a status before any stream, with a JSON body whose `reason` n
 | `401` | The key is unknown, revoked or expired. |
 | `403` | The key is not an Agent chat or full key, or the agent has not added the API (`api_disabled`). |
 | `404` | The key's agent selection does not include this agent, or you cannot see it. |
-| `409` | A turn is still running in this conversation (`busy`), or the agent moved since the conversation ran (`agent_moved`); start a new conversation for the latter. |
+| `409` | A turn is still running in this conversation (`busy`), the agent moved since the conversation ran (`agent_moved`), or the turn an answer belongs to has ended (`turn_ended`). Start a new conversation after `agent_moved`. |
 | `413` | The body or the turn's text is too large. |
 | `422` | The API's Decision gate declined the turn (`declined`). |
 | `503` | The agent is offline, paused or draining. |
@@ -79,12 +79,32 @@ Refusals arrive as a status before any stream, with a JSON body whose `reason` n
 | `data-plan` | The agent's plan. |
 | `data-notice` | Status notices, such as "Starting sandbox…". |
 | `message-metadata` | The session title. |
+| `dynamic-tool` | The agent's question (`agentconnect_ask`) or a tool approval (`agentconnect_approval`); see [Questions and approvals](#questions-and-approvals). |
 
 A client that renders only text shows only the reply. `stop()` in `useChat` aborts only the fetch: the turn still finishes, and its output lands in the session's transcript in the console. An interrupted stream cannot be resumed yet.
 
+## Questions and approvals [#questions-and-approvals]
+
+A turn can stop on something only the caller can answer: the agent asks a question, or a tool it wants to run needs approval. The stream hands it over as a tool call, a `dynamic-tool` part, and ends with the finish reason `tool-calls`. The turn waits for the answer.
+
+| Tool | What it asks | How to answer |
+| --- | --- | --- |
+| `agentconnect_ask` | A question. `input.message` asks it, and `input` holds the `options` to choose from, a `text` or `number` field, several `fields`, or a `url` to open. | `addToolOutput` with the chosen value, a list for a multi-select, a value per field for `fields`, or the `url` once opened. `state: 'output-error'` dismisses the question. |
+| `agentconnect_approval` | Approval for one tool call. `input.tool` names the tool and `input.detail` summarizes it in one line, such as the command. | `addToolApprovalResponse({ id, approved })`. |
+
+Send the answer as the next request. `useChat` does that on its own with `sendAutomaticallyWhen` set to `lastAssistantMessageIsCompleteWithToolCalls` or `lastAssistantMessageIsCompleteWithApprovalResponses`. The relay continues the same turn, and the rest of the reply streams into the same assistant message. Each tool call's `callProviderMetadata` names the turn it belongs to, so send the assistant message back as the stream built it.
+
+A refused approval takes effect at once, and the agent's editors never see it. A granted one takes effect when the key's owner could approve it in the console: a **Full access** key whose owner can edit the agent. Granted with any other key, it goes to the agent's editors to approve in the console, and the turn waits for them. A public site can refuse every approval in code, so its visitors never reach the editors; this site's Ask AI panel does.
+
+A turn does not wait forever:
+
+- Left unanswered for 10 minutes, it is cancelled.
+- A new message instead of an answer cancels it, and the message starts a turn of its own.
+- An answer to a turn that has already ended gets `409` with `turn_ended`.
+
 ## From Node [#from-node]
 
-The AI SDK's `DefaultChatTransport` sends turns and parses the stream. It needs AI SDK 5 or later (`npm i ai`):
+The AI SDK's `DefaultChatTransport` sends turns and parses the stream. It needs AI SDK 6 or later (`npm i ai`):
 
 ```ts
 import { DefaultChatTransport } from 'ai'
@@ -122,7 +142,7 @@ export async function POST(req: Request) {
 }
 ```
 
-On the page, point `useChat` at it (`ai` and `@ai-sdk/react`, AI SDK 5 or later):
+On the page, point `useChat` at it (`ai` and `@ai-sdk/react`, AI SDK 6 or later):
 
 ```tsx
 'use client'
@@ -161,4 +181,5 @@ The agent receives untrusted input on every turn. Configure it for that:
 - **`403` "this API key cannot chat with agents"**: the key's permission is **Read-only**. Create an Agent chat key.
 - **`404` "agent not found"**: the key's agent selection does not include this agent.
 - **`409` on a turn**: a turn is still running in this conversation. Wait for it to finish, or use a new chat `id`.
+- **`409` `turn_ended` on an answer**: the turn waited 10 minutes without one, or a new message replaced it. Ask again in a new message.
 - **`503` right after a deployment**: the agent's daemon is reconnecting. Retry.

@@ -97,6 +97,21 @@ export function foldLocation(body: ChatBody): ChatBody {
   return { ...body, messages: messages.map((m, i) => (i === index ? folded : m)) }
 }
 
+/** The agent's open questions and tool approvals in a message; the panel answers none, so it dismisses and refuses each. */
+export function openAgentQuestions(parts: readonly unknown[]): { dismiss: string[]; refuse: string[] } {
+  const dismiss: string[] = []
+  const refuse: string[] = []
+  for (const part of parts) {
+    const p = part as { type?: unknown; toolName?: unknown; state?: unknown; toolCallId?: unknown; approval?: { id?: unknown } }
+    if (p.type !== 'dynamic-tool') continue
+    if (p.toolName === 'agentconnect_ask' && p.state === 'input-available' && typeof p.toolCallId === 'string')
+      dismiss.push(p.toolCallId)
+    if (p.toolName === 'agentconnect_approval' && p.state === 'approval-requested' && typeof p.approval?.id === 'string')
+      refuse.push(p.approval.id)
+  }
+  return { dismiss, refuse }
+}
+
 function json(status: number, error: string, headers?: HeadersInit): Response {
   return Response.json({ error }, { status, headers })
 }

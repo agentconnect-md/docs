@@ -7,6 +7,7 @@ import {
   errorCode,
   foldLocation,
   isNewConversation,
+  openAgentQuestions,
   readConfig,
   readTabConversation,
   tabCookie
@@ -277,4 +278,20 @@ test('a caller within its rate goes through', async () => {
   const res = await handler(stub, { limit: async () => true })(chatRequest([user('q')]))
   assert.equal(res.status, 200)
   assert.equal(stub.calls.length, 1)
+})
+
+test("the panel dismisses the agent's open questions and refuses its open tool approvals, and nothing already answered", () => {
+  const tool = (toolName, state, extra = {}) => ({ type: 'dynamic-tool', toolName, toolCallId: `${toolName}-${state}`, state, input: {}, ...extra })
+  assert.deepEqual(
+    openAgentQuestions([
+      { type: 'step-start' },
+      { type: 'text', text: 'One moment.' },
+      tool('agentconnect_ask', 'input-available'),
+      tool('agentconnect_ask', 'output-error'),
+      tool('agentconnect_approval', 'approval-requested', { approval: { id: 'approval-1' } }),
+      tool('agentconnect_approval', 'approval-responded', { approval: { id: 'approval-2', approved: false } }),
+      tool('some_other_tool', 'input-available')
+    ]),
+    { dismiss: ['agentconnect_ask-input-available'], refuse: ['approval-1'] }
+  )
 })
