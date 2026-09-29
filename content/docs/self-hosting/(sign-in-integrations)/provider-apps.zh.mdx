@@ -139,7 +139,7 @@ Setup 会构建并检查当前的 Slack manifest，包括 OAuth、Events API 和
 
 Setup 会像 Agent 向导一样向 Google 验证项目和密钥，并以只写方式保存密钥。该应用的密钥在这里管理，而不是在控制台中；保存新密钥并重启之后，所有已连接的 Workspace 都会使用新密钥，所以请在重启之后再吊销旧密钥。
 
-在 Google Workspace Marketplace 上公开发布之前，只有你自己的 Workspace 组织能安装这个应用。要让其他组织使用，请先发布它。打开 `google-chat` 功能开关后，内置 Agent 的 Google Chat 向导会链接到应用的 Marketplace 页面，所以请在上架之后再打开开关。
+在 Google Workspace Marketplace 上公开发布之前，只有你自己的 Workspace 组织能安装这个应用。要让其他组织使用，请先发布它。`google-chat` 功能开关决定 Google Chat 是否出现在集成选择列表中，各组织接入自己的 Chat 应用也靠它，所以不必等上架再打开。在内置 Agent 上，向导以**从 Google Workspace Marketplace 安装**开头，这是指向本应用 Marketplace 页面的链接，要等上架后才能打开。在那之前，你自己 Workspace 中的人可以直接在 Google Chat 里找到这个应用。
 
 ## Lark 和飞书租户应用 [#lark-and-feishu-tenant-apps]
 
