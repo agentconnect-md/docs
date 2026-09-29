@@ -21,7 +21,7 @@ Google Chat 集成把 Agent 连接到你在自己的 Google Cloud 项目中创�
 2. 设置应用的名称、头像和描述。
 3. 在 **Functionality** 下勾选 **Receive 1:1 messages** 和 **Join spaces and group conversations**。
 4. 在 **Connection settings** 下选择 **HTTP endpoint URL**，所有触发器使用同一个 URL，填入向导显示的值，即部署的公开回调源地址加上 `/googlechat/events`，例如 `https://relay.example.test/googlechat/events`。
-5. 在 **Commands** 下添加一个名为 `/help` 的斜杠命令，描述填 "Show how to use this app"，命令 ID 填 `1`。任何未占用的 ID 都可以，AgentConnect 按名称匹配。
+5. 可选：在 **Commands** 下添加一个名为 `/help` 的斜杠命令，描述填 "Show how to use this app"，命令 ID 填 `1`。任何未占用的 ID 都可以，AgentConnect 按名称匹配。之后可以在 Chat 里用 `/help` 查看应用的命令。
 6. 在 **Visibility** 下，选择 Workspace 域中可以使用该应用的人员和群组。私有应用不需要在 Marketplace 上架。
 7. 点击 **Save**。
 
@@ -43,7 +43,7 @@ AgentConnect 会先向 Google 验证密钥，再保存；每次尝试之后都�
 
 - **私信**——直接给应用发消息，每条消息都会送达 Agent。回复以流式方式送达，最后编辑成最终内容。
 - **空间**——把应用添加到空间并 **@ 提及**它。Agent 会在该消息所在的话题中回复。Google 只把提及了应用的空间消息投递给它，话题内的回复也是如此：没有提及应用的话题回复不会送达，Agent 也就无法回答。因此空间的触发条件只有 **@ 提及**、**按决策**和**关闭**，没有**所有消息**。
-- **欢迎和帮助**——应用被添加到空间或私聊时会先自我介绍。输入 `/help` 并从 Chat 的命令列表中选中它，可以查看文字命令。
+- **欢迎和帮助**——应用被添加到空间或私聊时会先自我介绍。如果应用添加了 `/help` 命令，输入 `/help` 并从 Chat 的命令列表中选中它，可以查看文字命令。
 - **处理中**——Agent 两秒内还没有任何输出时，应用会先发一条 "⏳ Working on it…"，回答出来后替换它。如果 Agent 决定不回答，这条消息会被撤回，Google Chat 会显示有一条消息已被删除。
 - **格式**——Agent 的 Markdown 按 Google Chat 支持的子集渲染：粗体、斜体、删除线、行内代码、代码块、列表和链接。标题显示为粗体行，图片显示为链接，表格显示为等宽文本块。较长的回复会拆成多条消息。
 - **提问**——Agent 需要你输入时，会在对话里发一张卡片：每个选项一个按钮，或是一个带 **Confirm** 的简短表单。能看到卡片的人都可以回答，回答后卡片会显示结果。点 **Dismiss** 即拒绝回答。

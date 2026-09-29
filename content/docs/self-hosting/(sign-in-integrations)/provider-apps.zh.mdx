@@ -133,7 +133,7 @@ Setup 会构建并检查当前的 Slack manifest，包括 OAuth、Events API 和
 
 1. 配置部署的公开回调地址，并通过 HTTPS 提供控制台。Google 只通过 HTTPS 回调投递 Chat 事件，组织自行连接时使用的页面也要求控制台是 HTTPS。
 2. 开启 [Google 登录](/self-hosting/sign-in#google-sign-in)。用户要用自己在 Google Chat 中使用的 Google 账号登录，才能连接他们的 Workspace。
-3. 按照[创建应用](/connect-automate/chat-platforms/googlechat#create-the-app)创建 Chat 应用，填入卡片显示的 **HTTP endpoint URL**。
+3. 按照[创建应用](/connect-automate/chat-platforms/googlechat#create-the-app)创建 Chat 应用，填入卡片显示的 **HTTP endpoint URL**。如果要在 Marketplace 上发布，也请添加 `/help` 命令，Marketplace 审核要求应用提供帮助。
 4. 在 Setup 中打开 **Google Chat**，填入**项目 ID**、可选的**项目编号**和**服务账号密钥 JSON**，然后选择**保存 Google Chat 应用**。
 5. 重启 AgentConnect。
 

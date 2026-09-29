@@ -21,7 +21,7 @@ Then, in the Google Cloud console, open **APIs & Services → Google Chat API �
 2. Set the app's name, avatar, and description.
 3. Under **Functionality**, select **Receive 1:1 messages** and **Join spaces and group conversations**.
 4. Under **Connection settings**, choose **HTTP endpoint URL**, use one URL for all triggers, and enter the value the wizard shows: the deployment's public callback origin followed by `/googlechat/events`, such as `https://relay.example.test/googlechat/events`.
-5. Under **Commands**, add a slash command named `/help`, described "Show how to use this app", with command ID `1`. Any free ID works, since AgentConnect matches the name.
+5. Optionally, under **Commands**, add a slash command named `/help`, described "Show how to use this app", with command ID `1`. Any free ID works, since AgentConnect matches the name. People can then use `/help` in Chat to see the app's commands.
 6. Under **Visibility**, choose the people and groups in your Workspace domain who may use the app. A private app needs no Marketplace listing.
 7. Click **Save**.
 
@@ -43,7 +43,7 @@ Then test it: send the app a direct message, or add it to a space and mention it
 
 - **Direct messages** — message the app directly; every message reaches the agent. Replies stream in and are edited into their final form.
 - **Spaces** — add the app to a space and **@-mention** it. The agent replies in the same thread as the message. Google delivers a space message to the app only when it mentions the app, replies inside a thread included: a thread reply without the mention is never delivered, so the agent cannot answer it. For the same reason, a space's trigger offers **@-mention**, **By decision**, or **Off**, and no **any message** option.
-- **Welcome and help** — the app introduces itself when it is added to a space or a direct message. Type `/help` and pick it from Chat's command list to see the text commands.
+- **Welcome and help** — the app introduces itself when it is added to a space or a direct message. If the app has the `/help` command, type `/help` and pick it from Chat's command list to see the text commands.
 - **Working on it** — if the agent has shown nothing after two seconds, the app posts "⏳ Working on it…", and the answer replaces it. If the agent decides not to answer, the message is withdrawn, and Google Chat shows that a message was deleted.
 - **Formatting** — the agent's Markdown is rendered in Google Chat's supported subset: bold, italic, strikethrough, inline code, code blocks, lists, and links. Headings render as bold lines, images as links, and tables as monospace blocks. Long replies are split across messages.
 - **Questions** — when the agent needs your input, it posts a card in the conversation: a button per option, or a short form with **Confirm**. Anyone who can see the card can answer it, and it updates to show the answer. **Dismiss** declines the question.

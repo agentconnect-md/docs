@@ -133,7 +133,7 @@ The **Google Chat** card, below the **Google** card, configures one Chat app for
 
 1. Configure the deployment's public callback endpoint, and serve the console over HTTPS. Google delivers Chat events over HTTPS callbacks only, and the page where an organization connects itself needs an HTTPS console.
 2. Turn on [Google sign-in](/self-hosting/sign-in#google-sign-in). People connect their Workspace by signing in with the Google account they use in Google Chat.
-3. Create the Chat app as described in [Create the app](/connect-automate/chat-platforms/googlechat#create-the-app), with the **HTTP endpoint URL** the card shows.
+3. Create the Chat app as described in [Create the app](/connect-automate/chat-platforms/googlechat#create-the-app), with the **HTTP endpoint URL** the card shows. Add the `/help` command too if you will publish the app on the Marketplace, whose review expects the app to offer help.
 4. In Setup, open **Google Chat**, enter the **Project ID**, the optional **Project number**, and the **Service-account key JSON**, then choose **Save Google Chat app**.
 5. Restart AgentConnect.
 
