@@ -129,17 +129,19 @@ Setup builds and checks the current Slack manifest, including OAuth, Events API,
 
 ## Google Chat deployment app
 
-The **Google Chat** card, below the **Google** card, configures one Chat app for the whole deployment. Each Google Workspace organization installs that app and connects itself from Google Chat, which puts the app on its AgentConnect organization's built-in **AgentConnect** agent: see [Connect the deployment's app](/connect-automate/chat-platforms/googlechat#connect-the-deployments-app). Any agent can still connect its own Chat app instead.
+The **Google Chat** card, below the **Google** card, configures one Chat app for the whole deployment. It answers each connected Google Workspace through that organization's built-in **AgentConnect** agent; any agent can still connect its own Chat app.
 
 1. Configure the deployment's public callback endpoint, and serve the console over HTTPS. Google delivers Chat events over HTTPS callbacks only, and the page where an organization connects itself needs an HTTPS console.
 2. Turn on [Google sign-in](/self-hosting/sign-in#google-sign-in). People connect their Workspace by signing in with the Google account they use in Google Chat.
-3. Create the Chat app in Google Cloud as described in [Create the app](/connect-automate/chat-platforms/googlechat#create-the-app), with the **HTTP endpoint URL** the card shows and the `/help` slash command.
+3. Create the Chat app as described in [Create the app](/connect-automate/chat-platforms/googlechat#create-the-app), with the **HTTP endpoint URL** the card shows.
 4. In Setup, open **Google Chat**, enter the **Project ID**, the optional **Project number**, and the **Service-account key JSON**, then choose **Save Google Chat app**.
 5. Restart AgentConnect.
 
-Setup validates the project and key with Google the same way the agent wizard does, and stores the key write-only. The app's key is managed here, not in the console; after you save a new key and restart, every connected Workspace uses it, so revoke the old key only after the restart.
+Setup validates the project and key with Google the same way the agent wizard does, and stores the key write-only. To rotate it, save a new key here and restart; revoke the old key only after the restart.
 
-Until the app is published publicly on the Google Workspace Marketplace, only your own Workspace organization can install it. Publish it to reach other organizations. The `google-chat` feature flag shows Google Chat in the integration picker, for organizations' own Chat apps as well as this one, so it does not need to wait for the listing. Once this app is set up, the built-in agent's wizard leads with an **Install from Google Workspace Marketplace** link to its listing. The wizard shows the link right away, but the listing opens only after the app is published. Until then, people in your own Workspace find the app in Google Chat instead.
+A Workspace connects itself from Google Chat. Until it does, the app answers a message with a private **Configure** prompt, and being added to a space with a **Connect** card. Either leads to the console, where an Owner or Collaborator signs in with the Google account they use in Google Chat, chooses the organization, and clicks **Connect**. A Workspace connects to one organization at a time. Removing the Google Chat integration from the **AgentConnect** agent disconnects it.
+
+Until the app is published publicly on the Google Workspace Marketplace, only your own Workspace can use it. The built-in agent's wizard shows an **Install from Google Workspace Marketplace** link as soon as the app is set up, but the listing opens only after the app is published.
 
 ## Lark and Feishu tenant Apps
 
