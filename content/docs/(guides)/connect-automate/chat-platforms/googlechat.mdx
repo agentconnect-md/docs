@@ -4,23 +4,18 @@ icon: GoogleChat
 description: "Connect a Google Chat app so an agent answers direct messages and @mentions in spaces."
 ---
 
-import imgGoogleChatIntegration from '@/public/images/googlechat-integration.png'
-
 A Google Chat integration connects an agent to a Chat app built as a Google Workspace add-on. Google delivers the app's events over HTTPS callbacks only — there is no socket mode — so the deployment needs a public callback endpoint. AgentConnect Cloud provides one; a self-hosted deployment must have its public callback endpoint configured, as for [Linear](/connect-automate/triggers-automation/linear#before-you-connect). On a self-hosted deployment, Google Chat appears in the integration picker once the `google-chat` feature flag is on: the Helm chart keeps it off by default (`features.googleChat`); on Docker Compose, add `google-chat` to `FEATURE_FLAGS` in [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) and recreate `web`.
 
 There are two ways to connect:
 
-- **The deployment's app** answers your whole Google Workspace through your organization's built-in **AgentConnect** agent. You install it into your Workspace and connect it from Google Chat. It is available where the deployment offers one: on AgentConnect Cloud, or where a self-hosted administrator has configured the [deployment's Chat app](/self-hosting/provider-apps#google-chat-deployment-app).
+- **The deployment's app** answers your whole Google Workspace through your organization's built-in **AgentConnect** agent, and your Workspace connects itself from Google Chat. It is available on a self-hosted deployment whose administrator has configured the [deployment's Chat app](/self-hosting/provider-apps#google-chat-deployment-app).
 - **Your own Chat app** connects any agent through a Chat app you create in your own Google Cloud project.
 
 ## Connect the deployment's app
 
-<Image src={imgGoogleChatIntegration} alt="Install the deployment's Google Chat app from Google Workspace Marketplace" width={640} />
-
-1. On your organization's built-in **AgentConnect** agent, open **Integrations → Add integration → Google Chat** and choose **Install from Google Workspace Marketplace**. Install the app into your Google Workspace; a Workspace administrator can install it for everyone in the domain.
-2. In Google Chat, send the app a direct message, or add it to a space. Until your Workspace is connected, the app answers a message with a private **Configure** prompt, and being added with a **Connect** card.
-3. Follow it to the console, sign in with the Google account you use in Google Chat, choose the organization, and click **Connect**. You need to be an Owner or Collaborator of that organization. If you signed in to the console another way, link that Google account on your profile first.
-4. From the **Configure** prompt, Chat sends your message again, and the agent answers. The **Connect** card has no message to resend, so send the app a message or @-mention it once you are connected. From then on it answers everyone in your Workspace who messages the app or @-mentions it in a space.
+1. In Google Chat, send the app a direct message, or add it to a space. If the deployment has published the app on the Google Workspace Marketplace, install it from its listing first. Until your Workspace is connected, the app answers a message with a private **Configure** prompt, and being added with a **Connect** card.
+2. Follow it to the console, sign in with the Google account you use in Google Chat, choose the organization, and click **Connect**. You need to be an Owner or Collaborator of that organization. If you signed in to the console another way, link that Google account on your profile first.
+3. From the **Configure** prompt, Chat sends your message again, and the agent answers. The **Connect** card has no message to resend, so send the app a message or @-mention it once you are connected. From then on it answers everyone in your Workspace who messages the app or @-mentions it in a space.
 
 A Workspace connects to one organization at a time; one already connected elsewhere is refused. Connect from a conversation in your own Workspace: a guest in another organization's space cannot connect it. Removing the Google Chat integration from the **AgentConnect** agent disconnects your Workspace, and you can connect it again the same way.
 
@@ -47,7 +42,7 @@ Then, in the Google Cloud console, open **APIs & Services → Google Chat API �
 
 ### Connect it
 
-On your agent, open **Integrations → Add integration → Google Chat**; on the built-in **AgentConnect** agent, choose **Use your own Google Chat app instead** first. Paste the service-account key JSON, and the wizard fills in the **Project ID** from it. The **Project number** is optional: AgentConnect looks it up, and checks it if you enter one. Click **Connect**.
+On your agent, open **Integrations → Add integration → Google Chat**; on the built-in **AgentConnect** agent of a deployment with its own app, choose **Use your own Google Chat app instead** first. Paste the service-account key JSON, and the wizard fills in the **Project ID** from it. The **Project number** is optional: AgentConnect looks it up, and checks it if you enter one. Click **Connect**.
 
 AgentConnect validates the key with Google before saving it, and clears the key field after every attempt. A refusal names its fix: the wrong project, a key from another project, the Cloud Resource Manager API disabled, the Browser role missing, or the Chat API not configured.
 
