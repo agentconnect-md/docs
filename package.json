@@ -16,14 +16,14 @@
     "test": "node --test --test-concurrency=1 scripts/*.test.mjs"
   },
   "dependencies": {
-    "@ai-sdk/react": "^3.0.296",
+    "@ai-sdk/react": "^4.0.121",
     "@base-ui/react": "^1.8.0",
     "@floating-ui/react-dom": "^2.1.9",
     "@fumadocs/language": "^0.2.7",
     "@octokit/auth-app": "^8.3.1",
     "@octokit/core": "^7.0.8",
     "@opennextjs/cloudflare": "^1.20.6",
-    "ai": "^6.0.293",
+    "ai": "^7.0.118",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
     "fumadocs-core": "^16.15.15",
