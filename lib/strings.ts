@@ -18,7 +18,7 @@ const en = {
   askAi: {
     trigger: 'Ask AI',
     title: 'Ask AI',
-    disclaimer: 'AI can be inaccurate, please verify the answers.',
+    poweredBy: { text: 'Powered by', href: 'https://agentconnect.md/' },
     close: 'Close',
     placeholder: 'Ask a question',
     answering: 'AI is answering...',
@@ -61,7 +61,7 @@ const zh: Strings = {
   askAi: {
     trigger: '问 AI',
     title: '问 AI',
-    disclaimer: 'AI 的回答可能有误，请自行核实。',
+    poweredBy: { text: 'Powered by', href: 'https://agentconnect.md/zh/' },
     close: '关闭',
     placeholder: '输入问题',
     answering: 'AI 正在回答…',
