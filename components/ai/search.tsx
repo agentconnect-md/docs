@@ -49,7 +49,12 @@ export function AISearchPanelHeader({ className, ...props }: ComponentProps<'div
     >
       <div className="flex-1 px-3 py-2">
         <p className="mb-2 text-sm font-medium">{labels.title}</p>
-        <p className="text-xs text-fd-muted-foreground">{labels.disclaimer}</p>
+        <p className="text-xs text-fd-muted-foreground">
+          {labels.poweredBy.text}{' '}
+          <a href={labels.poweredBy.href} target="_blank" rel="noreferrer" className="font-medium text-fd-foreground hover:underline">
+            AgentConnect
+          </a>
+        </p>
       </div>
 
       <button
