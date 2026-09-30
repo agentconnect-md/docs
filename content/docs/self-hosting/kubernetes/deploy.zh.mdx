@@ -113,7 +113,7 @@ openConnector:
 
 Daemon 池默认有三个成员和三个预热的 Runtime 沙箱。每个预热沙箱都占用一个运行中的 Pod 和一个工作区 PVC。如果你更看重降低常驻成本而非更快的首次 Agent 启动，请设置 `daemonPool.runtime.warmReplicas: 0`。
 
-默认的 Runtime 镜像包含 Claude Code、Codex 和 DeepSeek Harness。要选择包含 Qwen Code、OpenCode 及其他 ACP Runtime 的已发布完整镜像，参见 [Runtime 认证](/self-hosting/kubernetes/runtime-authentication#choose-the-runtime-image)。
+默认的 Runtime 镜像包含 Claude Code、Codex、DeepSeek Harness 和 OpenCode。要选择包含 Qwen Code 及其他 ACP Runtime 的已发布完整镜像，参见 [Runtime 认证](/self-hosting/kubernetes/runtime-authentication#choose-the-runtime-image)。
 
 ### 在集群内运行 Logto [#run-logto-in-the-cluster]
 
@@ -168,7 +168,7 @@ daemonPool:
     existingSecret: agentconnect-model-credentials
 ```
 
-这个 Secret 的**条目就是变量**：`<PREFIX>MODEL_TOKEN` 和 `<PREFIX>MODEL_BASE_URL`，其中前缀对 Claude 是 `ANTHROPIC_`，对 Codex 是 `OPENAI_`，或者是 `DEEPSEEK_`，也可以为空，作为上述已识别 Runtime 和 OpenCode 的共享回退。示例使用了 [DeepSeek 文档中的 API 根地址](https://api-docs.deepseek.com/guides/harness/)。只有令牌而没有基础 URL 时，它就是提供方自身端点上的普通提供方密钥，不需要集群提供任何其他东西：agents 命名空间已经允许 DNS 和出站 443。只有基础 URL 而没有令牌时，Runtime 会指向一个自行签发凭证的端点。对于 Qwen Code 和其他 ACP Runtime，请按 Runtime 认证指南所示，用 `daemonPool.runtimeEnvironment` 映射它们各自的 API 密钥变量。
+这个 Secret 的**条目就是变量**：`<PREFIX>MODEL_TOKEN` 和 `<PREFIX>MODEL_BASE_URL`，其中前缀对 Claude 是 `ANTHROPIC_`，对 Codex 是 `OPENAI_`，或者是 `DEEPSEEK_`，也可以为空，作为共享回退。OpenCode 会为 Anthropic、OpenAI 和 DeepSeek 复用这三组提供方专用凭证，无需额外映射。示例使用了 [DeepSeek 文档中的 API 根地址](https://api-docs.deepseek.com/guides/harness/)。只有令牌而没有基础 URL 时，它就是提供方自身端点上的普通提供方密钥，不需要集群提供任何其他东西：agents 命名空间已经允许 DNS 和出站 443。只有基础 URL 而没有令牌时，Runtime 会指向一个自行签发凭证的端点。对于 Qwen Code 和其他 ACP Runtime，请按 Runtime 认证指南所示，用 `daemonPool.runtimeEnvironment` 映射它们各自的 API 密钥变量。
 
 两条规则让这一切可预期：
 

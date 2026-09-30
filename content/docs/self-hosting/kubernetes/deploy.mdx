@@ -113,7 +113,7 @@ openConnector:
 
 The daemon pool defaults to three members and three pre-warmed runtime sandboxes. Each warm sandbox holds a running pod and a workspace PVC. Set `daemonPool.runtime.warmReplicas: 0` when you prefer lower standing cost over a faster first agent launch.
 
-The default runtime image contains Claude Code, Codex, and DeepSeek Harness. To select the published full image with Qwen Code, OpenCode, and other ACP runtimes, see [Runtime authentication](/self-hosting/kubernetes/runtime-authentication#choose-the-runtime-image).
+The default runtime image contains Claude Code, Codex, DeepSeek Harness, and OpenCode. To select the published full image with Qwen Code and other ACP runtimes, see [Runtime authentication](/self-hosting/kubernetes/runtime-authentication#choose-the-runtime-image).
 
 ### Run Logto in the cluster
 
@@ -168,7 +168,7 @@ daemonPool:
     existingSecret: agentconnect-model-credentials
 ```
 
-The Secret's **entries are the variables**: `<PREFIX>MODEL_TOKEN` and `<PREFIX>MODEL_BASE_URL`, where the prefix is `ANTHROPIC_` for Claude, `OPENAI_` for Codex, `DEEPSEEK_`, or empty for the shared fallback of those recognized runtimes and OpenCode. The example uses [DeepSeek's documented API root](https://api-docs.deepseek.com/guides/harness/). A token with no base URL is a plain provider key on that provider's own endpoint, which needs nothing else from the cluster: the agents namespace already allows DNS and outbound 443. A base URL with no token aims a runtime at an endpoint that issues its own credential. For Qwen Code and other ACP runtimes, map their own API-key variables with `daemonPool.runtimeEnvironment` as shown in the runtime authentication guide.
+The Secret's **entries are the variables**: `<PREFIX>MODEL_TOKEN` and `<PREFIX>MODEL_BASE_URL`, where the prefix is `ANTHROPIC_` for Claude, `OPENAI_` for Codex, `DEEPSEEK_`, or empty for the shared fallback. OpenCode reuses the same three provider-specific pairs for Anthropic, OpenAI, and DeepSeek; no extra mapping is needed. The example uses [DeepSeek's documented API root](https://api-docs.deepseek.com/guides/harness/). A token with no base URL is a plain provider key on that provider's own endpoint, which needs nothing else from the cluster: the agents namespace already allows DNS and outbound 443. A base URL with no token aims a runtime at an endpoint that issues its own credential. For Qwen Code and other ACP runtimes, map their own API-key variables with `daemonPool.runtimeEnvironment` as shown in the runtime authentication guide.
 
 Two rules make this predictable:
 
