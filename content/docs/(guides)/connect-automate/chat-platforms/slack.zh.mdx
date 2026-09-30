@@ -7,11 +7,15 @@ description: "一键安装内置的 AgentConnect Slack 应用，或在 Agent 需
 import imgAddIntegration from '@/public/images/add-integration.png'
 import imgSlackIntegration from '@/public/images/slack-integration.png'
 
+把 AI Agent 接入 Slack，让它们在频道线程和私信中协助团队排查问题、回答疑问和完成工作。
+
 在 **AgentConnect Cloud** 上，推荐的路径是内置的**添加到 Slack** 应用。你只需批准工作区安装；AgentConnect 会完成 OAuth 流程并接入，不会要求你提供应用 manifest、令牌、签名密钥或回调 URL。
 
 <Image src={imgAddIntegration} alt="安装内置的 AgentConnect Slack 应用" width={640} />
 
 ## 在 Cloud 上把 AgentConnect 添加到 Slack [#add-agentconnect-to-slack-on-cloud]
+
+打开 [AgentConnect 控制台](https://app.agentconnect.md/)，登录或创建账户。你需要拥有 Slack 工作区的应用安装权限，或取得管理员批准。
 
 内置的 Slack 应用属于内置的 `agentconnect` Agent——AgentConnect 为每个组织创建的预置 Agent。先把该 Agent 放到某个 Daemon 上并选好它的 Runtime 和模型，然后从任一入口开始：
 
@@ -31,6 +35,22 @@ import imgSlackIntegration from '@/public/images/slack-integration.png'
 提及它即可开始对话；未提及的后续消息会留在 Agent 已加入的线程（thread）中。机器人也会回复私信。
 
 每个被发现的频道都会出现在 Agent 的集成卡片上。为入站激活选择 **@ 提及**（默认）、**所有消息**或**关闭**。关闭不会卸载应用，也不会阻止定时任务和受托的出站发消息。关于从 Slack 停止、取消、排队以及更改会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+
+### Slack 套餐与 AI 输出 [#slack-plans-and-ai-outputs]
+
+Slack 应用容器中的 AI Agent 体验需要付费 Slack 套餐。免费套餐仍可通过频道提及和私信与 Agent 对话；其他 Slack 功能受工作区套餐和权限限制。
+
+AgentConnect 使用生成式 AI，回答和生成的文件可能不准确或不完整。在依赖输出或执行建议的操作之前，请先核查，尤其是涉及法律、医疗、财务等重要决策时。
+
+### 数据与支持 [#data-and-support]
+
+你配置的 Runtime 和模型提供商会处理任务所需的 Slack 消息、相关历史和共享文件。会话记录和工作区文件可能保留在你选择的执行环境中，记忆按其配置存储。AgentConnect 会在控制平面加密保存集成凭据。数据处理、保留和删除详情请参阅[隐私政策](https://www.agentconnect.md/zh/privacy/)。
+
+如需安装帮助或咨询数据问题，请发邮件至 [contact@agentconnect.md](mailto:contact@agentconnect.md)，无需额外注册账户。AgentConnect 托管服务适用[服务条款](https://www.agentconnect.md/zh/terms/)。
+
+### 断开集成或卸载应用 [#disconnect-or-uninstall]
+
+从 Agent 上移除集成，可以停止该 Agent 使用它。如果机器人是共享的，其他 Agent 仍可能使用同一个安装。要撤销应用对 Slack 工作区的访问，请通过 Slack 的应用管理设置移除应用；这可能需要管理员批准。此前保存的会话、文件和记忆与应用安装分别管理，不会因卸载应用而自动清除。
 
 ## Agent 在 Slack 中能做什么 [#what-an-agent-can-do-in-slack]
 
