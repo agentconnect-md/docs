@@ -32,6 +32,6 @@ export function githubUrl(page: LinkedPage, view: 'blob' | 'edit' = 'blob', sect
 
 // A new issue naming the page by path only, so no channel's host lands in the public tracker.
 export function issueUrl(page: LinkedPage): string {
-  const query = new URLSearchParams({ title: `Docs: ${page.data.title}`, body: `Page: ${BASE_PATH}${page.url}\n\n` })
-  return `${REPO}/issues/new?${query}`
+  const query = new URLSearchParams({ title: `Docs: ${page.data.title}`, body: `Page: ${BASE_PATH}${page.url}\n\n`, labels: 'documentation' })
+  return `https://github.com/agentconnect-md/agentconnect/issues/new?${query}`
 }
