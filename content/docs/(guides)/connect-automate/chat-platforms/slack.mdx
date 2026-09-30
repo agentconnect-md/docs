@@ -7,11 +7,15 @@ description: "Install the built-in AgentConnect Slack app in one click, or conne
 import imgAddIntegration from '@/public/images/add-integration.png'
 import imgSlackIntegration from '@/public/images/slack-integration.png'
 
+Bring AI agents into Slack to investigate issues, answer questions, and work with your team in channel threads and direct messages.
+
 On **AgentConnect Cloud**, the recommended path is the built-in **Add to Slack** app. You approve the workspace installation; AgentConnect completes the OAuth flow and connects it without asking for an App manifest, token, signing secret, or callback URL.
 
 <Image src={imgAddIntegration} alt="Install the built-in AgentConnect Slack app" width={640} />
 
 ## Add AgentConnect to Slack on Cloud
+
+Open the [AgentConnect console](https://app.agentconnect.md/) and sign in or create an account. You need permission to install apps in the Slack workspace, or approval from its administrator.
 
 The built-in Slack app belongs to the built-in `agentconnect` agent — the preset agent AgentConnect creates for every organization. Place that agent on a daemon and choose its runtime and model first, then use either entry point:
 
@@ -31,6 +35,22 @@ Invite the bot to a channel:
 Mention it to start a conversation; unmentioned follow-ups stay in the thread the agent already joined. The bot also answers direct messages.
 
 Each discovered channel appears on the agent's Integrations card. Choose **@-mention** (the default), **any message**, or **Off** for inbound activation. Off does not uninstall the app or block scheduled and delegated outbound posts. See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing session settings from Slack.
+
+### Slack plans and AI outputs
+
+Slack requires a paid plan to use the AI agent experience in the app container. Channel mentions and direct-message conversations remain available on free Slack plans; other Slack features are subject to your workspace's plan and permissions.
+
+AgentConnect uses generative AI. Responses and generated files may be inaccurate or incomplete. Review outputs and proposed actions before relying on them, especially for legal, medical, financial, or other consequential decisions.
+
+### Data and support
+
+Your configured runtime and model provider process the Slack messages, relevant history, and shared files needed for a task. Session transcripts and workspace files may be retained in your chosen execution environment, with memory stored according to its configuration. AgentConnect stores integration credentials encrypted in the control plane. See the [Privacy Policy](https://www.agentconnect.md/privacy/) for processing, retention, and deletion information.
+
+For installation help or questions about your data, email [contact@agentconnect.md](mailto:contact@agentconnect.md). You do not need an additional account to request support. The [Terms of Service](https://www.agentconnect.md/terms/) apply to AgentConnect's hosted service.
+
+### Disconnect or uninstall
+
+Remove the integration from the agent to stop that agent from using it. If the bot is shared, other agents may still use the same installation. To revoke the app's access to the Slack workspace, remove it through Slack's app management settings; administrator approval may be required. Previously stored sessions, files, and memory are separate from the installation and are not automatically erased by uninstalling the app.
 
 ## What an agent can do in Slack
 
