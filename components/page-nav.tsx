@@ -19,7 +19,7 @@ export function PageNav({ className = '' }: { className?: string }) {
   if (!previous && !next) return null
 
   return (
-    <nav className={`mt-6 flex items-center justify-between gap-6 border-t pt-6 text-[0.9375rem] ${className}`}>
+    <nav className={`mt-6 flex items-center justify-between gap-6 border-t pt-6 text-[0.9375rem] max-xl:mb-12 ${className}`}>
       {previous ? (
         <Link href={previous.url} className={link}>
           <ArrowLeft className="text-fd-muted-foreground" />
