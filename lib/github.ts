@@ -1,12 +1,11 @@
-// Page feedback into GitHub Discussions, from Fumadocs' own docs (apps/docs/lib/github.ts) as its guide suggests, on
-// @octokit/core + @octokit/auth-app rather than the all-in-one octokit, which added about 1 MB gzip to the Worker.
+// Page feedback follows Fumadocs' GitHub Discussions integration with lightweight Octokit packages.
 // Needs a GitHub App installed on the repository with Discussions write access: GITHUB_APP_ID, GITHUB_APP_PRIVATE_KEY.
 import { createAppAuth } from '@octokit/auth-app'
 import { Octokit } from '@octokit/core'
 import { pageFeedback, type ActionResponse, type PageFeedback } from '@/components/feedback/schema'
 import { channel } from '@/lib/channel'
 
-export const repo = 'docs'
+export const repo = 'agentconnect'
 export const owner = 'agentconnect-md'
 // Both channels post to one category; a thread from another channel says so in its title, since both serve the same paths.
 export const DocsCategory = 'Docs Feedback'

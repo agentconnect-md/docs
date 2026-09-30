@@ -72,11 +72,14 @@ pnpm build --channel test && pnpm run deploy -- --env test
 pnpm build --channel prod && pnpm run deploy
 ```
 
-Page feedback ("How is this guide?") is posted to this repository's GitHub Discussions by a GitHub App
-with Discussions write access, installed on this repository only. Each Worker needs its secrets:
+Page feedback ("How is this guide?") is posted to the [main repository's Discussions](https://github.com/agentconnect-md/agentconnect/discussions)
+by a GitHub App with Discussions write access, installed on the main repository. Each Worker needs its secrets:
 `GITHUB_APP_ID` and `GITHUB_APP_PRIVATE_KEY` (the key in PKCS#8 form). Both channels post to the
 "Docs Feedback" category, one thread per page; a thread from `test` carries a `(test)` prefix in its
 title. Without the secrets the site still works; feedback is only logged.
+
+Documentation issues are tracked in the [main repository](https://github.com/agentconnect-md/agentconnect/issues/new?labels=documentation)
+with the `documentation` label. Page edit and source links still point to this repository.
 
 ## Ask AI
 
