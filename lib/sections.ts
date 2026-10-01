@@ -37,12 +37,13 @@ export function guidesStart(lang: string): string {
   return getLayoutTabs(source.getPageTree(lang))[0]?.url ?? source.getPages(lang)[0]?.url ?? localePath(lang, '/')
 }
 
-// The star count for the GitHub button, fetched at build time; the button shows without it if GitHub is unreachable.
+// Cache the star count at build time; timed revalidation cannot write to the read-only static-assets cache.
+// The button shows without a count if GitHub is unreachable.
 export async function githubStars(): Promise<number | undefined> {
   try {
     const res = await fetch('https://api.github.com/repos/agentconnect-md/agentconnect', {
       headers: { accept: 'application/vnd.github+json' },
-      next: { revalidate: 3600 }
+      cache: 'force-cache'
     })
     if (!res.ok) return undefined
     const body = (await res.json()) as { stargazers_count?: number }
