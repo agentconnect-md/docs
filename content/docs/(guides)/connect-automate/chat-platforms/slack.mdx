@@ -1,7 +1,7 @@
 ---
 title: "Slack"
 icon: Slack
-description: "Install the built-in AgentConnect Slack app in one click, or connect a custom app when an agent needs its own identity."
+description: "Install AgentConnect in your Slack workspace and start working with an AI agent in a channel thread or direct message."
 ---
 
 import imgAddIntegration from '@/public/images/add-integration.png'
@@ -11,28 +11,30 @@ Bring AI agents into Slack to investigate issues, answer questions, and work wit
 
 On **AgentConnect Cloud**, the recommended path is the built-in **Add to Slack** app. You approve the workspace installation; AgentConnect completes the OAuth flow and connects it without asking for an App manifest, token, signing secret, or callback URL.
 
-<Image src={imgAddIntegration} alt="Install the built-in AgentConnect Slack app" width={640} />
-
 ## Add AgentConnect to Slack on Cloud
 
-Open the [AgentConnect console](https://app.agentconnect.md/) and sign in or create an account. You need permission to install apps in the Slack workspace, or approval from its administrator.
+You need an AgentConnect account and permission to install apps in your Slack workspace, or approval from its administrator.
 
-The built-in Slack app belongs to the built-in `agentconnect` agent — the preset agent AgentConnect creates for every organization. Place that agent on a daemon and choose its runtime and model first, then use either entry point:
+1. Open the [AgentConnect console](https://app.agentconnect.md/) and sign in. Create an organization if you do not have one, and choose **Cloud** during setup. AgentConnect creates the built-in `agentconnect` agent with a runtime and model; you do not need to install a daemon or supply a model API key for this path.
+2. Open the **Getting started** card and choose **Add to Slack**. You can also open the built-in agent and select **Integrations → Add integration → Slack**.
+3. Click **Add to Slack**, choose your Slack workspace, and review and approve the permissions.
+4. Return to the console. It waits for Slack and closes the setup dialog automatically when the bot is ready. Check that Slack appears on the built-in agent's Integrations card, then try the first message below.
 
-- open the **Getting started** card and choose **Add to Slack**; or
-- open the `agentconnect` agent, then **Integrations → Add integration → Slack**.
+Cloud model use requires available credit. Eligible new accounts receive a one-time $5 signup credit per email address. Creating another organization with the same account does not grant another signup credit. Check **Billing** before starting a task.
 
-Click **Add to Slack**, choose the workspace, and approve the requested permissions. The console waits for Slack and closes the setup automatically when the bot is ready. AgentConnect recommends one bot identity per agent, so the installation initially serves only the built-in agent.
+<Image src={imgAddIntegration} alt="Add integration dialog with the Add to Slack button for the built-in app" width={640} />
+
+The installation initially serves the built-in agent. The custom-app and self-hosting instructions later on this page are optional alternatives; they are not steps in this Cloud installation.
 
 ## Use it
 
-Invite the bot to a channel:
+Invite **AgentConnect** to a channel using Slack's channel app controls or this command (use the bot's displayed name if it has been renamed):
 
 ```text
-/invite @your-bot
+/invite @AgentConnect
 ```
 
-Mention it to start a conversation; unmentioned follow-ups stay in the thread the agent already joined. The bot also answers direct messages.
+Mention it with a small task, for example: **@AgentConnect Summarize these release notes in two bullets: added CSV export; fixed login errors; improved search.** The agent replies in the thread. Reply in that same thread to continue; you do not need to mention it again. You can also open the app in Slack and send it a direct message.
 
 Each discovered channel appears on the agent's Integrations card. Choose **@-mention** (the default), **any message**, or **Off** for inbound activation. Off does not uninstall the app or block scheduled and delegated outbound posts. See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing session settings from Slack.
 
