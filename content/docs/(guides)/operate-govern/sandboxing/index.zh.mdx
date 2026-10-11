@@ -58,13 +58,13 @@ import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-
 
 <Image src={imgExecutionStrategyUnavailable} alt="没有 SRT 工具的 Daemon 上的执行策略选择器：沙箱和虚拟机被标记为不可用，提示框中列出了缺失的软件包" width={560} />
 
-新建的 Agent 在 `host` 可以运行时默认使用它，否则使用第一个可用的沙箱。版本过旧、无法上报策略的 Daemon 则只提供 `host` 和**沙箱**两项，其中**沙箱**指该 Daemon 配置使用的那个沙箱。要选择具体的策略，请[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
+新建的 Agent 在 `host` 可以运行时默认使用它，否则使用第一个可用的沙箱。版本过旧、无法上报策略的 Daemon 只提供 `host`。要提供沙箱，请[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
 
 在**编辑**中，如果有一次迁移到其他 Daemon 的操作尚未保存，选择器会被锁定；请先保存迁移。如果 Agent 所在的位置不再提供已保存的策略，该策略仍保持选中，并标记为“当前位置不提供此策略”。Agent 的**配置**标签页会在 Runtime 卡片的**执行策略**行中显示这一选择。
 
 AgentConnect 绝不会回退到更弱的边界。如果某个会话的策略无法在其所在机器上运行，该会话会被拒绝并给出原因。
 
-在选择器推出之前创建的 Agent 会保留原有边界。之前关闭了**在沙箱中运行**的 Agent 使用 `host`。之前开启了该选项的 Agent，在其 Daemon 上报策略后，使用该 Daemon 所配置的沙箱，即 `srt` 或 `microsandbox`。没有 Daemon 的沙箱化 Agent 使用 `srt`。
+在选择器推出之前创建的 Agent 保留了原有边界：之前关闭了**在沙箱中运行**的 Agent 使用 `host`，之前开启了该选项的 Agent 使用其 Daemon 所配置的沙箱，即 `srt` 或 `microsandbox`。
 
 ## 配置 Daemon [#configure-the-daemon]
 
@@ -131,7 +131,15 @@ microsandbox 需要 Linux amd64 主机。Daemon 用户需要能访问 `/dev/kvm`
 
 ### 旧版配置 [#older-configurations]
 
-`sandbox.backend` 和 `security.requireSandbox` 已停用。仍然发现这两项的 Daemon 会在启动时读取一次并记录一条警告：它忽略 `backend` 并按上文提供全部策略，并把 `requireSandbox: true` 解读为 `"host": false`。请把它们从 `config.json` 中删除。会话使用哪个沙箱现在由 Agent 的**执行策略**决定。
+`sandbox.backend` 和 `security.requireSandbox` 已不再支持。`config.json` 里仍有其中任一项的 Daemon 会拒绝启动，错误信息会指出替代写法：
+
+| 旧配置 | 替换为 |
+| --- | --- |
+| `sandbox.backend`（任意值） | 删除。默认提供全部策略，会话使用哪个沙箱由 Agent 的**执行策略**决定。 |
+| `security.requireSandbox: true` | `"sandbox": { "host": false }` |
+| `security.requireSandbox: false` | 删除。`host` 默认开启。 |
+
+`--require-sandbox` 参数也已移除，请改为在 `config.json` 中设置 `"host": false`。
 
 编辑配置后重启：
 
@@ -139,7 +147,7 @@ microsandbox 需要 Linux amd64 主机。Daemon 用户需要能访问 `/dev/kvm`
 npx -y @agentconnect.md/cli restart
 ```
 
-对于具名实例，加上 `--instance <name>`。对于前台运行的 Daemon，重新执行它原来的命令（加上 `--require-sandbox` 可关闭 `host`）。实例相关命令见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
+对于具名实例，加上 `--instance <name>`。对于前台运行的 Daemon，重新执行它原来的命令。实例相关命令见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
 
 ## Runtime 镜像 [#runtime-image]
 
