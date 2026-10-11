@@ -58,13 +58,13 @@ A strategy that can't run there stays in the list, disabled and marked **unavail
 
 <Image src={imgExecutionStrategyUnavailable} alt="The Execution strategy picker on a daemon without the SRT tools: Sandbox and VM are marked unavailable, and the tooltip names the missing packages" width={560} />
 
-New agents start on `host` where it can run, otherwise on the first available sandbox. A daemon too old to report its strategies offers `host` and **Sandbox** instead, where **Sandbox** is the sandbox that daemon is configured to use. [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) to choose a specific strategy.
+New agents start on `host` where it can run, otherwise on the first available sandbox. A daemon too old to report its strategies offers only `host`. [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) to offer the sandboxes.
 
 In **Edit**, the picker is locked while a move to another daemon is pending; save the move first. If the agent's placement no longer offers its saved strategy, the strategy stays selected and is marked "Not offered where this agent is placed." The agent's **Configuration** tab shows the choice as the **Execution strategy** row of the Runtime card.
 
 AgentConnect never falls back to a weaker boundary. A session whose strategy can't run on its machine is refused with the reason.
 
-Agents created before the picker keep their boundary. An agent that had **Run in sandbox** off uses `host`. One that had it on uses the sandbox its daemon was configured with, `srt` or `microsandbox`, once that daemon reports its strategies. A sandboxed agent with no daemon uses `srt`.
+Agents created before the picker kept their boundary: one that had **Run in sandbox** off uses `host`, and one that had it on uses the sandbox its daemon was configured with, `srt` or `microsandbox`.
 
 ## Configure the daemon
 
@@ -131,7 +131,15 @@ The picker then shows `host` as unavailable for agents on this daemon, and new a
 
 ### Older configurations
 
-`sandbox.backend` and `security.requireSandbox` are retired. A daemon that still finds them reads them once at startup and logs a warning: it ignores `backend` and offers every strategy as above, and it reads `requireSandbox: true` as `"host": false`. Remove them from `config.json`. Which sandbox a session uses is now the agent's **Execution strategy**.
+`sandbox.backend` and `security.requireSandbox` are no longer supported. A daemon whose `config.json` still contains either one refuses to start, and its error names the replacement:
+
+| Old setting | Replace with |
+| --- | --- |
+| `sandbox.backend` (any value) | Remove it. Every strategy is offered by default, and the agent's **Execution strategy** chooses the sandbox. |
+| `security.requireSandbox: true` | `"sandbox": { "host": false }` |
+| `security.requireSandbox: false` | Remove it. `host` is on by default. |
+
+The `--require-sandbox` flag is gone too. Set `"host": false` in `config.json` instead.
 
 Restart after editing the configuration:
 
@@ -139,7 +147,7 @@ Restart after editing the configuration:
 npx -y @agentconnect.md/cli restart
 ```
 
-For a named instance, add `--instance <name>`. For a foreground daemon, relaunch its existing command (add `--require-sandbox` to turn `host` off). See [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) for instance commands.
+For a named instance, add `--instance <name>`. For a foreground daemon, relaunch its existing command. See [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) for instance commands.
 
 ## Runtime image
 
