@@ -16,6 +16,8 @@ Playground 会在 Agent 的 Daemon 上创建一个真实的会话，使用与频
 
 你可以在需要时中断某一轮。当 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)为**对话、批准并修改设置**时，你还可以为下一轮更改受支持的 Runtime 设置，而不改动 Agent 已保存的配置。需要批准的工具调用会显示在输入框上方的待处理请求中。Agent 的编辑者在任何级别下都能回答；从**对话并批准工具调用**起，作为对话所有者的你也能回答，即使你只能查看该 Agent。
 
+当你让 Agent 在某个聊天对话中读取或发消息时，它是替你去做，规则与聊天中相同，参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。在你已在**个人资料 → 登录方式**中关联聊天账号（例如 Slack 账号）的工作区里，它按这个账号判断你能在那里读取和发什么；在其他地方，你只能触达你能在**会话**中打开其会话的对话。
+
 ## 在对话中配置 AgentConnect [#configure-agentconnect-from-a-conversation]
 
 在只有一个 Agent 的 Playground 对话中，这个 Agent 可以读取当前设置，并用与 [MCP 连接器](/connect-automate/mcp-connector)相同的工具替你做出更改。它以你的身份行事，因此你的角色和[可见范围](/operate-govern/permissions-overview)同样适用。每项更改都会以审批卡片的形式出现在输入框上方，列出确切的参数；在你点击 **Approve and run** 之前，任何更改都不会生效。之后 Agent 会收到结果并继续。

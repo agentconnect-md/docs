@@ -16,12 +16,16 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 
 一个 Agent 可以先在一个平台上开始对话，向另一个可信工作区发布一条聚焦的交接消息，之后再把结果报告回来。这不是实时镜像：每个平台各自保留自己的线程（thread）、会话和受众。
 
+只有 AgentConnect 能认出的人才能发起交接。发起交接的人必须通过在**个人资料 → 登录方式**中关联的聊天账号，被认出是你所在组织的成员；Agent 也只会发到这个人自己能发消息的地方。在 AgentConnect Cloud 上，这意味着用已关联的 Slack 账号，从 Slack 发起。从 Telegram 或 Discord 交接到 Slack 或 Lark / 飞书是不行的，因为 AgentConnect 无法知道 Telegram 或 Discord 上的人是谁。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
+
 ## 开始之前 [#before-you-start]
 
 你需要：
 
 - 一个已连接到两个消息平台的在线 Agent；
 - 两个获准交换相关信息的工作区；
+- 一个用来发起交接的已关联聊天账号：在 AgentConnect Cloud 上，就是在**个人资料 → 登录方式**中关联的 Slack 账号；
+- 一个目标对话，Agent 在那里已经有你能在**会话**中打开的会话；
 - 一个能在目标对话中发帖的机器人；以及
 - 一条明确的规则，规定哪些内容可以离开来源端。
 
@@ -42,14 +46,14 @@ List the incident channels you can reach through our approved internal bots.
 Do not send a message yet.
 ```
 
-Telegram 机器人只能列出 Agent 已经观察到的聊天，因此请先在目标聊天中启动机器人。在任何平台上，机器人都仍然需要在那里查看和发帖的权限。
+在另一个平台上，Agent 只会发到它已经有会话、而且你能打开这个会话的对话里；Telegram 机器人也只能列出 Agent 已经观察到的聊天。请先在目标聊天中提及一次机器人。在任何平台上，机器人都仍然需要在那里查看和发帖的权限。
 
 ## 3. 发起一次聚焦的交接 [#3-start-a-focused-handoff]
 
-说明可信的目标以及确切可以共享的内容：
+在 Slack 中说明可信的目标以及确切可以共享的内容：
 
 ```text
-Hand this incident off to our approved Slack #incidents channel.
+Hand this incident off to #incidents on our approved Discord server.
 
 - Post a new top-level message.
 - Include the symptoms, what I already tried, and the open question.
@@ -78,9 +82,9 @@ When moving work between messaging platforms:
 
 - **信任**：机器人能触达并不意味着每个工作区或参与者都已获准。
 - **会话**：来源端和目标端仍然是彼此关联但相互独立的会话。
-- **访问**：每个平台执行自己的机器人和对话权限。
+- **访问**：每个平台执行自己的机器人和对话权限，而且 Agent 只在提问的人自己能读、能发的地方读取和发消息。
 - **线程**：回复留在写下它们的地方，除非 Agent 刻意报告回去。
-- **身份**：一个平台上的账号不会被假定为另一个平台上的同一个人。
+- **身份**：只有通过关联到同一个 AgentConnect 个人资料的账号，一个平台上的账号才会被当作另一个平台上的同一个人。
 
 好的交接是在可信的团队工作区之间转移内部事件、把私信升级到团队频道，或发布经批准的摘要。避免跨不同信任级别的例行交接，也避免自动双向镜像，后者会造成重复消息、归属不清和泄露风险。
 

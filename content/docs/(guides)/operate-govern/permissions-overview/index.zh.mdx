@@ -70,6 +70,7 @@ flowchart LR
 
 - Agent 的**权限模式**控制其 Runtime 在一次运行中无需询问即可做什么。
 - Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定对话里的人是否还能回答这些询问、修改 Runtime 设置。它从不改变权限模式。
+- Agent 在它正在回答的对话之外读取或发到其他对话时，以提问的人为准：只限这个人自己能读、能发消息的地方。见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
 - [沙箱隔离](/operate-govern/sandboxing)把 Runtime 放进一个外层的 Linux 操作系统边界中，并限制其文件系统访问。
 - 工作区的**仓库访问权限**控制 Agent 通过 GitHub App 拥有的是只读还是读写访问权限。
 - 平台应用的权限范围控制 Slack、Discord、Telegram、Lark 或 GitHub 应用在该提供方处可以做什么。
