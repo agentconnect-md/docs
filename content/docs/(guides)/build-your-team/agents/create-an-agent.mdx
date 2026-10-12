@@ -36,6 +36,8 @@ These appear when the selected daemon and runtime advertise support. Exact choic
 - **Execution strategy** — the boundary the agent's sessions run in. The picker lists the strategies available where the agent is placed: the daemon's own, or for a daemon group, those at least one serving member offers. The options are **Host** (no boundary), **Sandbox** (an SRT process sandbox) and **VM** (a microsandbox VM). A strategy that can't run there stays in the list, disabled and marked **unavailable**; hover over it to see why. New agents start on `host` where it can run, otherwise on the first available sandbox. AgentConnect Cloud shows no picker, because each session already runs in its own pod. This outer boundary is separate from the runtime's permission mode. See [Sandboxing](/operate-govern/sandboxing#pick-an-execution-strategy).
 - **Memory** — **Managed** (an AgentConnect-managed directory), **Native** (the runtime's own isolated memory), **External** (a configured provider such as Mem0), or **Off**. See [the guide to using Mem0 OSS as external memory](/how-to-guides/external-memory) for setup.
 
+**What people can do in chat**, beside the model, decides whether people in a chat conversation may also approve tool calls and change these settings. New agents start at **Talk and approve tool calls**. See [What people can do in chat](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
+
 MCP servers are not part of this dialog. Create the agent first, then enable them from its **Tools & Skills** tab — the only place MCP access is granted. See [Tools & Skills](/build-your-team/tools-and-skills).
 
 ## Workspace

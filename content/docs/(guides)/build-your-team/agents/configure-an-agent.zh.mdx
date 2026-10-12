@@ -27,10 +27,35 @@ import imgAgentConfiguration from '@/public/images/agent-configuration.png'
 
 其他 Runtime 行为设置包括：
 
-- **允许在聊天中更改**——开启后，聊天用户可以（通过[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)）更改会话的 Runtime 设置并回答审批请求。关闭后，只有能编辑该 Agent 的人才能这样做。
+- **聊天中可以做什么**——对话里的人除了和 Agent 对话，是否还能批准工具调用、修改 Runtime 设置；见[下文](#what-people-can-do-in-chat)。
 - **显示页脚**——在回复中附上 Agent、Runtime、模型和会话链接。
 - **加入频道时介绍自己**——让 Agent 向频道中已有的 Agent 介绍自己，以便它们知道何时可以委派给它。
 - **执行策略**——Agent 会话运行所处的边界：**主机**（无边界）、**沙箱**（SRT 进程沙箱）或 **虚拟机**（microsandbox 虚拟机）。选择器列出 Agent 所在位置提供的策略。无法在该位置运行的策略仍会列出并标记为 **不可用**；将鼠标悬停在上面可查看原因。如果所在位置不再提供已保存的策略，该策略仍保持选中，并标记为“当前位置不提供此策略。”Runtime 卡片会以一行 **执行策略** 显示当前选择。AgentConnect Cloud 上的 Agent 既没有这个选择器也没有这一行，因为每个会话本来就运行在自己的 Pod 中。这个外层边界与 Runtime 的权限模式相互独立；参见[沙箱隔离](/operate-govern/sandboxing#pick-an-execution-strategy)。
+
+### 聊天中可以做什么 [#what-people-can-do-in-chat]
+
+**聊天中可以做什么**位于**编辑**对话框中模型的旁边，Runtime 卡片会显示当前级别。每个级别都包含上一级的权限：
+
+- **和 agent 对话**——对话里的人只能和 Agent 对话。需要批准的工具调用交给 Agent 的编辑者，在控制台或私信中处理。
+- **对话并批准工具调用**——默认级别。对话里的人还可以回答 Agent 权限模式询问的工具调用：允许一次、始终允许该工具，或拒绝。
+- **对话、批准并修改设置**——对话里的人还可以在聊天中修改模型、推理强度、权限模式和快速模式，方式是使用[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)或 Playground 中的控件。
+
+“对话里的人”具体指谁，取决于 AgentConnect 能否确认一个人的身份：
+
+- **开启了[遵循 Slack 访问权限](/operate-govern/permissions-overview/session-visibility#follow-slack-access)的 Slack**——只有 Agent 的编辑者。AgentConnect 通过编辑者在**个人资料 → 登录方式**中关联的 Slack 账号识别他们（参见[关联账号](/how-to-guides/linked-accounts)）。其他人尝试时，会私下收到提示：只有 Agent 编辑者可以操作；Slack 账号尚未关联的人还会看到关联方法。发起请求的人不是编辑者时，还会有一位编辑者在私信中收到这张审批卡片。
+- **其他聊天平台，或未开启该设置的 Slack**——在该对话中能和 Agent 对话的任何人。
+- **Playground 和 [Agent 对话 API](/connect-automate/agent-chat-api)**——Agent 的编辑者；在第二、三级下还包括对话的所有者，即使这个人只能查看该 Agent。通过对话 API 发起的对话属于密钥的所有者。
+
+无论哪个级别，以下规则都不变：
+
+- 设为**关闭**或**按决策**的对话，不接受聊天中的批准或设置修改。
+- 与其他组织共享的对话（例如 Slack Connect 频道）中不会发布审批卡片，审批会通过私信发给你所在组织的成员。
+- 第一个回答生效，无论它来自对话、私信还是控制台。
+- 这项设置从不改变权限模式：允许所有工具调用的 Agent 仍然不会询问，有人选择过始终允许的工具也仍然被允许。
+
+在公开群组中使用的 Agent，请选择**和 agent 对话**，这样群里没有人能批准它的工具调用。
+
+这项设置取代了**允许在聊天中更改**。现有 Agent 已改为**对话并批准工具调用**；原来允许在聊天中更改的，改为**对话、批准并修改设置**。在自托管部署中，开启了**遵循飞书 / Lark 访问权限**的飞书 / Lark 与上面的 Slack 规则相同。
 
 ## 描述与人设 [#description-and-persona]
 

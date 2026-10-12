@@ -59,6 +59,8 @@ import imgSocialSignInMethods from '@/public/images/social-sign-in-methods.png'
 
 已关联的 Slack 身份可以匹配私有 Slack 私信会话的所有者，并在组织启用**遵循 Slack 访问权限**时用于对话检查。已关联的 Lark 或飞书身份在其 Logto 记录包含提供方的跨应用 `union_id` 时，对其聊天的作用方式相同。因此，关联匹配的账号可以让现有会话变得可见；解除关联则会移除该提供方的匹配。见[会话可见范围](/operate-govern/permissions-overview/session-visibility#session-access)。
 
+开启**遵循 Slack 访问权限**后，AgentConnect 也通过这个已关联的 Slack 身份，识别在 Slack 中回答审批或修改设置的 Agent 编辑者；已关联的 Lark 或飞书身份在其聊天中的作用相同。尚未关联的编辑者在那里会被拒绝，并看到关联方法。见[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
+
 ### 两项 GitHub 策略以不同方式使用该身份 [#two-github-policies-use-the-identity-differently]
 
 - **按用户的仓库授权**在仓库设置期间检查已登录的人。没有关联 GitHub 身份也可以以只读方式选择公开仓库。私有仓库需要一个拥有访问权限的已关联身份，而**读写**始终要求已关联的 GitHub 用户拥有 `write` 或 `admin` 权限。

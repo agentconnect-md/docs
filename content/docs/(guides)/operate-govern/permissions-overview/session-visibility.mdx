@@ -46,6 +46,8 @@ A Slack channel or group-DM session requires a linked identity from the same Sla
 
 An active full member can read a public-channel session without joining that channel. Private channels and group DMs require current membership. Guests and Slack Connect users also require current conversation membership. One-to-one Slack DMs remain Private.
 
+With this on, only the agent's editors may answer approvals and change runtime settings from Slack. See [What people can do in chat](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
+
 ### Follow GitHub access
 
 A public-repository session remains available to every organization member. A private-repository session requires a linked GitHub profile with current access to that repository.
@@ -54,7 +56,7 @@ Linking GitHub does not install the GitHub App or grant repository access. It on
 
 ### Follow Feishu / Lark access
 
-The session audience follows current membership in the source chat, including one-to-one chats. AgentConnect checks membership with the installed bot App for that chat.
+The session audience follows current membership in the source chat, including one-to-one chats. AgentConnect checks membership with the installed bot App for that chat. With this on, only the agent's editors may answer approvals and change runtime settings from these chats.
 
 Lark and Feishu bot integrations are available on AgentConnect Cloud. Social sign-in and this setting currently require a self-hosted deployment with a matching regional Login App and a linked identity that exposes the provider's `union_id`. The regional Login App limits admitted bot Apps to the same trusted workspace; their App IDs do not need to match. See [Sign-in](/self-hosting/sign-in#lark-and-feishu-identities) for the self-hosted setup.
 

@@ -27,6 +27,8 @@ Daemon 主动向外连接 Discord 的网关——不需要公网端点。
 
 在机器人可见的服务器频道中提及它，它就会回答；较长的对话会在线程（thread）中继续。你也可以给它发私信。AgentConnect 会把[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)注册为原生的 Discord 斜杠命令。
 
+当工具调用需要批准时，Agent 会在频道或线程中发布一张审批卡片。谁能回答它，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定。
+
 ## 说明 [#notes]
 
 - 如果自动的 Message Content 设置被拒绝，请在开发者门户中手动启用该 intent，然后重新连接。

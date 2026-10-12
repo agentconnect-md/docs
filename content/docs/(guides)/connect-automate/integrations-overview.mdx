@@ -81,7 +81,9 @@ Use these commands to control the current conversation without asking the model 
 
 **Stop** also mutes the conversation until someone mentions the agent again or uses **resume**. **Cancel** interrupts only the current turn.
 
-The runtime-setting commands (`/models`, `/effort`, `/permission`, `/fast`) work only when the agent's **Allow change in chat** setting is on. On Telegram and Discord these commands appear in the native command menu, where the registered name is `/models` rather than `/model` (both are accepted when typed).
+The runtime-setting commands (`/models`, `/effort`, `/permission`, `/fast`) work only when the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) is **Talk, approve and change settings**. On Slack with **Follow Slack access** on, they work only for the agent's editors, and anyone else is told privately who can change them. On Telegram and Discord these commands appear in the native command menu, where the registered name is `/models` rather than `/model` (both are accepted when typed).
+
+When a tool call needs approval, Slack, Telegram, Discord, Lark / Feishu and Google Chat post an approval card in the conversation, unless the agent is set to **Talk to the agent**. The same setting decides who may answer it; see [When a run asks for permission](/operate-govern/sessions#when-a-run-asks-for-permission).
 
 ## How chatty should an agent be?
 

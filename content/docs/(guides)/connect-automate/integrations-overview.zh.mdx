@@ -81,7 +81,9 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 
 **停止**还会让对话静音，直到有人再次提及 Agent 或使用**恢复**。**取消**只中断当前轮次。
 
-运行时设置命令（`/models`、`/effort`、`/permission`、`/fast`）只有在 Agent 的**允许在聊天中更改**设置开启时才生效。在 Telegram 和 Discord 上，这些命令会出现在原生命令菜单中，注册的名称是 `/models` 而不是 `/model`（手动输入时两者都接受）。
+运行时设置命令（`/models`、`/effort`、`/permission`、`/fast`）只有在 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)为**对话、批准并修改设置**时才生效。在开启了**遵循 Slack 访问权限**的 Slack 上，只有 Agent 的编辑者能使用它们，其他人会私下收到提示，告知谁可以修改。在 Telegram 和 Discord 上，这些命令会出现在原生命令菜单中，注册的名称是 `/models` 而不是 `/model`（手动输入时两者都接受）。
+
+当工具调用需要批准时，Slack、Telegram、Discord、Lark / 飞书和 Google Chat 会在对话中发布一张审批卡片，除非 Agent 设为**和 agent 对话**。谁能回答这张卡片也由这项设置决定；参见[当运行请求权限时](/operate-govern/sessions#when-a-run-asks-for-permission)。
 
 ## Agent 应该有多“健谈”？ [#how-chatty-should-an-agent-be]
 

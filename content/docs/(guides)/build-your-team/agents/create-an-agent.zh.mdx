@@ -36,6 +36,8 @@ import imgAddAgent from '@/public/images/add-agent.png'
 - **执行策略**——Agent 会话运行所处的边界。选择器列出 Agent 所在位置可用的策略：Daemon 自身提供的策略，或者对于 Daemon 组，至少有一个服务中成员提供的策略。可选项包括 **主机**（无边界）、**沙箱**（SRT 进程沙箱）和 **虚拟机**（microsandbox 虚拟机）。无法在该位置运行的策略仍会留在列表中，但被禁用并标记为 **不可用**；将鼠标悬停在上面可查看原因。新 Agent 默认使用 `host`（在它能运行的地方），否则使用第一个可用的沙箱。AgentConnect Cloud 不显示此选择器，因为每个会话本来就运行在自己的 Pod 中。这个外层边界与 Runtime 的权限模式相互独立。参见[沙箱隔离](/operate-govern/sandboxing#pick-an-execution-strategy)。
 - **记忆**——**托管**（由 AgentConnect 管理的目录）、**原生**（Runtime 自身的独立记忆）、**外部**（已配置的提供方，例如 Mem0）或 **关闭**。设置方法参见[使用 Mem0 OSS 作为外部记忆的指南](/how-to-guides/external-memory)。
 
+模型旁边的**聊天中可以做什么**决定聊天对话里的人是否还能批准工具调用、修改这些设置。新 Agent 默认为**对话并批准工具调用**。参见[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
+
 MCP 服务器不在此对话框中配置。请先创建 Agent，然后从它的 **工具与技能** 标签页启用——那是授予 MCP 访问权限的唯一入口。参见[工具与技能](/build-your-team/tools-and-skills)。
 
 ## 工作区 [#workspace]
