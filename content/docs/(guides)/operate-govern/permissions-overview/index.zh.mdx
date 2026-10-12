@@ -62,11 +62,14 @@ flowchart LR
 
 提供方可见对象在会话本身上是只读的：请更改这项组织设置，而不是重新归类某一位参与者的副本。每项提供方检查都需要匹配的[关联账号](/how-to-guides/linked-accounts)；组织成员资格、所有者角色和个人 API 密钥都不能替代它。请参阅[会话可见范围](/operate-govern/permissions-overview/session-visibility)。
 
+遵循 Slack 或飞书 / Lark 访问权限后，在这些对话中能回答审批、修改 Runtime 设置的人也随之改变：只有 Agent 的编辑者，通过其关联账号识别。请参阅[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
+
 ## 相互独立的权限 [#permissions-that-are-separate]
 
 有几项控制使用了相似的词语，但保护的是不同的边界：
 
 - Agent 的**权限模式**控制其 Runtime 在一次运行中无需询问即可做什么。
+- Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定对话里的人是否还能回答这些询问、修改 Runtime 设置。它从不改变权限模式。
 - [沙箱隔离](/operate-govern/sandboxing)把 Runtime 放进一个外层的 Linux 操作系统边界中，并限制其文件系统访问。
 - 工作区的**仓库访问权限**控制 Agent 通过 GitHub App 拥有的是只读还是读写访问权限。
 - 平台应用的权限范围控制 Slack、Discord、Telegram、Lark 或 GitHub 应用在该提供方处可以做什么。

@@ -94,7 +94,7 @@ A turn can stop on something only the caller can answer: the agent asks a questi
 
 Send the answer as the next request. `useChat` does that on its own with `sendAutomaticallyWhen` set to `lastAssistantMessageIsCompleteWithToolCalls` or `lastAssistantMessageIsCompleteWithApprovalResponses`. The relay continues the same turn, and the rest of the reply streams into the same assistant message. Each tool call's `callProviderMetadata` names the turn it belongs to, so send the assistant message back as the stream built it.
 
-A refused approval takes effect at once, and the agent's editors never see it. A granted one takes effect when the key's owner could approve it in the console: a **Full access** key whose owner can edit the agent. Granted with any other key, it goes to the agent's editors to approve in the console, and the turn waits for them. A public site can refuse every approval in code, so its visitors never reach the editors; this site's Ask AI panel does.
+A refused approval takes effect at once, and the agent's editors never see it. A granted one takes effect at once when the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) is **Talk and approve tool calls** or above, because the conversation belongs to the key's owner. At **Talk to the agent**, it takes effect only with a **Full access** key whose owner can edit the agent. Granted with any other key, it goes to the agent's editors to approve in the console, and the turn waits for them. A public site can refuse every approval in code, so its visitors never reach the editors; this site's Ask AI panel does.
 
 A turn does not wait forever:
 
@@ -172,6 +172,7 @@ The agent receives untrusted input on every turn. Configure it for that:
 
 - Give it no [secrets](/build-your-team/variables-and-secrets) and no write access to repositories.
 - Run it in a [sandbox](/operate-govern/sandboxing) that isolates untrusted input: `microsandbox` or Kubernetes.
+- Set its **What people can do in chat** to **Talk to the agent**, so a visitor's approval never takes effect on its own.
 - Keep it in an organization whose members may read those transcripts.
 </Callout>
 

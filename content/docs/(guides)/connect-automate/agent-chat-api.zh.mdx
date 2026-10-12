@@ -94,7 +94,7 @@ curl -N "$CHAT_URL" \
 
 把回答作为下一次请求发出。把 `sendAutomaticallyWhen` 设为 `lastAssistantMessageIsCompleteWithToolCalls` 或 `lastAssistantMessageIsCompleteWithApprovalResponses`，`useChat` 就会自动发出。Relay 会继续同一轮，剩下的回复流进同一条 assistant 消息。每个工具调用的 `callProviderMetadata` 标明它属于哪一轮，所以要把流生成的 assistant 消息原样发回。
 
-拒绝审批会立即生效，Agent 的编辑者看不到这个请求。批准则要看密钥：如果密钥的所有者本来就能在控制台里批准，也就是能编辑这个 Agent 的人持有的**完全访问**密钥，批准直接生效；用其他密钥批准时，请求会交给 Agent 的编辑者在控制台里处理，这一轮等他们决定。公开站点可以在代码里拒绝所有审批，访客就永远不会打扰到编辑者；本站的 Ask AI 面板就是这样做的。
+拒绝审批会立即生效，Agent 的编辑者看不到这个请求。批准是否直接生效取决于 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)：为**对话并批准工具调用**或更高级别时，批准直接生效，因为对话属于密钥的所有者；为**和 agent 对话**时，只有能编辑这个 Agent 的人持有的**完全访问**密钥批准才直接生效。用其他密钥批准时，请求会交给 Agent 的编辑者在控制台里处理，这一轮等他们决定。公开站点可以在代码里拒绝所有审批，访客就永远不会打扰到编辑者；本站的 Ask AI 面板就是这样做的。
 
 一轮对话不会一直等下去：
 
@@ -172,6 +172,7 @@ Agent 每一轮收到的都是不可信输入。请据此配置它：
 
 - 不给它任何[密钥](/build-your-team/variables-and-secrets)，也不给仓库写权限。
 - 让它在能隔离不可信输入的[沙箱](/operate-govern/sandboxing)中运行：`microsandbox` 或 Kubernetes。
+- 把它的**聊天中可以做什么**设为**和 agent 对话**，这样访客的批准不会直接生效。
 - 把它放在一个成员可以阅读这些会话记录的组织里。
 </Callout>
 

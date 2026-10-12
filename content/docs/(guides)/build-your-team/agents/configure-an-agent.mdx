@@ -27,10 +27,35 @@ The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access*
 
 Other runtime behavior settings include:
 
-- **Allow change in chat** — when on, chat users can change session runtime settings (via the [in-conversation commands](/connect-automate/integrations-overview#in-conversation-commands)) and answer approval requests. When off, only people who can edit the agent can do so.
+- **What people can do in chat** — whether people in a conversation may also approve tool calls and change runtime settings; see [below](#what-people-can-do-in-chat).
 - **Show footer** — add the agent, runtime, model and session links to replies.
 - **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
 - **Execution strategy** — the boundary the agent's sessions run in: **Host** (no boundary), **Sandbox** (an SRT process sandbox) or **VM** (a microsandbox VM). The picker lists what the agent's placement offers. A strategy that can't run there stays listed as **unavailable**; hover over it to see why. If the placement no longer offers the saved strategy, it stays selected and is marked "Not offered where this agent is placed." The Runtime card shows the choice as an **Execution strategy** row. Agents on AgentConnect Cloud have neither the picker nor the row, because each session already runs in its own pod. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/operate-govern/sandboxing#pick-an-execution-strategy).
+
+### What people can do in chat
+
+**What people can do in chat** sits beside the model in **Edit**, and the Runtime card shows the current level. Each level includes the one before it:
+
+- **Talk to the agent** — people only talk to the agent. A tool call that needs approval goes to the agent's editors, in the console or in a direct message.
+- **Talk and approve tool calls** — the default. People can also answer a tool call that the agent's permission mode asks about: allow it once, always allow that tool, or deny it.
+- **Talk, approve and change settings** — people can also change the model, effort, permission mode and fast mode from chat, with the [in-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) or the Playground's controls.
+
+Who counts as people depends on whether AgentConnect knows who someone is:
+
+- **Slack, with [Follow Slack access](/operate-govern/permissions-overview/session-visibility#follow-slack-access) on** — only the agent's editors, recognized by the Slack account each one linked under **Your profile → Sign-in methods** (see [Linked accounts](/how-to-guides/linked-accounts)). Anyone else who tries is told privately that only an Agent editor can, and someone whose Slack account is not linked is told how to link it. When the person who asked is not an editor, an editor also gets the approval card in a direct message.
+- **Other chat platforms, or Slack with that setting off** — anyone who can talk to the agent in that conversation.
+- **The Playground and the [agent chat API](/connect-automate/agent-chat-api)** — the agent's editors, and at the second and third levels also the conversation's owner, even one who can only view the agent. A chat API conversation belongs to the key's owner.
+
+Every level keeps these rules:
+
+- A conversation switched **Off**, or answered **By decision**, takes no approvals or setting changes from chat.
+- A conversation shared with another organization, such as a Slack Connect channel, gets no approval card. The approval goes to a member of your organization in a direct message.
+- The first answer decides, whether it comes from the conversation, a direct message or the console.
+- The setting never changes the permission mode: an agent with full access still never asks, and a tool someone chose to always allow stays allowed.
+
+For an agent in a public group, choose **Talk to the agent**, so nobody there can approve its tool calls.
+
+This setting replaced **Allow change in chat**. Existing agents moved to **Talk and approve tool calls**, or to **Talk, approve and change settings** if they allowed changes in chat. On a self-hosted deployment, Feishu / Lark with **Follow Feishu / Lark access** on works like Slack above.
 
 ## Description and persona
 

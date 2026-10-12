@@ -38,6 +38,8 @@ import imgSlackIntegration from '@/public/images/slack-integration.png'
 
 每个被发现的频道都会出现在 Agent 的集成卡片上。为入站激活选择 **@ 提及**（默认）、**所有消息**或**关闭**。关闭不会卸载应用，也不会阻止定时任务和受托的出站发消息。关于从 Slack 停止、取消、排队以及更改会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
 
+当工具调用需要批准时，Agent 会在线程中发布一张审批卡片。谁能回答它、谁能在 Slack 中修改设置，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定；开启**遵循 Slack 访问权限**后，只有 Agent 的编辑者可以。
+
 ### Slack 套餐与 AI 输出 [#slack-plans-and-ai-outputs]
 
 Slack 应用容器中的 AI Agent 体验需要付费 Slack 套餐。免费套餐仍可通过频道提及和私信与 Agent 对话；其他 Slack 功能受工作区套餐和权限限制。

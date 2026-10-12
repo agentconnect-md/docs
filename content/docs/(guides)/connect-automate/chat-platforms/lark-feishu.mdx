@@ -54,5 +54,6 @@ The manual checklist remains visible in the integration dialog so you can verify
 - In a group, add the bot and **@-mention** it to start. The channel then appears on the agent's Integrations card, where you can choose **@-mention**, **any message**, or **Off**.
 - In a one-to-one chat, message the bot directly.
 - Use the [in-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) to stop, cancel, queue, or inspect a session.
+- When a tool call needs approval, the agent posts an approval card in the chat. Who may answer it is set by the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat). On a self-hosted deployment with **Follow Feishu / Lark access** on, only the agent's editors can.
 
 One Lark or Feishu bot binds to one agent at a time. Deleting its integration frees the stored bot identity for **Use an existing bot**; it does not delete the app from the platform developer console. Organization-wide management lives under the matching **Integrations → Messaging apps → Lark** or **Feishu** tab, where **Configure** opens the correct regional developer console.

@@ -46,6 +46,8 @@ Slack 频道或群组私信会话要求来自同一 Slack 工作区的已关联�
 
 活跃的正式成员无需加入频道即可读取公开频道的会话。私密频道和群组私信要求当前是其成员。访客和 Slack Connect 用户同样要求当前是该对话的成员。一对一的 Slack 私信保持私密。
 
+开启后，只有 Agent 的编辑者能在 Slack 中回答审批、修改 Runtime 设置。请参阅[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
+
 ### 遵循 GitHub 访问权限 [#follow-github-access]
 
 公开仓库的会话对每位组织成员保持可用。私有仓库的会话要求已关联的 GitHub 个人资料当前对该仓库具有访问权限。
@@ -54,7 +56,7 @@ Slack 频道或群组私信会话要求来自同一 Slack 工作区的已关联�
 
 ### 遵循飞书 / Lark 访问权限 [#follow-feishu--lark-access]
 
-会话可见对象遵循源聊天的当前成员资格，包括一对一聊天。AgentConnect 使用该聊天中已安装的机器人应用来检查成员资格。
+会话可见对象遵循源聊天的当前成员资格，包括一对一聊天。AgentConnect 使用该聊天中已安装的机器人应用来检查成员资格。开启后，只有 Agent 的编辑者能在这些聊天中回答审批、修改 Runtime 设置。
 
 Lark 和飞书机器人集成在 AgentConnect Cloud 上可用。社交登录和这项设置目前需要自托管部署，并配有匹配的区域 Login App，以及一个能提供该提供方 `union_id` 的已关联身份。区域 Login App 会把允许接入的机器人应用限制在同一个受信任的工作区内；它们的 App ID 不需要相同。有关自托管的设置，请参阅[登录](/self-hosting/sign-in#lark-and-feishu-identities)。
 

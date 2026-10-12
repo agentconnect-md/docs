@@ -59,6 +59,8 @@ Linking also does not merge two AgentConnect profiles, install a GitHub App, aut
 
 A linked Slack identity can match the owner of a private Slack direct-message session, and is used for the conversation check when the organization enables **Follow Slack access**. A linked Lark or Feishu identity works the same way for its chats when its Logto record contains the provider's cross-App `union_id`. Linking a matching account can therefore make existing sessions visible; unlinking removes that provider match. See [Session visibility](/operate-govern/permissions-overview/session-visibility#session-access).
 
+With **Follow Slack access** on, the same linked Slack identity is how AgentConnect recognizes an Agent editor who answers an approval or changes settings from Slack, and a linked Lark or Feishu identity does the same in its chats. An editor who has not linked is refused there and told how to link. See [What people can do in chat](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
+
 ### Two GitHub policies use the identity differently
 
 - **Per-user repository authorization** checks the signed-in person during repository setup. Public repositories can be selected read-only without a linked GitHub identity. Private repositories require a linked identity with access, and **Read & write** always requires the linked GitHub user to have `write` or `admin` permission.
