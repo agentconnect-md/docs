@@ -10,6 +10,7 @@ import { getMDXComponents } from '@/components/mdx'
 import { i18n } from '@/lib/i18n'
 import { pageScoped } from '@/lib/openapi-page'
 import { isTranslated } from '@/lib/page-links'
+import { pageAlternates } from '@/lib/seo'
 import { reference } from '@/lib/source'
 import { t } from '@/lib/strings'
 
@@ -66,5 +67,9 @@ export async function generateMetadata({ params }: PageProps<'/[lang]/api/[[...s
   const { lang, slug = [] } = await params
   const page = reference.getPage(slug, lang)
   if (!page) return {}
-  return { title: page.data.title, description: page.data.description }
+  return {
+    title: page.data.title,
+    description: page.data.description,
+    alternates: pageAlternates(`/api${slug.length ? `/${slug.join('/')}` : ''}`, lang)
+  }
 }

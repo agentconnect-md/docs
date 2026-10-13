@@ -20,6 +20,14 @@ titles and separators. A translation keeps the English page's headings one to on
 English heading's id (`## 连接 Gitea [#connect-gitea]`), so `#anchor` links and the table of contents
 work in both languages; images, diagrams and code blocks stay as they are.
 
+Pages declare their canonical URL and language alternatives. The production sitemap at
+`/docs/sitemap.xml` includes guides and API operations in both languages; test builds remain
+`noindex` and publish an empty sitemap. Set `DOCS_SITE_URL` to override the public website origin.
+
+Old guide slugs and API operation IDs redirect to their current pages, including the old
+`docs/`, `reference/` and `branches/1.0/` prefixes. Domain redirects must preserve the original
+path after `/docs`; unknown or removed pages return 404 instead of redirecting to the introduction.
+
 ## Channels and branches
 
 Each build is one channel, bound to one environment and one release line:
