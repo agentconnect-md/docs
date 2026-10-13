@@ -1,21 +1,27 @@
 import type { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { Callout } from 'fumadocs-ui/components/callout'
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page'
 import { getMDXComponents } from '@/components/mdx'
 import { pageChrome } from '@/components/page-chrome'
 import { PageNav } from '@/components/page-nav'
-import { i18n } from '@/lib/i18n'
+import { i18n, localePath } from '@/lib/i18n'
+import { legacyDestination } from '@/lib/legacy-redirects.mjs'
 import { isTranslated } from '@/lib/page-links'
 import { guidesStart } from '@/lib/sections'
-import { source } from '@/lib/source'
+import { pageAlternates } from '@/lib/seo'
+import { reference, source } from '@/lib/source'
 import { t } from '@/lib/strings'
 
 export default async function Page({ params }: PageProps<'/[lang]/[[...slug]]'>) {
   const { lang, slug } = await params
-  if (!slug?.length) redirect(guidesStart(lang))
+  if (!slug?.length) permanentRedirect(guidesStart(lang))
   const page = source.getPage(slug, lang)
-  if (!page) notFound()
+  if (!page) {
+    const destination = legacyDestination(slug, reference.getPages(i18n.defaultLanguage))
+    if (destination) permanentRedirect(localePath(lang, destination))
+    notFound()
+  }
 
   const MDX = page.data.body
   // A language without its own copy of the page is served the English one.
@@ -49,8 +55,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps<'/[lang]/[[...slug]]'>): Promise<Metadata> {
-  const { lang, slug } = await params
-  const page = slug?.length ? source.getPage(slug, lang) : undefined
+  const { lang, slug = [] } = await params
+  const page = slug.length ? source.getPage(slug, lang) : undefined
   if (!page) return {}
-  return { title: page.data.title, description: page.data.description }
+  return { title: page.data.title, description: page.data.description, alternates: pageAlternates(source, slug, lang) }
 }

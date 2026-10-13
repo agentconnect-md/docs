@@ -33,6 +33,6 @@ export const config = {
   // Matchers get the base path prepended, and the second one needs a character after it, so the root is listed too.
   matcher: [
     '/',
-    '/((?!api/search|api/proxy|api/chat|_next/static/|_next/image|images/|llms\\.mdx/|llms\\.txt|openapi\\.json|favicon\\.ico|icon\\.svg|apple-icon\\.png).*)'
+    '/((?!api/search|api/proxy|api/chat|_next/static/|_next/image|images/|llms\\.mdx/|llms\\.txt|sitemap\\.xml|openapi\\.json|favicon\\.ico|icon\\.svg|apple-icon\\.png).*)'
   ]
 }
