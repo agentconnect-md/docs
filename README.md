@@ -21,8 +21,9 @@ English heading's id (`## 连接 Gitea [#connect-gitea]`), so `#anchor` links an
 work in both languages; images, diagrams and code blocks stay as they are.
 
 Pages declare their canonical URL and language alternatives. The production sitemap at
-`/docs/sitemap.xml` includes guides and API operations in both languages; test builds remain
-`noindex` and publish an empty sitemap. Set `DOCS_SITE_URL` to override the public website origin.
+`/docs/sitemap.xml` includes guides and API operations with their available translations. English
+fallbacks use the English canonical and are omitted from language alternatives and the sitemap.
+Test builds remain `noindex` and publish an empty sitemap. Set `DOCS_SITE_URL` to override the public website origin.
 
 Old guide slugs and API operation IDs redirect to their current pages, including the old
 `docs/`, `reference/` and `branches/1.0/` prefixes. Domain redirects must preserve the original

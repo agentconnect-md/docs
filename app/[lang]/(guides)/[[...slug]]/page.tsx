@@ -58,5 +58,5 @@ export async function generateMetadata({ params }: PageProps<'/[lang]/[[...slug]
   const { lang, slug = [] } = await params
   const page = slug.length ? source.getPage(slug, lang) : undefined
   if (!page) return {}
-  return { title: page.data.title, description: page.data.description, alternates: pageAlternates(`/${slug.join('/')}`, lang) }
+  return { title: page.data.title, description: page.data.description, alternates: pageAlternates(source, slug, lang) }
 }

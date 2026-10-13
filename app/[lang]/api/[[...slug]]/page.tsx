@@ -70,6 +70,6 @@ export async function generateMetadata({ params }: PageProps<'/[lang]/api/[[...s
   return {
     title: page.data.title,
     description: page.data.description,
-    alternates: pageAlternates(`/api${slug.length ? `/${slug.join('/')}` : ''}`, lang)
+    alternates: pageAlternates(reference, slug, lang)
   }
 }
