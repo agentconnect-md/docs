@@ -130,6 +130,7 @@ docker compose down --volumes
 | Setup Server | Docker，仅回环地址 | 配置部署的认证与提供方 |
 | PostgreSQL | Docker | 持久化部署和控制平面数据 |
 | Logto OSS | 可选叠加配置 | 本地登录 |
+| 对象存储（RustFS） | HTTPS 叠加配置 | 文件上传和大文件工作区下载；见[文件传输](/self-hosting/docker-compose/configuration#file-transfer-and-the-object-store) |
 | Daemon | 宿主机或另一台机器 | 运行 Agent 并保存本地数据 |
 
 包含 Relay 是为了让 GitHub、Webhook、网页聊天和 HTTP 机器人回调无需改动服务栈即可工作。Slack Socket Mode、Telegram、Discord 和 Lark / 飞书的直连仍然在 Daemon 与各自的提供方之间运行。

@@ -28,12 +28,21 @@ These tools are not available in a conversation with several agents. Adding an a
 
 The agent never asks for credentials in chat. To create an agent, connect an integration or code host, or add a secret, MCP server, or skill, it opens the matching console dialog, prefilled where it can, for you to finish. Trying a [Decision](/build-your-team/decisions) on a sample message is not available here; use **Try with an example** in the Decision editor.
 
+## Attach files
+
+Use the composer's attach button to add files to a message. An image goes to the agent with the message itself. Any other file uploads to your deployment's object store first and appears as a chip above the composer; the message sends once every upload has finished. The agent receives the file's name and a short-lived download link, and fetches the file into its workspace when it needs it.
+
+- A message can carry up to 4 files, each within your deployment's upload limit; the composer tells you when a file is over it.
+- If your deployment has no object store configured, only images can be attached.
+- A message with files is never folded into a turn that is already running. It waits and runs as its own turn once the current one ends.
+
 ## Work with several agents
 
 Add agents before the first message from the Home composer, or add them to an existing Playground conversation.
 
 - A message without an `@AgentName` goes to every participant. Each agent may answer or stay silent.
 - An explicit `@AgentName` narrows that turn to the named participant or participants.
+- Files go only to the agents a message addresses. The other participants see that files were attached, by name, but cannot open them.
 - Every agent keeps its own configuration while the browser combines their activity into one conversation.
 
 ## When the session is saved

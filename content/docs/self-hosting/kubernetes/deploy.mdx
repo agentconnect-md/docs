@@ -175,6 +175,68 @@ Two rules make this predictable:
 - The Secret is the install's **only** source for those variables. Setting one of them in `daemonPool.extraEnv`, or letting `modelEgress.clients` render one, is refused when you install. A credential pair has to arrive whole — a Secret holding only a token, beside a base URL left by something else, would aim a real provider key at an endpoint that never issued it.
 - What the Secret carries **outranks an agent's own variable of the same name**, for the same reason. Leave `modelCredentials` unset when agents should carry their own keys.
 
+### Object store: Source Cache and file transfer
+
+An S3-compatible object store turns on two features:
+
+- **Source Cache.** A new sandbox starts its Git clone from a bundle in the store instead of fetching the whole repository from its origin. Sandbox pods never hold bucket credentials, only short-lived links for one object each.
+- **Console file transfer.** People can attach any file to a [Playground](/build-your-team/agents/playground#attach-files) message, and the console can download large or binary workspace files. Bytes go straight between the browser, the daemon or its pod, and the store; the Control Plane only signs the links. This works for every daemon, including self-hosted ones outside the cluster.
+
+Without a store, both are off: clones fetch from the origin, only images can be attached, and workspace downloads go through the Control Plane, up to 8 MiB per file.
+
+#### Bundled store
+
+The chart can run a single [RustFS](https://rustfs.com) pod on a PersistentVolumeClaim. Give it a public hostname:
+
+```yaml
+sourceCache:
+  store:
+    host: objects.example.test
+    persistence:
+      size: 50Gi
+      storageClass: standard
+```
+
+Signed links must be `https://`, so the store is reached through the Gateway on its own host. Provision that host's DNS, TLS, and Gateway listener like `publicUrl`. The edge must keep the `Host` header, which every signature covers, and accept request bodies up to the largest bundle (`sourceCache.limits.maxBundleBytes`, default `2Gi`). The chart creates the store's route only while `route.enabled` is `true`.
+
+The chart generates the store's key pair in the Secret `agentconnect-source-cache-store` and keeps it across upgrades. A post-install and post-upgrade Job creates the bucket, its lifecycle rules, and a CORS rule for `publicUrl`; it is safe to rerun.
+
+After you publish the route in [step 4](#4-configure-sign-in-before-publishing-the-route), restart the daemon pool once so its members find the lifecycle rules at once rather than at their next 6-hourly check:
+
+```bash
+kubectl -n agentconnect rollout restart deployment/agentconnect-daemon-pool
+curl https://objects.example.test/health
+```
+
+#### External bucket
+
+To use your own bucket instead, set `sourceCache.enabled: true` with its location and credentials; it takes precedence over the bundled store:
+
+```yaml
+sourceCache:
+  enabled: true
+  endpoint: https://s3.example.test
+  # Set only when browsers and out-of-cluster daemons reach the bucket at another origin.
+  publicEndpoint: ''
+  region: us-east-1
+  bucket: agentconnect-source-cache
+  forcePathStyle: true
+  credentials:
+    source: secret
+    secret:
+      name: agentconnect-source-cache
+```
+
+The Secret holds `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, mounted as files. On EKS, use `credentials.source: serviceAccount` with a `roleArn` instead; the role must trust both the daemon pool's and the Control Plane's ServiceAccounts. Leave `endpoint` empty for AWS's regional endpoint.
+
+Neither the chart nor AgentConnect writes an external bucket's configuration. Apply these yourself:
+
+- **Lifecycle rules** under `<prefix>/src/`: expire `ac-cache=pending` after 2 days and `ac-cache=unreferenced` after 7. Without them, members stop writing bundles and the Control Plane refuses transfers; both log the document to apply.
+- **A CORS rule** admitting `publicUrl` for `GET` and `PUT`, with the `content-type`, `x-amz-checksum-sha256`, and `x-amz-tagging` headers.
+- **Permissions:** `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, and `s3:PutObjectTagging` on `<prefix>/src/*`, and `s3:GetLifecycleConfiguration` on the bucket.
+
+The chart's [Source Cache reference](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#source-cache) has the exact rule and CORS documents, the AWS and MinIO commands, and every limit.
+
 ## 3. Install AgentConnect
 
 Install the version you verified:

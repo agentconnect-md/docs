@@ -187,6 +187,82 @@ docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
 
 The command is resumable and can also be rerun after rotating the Transit key. Vault workload identity is supported through `VAULT_JWT_ROLE`, `VAULT_JWT_PATH`, and `VAULT_AUTH_MOUNT` instead of `VAULT_TOKEN`.
 
+## File transfer and the object store
+
+Console file transfer needs an S3-compatible object store. With one, a person can attach any file to a [Playground](/build-your-team/agents/playground#attach-files) message, and the console can download workspace files of any size up to the store's limit. Bytes go straight between the browser or daemon and the store on short-lived signed URLs; the Control Plane only signs them and never sees file contents. Without a store, only images can be attached, and workspace downloads go through the Control Plane, up to 8 MiB per file.
+
+Signed URLs must be `https://`, and browsers and daemons reach the store directly, so the store needs an HTTPS origin they trust.
+
+### Bundled store (HTTPS overlay)
+
+The `compose.logto.https.yaml` overlay, which puts the stack and Logto sign-in behind Caddy HTTPS, also runs a [RustFS](https://rustfs.com) object store. Caddy serves it on its own HTTPS port, and a one-shot `object-store-setup` service creates the `agentconnect` bucket, its lifecycle rules, and a CORS rule for the console origin on every start. Add these to the overlay's `.env`:
+
+```dotenv
+AGENTCONNECT_OBJECT_STORE_HTTPS_PORT=1445
+AGENTCONNECT_OBJECT_STORE_ACCESS_KEY=agentconnect-store
+AGENTCONNECT_OBJECT_STORE_SECRET_KEY=<random-password>
+```
+
+The overlay refuses to start while any of the three is missing. Use all three Compose files in every command:
+
+```bash
+docker compose --env-file .env \
+  -f compose.yaml -f compose.logto.yaml -f compose.logto.https.yaml \
+  up -d
+```
+
+Check the store through Caddy:
+
+```bash
+curl -k https://<host>:1445/health
+```
+
+Browsers and daemons follow download links to that port, so they must trust the Caddy CA for it as well as for the console. The repository's [Caddy HTTPS guide](https://github.com/agentconnect-md/agentconnect/blob/main/docs/self-host-caddy-https.md) covers the whole overlay, including exporting and trusting the Caddy root certificate.
+
+### External bucket
+
+To use your own bucket instead, set `AC_FILE_TRANSFER` in `compose.env` to a one-line JSON document:
+
+```dotenv
+AC_FILE_TRANSFER='{"version":1,"endpoint":"https://s3.example.com","region":"us-east-1","bucket":"agentconnect","forcePathStyle":true,"credentials":{"source":"static","dir":"/run/secrets","accessKeyIdKey":"file_transfer_access_key_id","secretAccessKeyKey":"file_transfer_secret_access_key"}}'
+```
+
+| Field             | Meaning                                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| `endpoint`        | The store's `https://` origin; the AWS regional endpoint when omitted                                      |
+| `publicEndpoint`  | The origin browsers and daemons use, when it differs from the one the Control Plane reaches                |
+| `prefix`          | Optional key prefix inside the bucket                                                                      |
+| `forcePathStyle`  | `true` for MinIO, RustFS, and most self-hosted stores                                                      |
+| `credentials`     | Files holding the access key pair, read from `dir`                                                         |
+| `limits.maxBytes` | Largest file, default `512Mi`, at most `5Gi`                                                               |
+
+Mount the key files into the Control Plane with an override:
+
+```yaml
+# compose.file-transfer.yaml
+services:
+  control-plane:
+    secrets:
+      - file_transfer_access_key_id
+      - file_transfer_secret_access_key
+secrets:
+  file_transfer_access_key_id:
+    file: ./secrets/file-transfer-access-key-id
+  file_transfer_secret_access_key:
+    file: ./secrets/file-transfer-secret-access-key
+```
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.file-transfer.yaml \
+  up -d --force-recreate control-plane
+```
+
+The bucket also needs:
+
+- **A lifecycle rule** that expires objects tagged `ac-cache=pending` under `<prefix>/src/` (or `src/` with no prefix) after 2 days. Until it exists, the Control Plane refuses transfers and logs the rule to add. The [chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#bucket-lifecycle-rules) has the document and the commands for AWS and MinIO.
+- **A CORS rule** admitting the console origin for `GET` and `PUT`, with the `content-type`, `x-amz-checksum-sha256`, and `x-amz-tagging` headers.
+- **Permissions** for the key pair: `s3:PutObject`, `s3:PutObjectTagging`, and `s3:GetObject` under `<prefix>/src/*/transfer/`, and `s3:GetLifecycleConfiguration` on the bucket.
+
 ## Private certificate authorities
 
 A GitLab or Gitea instance presenting a certificate from a private authority needs that authority's bundle readable **at a file path that exists inside each process**, including the agent sandbox. Point every runtime at it:
@@ -209,6 +285,7 @@ The Relay never dials the instance — it only receives webhook deliveries — s
 - Replace every default secret and enable encrypted secret storage.
 - Set a connector encryption key if you use connectors, and back up its volume.
 - Put Web, Control Plane, Relay, and Logto behind HTTPS.
+- Give file transfer an HTTPS object store with its lifecycle rule, or leave it off.
 - Preserve WebSocket upgrades.
 - Back up PostgreSQL and test restores.
 - Keep Setup Server, PostgreSQL, and the connector gateway off the public network.

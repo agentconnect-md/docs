@@ -175,6 +175,68 @@ daemonPool:
 - 该 Secret 是安装实例中这些变量的**唯一**来源。在 `daemonPool.extraEnv` 中设置其中任何一个，或让 `modelEgress.clients` 渲染出一个，都会在安装时被拒绝。凭证对必须完整地一起提供——一个只含令牌的 Secret，配上别处遗留的基础 URL，会把真实的提供方密钥发往一个从未签发过它的端点。
 - 出于同样的原因，Secret 中携带的值**优先于 Agent 自己的同名变量**。当 Agent 应当使用自己的密钥时，请不要设置 `modelCredentials`。
 
+### 对象存储：Source Cache 与文件传输 [#object-store-source-cache-and-file-transfer]
+
+兼容 S3 的对象存储会启用两项功能：
+
+- **Source Cache。** 新的沙箱从存储中的 bundle 开始 Git 克隆，而不是从源仓库拉取整个仓库。沙箱 Pod 从不持有存储桶凭证，只拿到针对单个对象的短时链接。
+- **控制台文件传输。** 用户可以在 [Playground](/build-your-team/agents/playground#attach-files) 消息中附加任意文件，控制台也能下载大文件或二进制工作区文件。文件字节在浏览器、Daemon 或其 Pod 与存储之间直接传输；控制平面只负责签发链接。这对所有 Daemon 都有效，包括集群外自托管的 Daemon。
+
+没有对象存储时，这两项功能都不启用：克隆从源仓库拉取，只能附加图片，工作区文件经由控制平面下载，每个文件最大 8 MiB。
+
+#### 内置存储 [#bundled-store]
+
+Chart 可以在一个 PersistentVolumeClaim 上运行单个 [RustFS](https://rustfs.com) Pod。为它指定一个公开主机名：
+
+```yaml
+sourceCache:
+  store:
+    host: objects.example.test
+    persistence:
+      size: 50Gi
+      storageClass: standard
+```
+
+签名链接必须是 `https://`，因此存储通过 Gateway 在它自己的主机名上访问。请像 `publicUrl` 一样为该主机名准备 DNS、TLS 和 Gateway 监听器。边缘必须保留 `Host` 请求头（每个签名都覆盖它），并接受不超过最大 bundle 的请求体（`sourceCache.limits.maxBundleBytes`，默认 `2Gi`）。只有在 `route.enabled` 为 `true` 时，Chart 才会创建存储的路由。
+
+Chart 会在 Secret `agentconnect-source-cache-store` 中生成存储的密钥对，并在升级时保留它。一个 post-install 和 post-upgrade Job 会创建存储桶、它的生命周期规则以及针对 `publicUrl` 的 CORS 规则；重复运行也是安全的。
+
+在[第 4 步](#4-configure-sign-in-before-publishing-the-route)发布路由之后，重启一次 Daemon 池，让成员立即发现生命周期规则，而不必等到下一次每 6 小时一次的检查：
+
+```bash
+kubectl -n agentconnect rollout restart deployment/agentconnect-daemon-pool
+curl https://objects.example.test/health
+```
+
+#### 外部存储桶 [#external-bucket]
+
+如果要改用你自己的存储桶，请设置 `sourceCache.enabled: true` 及其位置和凭证；它优先于内置存储：
+
+```yaml
+sourceCache:
+  enabled: true
+  endpoint: https://s3.example.test
+  # Set only when browsers and out-of-cluster daemons reach the bucket at another origin.
+  publicEndpoint: ''
+  region: us-east-1
+  bucket: agentconnect-source-cache
+  forcePathStyle: true
+  credentials:
+    source: secret
+    secret:
+      name: agentconnect-source-cache
+```
+
+该 Secret 包含 `AWS_ACCESS_KEY_ID` 和 `AWS_SECRET_ACCESS_KEY`，以文件形式挂载。在 EKS 上，请改用 `credentials.source: serviceAccount` 并设置 `roleArn`；该角色必须同时信任 Daemon 池和控制平面的 ServiceAccount。`endpoint` 留空时使用 AWS 区域端点。
+
+Chart 和 AgentConnect 都不会写入外部存储桶的配置。请自行应用：
+
+- **生命周期规则**，作用于 `<prefix>/src/`：`ac-cache=pending` 在 2 天后过期，`ac-cache=unreferenced` 在 7 天后过期。缺少这些规则时，成员会停止写入 bundle，控制平面会拒绝传输；两者都会在日志中给出需要应用的规则文档。
+- **一条 CORS 规则**：允许 `publicUrl` 发起 `GET` 和 `PUT`，并允许 `content-type`、`x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
+- **权限**：在 `<prefix>/src/*` 上拥有 `s3:GetObject`、`s3:PutObject`、`s3:DeleteObject` 和 `s3:PutObjectTagging`，并在存储桶上拥有 `s3:GetLifecycleConfiguration`。
+
+Chart 的 [Source Cache 参考](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#source-cache)给出了确切的规则和 CORS 文档、AWS 与 MinIO 命令，以及全部限制项。
+
 ## 3. 安装 AgentConnect [#3-install-agentconnect]
 
 安装你已校验的版本：

@@ -187,6 +187,82 @@ docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
 
 该命令可以断点续跑，也可以在轮换 Transit 密钥之后重新运行。Vault 工作负载身份可以通过 `VAULT_JWT_ROLE`、`VAULT_JWT_PATH` 和 `VAULT_AUTH_MOUNT` 来使用，以替代 `VAULT_TOKEN`。
 
+## 文件传输与对象存储 [#file-transfer-and-the-object-store]
+
+控制台的文件传输需要一个兼容 S3 的对象存储。有了它，用户可以在 [Playground](/build-your-team/agents/playground#attach-files) 消息中附加任意文件，控制台也能下载不超过存储上限的任意大小的工作区文件。文件字节通过短时有效的签名 URL 在浏览器或 Daemon 与存储之间直接传输；控制平面只负责签名，从不接触文件内容。没有对象存储时，只能附加图片，工作区文件经由控制平面下载，每个文件最大 8 MiB。
+
+签名 URL 必须是 `https://`，并且浏览器和 Daemon 会直接访问存储，因此存储需要一个它们信任的 HTTPS 源地址。
+
+### 内置存储（HTTPS 叠加配置） [#bundled-store-https-overlay]
+
+`compose.logto.https.yaml` 叠加配置把服务栈和 Logto 登录放在 Caddy HTTPS 之后，同时还会运行一个 [RustFS](https://rustfs.com) 对象存储。Caddy 在单独的 HTTPS 端口上提供它，一次性的 `object-store-setup` 服务会在每次启动时创建 `agentconnect` 存储桶、它的生命周期规则，以及允许控制台源地址的 CORS 规则。在叠加配置的 `.env` 中加入：
+
+```dotenv
+AGENTCONNECT_OBJECT_STORE_HTTPS_PORT=1445
+AGENTCONNECT_OBJECT_STORE_ACCESS_KEY=agentconnect-store
+AGENTCONNECT_OBJECT_STORE_SECRET_KEY=<random-password>
+```
+
+缺少其中任何一项时，叠加配置会拒绝启动。每条命令都要带上全部三个 Compose 文件：
+
+```bash
+docker compose --env-file .env \
+  -f compose.yaml -f compose.logto.yaml -f compose.logto.https.yaml \
+  up -d
+```
+
+通过 Caddy 检查存储：
+
+```bash
+curl -k https://<host>:1445/health
+```
+
+浏览器和 Daemon 会沿着下载链接访问这个端口，因此除了控制台之外，它们也必须为这个端口信任 Caddy CA。仓库中的 [Caddy HTTPS 指南](https://github.com/agentconnect-md/agentconnect/blob/main/docs/self-host-caddy-https.md)完整介绍了这个叠加配置，包括如何导出并信任 Caddy 根证书。
+
+### 外部存储桶 [#external-bucket]
+
+如果要改用你自己的存储桶，请在 `compose.env` 中把 `AC_FILE_TRANSFER` 设置为单行 JSON 文档：
+
+```dotenv
+AC_FILE_TRANSFER='{"version":1,"endpoint":"https://s3.example.com","region":"us-east-1","bucket":"agentconnect","forcePathStyle":true,"credentials":{"source":"static","dir":"/run/secrets","accessKeyIdKey":"file_transfer_access_key_id","secretAccessKeyKey":"file_transfer_secret_access_key"}}'
+```
+
+| 字段 | 含义 |
+| --- | --- |
+| `endpoint` | 存储的 `https://` 源地址；省略时使用 AWS 区域端点 |
+| `publicEndpoint` | 浏览器和 Daemon 使用的源地址，仅在与控制平面访问的地址不同时设置 |
+| `prefix` | 存储桶内可选的键前缀 |
+| `forcePathStyle` | MinIO、RustFS 和大多数自托管存储设为 `true` |
+| `credentials` | 存放访问密钥对的文件，从 `dir` 读取 |
+| `limits.maxBytes` | 单个文件上限，默认 `512Mi`，最大 `5Gi` |
+
+用一个覆盖文件把密钥文件挂载到控制平面：
+
+```yaml
+# compose.file-transfer.yaml
+services:
+  control-plane:
+    secrets:
+      - file_transfer_access_key_id
+      - file_transfer_secret_access_key
+secrets:
+  file_transfer_access_key_id:
+    file: ./secrets/file-transfer-access-key-id
+  file_transfer_secret_access_key:
+    file: ./secrets/file-transfer-secret-access-key
+```
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.file-transfer.yaml \
+  up -d --force-recreate control-plane
+```
+
+存储桶还需要：
+
+- **一条生命周期规则**：让 `<prefix>/src/`（没有前缀时为 `src/`）下标记为 `ac-cache=pending` 的对象在 2 天后过期。在规则存在之前，控制平面会拒绝传输，并在日志中给出需要添加的规则。规则文档以及 AWS 和 MinIO 的命令见 [Chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#bucket-lifecycle-rules)。
+- **一条 CORS 规则**：允许控制台源地址发起 `GET` 和 `PUT`，并允许 `content-type`、`x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
+- **权限**：密钥对需要在 `<prefix>/src/*/transfer/` 下拥有 `s3:PutObject`、`s3:PutObjectTagging` 和 `s3:GetObject`，并在存储桶上拥有 `s3:GetLifecycleConfiguration`。
+
 ## 私有证书颁发机构 [#private-certificate-authorities]
 
 如果 GitLab 或 Gitea 实例出示的是由私有证书颁发机构签发的证书，就需要让该机构的证书包**在每个进程内部都存在的文件路径**上可读，包括 Agent 沙箱。让每个 Runtime 都指向它：
@@ -209,6 +285,7 @@ Relay 从不主动连接该实例——它只接收 Webhook 投递——因此�
 - 替换所有默认密钥，并启用加密的密钥存储。
 - 如果使用连接器，设置连接器加密密钥，并备份其卷。
 - 把 Web、控制平面、Relay 和 Logto 放在 HTTPS 之后。
+- 为文件传输配置带生命周期规则的 HTTPS 对象存储，或者不启用它。
 - 保留 WebSocket 升级。
 - 备份 PostgreSQL 并测试恢复。
 - 让 Setup Server、PostgreSQL 和连接器网关远离公共网络。
