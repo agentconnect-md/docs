@@ -260,7 +260,7 @@ docker compose --env-file compose.env -f compose.yaml -f compose.file-transfer.y
 存储桶还需要：
 
 - **一条生命周期规则**：让 `<prefix>/src/`（没有前缀时为 `src/`）下标记为 `ac-cache=pending` 的对象在 2 天后过期。在规则存在之前，控制平面会拒绝传输，并在日志中给出需要添加的规则。规则文档以及 AWS 和 MinIO 的命令见 [Chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#bucket-lifecycle-rules)。
-- **一条 CORS 规则**：允许控制台源地址发起 `GET` 和 `PUT`，并允许 `x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
+- **一条 CORS 规则**：允许控制台源地址发起 `GET` 和 `PUT`，并允许 `content-type`、`x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
 - **权限**：密钥对需要在 `<prefix>/src/*/transfer/` 下拥有 `s3:PutObject`、`s3:PutObjectTagging` 和 `s3:GetObject`，并在存储桶上拥有 `s3:GetLifecycleConfiguration`。
 
 ## 私有证书颁发机构 [#private-certificate-authorities]

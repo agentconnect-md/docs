@@ -232,7 +232,7 @@ sourceCache:
 Chart 和 AgentConnect 都不会写入外部存储桶的配置。请自行应用：
 
 - **生命周期规则**，作用于 `<prefix>/src/`：`ac-cache=pending` 在 2 天后过期，`ac-cache=unreferenced` 在 7 天后过期。缺少这些规则时，成员会停止写入 bundle，控制平面会拒绝传输；两者都会在日志中给出需要应用的规则文档。
-- **一条 CORS 规则**：允许 `publicUrl` 发起 `GET` 和 `PUT`，并允许 `x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
+- **一条 CORS 规则**：允许 `publicUrl` 发起 `GET` 和 `PUT`，并允许 `content-type`、`x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
 - **权限**：在 `<prefix>/src/*` 上拥有 `s3:GetObject`、`s3:PutObject`、`s3:DeleteObject` 和 `s3:PutObjectTagging`，并在存储桶上拥有 `s3:GetLifecycleConfiguration`。
 
 Chart 的 [Source Cache 参考](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#source-cache)给出了确切的规则和 CORS 文档、AWS 与 MinIO 命令，以及全部限制项。

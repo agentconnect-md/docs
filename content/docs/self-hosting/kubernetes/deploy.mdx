@@ -232,7 +232,7 @@ The Secret holds `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, mounted as fil
 Neither the chart nor AgentConnect writes an external bucket's configuration. Apply these yourself:
 
 - **Lifecycle rules** under `<prefix>/src/`: expire `ac-cache=pending` after 2 days and `ac-cache=unreferenced` after 7. Without them, members stop writing bundles and the Control Plane refuses transfers; both log the document to apply.
-- **A CORS rule** admitting `publicUrl` for `GET` and `PUT`, with the `x-amz-checksum-sha256` and `x-amz-tagging` headers.
+- **A CORS rule** admitting `publicUrl` for `GET` and `PUT`, with the `content-type`, `x-amz-checksum-sha256`, and `x-amz-tagging` headers.
 - **Permissions:** `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, and `s3:PutObjectTagging` on `<prefix>/src/*`, and `s3:GetLifecycleConfiguration` on the bucket.
 
 The chart's [Source Cache reference](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#source-cache) has the exact rule and CORS documents, the AWS and MinIO commands, and every limit.

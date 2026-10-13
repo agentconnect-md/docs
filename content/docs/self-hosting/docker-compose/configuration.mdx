@@ -260,7 +260,7 @@ docker compose --env-file compose.env -f compose.yaml -f compose.file-transfer.y
 The bucket also needs:
 
 - **A lifecycle rule** that expires objects tagged `ac-cache=pending` under `<prefix>/src/` (or `src/` with no prefix) after 2 days. Until it exists, the Control Plane refuses transfers and logs the rule to add. The [chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#bucket-lifecycle-rules) has the document and the commands for AWS and MinIO.
-- **A CORS rule** admitting the console origin for `GET` and `PUT`, with the `x-amz-checksum-sha256` and `x-amz-tagging` headers.
+- **A CORS rule** admitting the console origin for `GET` and `PUT`, with the `content-type`, `x-amz-checksum-sha256`, and `x-amz-tagging` headers.
 - **Permissions** for the key pair: `s3:PutObject`, `s3:PutObjectTagging`, and `s3:GetObject` under `<prefix>/src/*/transfer/`, and `s3:GetLifecycleConfiguration` on the bucket.
 
 ## Private certificate authorities
