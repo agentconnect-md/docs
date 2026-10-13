@@ -25,7 +25,7 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 - 一个已连接到两个消息平台的在线 Agent；
 - 两个获准交换相关信息的工作区；
 - 一个用来发起交接的已关联聊天账号：在 AgentConnect Cloud 上，就是在**个人资料 → 登录方式**中关联的 Slack 账号；
-- 一个目标对话，Agent 在那里已经有你能在**会话**中打开的会话；
+- 一个你自己能发消息的目标对话：在你关联了账号的平台上，按这个账号判断；在其他平台上（包括账号无法关联的 Telegram 和 Discord），要求 Agent 在那里已经有你能在**会话**中打开的会话；
 - 一个能在目标对话中发帖的机器人；以及
 - 一条明确的规则，规定哪些内容可以离开来源端。
 
@@ -46,7 +46,7 @@ List the incident channels you can reach through our approved internal bots.
 Do not send a message yet.
 ```
 
-在另一个平台上，Agent 只会发到它已经有会话、而且你能打开这个会话的对话里；Telegram 机器人也只能列出 Agent 已经观察到的聊天。请先在目标聊天中提及一次机器人。在任何平台上，机器人都仍然需要在那里查看和发帖的权限。
+在你没有关联账号的平台上（例如 Telegram 或 Discord），Agent 只会发到它已经有会话、而且你能打开这个会话的对话里；Telegram 机器人也只能列出 Agent 已经观察到的聊天。请先在目标聊天中提及一次机器人。在任何平台上，机器人都仍然需要在那里查看和发帖的权限。
 
 ## 3. 发起一次聚焦的交接 [#3-start-a-focused-handoff]
 

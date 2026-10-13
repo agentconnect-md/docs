@@ -85,7 +85,7 @@ Slack 和 Lark / 飞书能知道一个对话里有谁。Telegram 和 Discord 不
 
 把同一个 Agent 连接到多个聊天平台后，它就可以从一个对话向另一个对话发起主动交接。只在两个你信任并已批准互通信息的消息工作区之间使用此功能。目标端会开启自己的关联会话，而不是合并两个平台的会话记录。
 
-在另一个平台上，或通过 Agent 的另一个机器人，AgentConnect 必须先通过提问的人在**个人资料 → 登录方式**中关联的聊天账号，认出这个人是你所在组织的成员。之后，Agent 只在这个人能在**会话**中打开 Agent 会话的对话里读取或发消息。在 AgentConnect Cloud 上，这个账号就是 Slack 账号，所以可以从 Slack 交接到 Agent 已经有会话的 Telegram、Discord 或 Lark / 飞书对话。从 Telegram 或 Discord 交接到 Slack 或 Lark / 飞书则不行：AgentConnect 无法知道那里的人是谁，所以他们只能触达同一个机器人上的其他频道和群组。自托管部署还可以关联 Lark 和飞书账号。参见[在受信任的工作区之间交接对话](/how-to-guides/hand-off-conversations-across-messaging-platforms)。
+在另一个平台上，或通过 Agent 的另一个机器人，AgentConnect 必须先通过提问的人在**个人资料 → 登录方式**中关联的聊天账号，认出这个人是你所在组织的成员。之后，Agent 按这个人为目标对话所在工作区关联的聊天账号来判断：公开频道要求这个人是正式成员，私密频道或群组私信要求这个人是其中的成员。如果这个人没有为那个工作区关联账号，Agent 只在这个人能在**会话**中打开 Agent 会话的对话里读取或发消息。Telegram 和 Discord 账号无法关联，所以在这两个平台上始终按这条规则。在 AgentConnect Cloud 上，可以关联的是 Slack 账号，所以可以从 Slack 交接到 Agent 已经有会话、而且这个人能打开这个会话的 Telegram、Discord 或 Lark / 飞书对话。从 Telegram 或 Discord 交接到 Slack 或 Lark / 飞书则不行：AgentConnect 无法知道那里的人是谁，所以他们只能触达同一个机器人上的其他频道和群组。自托管部署还可以关联 Lark 和飞书账号。参见[在受信任的工作区之间交接对话](/how-to-guides/hand-off-conversations-across-messaging-platforms)。
 
 ## 对话内命令 [#in-conversation-commands]
 
