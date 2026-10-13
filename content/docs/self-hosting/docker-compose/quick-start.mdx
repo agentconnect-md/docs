@@ -130,6 +130,7 @@ docker compose down --volumes
 | Setup Server | Docker, loopback only | Configure deployment auth and providers |
 | PostgreSQL | Docker | Persist deployment and Control Plane data |
 | Logto OSS | Optional overlay | Local sign-in |
+| Object store (RustFS) | HTTPS overlay | File uploads and large workspace downloads; see [File transfer](/self-hosting/docker-compose/configuration#file-transfer-and-the-object-store) |
 | Daemon | Host or another machine | Run agents and hold local data |
 
 The Relay is included so GitHub, webhooks, webchat, and HTTP bot callbacks work without changing the stack. Direct Slack Socket Mode, Telegram, Discord, and Lark / Feishu connections continue to run between the daemon and their providers.
