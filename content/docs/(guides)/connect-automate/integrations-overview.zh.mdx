@@ -57,13 +57,35 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 
 频道触发条件作用于共享机器人。将其切换为**关闭**会停止该频道中经由该机器人的路由。
 
-### 跨平台交接 [#cross-platform-handoffs]
-
-把同一个 Agent 连接到多个聊天平台后，它就可以从一个对话向另一个对话发起主动交接。只在两个你信任并已批准互通信息的消息工作区之间使用此功能。目标端会开启自己的关联会话，而不是合并两个平台的会话记录。参见[在受信任的工作区之间交接对话](/how-to-guides/hand-off-conversations-across-messaging-platforms)。
-
 ### 受限 Agent [#restricted-agents]
 
 当 Agent 的团队可见范围为**指定成员**时，它的聊天对话同样受限。新发现的频道和私信初始为**关闭**，直到有权限的编辑者在集成卡片上逐一启用。每个 Agent 之后也可以选择关闭作为显式静音。参见[团队可见范围](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes)。
+
+## 在其他对话中读取和发消息 [#reading-and-posting-in-other-conversations]
+
+有人让 Agent 在另一个对话（不是它正在回答的这个）中读取或发消息时，Agent 是替这个人去做，范围不会超出这个人自己能做的。它正在回答的对话始终对它开放。
+
+它只在提问的人能看到的对话里读取消息、线程、表情回应或书签：
+
+- 公开频道：这个人是该工作区的正式成员，而不是访客；
+- 这个人所在的私密频道或群组私信；
+- 这个人自己和 Agent 的私信。别人的私信永远不能读取。
+
+它只在提问的人自己也能发消息的地方发消息、添加表情回应、安排定时消息、发起对话，或修改书签、画布和列表。发什么由这个人决定。有三种情况各有规则：
+
+- **私信**只发给你所在组织的成员：在 Slack 上，是该工作区的正式成员，不是访客。
+- **与其他组织共享的对话**（例如 Slack Connect 频道）只以草稿形式接收来自其他对话的消息。你所在组织的一位成员（通常是提问的人）会在 Slack 私信中收到一张卡片，选择 **Approve** 或 **Discard**。无人处理的草稿在 24 小时后过期。
+- **没有人发起的运行**，例如 Webhook、GitHub 事件或另一个 Agent 的请求，只读取公开频道和它自己的对话，也只在它自己的对话里发消息。定时任务代表最后编辑它的人；没有人编辑过时，代表创建它的人。
+
+Agent 用到来自私密对话的内容时，会说明出处。请求被拒绝时，它会说无法在这里分享或无法发到那里，但不会透露那个对话是否存在。
+
+Slack 和 Lark / 飞书能知道一个对话里有谁。Telegram 和 Discord 不能，所以在这两个平台上，只有平台显示为公开的群组或频道才算数：有公开 @用户名 的 Telegram 群组，或服务器里所有人都能查看的 Discord 频道。
+
+### 跨平台交接 [#cross-platform-handoffs]
+
+把同一个 Agent 连接到多个聊天平台后，它就可以从一个对话向另一个对话发起主动交接。只在两个你信任并已批准互通信息的消息工作区之间使用此功能。目标端会开启自己的关联会话，而不是合并两个平台的会话记录。
+
+在另一个平台上，或通过 Agent 的另一个机器人，AgentConnect 必须先通过提问的人在**个人资料 → 登录方式**中关联的聊天账号，认出这个人是你所在组织的成员。之后，Agent 按这个人为目标对话所在工作区关联的聊天账号来判断：公开频道要求这个人是正式成员，私密频道或群组私信要求这个人是其中的成员。如果这个人没有为那个工作区关联账号，Agent 只在这个人能在**会话**中打开 Agent 会话的对话里读取或发消息。Telegram 和 Discord 账号无法关联，所以在这两个平台上始终按这条规则。在 AgentConnect Cloud 上，可以关联的是 Slack 账号，所以可以从 Slack 交接到 Agent 已经有会话、而且这个人能打开这个会话的 Telegram、Discord 或 Lark / 飞书对话。从 Telegram 或 Discord 交接到 Slack 或 Lark / 飞书则不行：AgentConnect 无法知道那里的人是谁，所以他们只能触达同一个机器人上的其他频道和群组。自托管部署还可以关联 Lark 和飞书账号。参见[在受信任的工作区之间交接对话](/how-to-guides/hand-off-conversations-across-messaging-platforms)。
 
 ## 对话内命令 [#in-conversation-commands]
 

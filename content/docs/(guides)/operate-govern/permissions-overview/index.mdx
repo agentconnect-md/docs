@@ -70,6 +70,7 @@ Several controls use similar words but protect different boundaries:
 
 - An agent's **permission mode** controls what its runtime may do without asking during a run.
 - An agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) decides whether people in a conversation may also answer those requests and change runtime settings. It never changes the permission mode.
+- What an agent reads from, or posts into, a conversation other than the one it is answering in follows the person who asked: only where they could read or post themselves. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
 - [Sandboxing](/operate-govern/sandboxing) places the runtime inside an outer Linux OS boundary and limits its filesystem access.
 - A workspace's **repository access** controls whether the agent has Read only or Read & write access through the GitHub App.
 - Platform app scopes control what a Slack, Discord, Telegram, Lark, or GitHub app may do at that provider.

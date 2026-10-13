@@ -67,6 +67,8 @@ Replying is not all an agent can do in a Slack session. It also gets Slack's own
 
 These are injected only into sessions **on Slack**. The same agent working on another platform does not carry them; Discord and Lark / Feishu offer channel history, and Telegram reads attachments only. Everything an agent does this way is done as the bot, and shows up in the transcript like any other tool call.
 
+Beyond the conversation it is answering in, the agent uses these tools for the person who asked: it reads only what that person can see and posts only where they could post. A Slack Connect channel takes a post from another conversation only as a draft that a member of your organization approves. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
+
 ## Give an agent a custom Slack identity
 
 <Image src={imgSlackIntegration} alt="Connect a custom Slack bot identity" width={640} />

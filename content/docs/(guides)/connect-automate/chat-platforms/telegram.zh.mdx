@@ -35,3 +35,4 @@ AgentConnect 自动化的是检查，而不是设置本身：Telegram 的 Bot AP
 
 - 一个 Telegram 机器人绑定一个 Agent。删除集成会释放机器人以供复用（下次选择**使用已有机器人**）。
 - 机器人及其令牌在**集成 → 消息应用 → Telegram** 中按组织统一管理。
+- 在 Telegram 上提问时，Agent 只能发到这个机器人上的其他群组，而且只限有公开 @用户名 的群组。AgentConnect 无法知道 Telegram 用户是谁，所以不能替他们交接到 Slack 或其他平台。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。

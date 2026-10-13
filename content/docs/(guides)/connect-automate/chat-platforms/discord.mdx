@@ -34,3 +34,4 @@ When a tool call needs approval, the agent posts an approval card in the channel
 - If automatic Message Content setup was rejected, enable the intent manually in the Developer Portal and connect again.
 - If the bot cannot reply or create a thread, use **Integrations → Messaging apps → Discord → Add to Discord** to reinstall it with the current scopes and permissions.
 - One Discord bot binds to one agent; deleting the integration frees the bot for reuse.
+- Asked from Discord, the agent reads and posts in other channels only on this bot, and only in channels everyone in the server can view. AgentConnect cannot tell who a Discord user is, so it cannot hand off into Slack or another platform for them. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).

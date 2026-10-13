@@ -57,13 +57,35 @@ Normally one bot ↔ one agent. A **shared Slack bot** can serve multiple agents
 
 The channel trigger applies to the shared bot. Switching it **Off** stops routing through that bot in the channel.
 
-### Cross-platform handoffs
-
-Connect the same agent to more than one chat platform and it can send a deliberate handoff from one conversation to another. Use this only between two messaging workspaces you trust and have approved to exchange information. The destination starts its own linked session rather than merging both platform transcripts. See [Hand off conversations between trusted workspaces](/how-to-guides/hand-off-conversations-across-messaging-platforms).
-
 ### Restricted agents
 
 When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. Every agent can also choose Off later as an explicit mute. See [Team visibility](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes).
+
+## Reading and posting in other conversations
+
+When someone asks an agent to read or post in a conversation other than the one it is answering in, the agent does it for that person and never goes further than they could. The conversation it is answering in is always open to it.
+
+It reads another conversation's messages, threads, reactions or bookmarks only where the person asking can see that conversation:
+
+- a public channel, if they are a full member of that workspace rather than a guest;
+- a private channel or group DM they are a member of;
+- their own direct message with the agent. Someone else's direct message is never readable.
+
+It posts, reacts, schedules a message, starts a conversation, or changes bookmarks, canvases or lists only where the person asking could post themselves. What it posts is their call. Three cases have their own rule:
+
+- **A direct message** goes only to a member of your organization: on Slack, a full member of the workspace, not a guest.
+- **A conversation shared with another organization**, such as a Slack Connect channel, takes a post from another conversation only as a draft. A member of your organization, usually the person who asked, gets it as a card in a Slack direct message and chooses **Approve** or **Discard**. A draft nobody answers expires after 24 hours.
+- **A run no person is behind**, such as a webhook, a GitHub event or another agent's request, reads only public channels and its own conversation, and posts only in its own conversation. A schedule acts for the person who last edited it, or else the person who created it.
+
+When the agent uses something from a private conversation, it says where it came from. When a request is refused, it says it can't share that or can't post there, without saying whether the conversation exists.
+
+Slack and Lark / Feishu can tell who is in a conversation. Telegram and Discord cannot, so there only a group or channel the platform shows as public counts: a Telegram group with a public @username, or a Discord channel everyone in the server can view.
+
+### Cross-platform handoffs
+
+Connect the same agent to more than one chat platform and it can send a deliberate handoff from one conversation to another. Use this only between two messaging workspaces you trust and have approved to exchange information. The destination starts its own linked session rather than merging both platform transcripts.
+
+On another platform, or through another of the agent's bots, AgentConnect must first recognize the person asking as a member of your organization, by the chat account they linked under **Your profile → Sign-in methods**. The agent then judges them by the chat account they linked for the destination's workspace: a public channel needs them to be a full member, and a private channel or group DM needs them to be a member. Where they have linked no account for that workspace, the agent reads or posts only in conversations whose sessions they can open under **Sessions**. Telegram and Discord accounts can't be linked, so that is always the rule there. On AgentConnect Cloud the account to link is a Slack account, so a handoff works from Slack into a Telegram, Discord or Lark / Feishu conversation where the agent already has a session they can open. It does not work from Telegram or Discord into Slack or Lark / Feishu: AgentConnect cannot tell who someone there is, so they reach other channels and groups only on that same bot. A self-hosted deployment can also link Lark and Feishu accounts. See [Hand off conversations between trusted workspaces](/how-to-guides/hand-off-conversations-across-messaging-platforms).
 
 ## In-conversation commands
 

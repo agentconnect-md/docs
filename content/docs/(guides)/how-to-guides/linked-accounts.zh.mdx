@@ -61,6 +61,8 @@ import imgSocialSignInMethods from '@/public/images/social-sign-in-methods.png'
 
 开启**遵循 Slack 访问权限**后，AgentConnect 也通过这个已关联的 Slack 身份，识别在 Slack 中回答审批或修改设置的 Agent 编辑者；已关联的 Lark 或飞书身份在其聊天中的作用相同。尚未关联的编辑者在那里会被拒绝，并看到关联方法。见[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
 
+无论**会话访问权限**如何设置，已关联的 Slack 账号还让 Agent 能跨平台替你做事。你在 Slack 中让 Agent 处理另一个平台上的对话，或通过 Agent 的另一个机器人处理对话时，AgentConnect 靠它认出你。你从其他地方（例如 Playground 或 Agent 的另一个机器人）问到那个 Slack 工作区里的对话时，Agent 按它判断你：公开频道要求你是正式成员，私密频道或群组私信要求你是其中的成员。没有关联时，你在 Slack 中提问，Agent 只能触达这个机器人自己的对话。在自托管部署上，已关联的 Lark 或飞书账号作用相同。见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
+
 ### 两项 GitHub 策略以不同方式使用该身份 [#two-github-policies-use-the-identity-differently]
 
 - **按用户的仓库授权**在仓库设置期间检查已登录的人。没有关联 GitHub 身份也可以以只读方式选择公开仓库。私有仓库需要一个拥有访问权限的已关联身份，而**读写**始终要求已关联的 GitHub 用户拥有 `write` 或 `admin` 权限。

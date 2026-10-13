@@ -16,12 +16,16 @@ Here, _workspace_ means a Slack workspace, Discord server, Lark / Feishu tenant,
 
 One agent can start with a conversation on one platform, post a focused handoff to another trusted workspace, and later report the result back. This is not a live mirror: each platform keeps its own thread, session, and audience.
 
+A handoff works only for someone AgentConnect can recognize. The person who asks for it must be known as a member of your organization by a chat account linked under **Your profile → Sign-in methods**, and the agent posts only where that person could post themselves. On AgentConnect Cloud, that means asking from Slack with a linked Slack account. A handoff does not work from Telegram or Discord into Slack or Lark / Feishu, because AgentConnect cannot tell who someone on Telegram or Discord is. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
+
 ## Before you start
 
 You need:
 
 - one online agent connected to both messaging platforms;
 - two workspaces approved to exchange the relevant information;
+- a linked chat account to ask from: on AgentConnect Cloud, your Slack account under **Your profile → Sign-in methods**;
+- a destination you could post in yourself: on a platform where you linked an account, judged by that account; elsewhere, including Telegram and Discord, whose accounts can't be linked, a conversation where the agent already has a session you can open under **Sessions**;
 - a bot that can post in the destination conversation; and
 - a clear rule for what may leave the source.
 
@@ -42,14 +46,14 @@ List the incident channels you can reach through our approved internal bots.
 Do not send a message yet.
 ```
 
-Telegram bots can list only chats the agent has already observed, so start the bot in the destination chat first. On every platform, the bot still needs permission to view and post there.
+On a platform where you have no linked account, such as Telegram or Discord, the agent posts only into a conversation where it already has a session you can open, and Telegram bots list only chats the agent has already observed. Mention the bot in the destination chat first. On every platform, the bot still needs permission to view and post there.
 
 ## 3. Start a focused handoff
 
-State the trusted destination and exactly what may be shared:
+From Slack, state the trusted destination and exactly what may be shared:
 
 ```text
-Hand this incident off to our approved Slack #incidents channel.
+Hand this incident off to #incidents on our approved Discord server.
 
 - Post a new top-level message.
 - Include the symptoms, what I already tried, and the open question.
@@ -78,9 +82,9 @@ When moving work between messaging platforms:
 
 - **Trust:** the bot's reach does not make every workspace or participant approved.
 - **Sessions:** source and destination remain separate, linked sessions.
-- **Access:** each platform enforces its own bot and conversation permissions.
+- **Access:** each platform enforces its own bot and conversation permissions, and the agent reads and posts only where the person asking could.
 - **Threads:** replies remain where they were written unless the agent deliberately reports back.
-- **Identity:** an account on one platform is not assumed to be the same person on another.
+- **Identity:** an account on one platform counts as the same person on another only through the accounts linked to their AgentConnect profile.
 
 Good handoffs move an internal incident between trusted team workspaces, escalate a DM into a team channel, or publish an approved summary. Avoid routine handoffs across different trust levels and avoid automatic two-way mirroring, which creates duplicate messages, unclear ownership, and disclosure risk.
 

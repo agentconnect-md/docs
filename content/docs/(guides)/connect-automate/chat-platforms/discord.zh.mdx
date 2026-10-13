@@ -34,3 +34,4 @@ Daemon 主动向外连接 Discord 的网关——不需要公网端点。
 - 如果自动的 Message Content 设置被拒绝，请在开发者门户中手动启用该 intent，然后重新连接。
 - 如果机器人无法回复或无法创建线程，使用**集成 → 消息应用 → Discord → 添加到 Discord** 以当前的作用域和权限重新安装它。
 - 一个 Discord 机器人绑定一个 Agent；删除集成会释放机器人以供复用。
+- 在 Discord 上提问时，Agent 只能在这个机器人上的其他频道中读取和发消息，而且只限服务器里所有人都能查看的频道。AgentConnect 无法知道 Discord 用户是谁，所以不能替他们交接到 Slack 或其他平台。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
