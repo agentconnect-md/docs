@@ -13,7 +13,11 @@ import imgCredentials from '@/public/images/dingtalk-credentials.png'
 import imgIntegration from '@/public/images/dingtalk-integration.png'
 import imgQuestionCard from '@/public/images/dingtalk-question-card.png'
 
-AgentConnect Cloud 和自托管部署都支持钉钉（中国大陆版）。每个组织用自己的企业内部应用连接机器人。Daemon 通过钉钉的 Stream 模式主动向外连接，因此不需要公网回调 URL。
+<Callout>
+  本页适用于中国大陆版钉钉（dingtalk.com）。国际版钉钉（dingtalk.io）请切换到[英文版](https://www.agentconnect.md/docs/connect-automate/chat-platforms/dingtalk)。
+</Callout>
+
+AgentConnect Cloud 和自托管部署都支持钉钉。每个组织用自己的企业内部应用连接机器人。Daemon 通过钉钉的 Stream 模式主动向外连接，因此不需要公网回调 URL。
 
 ## 创建应用 [#create-the-app]
 
@@ -45,7 +49,7 @@ AgentConnect Cloud 和自托管部署都支持钉钉（中国大陆版）。每�
 
 ## 连接 [#connect-it]
 
-在你的 Agent 上打开**集成 → 添加集成 → 钉钉**，粘贴 Client ID 和 Client Secret，然后点击**连接**。AgentConnect 会先向钉钉校验这对凭证再保存。
+在你的 Agent 上打开**集成 → 添加集成 → 钉钉**，在钉钉选择块上保持「国内版」（「国际版」对应国际版钉钉），粘贴 Client ID 和 Client Secret，然后点击**连接**。AgentConnect 会先向钉钉校验这对凭证再保存；如果应用属于另一个版本，会提示你切换到哪个版本。
 
 <Image src={imgIntegration} alt="添加钉钉集成：填写 Client ID 和 Client Secret" width={640} />
 
