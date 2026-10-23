@@ -49,6 +49,7 @@ import {
 } from 'lucide-react'
 import type { LoaderPlugin } from 'fumadocs-core/source'
 import {
+  DingTalkMark,
   DiscordMark,
   GiteaMark,
   GitHubMark,
@@ -111,6 +112,7 @@ const ICONS: Record<string, ComponentType> = {
   Wrench,
   Zap,
   // Platforms lucide does not ship a mark for.
+  DingTalk: DingTalkMark,
   Discord: DiscordMark,
   Gitea: GiteaMark,
   GitHub: GitHubMark,
