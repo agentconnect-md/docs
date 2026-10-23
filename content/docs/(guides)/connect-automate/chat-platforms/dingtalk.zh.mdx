@@ -35,7 +35,9 @@ AgentConnect Cloud 和自托管部署都支持钉钉。每个组织用自己的�
 
    <Image src={imgRobotStream} alt="Stream 消息接收模式和发布按钮" width={560} />
 
-3. 在**权限管理**中搜索 `Card.Instance.Write` 并开通，成员就能点按卡片回答 Agent 的问题。这个权限无需审批。不开通时，问题会以带编号的文字发出。
+3. 在**权限管理**中搜索并开通 `Card.Instance.Write` 和 `Contact.Org.Read`，两个权限都无需审批。
+   - `Card.Instance.Write` 让成员能点按卡片回答 Agent 的问题。不开通时，问题会以带编号的文字发出。
+   - `Contact.Org.Read` 让 Console 用组织名称命名这个集成，机器人收到第一条消息后生效。不开通时，集成以 Client ID 命名。
 
    <Image src={imgPermission} alt="已开通 Card.Instance.Write 权限" width={640} />
 
