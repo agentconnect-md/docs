@@ -1,0 +1,70 @@
+---
+title: "DingTalk"
+icon: DingTalk
+description: "Connect a robot from your organization's own DingTalk app for direct messages and group @mentions."
+---
+
+import imgCreateApp from '@/public/images/dingtalk-create-app.png'
+import imgRobotIdentity from '@/public/images/dingtalk-robot-identity.png'
+import imgRobotStream from '@/public/images/dingtalk-robot-stream.png'
+import imgPermission from '@/public/images/dingtalk-permission.png'
+import imgVersion from '@/public/images/dingtalk-version.png'
+import imgCredentials from '@/public/images/dingtalk-credentials.png'
+import imgIntegration from '@/public/images/dingtalk-integration.png'
+import imgQuestionCard from '@/public/images/dingtalk-question-card.png'
+
+AgentConnect Cloud and self-hosted deployments support DingTalk (mainland China). Each organization connects a robot from its own internal app. The daemon connects outbound through DingTalk's Stream mode, so no public callback URL is required.
+
+## Create the app
+
+In the [DingTalk developer console](https://open-dev.dingtalk.com/), signed in to your organization:
+
+1. Under internal apps, click **Create app**. The name takes letters, Chinese characters, and digits only, with no spaces.
+
+   <Image src={imgCreateApp} alt="The Create app panel with a name, a description, and an icon" width={360} />
+
+2. Click **Add capability → Robot** and turn on the robot. Give it your agent's name and icon, which DingTalk shows in chats and AgentConnect cannot set for you.
+
+   <Image src={imgRobotIdentity} alt="Robot settings with the robot's name and icon" width={640} />
+
+   Fill in the robot's intro and description, upload a message preview image, keep the **Stream** receive mode, and click **Publish**.
+
+   <Image src={imgRobotStream} alt="The Stream message receive mode and the Publish button" width={560} />
+
+3. Under **Permissions**, search for `Card.Instance.Write` and enable it, so members can answer the agent's questions with a tap. It needs no approval. Without it, questions arrive as numbered text instead.
+
+   <Image src={imgPermission} alt="The Card.Instance.Write permission enabled" width={640} />
+
+4. Under **Versions**, create a version, choose who can see the robot, and save it. A version that needs no review goes live at once. Every later change to the app takes effect only after you publish a new version.
+
+   <Image src={imgVersion} alt="A new app version available to all employees" width={560} />
+
+5. Under **Credentials**, copy the **Client ID** and **Client Secret**.
+
+   <Image src={imgCredentials} alt="The app's credentials, with the values hidden" width={560} />
+
+## Connect it
+
+On your agent, open **Integrations → Add integration → DingTalk**, paste the Client ID and Client Secret, and click **Connect**. AgentConnect checks the pair with DingTalk before saving it.
+
+<Image src={imgIntegration} alt="Add a DingTalk integration with a Client ID and Client Secret" width={640} />
+
+## Use it
+
+- **Direct messages** — message the robot directly. A direct message is one ongoing session with the agent.
+- **Groups** — add the robot to a group and **@-mention** it. DingTalk delivers a group message to the robot only when it mentions it. Each new mention starts a session; to continue one, reply to the agent's message, which mentions the robot for you. To keep one session for the whole group instead, set the group's **Session mode** to **Single session** on the agent's Integrations card.
+- **Progress** — while the agent works, a "🤔思考中" reaction sits on your message, and it disappears when the turn ends. Answers arrive as Markdown.
+- **Files and images** — send the robot a file or image in a direct message, or quote one in a group while mentioning the robot. An agent can share images and files from its workspace back.
+- **Questions** — when the agent asks you to choose, it sends a card. A yes/no question and up to four options are buttons; five to twelve options are a dropdown with **Submit**. Tap your answer, and the card shows it to everyone in the conversation.
+
+  <Image src={imgQuestionCard} alt="A question card with one button per option" width={360} />
+
+- **Approvals** — DingTalk has no approval card. When a tool call needs approval, an Agent editor answers it in the console, and the conversation gets a notice.
+
+See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing supported session settings.
+
+## Notes
+
+- DingTalk's Standard edition allows an app 5,000 API calls and 3,000 incoming messages a month. When the limit is reached, the agent says so once in the conversation instead of answering. Higher DingTalk editions raise the limit.
+- One DingTalk robot binds to one agent. Deleting the integration frees the robot for reuse (**Use an existing bot** next time); it does not delete the app from the DingTalk developer console.
+- Replace the Client Secret under **Integrations → Messaging apps → DingTalk → Replace secret**. The robot's conversations are unchanged.
