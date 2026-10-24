@@ -43,7 +43,8 @@ import imgAgentConfiguration from '@/public/images/agent-configuration.png'
 “对话里的人”具体指谁，取决于 AgentConnect 能否确认一个人的身份：
 
 - **开启了[遵循 Slack 访问权限](/operate-govern/permissions-overview/session-visibility#follow-slack-access)的 Slack**——只有 Agent 的编辑者。AgentConnect 通过编辑者在**个人资料 → 登录方式**中关联的 Slack 账号识别他们（参见[关联账号](/how-to-guides/linked-accounts)）。其他人尝试时，会私下收到提示：只有 Agent 编辑者可以操作；Slack 账号尚未关联的人还会看到关联方法。发起请求的人不是编辑者时，还会有一位编辑者在私信中收到这张审批卡片。
-- **其他聊天平台，或未开启该设置的 Slack**——在该对话中能和 Agent 对话的任何人。
+- **开启了[要求 Microsoft Teams 访问权限](/connect-automate/chat-platforms/msteams#follow-teams-access)的 Microsoft Teams**——只有 Agent 的编辑者。AgentConnect 通过编辑者关联的 Microsoft 账号识别他们。其他人尝试时，会私下收到提示：只有 Agent 编辑者可以操作。在与其他组织共享的频道中，会有一位编辑者在自己和机器人的一对一聊天中收到审批卡片。
+- **其他聊天平台，或未开启该设置的 Slack 和 Teams**——在该对话中能和 Agent 对话的任何人。
 - **Playground 和 [Agent 对话 API](/connect-automate/agent-chat-api)**——Agent 的编辑者；在第二、三级下还包括对话的所有者，即使这个人只能查看该 Agent。通过对话 API 发起的对话属于密钥的所有者。
 
 无论哪个级别，以下规则都不变：

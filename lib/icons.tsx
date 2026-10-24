@@ -57,6 +57,7 @@ import {
   GoogleChatMark,
   LarkMark,
   LinearMark,
+  MicrosoftTeamsMark,
   QQMark,
   SlackMark,
   TelegramMark
@@ -120,6 +121,7 @@ const ICONS: Record<string, ComponentType> = {
   GoogleChat: GoogleChatMark,
   Lark: LarkMark,
   Linear: LinearMark,
+  MicrosoftTeams: MicrosoftTeamsMark,
   QQ: QQMark,
   Slack: SlackMark,
   Telegram: TelegramMark
