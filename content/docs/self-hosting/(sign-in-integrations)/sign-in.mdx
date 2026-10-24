@@ -164,11 +164,12 @@ Without an API Resource, AgentConnect falls back to the SPA ID token. That is su
 
 ## Social providers
 
-Setup manages the Logto connectors for GitHub, Google, and Slack from the corresponding provider cards:
+Setup manages the Logto connectors for GitHub, Google, Slack, and Microsoft from the corresponding provider cards:
 
 - **GitHub:** one AgentConnect GitHub App can handle repository integration and sign-in.
 - **Google:** create the OAuth client manually with the exact origin and callback values Setup shows; the bundled local values use bare `localhost`.
 - **Slack:** one deployment App can handle workspace installation and a separate Slack OIDC sign-in flow; all public origins must use HTTPS.
+- **Microsoft:** a multi-tenant Microsoft Entra application signs people in with their work or school account; with its home tenant it is also the [Microsoft Teams deployment app](/self-hosting/provider-apps#microsoft-teams-deployment-app).
 
 The Lark and Feishu cards configure regional tenant Apps for trusted-workspace bot admission. They do not automatically add Lark or Feishu as Logto sign-in methods. See [Lark and Feishu tenant Apps](/self-hosting/provider-apps#lark-and-feishu-tenant-apps).
 

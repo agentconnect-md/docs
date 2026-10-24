@@ -43,7 +43,8 @@ Other runtime behavior settings include:
 Who counts as people depends on whether AgentConnect knows who someone is:
 
 - **Slack, with [Follow Slack access](/operate-govern/permissions-overview/session-visibility#follow-slack-access) on** — only the agent's editors, recognized by the Slack account each one linked under **Your profile → Sign-in methods** (see [Linked accounts](/how-to-guides/linked-accounts)). Anyone else who tries is told privately that only an Agent editor can, and someone whose Slack account is not linked is told how to link it. When the person who asked is not an editor, an editor also gets the approval card in a direct message.
-- **Other chat platforms, or Slack with that setting off** — anyone who can talk to the agent in that conversation.
+- **Microsoft Teams, with [Require Microsoft Teams access](/connect-automate/chat-platforms/msteams#follow-teams-access) on** — only the agent's editors, recognized by the Microsoft account each one linked. Anyone else who tries is told privately that only an Agent editor can. When the person who asked is not an editor, an editor also gets the approval card in their 1:1 chat with the bot.
+- **Other chat platforms, or Slack and Teams with that setting off** — anyone who can talk to the agent in that conversation.
 - **The Playground and the [agent chat API](/connect-automate/agent-chat-api)** — the agent's editors, and at the second and third levels also the conversation's owner, even one who can only view the agent. A chat API conversation belongs to the key's owner.
 
 Every level keeps these rules:

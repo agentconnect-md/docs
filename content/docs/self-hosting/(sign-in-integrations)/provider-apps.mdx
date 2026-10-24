@@ -143,6 +143,20 @@ A Workspace connects itself from Google Chat. Until it does, the app answers a m
 
 Until the app is published publicly on the Google Workspace Marketplace, only your own Workspace can use it.
 
+## Microsoft Teams deployment app
+
+The **Microsoft** card configures the deployment's Microsoft sign-in application. Entering the application's home tenant there makes the same application the deployment's Teams app, which each Microsoft 365 organization connects to one of its agents with an administrator's sign-in; any agent can still [register its own bot](/connect-automate/chat-platforms/msteams#register-your-own-bot).
+
+1. Configure the deployment's public callback endpoint, and serve the console over HTTPS.
+2. In [Microsoft Entra](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade), register a multi-tenant application (accounts in any organizational directory). Add the card's **Redirect URIs** and its **Connect page** as Web redirect URIs, and create a client secret.
+3. Register a bot for that application in the [Teams Developer Portal](https://dev.teams.microsoft.com/tools/bots), or as an Azure Bot, with the **Messaging endpoint** the card shows.
+4. In Setup, open **Microsoft**, enter the **Client ID**, the **Client secret**, and the application's **Directory (tenant) ID for Teams**, and save. Setup checks the secret against that tenant before saving it.
+5. Restart AgentConnect.
+
+One application and one secret serve Microsoft sign-in and Teams, so a rotation reaches both. Clearing the tenant ID turns Teams off and keeps sign-in.
+
+An organization connects from an agent's **Add integration → Microsoft Teams → Connect with Microsoft**: a Teams or Global administrator signs in, and the app is published to that Microsoft 365 organization's app catalog with no Store listing. Microsoft Entra labels the application unverified until publisher verification, which organizations that allow only verified publishers require.
+
 ## Lark and Feishu tenant Apps
 
 The **Lark** and **Feishu** cards configure one regional Login App as the deployment's tenant anchor. AgentConnect uses it to accept multiple bot Apps only when they belong to the same trusted workspace; the Login App is not an AgentConnect chat bot.

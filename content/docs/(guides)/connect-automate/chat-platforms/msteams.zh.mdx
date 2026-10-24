@@ -1,0 +1,83 @@
+---
+title: "Microsoft Teams"
+icon: MicrosoftTeams
+description: "把 Agent 连接到 Microsoft Teams，用于一对一聊天、群聊和团队频道。"
+---
+
+import imgConnect from '@/public/images/msteams-connect.png'
+import imgRegister from '@/public/images/msteams-register.png'
+
+Microsoft Teams 集成把 Agent 连接到你的 Microsoft 365 组织。Teams 只通过 HTTPS 向机器人投递消息，所以部署需要一个公开的回调地址。AgentConnect Cloud 已经提供。
+
+连接方式有两种。**使用 Microsoft 连接**用的是部署自带的 Teams 应用，只需管理员登录一次。**注册自己的 Bot**用的是你的组织自行注册和安装的机器人，适用于任何 Agent。
+
+## 使用 Microsoft 连接 [#connect-with-microsoft]
+
+在 Agent 上打开**集成 → 添加集成 → Microsoft Teams**，点击**使用 Microsoft 连接**。
+
+<Image src={imgConnect} alt="选中 Microsoft Teams 的添加集成对话框，以及使用 Microsoft 连接按钮" width={640} />
+
+1. 用你所在 Microsoft 365 组织的 Teams 管理员或全局管理员账号登录，并为组织批准这个应用。
+2. 回到 AgentConnect，选择 Agent 要加入的团队，点击**添加到团队**。Agent 马上就能在这些团队的频道里回复。
+
+在应用设置策略允许的情况下，成员可以在**应用 → 为你的组织构建**中把应用添加到一对一聊天。
+
+一个 Microsoft 365 组织只连接一个 AgentConnect 组织，并通过这个应用连接一个 Agent。如果同一个 Microsoft 365 组织里还要用别的 Agent，请为它注册自己的 Bot。
+
+## 注册自己的 Bot [#register-your-own-bot]
+
+<Image src={imgRegister} alt="注册自己的 Teams 机器人：消息传送终结点，以及应用(机器人) ID、目录(租户) ID 和客户端密码" width={640} />
+
+在向导中选择**改为注册自己的 Bot**。登录你的 Microsoft 365 组织，在 [Teams 开发人员门户](https://dev.teams.microsoft.com/tools/bots)中：
+
+1. 打开 **Bot management → New Bot**，命名后点击 **Add**。门户会同时在 Microsoft Entra 中创建机器人的应用注册。
+2. 在 **Configure** 下，把向导显示的**消息端点**粘贴为端点地址，点击 **Save**。
+3. 在 **Client secrets** 下，点击 **Add a client secret for your bot** 并复制它的值。Teams 只显示一次。
+4. 在 **Configure** 中复制 **Bot ID**。
+5. 在 [Microsoft Entra → 应用注册](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade)中打开机器人的应用，在**概述**里复制它的**目录(租户) ID**。
+
+使用相同消息端点的 Azure Bot 资源也可以。
+
+把**应用(机器人) ID**、**目录(租户) ID**和**客户端密码**粘贴到向导中，点击**连接**。AgentConnect 会先向 Microsoft Entra 一起验证这三项，再保存。
+
+然后点击**下载应用包**，在 [Teams 管理中心](https://admin.teams.microsoft.com/policies/manage-apps)的 **Teams 应用 → 管理应用 → 上传新应用**中上传它。再打开该应用，选择**添加到团队**：机器人马上就能在这个团队的频道里回复。
+
+- 之后成员可以把应用添加到一对一聊天。新上传的应用可能要几个小时后才能在一对一聊天中使用。
+- 如果要让成员自己上传应用包，请在他们的应用设置策略中允许自定义应用。
+
+## 保持应用最新 [#keep-the-app-current]
+
+Agent 的名称和图标保存在 Teams 应用里。它们变化后，**集成 → 消息应用 → Microsoft Teams** 下机器人那一行会显示**Teams 里的应用版本较旧。**
+
+- 通过**使用 Microsoft 连接**接入的，点击**在 Teams 中更新**，再用管理员账号登录一次。应用会在你的组织中以及已安装它的团队里更新。
+- 使用自己的 Bot 的，点击**下载应用包**，在 Teams 管理中心再上传一次。它会更新同一个 Teams 应用。
+
+## 使用 [#use-it]
+
+- **一对一聊天**：直接给机器人发消息。一个一对一聊天就是和 Agent 的一个持续会话。
+- **频道**：在帖子里 @ 机器人，即在该帖子的线程中开始一个会话；线程里的回复会继续这个会话。Agent 集成卡片上该频道的触发方式，决定没有 @ 的新帖子是否会开始工作。频道在第一次被 @ 之后出现在卡片上。在私有频道和共享频道中，Teams 只会把 @ 机器人的消息发给它，所以要继续会话的每条回复都需要 @ 机器人。
+- **群聊**：@ 机器人开始一个会话；回复 Agent 的消息即可继续。如果想让整个群聊保持一个会话，把它的**会话模式**设为**单一会话**。
+- **回复**：Agent 先发出一条回复，在工作过程中原地编辑，支持 Markdown 格式。
+- **提问和审批**：Agent 会发送一张卡片，每个选项一个按钮。点选你的答案，卡片会为对话中的所有人更新。谁能回答审批，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定。
+
+关于停止、取消、排队以及更改支持的会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+
+## 与其他组织共享的频道 [#channels-shared-with-other-organizations]
+
+包含其他组织成员的共享频道，或者有来宾加入的对话，属于外部场所。即使新对话默认是开启的，它对 Agent 也从**关闭**开始。在那里 @ 机器人，会收到一条一次性的提示，说明 Agent 尚未在此启用；编辑者可以在 Agent 的集成卡片上开启该频道。
+
+开启后，Agent 会在那里回复，但它需要的审批不会发到频道里。提问的人如果属于你的组织，会在自己和机器人的一对一聊天中收到审批卡片。否则，会有一位关联了 Microsoft 账号的 Agent 编辑者在自己和机器人的一对一聊天中收到卡片，人选方式见[会话](/operate-govern/sessions#when-a-run-asks-for-permission)；任何编辑者也都可以在控制台中处理。
+
+## 跟随 Teams 访问权限 [#follow-teams-access]
+
+所有者可以在**设置 → 会话访问权限 → 要求 Microsoft Teams 访问权限**中，让 Teams 会话只对各对话里的成员可见。每个人在**个人资料 → 登录方式**中关联自己的 Microsoft 工作或学校账号；对话里的机器人随后会检查他们是否是该一对一聊天、群聊或频道的当前成员。来自其他组织的来宾无法匹配到账号，看不到已同步的会话。开启后，只有 Agent 的编辑者可以在 Teams 中回答审批和更改运行时设置；与其他组织共享的频道里的审批，也会发到编辑者的一对一聊天，而不是提问的人的。参见[会话可见性](/operate-govern/permissions-overview/session-visibility#session-access)。
+
+## 说明 [#notes]
+
+- 暂不支持文件和附件。
+- 一个 Teams 机器人绑定一个 Agent。删除集成会释放你自己的机器人以供复用（下次选择**使用已有机器人**），不会删除机器人或它的应用注册。
+- 在**集成 → 消息应用 → Microsoft Teams** 中更换你自己机器人的客户端密码，机器人的对话不受影响。部署自带 Teams 应用的密码在 [Setup Server](/self-hosting/provider-apps#microsoft-teams-deployment-app) 中管理。
+
+## 自托管 [#self-hosting]
+
+自托管部署需要先配置好公开的回调地址，和 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 的要求一样。运维者配置好 [Microsoft Teams 部署应用](/self-hosting/provider-apps#microsoft-teams-deployment-app)之后，向导里才会出现**使用 Microsoft 连接**。

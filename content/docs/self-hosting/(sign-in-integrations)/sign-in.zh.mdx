@@ -164,11 +164,12 @@ docker compose --env-file compose.env up -d
 
 ## 社交登录提供方 [#social-providers]
 
-Setup 通过对应的提供方卡片管理 GitHub、Google 和 Slack 的 Logto 连接器：
+Setup 通过对应的提供方卡片管理 GitHub、Google、Slack 和 Microsoft 的 Logto 连接器：
 
 - **GitHub**：一个 AgentConnect GitHub App 即可同时处理仓库集成和登录。
 - **Google**：按照 Setup 显示的精确源地址和回调值手动创建 OAuth 客户端；内置的本地值使用裸 `localhost`。
 - **Slack**：一个部署级应用即可同时处理工作区安装和独立的 Slack OIDC 登录流程；所有公开源地址都必须使用 HTTPS。
+- **Microsoft**：一个多租户的 Microsoft Entra 应用让用户用工作或学校账号登录；填入主租户后，它也是 [Microsoft Teams 部署应用](/self-hosting/provider-apps#microsoft-teams-deployment-app)。
 
 Lark 和飞书卡片配置的是用于可信工作区机器人准入的区域租户应用。它们不会自动把 Lark 或飞书添加为 Logto 登录方式。参见 [Lark 和飞书租户应用](/self-hosting/provider-apps#lark-and-feishu-tenant-apps)。
 
