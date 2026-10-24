@@ -33,11 +33,13 @@ In the [DingTalk developer console](https://open-dev.dingtalk.io/), signed in as
 
    <Image src={imgRobotStream} alt="The Stream message receiving mode and the Publish button" width={640} />
 
-3. Under **Version management and release**, create a version, choose who can see the robot, save it, and confirm the publish. The version needs no review and goes live at once. Every later change to the app takes effect only after you publish a new version.
+3. Under **Permission management**, search for `Contact.Org.Read` and enable it; it needs no approval. Once the robot receives its first message, the Console names the integration after your organization instead of its Client ID.
+
+4. Under **Version management and release**, create a version, choose who can see the robot, save it, and confirm the publish. The version needs no review and goes live at once. Every later change to the app takes effect only after you publish a new version.
 
    <Image src={imgVersion} alt="A new app version available to all employees" width={560} />
 
-4. Under **Credentials and basic information**, copy the **Client ID** and **Client Secret**.
+5. Under **Credentials and basic information**, copy the **Client ID** and **Client Secret**.
 
    <Image src={imgCredentials} alt="The app's credentials, with the values hidden" width={560} />
 
@@ -61,5 +63,6 @@ See [In-conversation commands](/connect-automate/integrations-overview#in-conver
 ## Notes
 
 - DingTalk limits each organization's API calls by plan. When DingTalk refuses calls over the limit, the agent says so once in the conversation instead of answering.
+- Topic circles aren't supported: DingTalk lets only its own assistants and webhook robots join one, not an app's robot.
 - One DingTalk robot binds to one agent. Deleting the integration frees the robot for reuse (**Use an existing bot** next time); it does not delete the app from the DingTalk developer console.
 - Replace the Client Secret under **Integrations → Messaging apps → DingTalk → Replace secret**. The robot's conversations are unchanged.
