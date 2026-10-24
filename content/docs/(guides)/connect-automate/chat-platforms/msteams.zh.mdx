@@ -4,6 +4,9 @@ icon: MicrosoftTeams
 description: "把 Agent 连接到 Microsoft Teams，用于一对一聊天、群聊和团队频道。"
 ---
 
+import imgConnect from '@/public/images/msteams-connect.png'
+import imgRegister from '@/public/images/msteams-register.png'
+
 Microsoft Teams 集成把 Agent 连接到你的 Microsoft 365 组织。Teams 只通过 HTTPS 向机器人投递消息，所以部署需要一个公开的回调地址。AgentConnect Cloud 已经提供。
 
 连接方式有两种。**使用 Microsoft 连接**用的是部署自带的 Teams 应用，只需管理员登录一次。**注册自己的 Bot**用的是你的组织自行注册和安装的机器人，适用于任何 Agent。
@@ -11,6 +14,8 @@ Microsoft Teams 集成把 Agent 连接到你的 Microsoft 365 组织。Teams 只
 ## 使用 Microsoft 连接 [#connect-with-microsoft]
 
 在 Agent 上打开**集成 → 添加集成 → Microsoft Teams**，点击**使用 Microsoft 连接**。
+
+<Image src={imgConnect} alt="选中 Microsoft Teams 的添加集成对话框，以及使用 Microsoft 连接按钮" width={640} />
 
 1. 用你所在 Microsoft 365 组织的 Teams 管理员或全局管理员账号登录，并为组织批准这个应用。
 2. 回到 AgentConnect，选择 Agent 要加入的团队，点击**添加到团队**。Agent 马上就能在这些团队的频道里回复。
@@ -20,6 +25,8 @@ Microsoft Teams 集成把 Agent 连接到你的 Microsoft 365 组织。Teams 只
 一个 Microsoft 365 组织只连接一个 AgentConnect 组织，并通过这个应用连接一个 Agent。如果同一个 Microsoft 365 组织里还要用别的 Agent，请为它注册自己的 Bot。
 
 ## 注册自己的 Bot [#register-your-own-bot]
+
+<Image src={imgRegister} alt="注册自己的 Teams 机器人：消息传送终结点，以及应用(机器人) ID、目录(租户) ID 和客户端密码" width={640} />
 
 在向导中选择**改为注册自己的 Bot**。登录你的 Microsoft 365 组织，在 [Teams 开发人员门户](https://dev.teams.microsoft.com/tools/bots)中：
 

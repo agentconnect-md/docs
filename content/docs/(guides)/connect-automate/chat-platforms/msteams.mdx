@@ -4,6 +4,9 @@ icon: MicrosoftTeams
 description: "Connect an agent to Microsoft Teams for 1:1 chats, group chats, and team channels."
 ---
 
+import imgConnect from '@/public/images/msteams-connect-en.png'
+import imgRegister from '@/public/images/msteams-register-en.png'
+
 A Microsoft Teams integration connects an agent to your Microsoft 365 organization. Teams delivers messages to bots over HTTPS only, so the deployment needs a public callback endpoint. AgentConnect Cloud has one.
 
 There are two ways to connect. **Connect with Microsoft** uses the deployment's own Teams app, and an administrator only signs in. **Register your own bot** uses a bot your organization registers and installs itself, and works for any agent.
@@ -11,6 +14,8 @@ There are two ways to connect. **Connect with Microsoft** uses the deployment's 
 ## Connect with Microsoft
 
 On your agent, open **Integrations → Add integration → Microsoft Teams** and click **Connect with Microsoft**.
+
+<Image src={imgConnect} alt="The Add integration dialog with Microsoft Teams selected and the Connect with Microsoft button" width={640} />
 
 1. Sign in as a Teams or Global administrator of your Microsoft 365 organization, and approve the app for the organization.
 2. Back in AgentConnect, choose the teams the agent joins, and click **Add to teams**. The agent answers in those teams' channels right away.
@@ -20,6 +25,8 @@ People add the app to a 1:1 chat from **Apps → Built for your org**, where the
 A Microsoft 365 organization connects to one AgentConnect organization, and through this app to one agent. To use another agent in the same Microsoft 365 organization, register your own bot for it.
 
 ## Register your own bot
+
+<Image src={imgRegister} alt="Register your own Teams bot: the messaging endpoint, then the App (bot) ID, Directory (tenant) ID, and client secret" width={640} />
 
 Choose **Register your own bot instead** in the wizard. In the [Teams Developer Portal](https://dev.teams.microsoft.com/tools/bots), signed in to your Microsoft 365 organization:
 
