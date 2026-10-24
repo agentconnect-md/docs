@@ -143,6 +143,20 @@ Workspace 在 Google Chat 里自行完成连接。连接之前，应用会对消
 
 在 Google Workspace Marketplace 上公开发布之前，只有你自己的 Workspace 能使用这个应用。
 
+## Microsoft Teams 部署应用 [#microsoft-teams-deployment-app]
+
+**Microsoft** 卡片配置部署的 Microsoft 登录应用。在那里填入应用的主租户后，同一个应用也会成为部署的 Teams 应用：每个 Microsoft 365 组织由管理员登录一次，就能把它连接到自己的一个 Agent；任何 Agent 也仍然可以[注册自己的 Bot](/connect-automate/chat-platforms/msteams#register-your-own-bot)。
+
+1. 配置部署的公开回调地址，并通过 HTTPS 提供控制台。
+2. 在 [Microsoft Entra](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) 中注册一个多租户应用（任何组织目录中的账户）。把卡片上的**重定向 URI** 和**连接页面**都添加为 Web 重定向 URI，并创建一个客户端密码。
+3. 在 [Teams 开发人员门户](https://dev.teams.microsoft.com/tools/bots)中为这个应用注册一个机器人，或者用 Azure Bot，填入卡片显示的**消息端点**。
+4. 在 Setup 中打开 **Microsoft**，填入**客户端 ID**、**客户端密码**和应用的**用于 Teams 的目录(租户) ID**，然后保存。Setup 会先用这个租户验证密码，再保存。
+5. 重启 AgentConnect。
+
+Microsoft 登录和 Teams 共用一个应用和一个密码，轮换一次两者同时生效。清空租户 ID 会关闭 Teams，保留登录。
+
+组织从 Agent 的**添加集成 → Microsoft Teams → 使用 Microsoft 连接**接入：由 Teams 管理员或全局管理员登录，应用随即发布到该 Microsoft 365 组织的应用目录，不需要上架 Teams 商店。在完成发布者验证之前，Microsoft Entra 会把这个应用标为未验证；只允许已验证发布者的组织需要先完成这项验证。
+
 ## Lark 和飞书租户应用 [#lark-and-feishu-tenant-apps]
 
 **Lark** 和**飞书**卡片配置一个区域登录应用，作为部署的租户锚点。AgentConnect 用它来确保只有属于同一个可信工作区的多个机器人应用才会被接受；登录应用本身不是 AgentConnect 聊天机器人。
