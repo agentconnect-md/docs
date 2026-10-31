@@ -47,9 +47,23 @@ Off keeps the bot in the channel, preserves past sessions, and only mutes inboun
 
 [Linear](/connect-automate/triggers-automation/linear) has the same shape with a different roster: its conversations are the workspace's **teams**, listed for you the moment you connect it, and a team row takes only **@-mention**, **By decision**, or **Off** — every Linear event is addressed to the app already.
 
+### Session mode
+
+A channel row also has a **Session mode**, which decides which session a message joins:
+
+- **Auto** — a coordinator reads every message in the conversation and decides what to do with it: hand it to a task already working on that topic, open a new task in the message's thread, answer a quick question itself, or let a message that isn't for the agent pass. A message that @-mentions the agent is always answered. People then talk to the task in its thread, without the coordinator. While the coordinator decides, the message shows 🤔.
+- **Per thread** — each new message starts its own session, and replies in its thread continue it.
+- **Single session** — every message in the conversation, at the root or in a thread, joins one long session. Send `!new` to start a fresh one.
+
+A channel or group conversation the bot joins starts on **Auto** when the agent's daemon supports it, and on **Per thread** otherwise. Conversations you already have keep their mode, and one-to-one DMs don't use Auto. Under Auto the coordinator sees every message, so **Respond to** offers only **Off** beside **Decided by the coordinator**. Auto can't be combined with **By decision** or a shared bot's **Or pick by decision**; switch the row to **Per thread** first.
+
+In a task's thread, `!new` restarts that task and `!stop` stops it until someone mentions the agent there. At the conversation's root, `!new` starts a new coordinator, which keeps the open tasks, and `!stop` stops the coordinator's current turn. Open the coordinator's session in [Sessions](/operate-govern/sessions) to see its tasks, each with the summary it keeps of its own progress, on the **Tasks** tab.
+
+A self-hosted daemon runs Auto unless its `config.json` sets `"features": { "autoSessionMode": false }`; such a daemon answers an Auto conversation as **Per thread**.
+
 ### Direct messages
 
-A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. One-to-one DMs use **On / Off**. Group conversations use the same trigger choices as channels. Conversations for a restricted agent start Off until an allowed editor enables them.
+A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. One-to-one DMs use **On / Off**. Group conversations use the same trigger choices and session modes as channels. Conversations for a restricted agent start Off until an allowed editor enables them.
 
 ### Shared bots
 

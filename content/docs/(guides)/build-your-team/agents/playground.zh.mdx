@@ -18,6 +18,10 @@ Playground 会在 Agent 的 Daemon 上创建一个真实的会话，使用与频
 
 当你让 Agent 在某个聊天对话中读取或发消息时，它是替你去做，规则与聊天中相同，参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。在你已在**个人资料 → 登录方式**中关联聊天账号（例如 Slack 账号）的工作区里，它按这个账号判断你：公开频道要求你是正式成员，私密频道或群组私信要求你是其中的成员。在其他地方（包括账号无法关联的 Telegram 和 Discord），你只能触达你能在**会话**中打开其会话的对话。
 
+## 你与 Agent 的专属对话 [#your-own-conversation-with-an-agent]
+
+当 Agent 的 Daemon 运行[自动模式](/connect-automate/integrations-overview#session-mode)时，Agent 页面的**试用**按钮，以及从首页输入框发给单个 Agent 的消息，都会打开你与该 Agent 的专属对话。只有你能打开它，每次打开的都是同一个对话。对话中由协调会话回应每条消息：简单的问题它直接回答，需要动手的事情则开启一个任务。每个任务在自己的会话页面上继续，对话中会附上该页面的链接，你也可以在那里继续给任务发消息。会话面板中的**新建会话**则会打开普通的 Playground 对话；下文的配置工作请使用它。
+
 ## 在对话中配置 AgentConnect [#configure-agentconnect-from-a-conversation]
 
 在只有一个 Agent 的 Playground 对话中，这个 Agent 可以读取当前设置，并用与 [MCP 连接器](/connect-automate/mcp-connector)相同的工具替你做出更改。它以你的身份行事，因此你的角色和[可见范围](/operate-govern/permissions-overview)同样适用。每项更改都会以审批卡片的形式出现在输入框上方，列出确切的参数；在你点击 **Approve and run** 之前，任何更改都不会生效。之后 Agent 会收到结果并继续。

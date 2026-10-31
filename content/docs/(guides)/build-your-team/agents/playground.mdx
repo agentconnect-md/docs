@@ -18,6 +18,10 @@ You can interrupt a turn when needed. When the agent's [**What people can do in 
 
 When you ask the agent to read or post in a chat conversation, it does so for you, by the same rule as in chat; see [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations). In a workspace where you linked your chat account under **Your profile → Sign-in methods**, such as your Slack account, it judges you by that account: a public channel needs you to be a full member, and a private channel or group DM needs you to be a member. Anywhere else, including Telegram and Discord, whose accounts can't be linked, you reach only conversations whose sessions you can open under **Sessions**.
 
+## Your own conversation with an agent
+
+Where the agent's daemon runs [Auto](/connect-automate/integrations-overview#session-mode), the agent page's **Playground** button, and a message to one agent from the Home composer, open your own conversation with that agent. Only you can open it, and it is the same conversation every time. A coordinator answers each message there: it replies to a quick question itself and opens a task for anything that needs work. Each task continues on its own session page, which the conversation links to, and you can keep writing to the task there. **New session** in the Sessions panel opens an ordinary Playground conversation instead; use it for the setup work below.
+
 ## Configure AgentConnect from a conversation
 
 In a Playground conversation with a single agent, that agent can read your setup and make changes for you with the same tools as the [MCP connector](/connect-automate/mcp-connector). It acts as you, so your role and [visibility](/operate-govern/permissions-overview) apply. Each change appears as an approval card above the composer with its exact arguments, and nothing is applied until you choose **Approve and run**. The agent is then told the result and continues.
