@@ -21,11 +21,13 @@ Daemon 克隆一个仓库和分支（可选择把 Agent 限定到某个子目录
 
 要从列表中挑选仓库，请安装 **AgentConnect GitHub App**：
 
-1. 在 **添加 Agent → 从 GitHub** 中，点击 **安装 GitHub App**（或前往 **设置 → GitHub → 在 GitHub 安装**）。
+1. 在 **添加 Agent → 从 GitHub** 中，点击 **安装 GitHub App**（或前往 **集成 → 代码托管平台 → GitHub → 在 GitHub 安装**）。
 2. 在 GitHub 上选择账号以及要授权的仓库。
 3. 回到对话框，选择 **仓库** 和 **分支**，如果 Agent 应当位于某个子文件夹，请设置 **Agent 目录**，然后选择 **推送权限**：
    - **只读**——Agent 可以拉取但不能推送。
    - **读写**——Agent 可以向仓库推送。
+
+在你[给某个 Agent 单独的 App](/connect-automate/triggers-automation/github#give-an-agent-its-own-github-app) 之前，Agent 共用部署的内置 GitHub App；单独的 App 让它在 GitHub 上成为另一个身份。
 
 在 AgentConnect OSS 上，部署运维人员必须[先配置 GitHub App](/self-hosting/provider-apps#github-app)。没有 App 时，公开仓库仍然可以以只读方式克隆。
 

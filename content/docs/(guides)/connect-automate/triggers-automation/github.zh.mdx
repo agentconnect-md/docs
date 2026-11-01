@@ -8,6 +8,8 @@ import imgGithubIntegration from '@/public/images/github-integration.png'
 import imgGithubInstallationPicker from '@/public/images/github-installation-picker.png'
 import imgGithubTrustedUsers from '@/public/images/github-trusted-users.png'
 import imgGithubWatchesCard from '@/public/images/github-watches-card.png'
+import imgGithubAppDialog from '@/public/images/github-app-dialog.png'
+import imgGithubAppsCard from '@/public/images/github-apps-card.png'
 
 GitHub 集成让 Agent **监视一个仓库**，或某个安装实例下的全部仓库：新的 Issue、Pull Request 和评论会成为会话，Agent 则可以用 PR / Issue 评论的形式回写。它依托部署的 [AgentConnect GitHub App](/build-your-team/agents/workspaces-and-repos)。AgentConnect Cloud 不需要为每个仓库配置 Webhook；AgentConnect OSS 的运维人员则在 Relay 上配置一个部署级别的 GitHub App Webhook。
 
@@ -58,7 +60,7 @@ AgentConnect 检查每条评论（包括被编辑的内容）的作者；不会�
 关联到已登录 AgentConnect 个人资料的 GitHub 身份可以参与两项彼此独立的控制台用户检查：
 
 - 可选的按用户仓库授权用它来验证私有仓库访问权限和每一项写入授权；以及
-- **设置 → 会话访问权限 → 遵循 GitHub 访问权限**在判断查看者是否可以读取来自私有仓库的会话时会用到它。
+- **设置 → 会话访问权限 → 要求 GitHub 访问权限**在判断查看者是否可以读取来自私有仓库的会话时会用到它。
 
 公开仓库的只读设置和公开仓库的会话不需要关联 GitHub 个人资料。关联 GitHub 不会安装 GitHub App、不会授予仓库，也不会改变上述 Webhook 作者规则。参见[关联账号](/how-to-guides/linked-accounts)。
 
@@ -121,6 +123,25 @@ AgentConnect 本身从不阻止合并。要让合并等待某个评审者，请�
 
 AgentConnect 从不创建、重命名或删除这些团队；它们由你自己管理。团队只存在于组织中，因此在个人账号拥有的仓库上只能使用 `@<agent-name>`。
 
+## 给 Agent 单独的 GitHub App [#give-an-agent-its-own-github-app]
+
+每个 Agent 一开始都使用部署的**内置** GitHub App。使用它的所有 Agent 在 GitHub 上是同一个身份，而 GitHub 不接受 Pull Request 作者对自己的评审，所以评审 Agent 无法批准另一个 Agent 开的 Pull Request，也无法对它请求修改。给评审 Agent 一个单独的 App，它就成了另一个身份。
+
+1. 在 Agent 的 GitHub 卡片上选择 **GitHub App**。在**编辑工作区**中，同一个对话框位于 **GitHub App 已连接**旁的 **⋯ → 使用独立的 GitHub App…**。
+2. 选一个组织里空闲的 App，或选择**新建 GitHub App…** 并点击**在 GitHub 上继续**。AgentConnect 会填好 App 的权限、事件和 Webhook；你在 GitHub 上确认并安装它。
+3. 回到 AgentConnect 后，对话框会检查该 App 是否覆盖了 Agent 用到的一切：工作区仓库、已授权的仓库和安装实例，以及它监视的仓库。缺少的项会列出来并附带**去 GitHub 添加**。在 GitHub 上补上后，点击**重新检查**。
+4. 全部覆盖后，选择**切换**。
+
+<Image src={imgGithubAppDialog} alt="GitHub App 对话框：acme-reviewer 覆盖了 Agent 的仓库、安装实例和评审监视项" width={520} />
+
+此后 Agent 的一切都通过该 App 进行——事件、仓库凭证、评审和 Check——它的 GitHub 卡片会显示**通过 `<app-slug>`**。`@<app-slug>` 只会叫到这个 Agent。组织中任一 App 开的 Pull Request 仍算作内部 Pull Request，所以使用不同 App 的 Agent 会自动评审彼此的 Pull Request。
+
+一个 App 同一时间只服务一个 Agent。把 Agent 改回内置 App，或删除该 Agent，它的 App 就会空闲出来，供其他 Agent 使用。
+
+组织的 App 列在**集成 → 代码托管平台 → GitHub** 中内置 App 的下方，并标出使用它的 Agent。展开一个 App 可以看到它安装在哪些账号上。所有者可以在那里把它从某个账号卸载，或删除空闲的 App；删除后的 App 仍留在 GitHub 上，直到你在 GitHub 上也删除它。
+
+<Image src={imgGithubAppsCard} alt="集成页的 GitHub 卡片：内置 App 和 acme-reviewer，后者展开显示它在 acme 上的安装" width={640} />
+
 ## 管理监视项 [#manage-watches]
 
 Agent 页面把它的 GitHub 集成归为一张卡片——每个被监视的仓库一行，安装实例则显示为 `<account>/*`，其中包含：
@@ -133,6 +154,6 @@ Agent 页面把它的 GitHub 集成归为一张卡片——每个被监视的仓
 
 ## 前提条件 [#requirements]
 
-- **GitHub App** 必须已为你的组织安装（**设置 → GitHub → 在 GitHub 安装**）；如果尚未安装，集成对话框会提供安装按钮，并带有**已安装，立即同步**刷新按钮。
+- **GitHub App** 必须已为你的组织安装（**集成 → 代码托管平台 → GitHub → 在 GitHub 安装**）；如果尚未安装，集成对话框会提供安装按钮，并带有**已安装，立即同步**刷新按钮。
 - 已启用的监视项在**只读**访问权限下可以发布普通的最终回复。正式评审、Check 和仓库变更需要**读写**。
 - 在 AgentConnect OSS 上，运维人员必须先[配置部署的 GitHub App 及其 Relay Webhook](/self-hosting/provider-apps#github-app)。

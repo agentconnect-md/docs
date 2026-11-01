@@ -57,7 +57,7 @@ This card decides whether sessions from a platform follow that platform's own ac
 
 - **Off**, the default — each new session is **Everyone** or **Private** according to where it started. See the [default audience table](/operate-govern/permissions-overview/session-visibility#default-audience).
 - **Follow Slack access** — a Slack channel or group-DM session requires a linked Slack identity from the same workspace with current access to the source conversation.
-- **Follow GitHub access** — a private-repository session requires a linked GitHub profile with current access to that repository. Public-repository sessions stay available to every member.
+- **Require GitHub access** — a private-repository session requires a linked GitHub profile with current access to that repository. Public-repository sessions stay available to every member.
 - **Follow Feishu / Lark access** — the audience follows current membership in the source chat, including one-to-one chats. This currently requires a self-hosted deployment.
 
 A provider audience is read-only on the session itself: change this organization setting rather than reclassifying one participant's copy. Every provider check needs a matching [linked account](/how-to-guides/linked-accounts); organization membership, the Owner role, and a personal API key do not substitute for it. See [Session visibility](/operate-govern/permissions-overview/session-visibility).

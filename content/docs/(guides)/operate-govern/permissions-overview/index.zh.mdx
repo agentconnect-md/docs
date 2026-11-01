@@ -57,7 +57,7 @@ flowchart LR
 
 - **关闭**，即默认值——每个新会话根据其启动位置设为**所有人**或**私密**。请参阅[默认可见对象表](/operate-govern/permissions-overview/session-visibility#default-audience)。
 - **遵循 Slack 访问权限**——Slack 频道或群组私信会话要求来自同一工作区的已关联 Slack 身份，且当前对源对话具有访问权限。
-- **遵循 GitHub 访问权限**——私有仓库会话要求已关联的 GitHub 个人资料当前对该仓库具有访问权限。公开仓库会话对每位成员保持可用。
+- **要求 GitHub 访问权限**——私有仓库会话要求已关联的 GitHub 个人资料当前对该仓库具有访问权限。公开仓库会话对每位成员保持可用。
 - **遵循飞书 / Lark 访问权限**——可见对象遵循源聊天的当前成员资格，包括一对一聊天。目前这需要自托管部署。
 
 提供方可见对象在会话本身上是只读的：请更改这项组织设置，而不是重新归类某一位参与者的副本。每项提供方检查都需要匹配的[关联账号](/how-to-guides/linked-accounts)；组织成员资格、所有者角色和个人 API 密钥都不能替代它。请参阅[会话可见范围](/operate-govern/permissions-overview/session-visibility)。

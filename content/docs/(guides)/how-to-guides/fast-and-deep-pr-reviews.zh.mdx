@@ -93,6 +93,8 @@ AgentConnect PR Review: <agent-name>
 
 两个 Agent 仍然以同一个安装级 GitHub App 身份写入。因此，这一模式让基础评审者保持在**简要**，它可以提交正式的 `COMMENT` 评审，但不能 `APPROVE` 或 `REQUEST_CHANGES`。深度评审者使用**详细**来给出决定性结论、行内评论和信息性 Check。
 
+如果要让评审者批准另一个 Agent 开的 Pull Request 或对它请求修改，请[给它单独的 GitHub App](/connect-automate/triggers-automation/github#give-an-agent-its-own-github-app)；GitHub 不接受 Pull Request 作者对自己的评审。
+
 只有当仓库把 AgentConnect Check 设为必需时，它才会阻止合并。[合并前要求评审](/connect-automate/triggers-automation/github#require-a-review-before-merging)说明了哪些评审者可以被设为必需；像 `deep-review` 这样的 **@ 提及**评审者不能。
 
 ## 重要行为 [#important-behavior]
