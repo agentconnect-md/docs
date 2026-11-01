@@ -93,6 +93,8 @@ AgentConnect PR Review: <agent-name>
 
 Both agents still write as the same installation-level GitHub App identity. For that reason, this pattern keeps the baseline reviewer on **Brief**, which can submit a formal `COMMENT` review but cannot `APPROVE` or `REQUEST_CHANGES`. The deep reviewer uses **Details** for the decisive verdict, inline comments, and informational Check.
 
+To have a reviewer approve or request changes on pull requests another agent opens, [give it its own GitHub App](/connect-automate/triggers-automation/github#give-an-agent-its-own-github-app); GitHub refuses a review from the pull request's own author.
+
 AgentConnect Checks block merging only when the repository requires one. [Require a review before merging](/connect-automate/triggers-automation/github#require-a-review-before-merging) explains which reviewers can be required; an **@-mention** reviewer such as `deep-review` cannot.
 
 ## Important behavior

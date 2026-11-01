@@ -21,11 +21,13 @@ The daemon clones a repository and branch (optionally scoping the agent to a sub
 
 To pick repositories from a list, install the **AgentConnect GitHub app**:
 
-1. In **Add agent → From GitHub**, click **Install GitHub app** (or go to **Settings → GitHub → Install on GitHub**).
+1. In **Add agent → From GitHub**, click **Install GitHub app** (or go to **Integrations → Code hosts → GitHub → Install on GitHub**).
 2. On GitHub, choose the account and which repositories to grant.
 3. Back in the dialog, pick the **repository** and **branch**, set the **agent directory** if the agent should live in a subfolder, and choose **push access**:
    - **Read only** — the agent can pull but not push.
    - **Read & write** — the agent can push to the repo.
+
+Agents share the deployment's built-in GitHub App until you [give one its own](/connect-automate/triggers-automation/github#give-an-agent-its-own-github-app), which makes it a separate actor on GitHub.
 
 On AgentConnect OSS, the deployment operator must [configure the GitHub App first](/self-hosting/provider-apps#github-app). Public repositories can still be cloned read-only without the App.
 
