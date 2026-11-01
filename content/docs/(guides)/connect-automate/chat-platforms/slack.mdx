@@ -7,6 +7,7 @@ description: "Install AgentConnect in your Slack workspace and start working wit
 import imgAddIntegration from '@/public/images/add-integration.png'
 import imgSlackIntegration from '@/public/images/slack-integration.png'
 import imgCodeChannelDiff from '@/public/images/slack-code-channel-diff.jpg'
+import imgCodeChannelPreview from '@/public/images/slack-code-channel-preview.jpg'
 
 Bring AI agents into Slack to investigate issues, answer questions, and work with your team in channel threads and direct messages.
 
@@ -20,8 +21,6 @@ You need an AgentConnect account and permission to install apps in your Slack wo
 2. Open the **Getting started** card and choose **Add to Slack**. You can also open the built-in agent and select **Integrations → Add integration → Slack**.
 3. Click **Add to Slack**, choose your Slack workspace, and review and approve the permissions.
 4. Return to the console. It waits for Slack and closes the setup dialog automatically when the bot is ready. Check that Slack appears on the built-in agent's Integrations card, then try the first message below.
-
-Cloud model use requires available credit. Eligible new accounts receive a one-time $5 signup credit per email address. Creating another organization with the same account does not grant another signup credit. Check **Billing** before starting a task.
 
 <Image src={imgAddIntegration} alt="Add integration dialog with the Add to Slack button for the built-in app" width={640} />
 
@@ -72,7 +71,7 @@ Beyond the conversation it is answering in, the agent uses these tools for the p
 
 ## Work in a Code channel
 
-**Release candidate:** this walkthrough was tested with AgentConnect **v2.9.0-rc.63** and the **Codex 2.5.0-agentconnect.1** runtime. Code channels require an installation whose Slack app and workspace support the feature. They are not available through every Cloud installation yet. If the agent reports that it cannot create one, continue in the original thread.
+**Release candidate:** this example was built with AgentConnect **v2.9.0-rc.63** and Codex, then rechecked and captured on **v2.9.0-rc.65**. Code channels require an installation whose Slack app and workspace support the feature. They are not available through every Cloud installation yet. If the agent reports that it cannot create one, continue in the original thread.
 
 On Cloud, start with the Slack connection above and give your agent a repository it can write to under [Workspace](/build-your-team/agents/configure-an-agent). Use a small example repository without business data for a first run. You do not need to install a local daemon for this workflow.
 
@@ -81,12 +80,7 @@ On Cloud, start with the Slack connection above and give your agent a repository
 Ask for the result you need. A multi-step coding request can open a dedicated Code channel; a quick question stays in the current conversation. For example:
 
 ```text
-Build a small CSV-to-JSON playground in examples/csv-playground.
-Use plain HTML, CSS, and JavaScript with no dependencies. Support an optional
-header row, quoted commas, escaped quotes, multiline fields, and clear errors.
-Include synthetic sample data and focused tests. Work on an isolated branch,
-change only this example directory, give me a page I can try in Slack, and
-open a pull request when the checks pass.
+Build a CSV-to-JSON playground I can try here in Slack, then open a PR.
 ```
 
 Follow the channel link the agent returns. Continue there with normal requests such as **Keep spaces in values, but ignore empty lines between records.** The channel keeps one shared coding session. A thread reply continues that session and receives its reply in the thread; the Code view and artifacts belong to the whole channel.
@@ -95,7 +89,7 @@ Follow the channel link the agent returns. Continue there with normal requests s
 
 Open **Code** to inspect the diff. For an eligible isolated repository, AgentConnect updates it as work runs and compares the current workspace with the task's starting point. Committing the changes does not make that comparison disappear.
 
-<Image src={imgCodeChannelDiff} alt="Code view comparing Task start with Current workspace for the six-file CSV playground example" width={1186} />
+<Image src={imgCodeChannelDiff} alt="A conversation with collapsed work steps beside the CSV playground diff" width={1182} />
 
 Ask for something you can try, as in the request above, and open the HTML preview the agent adds to the channel. In the CSV example, **Headers** produces objects and **Data** produces arrays. Try this synthetic input:
 
@@ -106,22 +100,11 @@ Bo,Kyoto,"Said ""hello""
 and waved"
 ```
 
-Then try `name,city` followed by `Ari,Oslo,extra`: the example reports the inconsistent column count, clears the output, and disables copying. These behaviors, along with the automatic diff and continuing conversation, were verified in the walkthrough. The [example pull request](https://github.com/agentconnect-md/agentconnect/pull/3562) contains the source and six passing parser tests.
+<Image src={imgCodeChannelPreview} alt="The conversation beside an interactive CSV-to-JSON preview with sample input and JSON output" width={1182} />
+
+Then try `name,city` followed by `Ari,Oslo,extra`: the example reports the inconsistent column count, clears the output, and disables copying. The [example pull request](https://github.com/agentconnect-md/agentconnect/pull/3562) contains the source and six parser tests.
 
 The fixed bar shows the model and effort together, plus reported context usage such as `42k/200k`. Repository, branch, and PR items help you return to the code. A PR status reflects the agent's most recent check; it is **not an automatic subscription** to CI changes. Ask **Check the PR and update its status** when you need a fresh result.
-
-### Plans, tasks, and current limits
-
-Work steps in the conversation, an agent's plan, and background tasks describe different things. A list of tool calls is not evidence that a background task was reported.
-
-| Surface               | What to expect in this tested release                                                                                                                            |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Plan                  | The agent explained its plan in the conversation. A separate Plan tab was not observed in this example.                                                          |
-| Tasks                 | Reads the same task sources as the web console. Reported active work stays visible; finished work is grouped and collapsed. Availability depends on the runtime. |
-| Codex background work | A real helper subagent ran during the example, but this runtime's background work did not reach the Tasks data source. The tab remained empty.                   |
-| PR                    | The PR link and fixed-bar status worked. Slack rejected the native PR view in this installation, so review the PR on the code host.                              |
-
-The Tasks tab does not yet provide task ID or tool-call ID drill-down, full background logs, or an individual Stop control. Do not interpret an empty Tasks tab as proof that no helper or command ran. Use the session in the console for the information the runtime actually reports.
 
 ## Give an agent a custom Slack identity
 
