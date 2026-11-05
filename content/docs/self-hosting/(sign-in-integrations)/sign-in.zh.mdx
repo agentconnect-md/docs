@@ -1,7 +1,7 @@
 ---
 title: "登录"
 icon: LogIn
-description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录。"
+description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录，支持社交登录提供方或企业 SSO。"
 ---
 
 AgentConnect 使用 Logto 处理人类用户登录、可续期的浏览器令牌以及关联的社交身份。组织、角色、Agent 可见范围、会话可见范围和仓库权限仍由 AgentConnect 自己管理。
@@ -55,6 +55,7 @@ Setup 会创建或更新 AgentConnect SPA、它的重定向地址、所选的社
 | Google | 本地推荐；使用页面显示的精确裸 localhost 值创建 Web OAuth 客户端 |
 | GitHub | Setup 会创建一个同时用于仓库集成和登录的 App |
 | Slack | 需要 Logto、Web、控制平面和 Relay 的源地址都使用 HTTPS |
+| 企业 SSO | 你的组织自己的 OIDC 或 SAML 身份提供方；参见[企业 SSO](#enterprise-sso) |
 
 Google 是最简短的本地路径。把它的客户端 ID 和密钥粘贴到 Setup 中，然后选择**保存 Google OAuth 并配置 Logto**。在所有必需的公开源地址都使用 HTTPS 之前，初始提供方选择器会禁用 Slack。
 
@@ -183,6 +184,50 @@ Google 是本地登录最简单的提供方。内置拓扑使用裸 `localhost`�
 
 Setup 会创建或更新对应的 Logto 连接器，并可以对其进行验证。请手动核对显示的 Google 源地址和重定向 URI。
 
+## 企业 SSO [#enterprise-sso]
+
+用户可以通过组织自己的身份提供方（OIDC 或 SAML）登录，与社交登录提供方并存，也可以完全取代它们。在 Setup 初始引导时选择 **Enterprise SSO (OIDC or SAML)** 作为第一个登录提供方，或稍后打开 **Enterprise SSO** 卡片。
+
+1. 选择协议，并填写**登录按钮上的名称**（Name on the sign-in button）。控制台会把它显示为**使用 _名称_ 继续**；默认名称是 `SSO`。
+2. 选择**创建 SSO 连接器**（Create SSO connector）。Logto 会创建该连接器，Setup 随后显示需要在身份提供方登记的值：
+
+   | 协议 | 在身份提供方登记 |
+   | --- | --- |
+   | OIDC | 重定向 URI `https://login.agentconnect.example/callback/<connector-id>` |
+   | SAML | ACS URL `https://login.agentconnect.example/api/authn/single-sign-on/saml/<connector-id>` 和 SP entity ID `https://login.agentconnect.example/enterprise-sso/<connector-id>` |
+
+3. 填写身份提供方的设置：
+   - **OIDC**：issuer URL、客户端 ID 和客户端密钥。始终会请求 `openid profile email`；只有当提供方需要更多 scope 才返回邮箱地址时，才需要额外添加。
+   - **SAML**：元数据 URL 或元数据 XML；如果携带邮箱地址的属性不是 `email`，再填写该属性名。
+4. 至少填写一个邮箱域名，例如 `example.com`。Logto 只为这些域名下的地址提供该连接器，因此没有域名时 Setup 会拒绝保存。
+5. 选择**保存 SSO 并配置 Logto**（Save SSO and configure Logto），然后重启控制平面和 Web。
+
+AgentConnect 登录页会把 SSO 按钮放在社交登录提供方之前，点击后直接跳转到身份提供方。当企业 SSO 是唯一的登录方式时，Setup 的**使用 Logto 登录**也会走它，因此第一位管理员也可以通过它认领。
+
+使用 Microsoft Entra ID 时，注册一个单租户的 **Web** 应用并填入重定向 URI，创建客户端密钥，issuer 使用 `https://login.microsoftonline.com/<tenant-id>/v2.0`。在 ID 令牌中添加 `email` 可选声明，这样登录时才会带上邮箱地址。
+
+### 邮箱地址 [#email-addresses]
+
+Logto 会把 SSO 登录关联到邮箱地址相同的已有账号，因此之前用社交登录提供方登录过的人仍是同一个 AgentConnect 用户。只填写身份提供方真正掌控其地址的域名。
+
+OIDC 提供方会标明每个地址是否已验证。当它没有给出验证状态时，由**当身份提供方未说明邮箱是否已验证时信任该邮箱**（Trust email addresses when the identity provider does not say whether they are verified）决定，该选项默认开启。当提供方明确表示地址未验证时，无论该选项如何，Logto 都会丢弃这个地址。
+
+### 修改或移除连接器 [#change-or-remove-the-connector]
+
+保存新的设置会保留连接器及其 URL。更改协议会替换连接器，因此需要在身份提供方重新登记新的 URL；用户重新登录后会按邮箱地址匹配回原账号。
+
+**移除 SSO 登录**（Remove SSO sign-in）会关闭企业 SSO 并移除登录按钮；连接器仍保留在 Logto 中，再次配置 SSO 时会复用它。Setup 始终保留至少一种登录方式，因此当 SSO 是唯一的登录方式时，请先配置一个社交登录提供方。
+
+### 私有网络中的身份提供方 [#identity-providers-on-a-private-network]
+
+Logto 默认不会访问私有网络中的地址。如果 issuer、它的令牌端点或 SAML 元数据 URL 解析到私有地址，需要在 Logto 中放行该地址或 CIDR 网段。使用内置叠加配置时，在 `compose.env` 中设置它，然后重新创建 Logto 容器：
+
+```dotenv
+LOGTO_SSRF_ALLOWED_ADDRESSES=192.0.2.10/32
+```
+
+使用外部 Logto OSS 部署时，把 Logto 的 `SSRF_ALLOWED_ADDRESSES` 环境变量设为相同的值。
+
 ## Lark 和飞书身份 [#lark-and-feishu-identities]
 
 Lark 和飞书的会话访问权限属于高级自托管配置。它同时需要：
@@ -224,6 +269,6 @@ Logto 在 [通过 Account API 管理账户设置](https://docs.logto.io/end-user
 4. 确认在原始访问令牌过期后，AgentConnect 仍能继续调用控制平面。
 5. 在 Setup 中运行每个可用的提供方检查，并手动核对所有标记为无法验证的回调地址。
 
-立即返回 `401` 通常意味着浏览器 API 资源与控制平面的 audience 不匹配。点击提供方按钮后跳到 Logto 错误页，通常意味着登录体验中缺少该连接器。
+立即返回 `401` 通常意味着浏览器 API 资源与控制平面的 audience 不匹配。点击提供方按钮后跳到 Logto 错误页，通常意味着登录体验中缺少该连接器。在身份提供方页面之后 SSO 登录失败，通常意味着客户端密钥或某个已登记的 URL 不匹配；**Logto Console → Audit logs** 会记录提供方的响应。
 
 在 Setup 中完成 Logto 登录的初始引导之前，请让本地无身份验证的栈只绑定在回环地址上。
