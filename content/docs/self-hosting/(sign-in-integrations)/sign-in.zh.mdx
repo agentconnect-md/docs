@@ -1,7 +1,7 @@
 ---
 title: "登录"
 icon: LogIn
-description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录，支持社交登录提供方或企业 SSO。"
+description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录，支持社交登录提供方或单点登录（SSO）。"
 ---
 
 AgentConnect 使用 Logto 处理人类用户登录、可续期的浏览器令牌以及关联的社交身份。组织、角色、Agent 可见范围、会话可见范围和仓库权限仍由 AgentConnect 自己管理。
@@ -55,7 +55,7 @@ Setup 会创建或更新 AgentConnect SPA、它的重定向地址、所选的社
 | Google | 本地推荐；使用页面显示的精确裸 localhost 值创建 Web OAuth 客户端 |
 | GitHub | Setup 会创建一个同时用于仓库集成和登录的 App |
 | Slack | 需要 Logto、Web、控制平面和 Relay 的源地址都使用 HTTPS |
-| 企业 SSO | 你的组织自己的 OIDC 或 SAML 身份提供方；参见[企业 SSO](#enterprise-sso) |
+| 单点登录（SSO） | 你的组织自己的 OIDC 或 SAML 身份提供方；参见[单点登录](#single-sign-on) |
 
 Google 是最简短的本地路径。把它的客户端 ID 和密钥粘贴到 Setup 中，然后选择**保存 Google OAuth 并配置 Logto**。在所有必需的公开源地址都使用 HTTPS 之前，初始提供方选择器会禁用 Slack。
 
@@ -184,9 +184,9 @@ Google 是本地登录最简单的提供方。内置拓扑使用裸 `localhost`�
 
 Setup 会创建或更新对应的 Logto 连接器，并可以对其进行验证。请手动核对显示的 Google 源地址和重定向 URI。
 
-## 企业 SSO [#enterprise-sso]
+## 单点登录（SSO） [#single-sign-on]
 
-用户可以通过组织自己的身份提供方（OIDC 或 SAML）登录，与社交登录提供方并存，也可以完全取代它们。在 Setup 初始引导时选择 **Enterprise SSO (OIDC or SAML)** 作为第一个登录提供方，或稍后打开 **Enterprise SSO** 卡片。
+用户可以通过组织自己的身份提供方（OIDC 或 SAML）登录，与社交登录提供方并存，也可以完全取代它们。在 Setup 初始引导时选择 **Single sign-on (OIDC or SAML)** 作为第一个登录提供方，或稍后打开 **Single sign-on** 卡片。
 
 1. 选择协议，并填写**登录按钮上的名称**（Name on the sign-in button）。控制台会把它显示为**使用 _名称_ 继续**；默认名称是 `SSO`。
 2. 选择**创建 SSO 连接器**（Create SSO connector）。Logto 会创建该连接器，Setup 随后显示需要在身份提供方登记的值：
@@ -202,7 +202,7 @@ Setup 会创建或更新对应的 Logto 连接器，并可以对其进行验证�
 4. 至少填写一个邮箱域名，例如 `example.com`。Logto 只为这些域名下的地址提供该连接器，因此没有域名时 Setup 会拒绝保存。
 5. 选择**保存 SSO 并配置 Logto**（Save SSO and configure Logto），然后重启控制平面和 Web。
 
-AgentConnect 登录页会把 SSO 按钮放在社交登录提供方之前，点击后直接跳转到身份提供方。当企业 SSO 是唯一的登录方式时，Setup 的**使用 Logto 登录**也会走它，因此第一位管理员也可以通过它认领。
+AgentConnect 登录页会把 SSO 按钮放在社交登录提供方之前，点击后直接跳转到身份提供方。当 SSO 是唯一的登录方式时，Setup 的**使用 Logto 登录**也会走它，因此第一位管理员也可以通过它认领。
 
 使用 Microsoft Entra ID 时，注册一个单租户的 **Web** 应用并填入重定向 URI，创建客户端密钥，issuer 使用 `https://login.microsoftonline.com/<tenant-id>/v2.0`。在 ID 令牌中添加 `email` 可选声明，这样登录时才会带上邮箱地址。
 
@@ -216,7 +216,7 @@ OIDC 提供方会标明每个地址是否已验证。当它没有给出验证状
 
 保存新的设置会保留连接器及其 URL。更改协议会替换连接器，因此需要在身份提供方重新登记新的 URL；用户重新登录后会按邮箱地址匹配回原账号。
 
-**移除 SSO 登录**（Remove SSO sign-in）会关闭企业 SSO 并移除登录按钮；连接器仍保留在 Logto 中，再次配置 SSO 时会复用它。Setup 始终保留至少一种登录方式，因此当 SSO 是唯一的登录方式时，请先配置一个社交登录提供方。
+**移除 SSO 登录**（Remove SSO sign-in）会关闭 SSO 并移除登录按钮；连接器仍保留在 Logto 中，再次配置 SSO 时会复用它。Setup 始终保留至少一种登录方式，因此当 SSO 是唯一的登录方式时，请先配置一个社交登录提供方。
 
 ### 私有网络中的身份提供方 [#identity-providers-on-a-private-network]
 

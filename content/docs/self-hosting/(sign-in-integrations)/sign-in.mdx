@@ -1,7 +1,7 @@
 ---
 title: "Sign-in"
 icon: LogIn
-description: "Add Logto-backed sign-in to AgentConnect OSS with Logto Cloud, external Logto OSS, or the bundled local overlay, through social providers or enterprise SSO."
+description: "Add Logto-backed sign-in to AgentConnect OSS with Logto Cloud, external Logto OSS, or the bundled local overlay, through social providers or single sign-on (SSO)."
 ---
 
 AgentConnect uses Logto for human sign-in, renewable browser tokens, and linked social identities. AgentConnect still owns organizations, roles, agent visibility, session visibility, and repository permissions.
@@ -55,7 +55,7 @@ Setup creates or updates the AgentConnect SPA, its redirects, the selected socia
 | Google | Recommended locally; create the Web OAuth client with the exact bare localhost values shown |
 | GitHub | Setup creates one App for repository integration and sign-in |
 | Slack | Requires HTTPS Logto, Web, Control Plane, and Relay origins |
-| Enterprise SSO | Your organization's OIDC or SAML identity provider; see [Enterprise SSO](#enterprise-sso) |
+| Single sign-on | Your organization's OIDC or SAML identity provider; see [Single sign-on](#single-sign-on) |
 
 Google is the shortest local path. Paste its client ID and secret into Setup and choose **Save Google OAuth and configure Logto**. The initial provider picker disables Slack until all required public origins use HTTPS.
 
@@ -184,9 +184,9 @@ Google is the simplest provider for local sign-in. The bundled topology uses bar
 
 Setup creates or updates the matching Logto connector and can verify it. Compare the displayed Google origins and redirect URIs manually.
 
-## Enterprise SSO
+## Single sign-on
 
-People can sign in through your organization's own identity provider over OIDC or SAML, alongside the social providers or instead of them. Choose **Enterprise SSO (OIDC or SAML)** as the first sign-in provider during Setup bootstrap, or open the **Enterprise SSO** card later.
+People can sign in through your organization's own identity provider over OIDC or SAML, alongside the social providers or instead of them. Choose **Single sign-on (OIDC or SAML)** as the first sign-in provider during Setup bootstrap, or open the **Single sign-on** card later.
 
 1. Choose the protocol and the **Name on the sign-in button**. The console shows it as **Continue with _name_**; the default name is `SSO`.
 2. Choose **Create SSO connector**. Logto creates the connector, and Setup shows the values to register with the identity provider:
@@ -202,7 +202,7 @@ People can sign in through your organization's own identity provider over OIDC o
 4. Enter at least one email domain, such as `example.com`. Logto offers the connector only for addresses in these domains, so Setup refuses to save the connector without one.
 5. Choose **Save SSO and configure Logto**, then restart Control Plane and Web.
 
-The AgentConnect sign-in page shows the SSO button ahead of the social providers and goes straight to the identity provider. When enterprise SSO is the only sign-in method, Setup's **Sign in with Logto** uses it too, so the first administrator can be claimed through it.
+The AgentConnect sign-in page shows the SSO button ahead of the social providers and goes straight to the identity provider. When SSO is the only sign-in method, Setup's **Sign in with Logto** uses it too, so the first administrator can be claimed through it.
 
 For Microsoft Entra ID, register a single-tenant **Web** application with the redirect URI, create a client secret, and use `https://login.microsoftonline.com/<tenant-id>/v2.0` as the issuer. Add the `email` optional claim to the ID token so the sign-in carries an address.
 
@@ -216,7 +216,7 @@ An OIDC provider marks each address as verified or not. When it sends no verific
 
 Saving new settings keeps the connector and its URLs. Changing the protocol replaces the connector, so register the new URLs with the identity provider; people sign in again and are matched to their accounts by email address.
 
-**Remove SSO sign-in** turns enterprise SSO off and removes the button; the connector stays in Logto and is reused if you set SSO up again. Setup keeps at least one sign-in method, so configure a social provider first when SSO is the only one.
+**Remove SSO sign-in** turns SSO off and removes the button; the connector stays in Logto and is reused if you set SSO up again. Setup keeps at least one sign-in method, so configure a social provider first when SSO is the only one.
 
 ### Identity providers on a private network
 
