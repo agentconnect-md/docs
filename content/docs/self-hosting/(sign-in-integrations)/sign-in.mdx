@@ -1,7 +1,7 @@
 ---
 title: "Sign-in"
 icon: LogIn
-description: "Add Logto-backed sign-in to AgentConnect OSS with Logto Cloud, external Logto OSS, or the bundled local overlay."
+description: "Add Logto-backed sign-in to AgentConnect OSS with Logto Cloud, external Logto OSS, or the bundled local overlay, through social providers or single sign-on (SSO)."
 ---
 
 AgentConnect uses Logto for human sign-in, renewable browser tokens, and linked social identities. AgentConnect still owns organizations, roles, agent visibility, session visibility, and repository permissions.
@@ -55,6 +55,7 @@ Setup creates or updates the AgentConnect SPA, its redirects, the selected socia
 | Google | Recommended locally; create the Web OAuth client with the exact bare localhost values shown |
 | GitHub | Setup creates one App for repository integration and sign-in |
 | Slack | Requires HTTPS Logto, Web, Control Plane, and Relay origins |
+| Single sign-on | Your organization's OIDC or SAML identity provider; see [Single sign-on](#single-sign-on) |
 
 Google is the shortest local path. Paste its client ID and secret into Setup and choose **Save Google OAuth and configure Logto**. The initial provider picker disables Slack until all required public origins use HTTPS.
 
@@ -183,6 +184,50 @@ Google is the simplest provider for local sign-in. The bundled topology uses bar
 
 Setup creates or updates the matching Logto connector and can verify it. Compare the displayed Google origins and redirect URIs manually.
 
+## Single sign-on
+
+People can sign in through your organization's own identity provider over OIDC or SAML, alongside the social providers or instead of them. Choose **Single sign-on (OIDC or SAML)** as the first sign-in provider during Setup bootstrap, or open the **Single sign-on** card later.
+
+1. Choose the protocol and the **Name on the sign-in button**. The console shows it as **Continue with _name_**; the default name is `SSO`.
+2. Choose **Create SSO connector**. Logto creates the connector, and Setup shows the values to register with the identity provider:
+
+   | Protocol | Register with the identity provider |
+   | --- | --- |
+   | OIDC | Redirect URI `https://login.agentconnect.example/callback/<connector-id>` |
+   | SAML | ACS URL `https://login.agentconnect.example/api/authn/single-sign-on/saml/<connector-id>` and SP entity ID `https://login.agentconnect.example/enterprise-sso/<connector-id>` |
+
+3. Enter the identity provider's settings:
+   - **OIDC:** the issuer URL, client ID, and client secret. `openid profile email` are always requested; add scopes only when the provider needs more to return an email address.
+   - **SAML:** the metadata URL or the metadata XML, and the attribute that carries the email address when it is not `email`.
+4. Enter at least one email domain, such as `example.com`. Logto offers the connector only for addresses in these domains, so Setup refuses to save the connector without one.
+5. Choose **Save SSO and configure Logto**, then restart Control Plane and Web.
+
+The AgentConnect sign-in page shows the SSO button ahead of the social providers and goes straight to the identity provider. When SSO is the only sign-in method, Setup's **Sign in with Logto** uses it too, so the first administrator can be claimed through it.
+
+For Microsoft Entra ID, register a single-tenant **Web** application with the redirect URI, create a client secret, and use `https://login.microsoftonline.com/<tenant-id>/v2.0` as the issuer. Add the `email` optional claim to the ID token so the sign-in carries an address.
+
+### Email addresses
+
+Logto links an SSO sign-in to an existing account with the same email address, so someone who signed in with a social provider before keeps the same AgentConnect user. List only domains whose addresses the identity provider controls.
+
+An OIDC provider marks each address as verified or not. When it sends no verification status, **Trust email addresses when the identity provider does not say whether they are verified** decides; it is on by default. When the provider says an address is unverified, Logto drops it, whatever this option says.
+
+### Change or remove the connector
+
+Saving new settings keeps the connector and its URLs. Changing the protocol replaces the connector, so register the new URLs with the identity provider; people sign in again and are matched to their accounts by email address.
+
+**Remove SSO sign-in** turns SSO off and removes the button; the connector stays in Logto and is reused if you set SSO up again. Setup keeps at least one sign-in method, so configure a social provider first when SSO is the only one.
+
+### Identity providers on a private network
+
+Logto does not call addresses on private networks by default. If the issuer, its token endpoint, or the SAML metadata URL resolves to one, allow its address or CIDR range in Logto. With the bundled overlay, set it in `compose.env` and recreate the Logto container:
+
+```dotenv
+LOGTO_SSRF_ALLOWED_ADDRESSES=192.0.2.10/32
+```
+
+For an external Logto OSS deployment, set Logto's `SSRF_ALLOWED_ADDRESSES` environment variable to the same value.
+
 ## Lark and Feishu identities
 
 Lark and Feishu session access is an advanced self-hosted setup. It needs both:
@@ -224,6 +269,6 @@ Logto documents the identity-editing behavior in [Account settings by Account AP
 4. Confirm AgentConnect continues calling the Control Plane after the original access token expires.
 5. In Setup, run each available provider check and manually compare any callbacks marked as unverifiable.
 
-An immediate `401` usually means the browser API resource and Control Plane audience do not match. A provider button that reaches a Logto error page usually means the connector is missing from the sign-in experience.
+An immediate `401` usually means the browser API resource and Control Plane audience do not match. A provider button that reaches a Logto error page usually means the connector is missing from the sign-in experience. An SSO sign-in that fails after the identity provider's page usually means the client secret or a registered URL does not match; **Logto Console → Audit logs** records the provider's response.
 
 Until Logto sign-in is bootstrapped in Setup, keep the local no-auth stack bound to loopback.
