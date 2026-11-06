@@ -1,29 +1,52 @@
 ---
 title: "Webhook"
 icon: Webhook
-description: "一个 HTTPS 端点，把任何 POST 请求变成一次 Agent 会话——并通过 HMAC 签名验证请求确实来自你。"
+description: "一个 HTTPS 端点，把任何 POST 请求变成一次 Agent 会话——发送方可以是你写的程序，也可以是自带固定格式的现有系统。"
 ---
 
 import imgWebhookIntegration from '@/public/images/webhook-integration.png'
 
 Webhook 集成为 Agent 提供一个**入站 HTTPS 端点**。任何能够 POST JSON 的东西——CI、监控系统、另一台机器上的 cron、你自己的应用——都可以启动这个 Agent。
 
-<Image src={imgWebhookIntegration} alt="创建 Webhook 集成" width={640} />
+<Image src={imgWebhookIntegration} alt="Webhook 表单：名称、会话连续性、指令和 HMAC 签名" width={640} />
 
 ## 创建 [#create-one]
 
-在 Agent 页面：**集成 → 添加集成 → Webhook**，为它命名（默认为 `<agent>-webhook`），然后点击**创建**。对话框会显示：
+在 Agent 页面：**集成 → 添加集成 → Webhook**，然后设置：
 
-- **入站端点**——这个集成的 `POST` URL。
-- **签名密钥**——**只显示一次**；请立即复制。用于验证你的请求。
+- **名称**——默认为 `<agent>-webhook`。
+- **会话连续性**——哪些投递共用一个会话（见[会话](#sessions)）。
+- **指令**——可选。Agent 拿到每次投递后要做什么。发送方自己写消息时留空；发送方是无法改动格式的现有系统时填写（见[两种告诉 Agent 做什么的方式](#two-ways-to-tell-the-agent-what-to-do)）。
+- **要求 HMAC 签名**——可选。在 URL 之外再加一个签名密钥。
+
+点击**创建**后，对话框会显示：
+
+- **入站端点**——这个集成的 `POST` URL。其中的令牌就是凭据，请保密。
+- **签名密钥**——仅在要求签名时出现。**只显示一次**；请立即复制。
 - **发送测试投递**——一条现成的 curl 命令，消息内容可编辑，让你在写任何代码之前就能先发一次测试。
 
-## 发送消息 [#send-a-message]
+之后要修改指令，点 Agent **集成**卡片里该 Webhook 那一行的铅笔按钮。
 
-JSON 请求体就是 Agent 收到的消息。保持内容聚焦，把指令放在大段日志或诊断数据之前：
+## 两种告诉 Agent 做什么的方式 [#two-ways-to-tell-the-agent-what-to-do]
+
+**由发送方写消息。** **指令**留空。Agent 把请求体里的 `prompt`、`text` 或 `message` 字符串字段（取第一个存在的）当作指令，其余字段作为上下文一并交给它；三个字段都没有时，整个请求体原样交给 Agent。适合发送方由你掌控的情况：CI 步骤、脚本、你自己的应用。把指令放在大段日志或诊断数据之前：
 
 ```bash
-BODY='{"message":"Deploy of api-server v2.31 failed on step migrate — investigate and summarize."}'
+curl -X POST "$WEBHOOK_URL" \
+  -H "content-type: application/json" \
+  -d '{"message":"Deploy of api-server v2.31 failed on step migrate — investigate and summarize.","log_url":"https://ci.example.test/runs/1234"}'
+```
+
+**由 Webhook 自带指令。** 填写**指令**，例如*“分析这条告警：在服务最近的变更里找出可能原因，并发一段简短总结。”* 之后每次投递交给 Agent 的都是这段指令，后面跟着完整的请求体；Agent 把请求体当作数据，而不是指令，也不会从中挑出任何字段。这样就能把格式固定的现有系统——告警工具、错误追踪、表单服务——直接接到 Agent 上。这类系统转发的内容（错误信息、告警描述）可能由任何人写成，所以 Webhook 一旦有了自己的指令，请求体就不会再被当作指令读取。
+
+指令最多 8,000 个字符。两种方式下，Agent 自身的描述都照样生效。
+
+## 签名请求 [#sign-requests]
+
+开启**要求 HMAC 签名**后，每个请求都必须携带用签名密钥对原始请求体计算的 HMAC-SHA256，以 `X-AC-Signature: sha256=<hex>` 发送：
+
+```bash
+BODY='{"message":"Nightly import finished with 3 rejected rows — summarize them."}'
 SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" -r | cut -d' ' -f1)
 
 curl -X POST "$WEBHOOK_URL" \
@@ -32,14 +55,32 @@ curl -X POST "$WEBHOOK_URL" \
   -d "$BODY"
 ```
 
-签名是用你的签名密钥对原始请求体计算的 HMAC-SHA256，通过 `X-AC-Signature: sha256=<hex>` 发送。缺少签名或签名错误的请求会被拒绝。
+缺少签名或签名错误的请求，会和未知 URL 一样被拒绝。
 
-## 会发生什么 [#what-happens]
+## 会话 [#sessions]
 
-每次投递都会在 Agent 的 Daemon 上启动（或继续）一个会话——你可以在[会话](/operate-govern/sessions)中找到它，触发来源显示为该 Webhook，并附带完整的会话记录。Agent 页面会显示这个 Webhook 最近的投递记录以及上次触发的时间。
+**会话连续性**决定 Agent 把哪些投递放在一起看：
+
+- **每次投递新建会话**（默认）——每个 POST 各开一个会话。
+- **每个主题一个会话**——`X-AC-Session-Key` 请求头取值相同的投递延续同一个会话，这样一张工单、一笔订单或一段对话能在多次事件之间积累上下文。不带这个请求头的投递单独开一个会话。
+- **整个 Webhook 共用一个会话**——所有投递都延续同一个会话。
+
+每个会话都会出现在[会话](/operate-govern/sessions)中，触发来源显示为该 Webhook，并附带完整的会话记录。Agent 页面上该 Webhook 那一行会显示上次触发的时间，它的历史按钮会列出最近的投递、结果以及对应的会话。
+
+## 请求参考 [#request-reference]
+
+| | |
+| --- | --- |
+| 方法和类型 | `POST`，`content-type: application/json` |
+| 请求体大小 | 最多 128 KiB。Agent 读取前 64 KiB，请求体被截断时会告知 Agent。 |
+| `X-AC-Delivery-Key` | 可选，最多 200 个字符。标识一次投递：用同一个键重试会被吸收，不会重复执行。不带时自动生成。 |
+| `X-AC-Session-Key` | 可选，最多 200 个字符。Webhook 使用**每个主题一个会话**时，用它把投递归入同一个会话。 |
+| `X-AC-Signature` | `sha256=<hex>`——仅在 Webhook 要求签名时必需。 |
+| `202` | 已接收；响应体为 `{"deliveryKey":"…"}`。Agent 在响应之后才开始运行。 |
+| `404` | 未知 URL，或签名缺失、错误。 |
+| `429` | 这个 Webhook 的投递过多——允许连续 10 次，之后约每秒一次。稍后用同一个投递键重试。 |
 
 ## 提示 [#tips]
 
-- 在消息里写明指令，而不只是给数据：“*这是失败的构建日志：……请诊断并起草一个工单”* 比只丢一段日志要好得多。
 - 把 Webhook 和 [GitHub 工作区](/build-your-team/agents/workspaces-and-repos)搭配使用，这样 Agent 才能真正查看它被告知的那些代码。
-- 要轮换密钥，删除这个 Webhook 集成并新建一个（新的 URL 和密钥）。
+- 要轮换 URL（和密钥），删除这个 Webhook 集成并新建一个。编辑 Webhook 不会改变它的 URL。
