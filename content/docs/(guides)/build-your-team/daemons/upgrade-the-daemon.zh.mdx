@@ -43,13 +43,15 @@ import imgDaemonUpgrade from '@/public/images/daemon-upgrade.png'
 
 ## 自动升级 [#upgrade-automatically]
 
-在 Daemon 页面打开**自动升级**后，它会跟随控制台提供的版本升级，不需要有人点**升级**。它在继续服务的同时下载新版本，只在空闲时才重启切换过去：没有正在运行的 turn 或后台任务，并且最近五分钟内也没有。自动升级不会打断任何 turn。
+打开了**自动升级**的 Daemon 会跟随控制台提供的版本升级，不需要有人点**升级**。自动升级按 Daemon 单独设置：在**基础设施**页面打开这台 Daemon，在它的**详情**卡片（手机上是**系统**卡片）中打开或关闭**自动升级**。更改立即生效。
+
+它在继续服务的同时下载新版本，只在空闲时才重启切换过去：没有正在运行的 turn 或后台任务，并且最近五分钟内也没有。自动升级不会打断任何 turn。
 
 - **分批推出**。在 stable 频道上，每台 Daemon 在新版本出现后会等待一个固定的延迟，最长两小时，这样有问题的版本不会同时到达所有 Daemon。
 - **无法启动的版本会被撤回**。Daemon 会回到之前运行的版本，并从此跳过这个版本。
 - **手动选择旧版本会关闭它**。从控制台升级到比最新版本更旧的版本时，会为这台 Daemon 关闭自动升级，这样它不会马上又升回去。
 
-自动升级要求 Daemon 由 CLI 运行——[以服务方式](/build-your-team/daemons/install-the-daemon#run-it-permanently)或通过 `agentconnect run`。打开这个开关所需的权限与**升级**相同。
+自动升级要求 Daemon 由 CLI 运行——[以服务方式](/build-your-team/daemons/install-the-daemon#run-it-permanently)或通过 `agentconnect run`；其他 Daemon 上这个开关不可用，并会说明原因。打开这个开关所需的权限与**升级**相同。
 
 如果希望之后新加入的 Daemon 一开始就打开自动升级，所有者可以在**组织设置**中打开**默认 Daemon 自动升级**。已有的 Daemon 保留各自的设置。
 
