@@ -43,7 +43,7 @@ Two limits worth knowing:
 
 ## Upgrade automatically
 
-A daemon with **Auto-upgrade** on follows the release the console offers without anyone clicking **Upgrade**. Auto-upgrade is set per daemon: open the daemon from the **Infra** page and switch **Auto-upgrade** on or off in its **Details** card (**System** on a phone). The change takes effect right away.
+A daemon with **Auto-upgrade** on follows the release the console offers without anyone clicking **Upgrade**. Auto-upgrade is set per daemon: open the daemon from the **Infra** page and switch **Auto-upgrade** on or off right after the version at the top of the page. The change takes effect right away. An icon beside the switch shows the last automatic upgrade; point at the switch to read it.
 
 It downloads the new release while it keeps serving, and restarts onto it only once it is idle: no turn or background task running, and none for the last five minutes. An automatic upgrade never cuts a turn short.
 
@@ -51,7 +51,7 @@ It downloads the new release while it keeps serving, and restarts onto it only o
 - **A release that cannot start is undone.** The daemon goes back to the version it ran before and skips that release from then on.
 - **Picking an older version by hand turns it off.** Upgrading to anything older than the latest release from the console switches Auto-upgrade off for that daemon, so it does not move straight back.
 
-Auto-upgrade needs a daemon run by the CLI — [as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently) or with `agentconnect run`; for any other daemon the switch is unavailable and says why. The switch takes the same permission as **Upgrade**.
+Auto-upgrade needs a daemon run by the CLI — [as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently) or with `agentconnect run`; for any other daemon the switch is unavailable, and pointing at it says why. The switch takes the same permission as **Upgrade**.
 
 To have every daemon added from now on start with Auto-upgrade on, an Owner turns on **Default daemon auto-upgrade** in **Organization settings**. Daemons that already exist keep their own setting.
 
