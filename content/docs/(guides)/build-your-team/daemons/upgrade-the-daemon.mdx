@@ -41,6 +41,18 @@ Two limits worth knowing:
 - **A remote upgrade has no process-level automatic rollback.** Once the old daemon has exited, recovery is a host-side job — see [Roll back](#roll-back). A local `upgrade --restart` does roll back on its own.
 - **The console offers Upgrade only while the daemon is online.** An offline or stuck daemon has to be upgraded from the host, or queued through the upgrade endpoint in the [API reference](/api) (`POST /v1/orgs/{orgId}/daemons/{id}/upgrade`). A queued upgrade is picked up at the daemon's next authenticated connection, before full startup, which is what recovers a daemon that never reaches ready. Daemons old enough to predate that path need an online connection or a host-side upgrade.
 
+## Upgrade automatically
+
+Turn on **Auto-upgrade** on a daemon's page and it follows the release the console offers without anyone clicking **Upgrade**. It downloads the new release while it keeps serving, and restarts onto it only once it is idle: no turn or background task running, and none for the last five minutes. An automatic upgrade never cuts a turn short.
+
+- **Rollout is spread out.** On the stable channel each daemon waits a fixed delay of up to two hours after a release appears, so a bad release does not reach every daemon at once.
+- **A release that cannot start is undone.** The daemon goes back to the version it ran before and skips that release from then on.
+- **Picking an older version by hand turns it off.** Upgrading to anything older than the latest release from the console switches Auto-upgrade off for that daemon, so it does not move straight back.
+
+Auto-upgrade needs a daemon run by the CLI — [as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently) or with `agentconnect run`. The switch takes the same permission as **Upgrade**.
+
+To have every daemon added from now on start with Auto-upgrade on, an Owner turns on **Default daemon auto-upgrade** in **Organization settings**. Daemons that already exist keep their own setting.
+
 ## Upgrade a service-installed daemon on the host
 
 For a daemon [installed as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently), one command does the whole sequence:
