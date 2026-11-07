@@ -1,20 +1,20 @@
 'use client'
 import Link from 'fumadocs-core/link'
 import { usePathname } from 'fumadocs-core/framework'
-import { BookOpen, Code2, Server, type LucideIcon } from 'lucide-react'
+import { BookOpen, Code2, History, Server, type LucideIcon } from 'lucide-react'
 import { FullSearchTrigger, SearchTrigger } from 'fumadocs-ui/layouts/shared/slots/search-trigger'
 import { GitHubMark } from './brand-marks'
 import { Logo } from './logo'
 import { ThemeMenu } from './theme-menu'
 
 export interface NavTab {
-  id: 'guides' | 'reference' | 'self-hosting'
+  id: 'guides' | 'reference' | 'self-hosting' | 'changelog'
   title: string
   url: string
   urls: string[]
 }
 
-export const TAB_ICONS: Record<NavTab['id'], LucideIcon> = { guides: BookOpen, 'self-hosting': Server, reference: Code2 }
+export const TAB_ICONS: Record<NavTab['id'], LucideIcon> = { guides: BookOpen, 'self-hosting': Server, reference: Code2, changelog: History }
 
 export function useActiveTab(tabs: NavTab[]): NavTab['id'] {
   const pathname = usePathname().replace(/(.)\/$/, '$1')
@@ -44,15 +44,15 @@ export function SiteNav({
   return (
     <header className="ac-nav hidden md:flex">
       <Link href={tabs[0].url} aria-label="AgentConnect" className="shrink-0">
-        {/* Below 900px the header keeps the diamond and drops the wordmark, so the tabs and buttons still fit. */}
-        <Logo wordmarkClassName="hidden min-[900px]:inline" />
+        {/* Narrow headers keep the diamond so all four tabs and the controls fit. */}
+        <Logo wordmarkClassName="hidden min-[1100px]:inline" />
       </Link>
       <nav className="ac-nav-tabs">
         {tabs.map((tab) => {
           const Icon = TAB_ICONS[tab.id]
           return (
-            <Link key={tab.id} href={tab.url} data-active={tab.id === active} className="ac-nav-tab">
-              <Icon className="size-4" />
+            <Link key={tab.id} href={tab.url} data-active={tab.id === active} aria-current={tab.id === active ? 'page' : undefined} className="ac-nav-tab">
+              <Icon className="hidden size-4 lg:block" aria-hidden="true" />
               {tab.title}
             </Link>
           )

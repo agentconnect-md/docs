@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { fetchReleases, releaseSummary, renderChangelog } from './lib/changelog.mjs'
+import matter from 'gray-matter'
+import { fetchReleases, releaseSummary, renderChangelogPages } from './lib/changelog.mjs'
 
 const body = `<!-- agentconnect-release-summary:start -->
 ## Summary
@@ -18,7 +19,7 @@ const body = `<!-- agentconnect-release-summary:start -->
 
 test('only the bounded summary reaches the changelog, with dates and release links', () => {
   const release = { tag_name: 'v1.1.0', published_at: '2026-11-05T12:00:00Z', body }
-  const markdown = renderChangelog([
+  const [{ markdown }] = renderChangelogPages([
     release,
     { ...release, tag_name: 'v1.2.0', published_at: '2026-11-06T12:00:00Z' },
     { ...release, tag_name: 'v2.0.0-rc.1', prerelease: true },
@@ -30,6 +31,26 @@ test('only the bounded summary reaches the changelog, with dates and release lin
   assert.match(markdown, /2026-11-05 · \[View release on GitHub\]\(https:\/\/github.com\/agentconnect-md\/agentconnect\/releases\/tag\/v1\.1\.0\)/)
   assert.ok(markdown.indexOf('## v1.2.0') < markdown.indexOf('## v1.1.0'))
   assert.doesNotMatch(markdown, /abcdef1|Full Changelog|### Features|## Summary|<!--|v2\.0\.0|v3\.0\.0|v0\.9\.0/)
+  const { data } = matter(markdown)
+  assert.deepEqual(data.entries.map((entry) => entry.title), ['v1.2.0', 'v1.1.0'])
+  assert.equal(data.entries[0].content, releaseSummary(body))
+})
+
+test('pages contain every eligible summary exactly once, with matching search anchors', () => {
+  const releases = Array.from({ length: 21 }, (_, index) => ({
+    tag_name: `v1.0.${index}`,
+    published_at: `2026-10-${String(index + 1).padStart(2, '0')}T12:00:00Z`,
+    body
+  }))
+  const pages = renderChangelogPages(releases)
+  assert.deepEqual(pages.map((page) => page.name), ['index', '2', '3'])
+  const entries = pages.flatMap(({ markdown }) => {
+    const { data, content } = matter(markdown)
+    for (const entry of data.entries) assert.ok(content.includes(`## ${entry.title} [#${entry.id}]`))
+    return data.entries
+  })
+  assert.equal(entries.length, 21)
+  assert.deepEqual(entries.map((entry) => entry.title), releases.toReversed().map((release) => release.tag_name))
 })
 
 test('missing, empty, or ambiguous summary boundaries never fall back to technical notes', () => {

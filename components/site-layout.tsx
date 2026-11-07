@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type * as PageTree from 'fumadocs-core/page-tree'
 import { DocsLayout } from 'fumadocs-ui/layouts/docs'
+import { HomeLayout } from 'fumadocs-ui/layouts/home'
 import { Sidebar, SidebarProvider, useSidebar } from 'fumadocs-ui/layouts/docs/slots/sidebar'
 import { AskAi } from '@/components/ai/ask-ai'
 import { MenuTrigger, MobileSections } from '@/components/sidebar-parts'
@@ -20,8 +21,8 @@ function forSidebar<T extends PageTree.Node | PageTree.Root>(node: T): T {
   return node
 }
 
-// Every section shares one frame: the site header over Fumadocs' docs layout.
-export async function SiteLayout({ lang, tree, children }: { lang: string; tree: PageTree.Root; children: ReactNode }) {
+// Sections share the site header and footer; written docs also have a sidebar.
+export async function SiteLayout({ lang, tree, children }: { lang: string; tree?: PageTree.Root; children: ReactNode }) {
   const s = t(lang)
   const tabs = siteTabs(lang)
   const stars = await githubStars()
@@ -31,21 +32,28 @@ export async function SiteLayout({ lang, tree, children }: { lang: string; tree:
       <div className="ac-header">
         <SiteNav tabs={tabs} consoleUrl={channel.consoleUrl} consoleLabel={s.openConsole} starLabel={s.star} stars={stars} />
       </div>
-      <DocsLayout
-        {...baseOptions(lang)}
-        tree={forSidebar(tree)}
-        // Section tabs live in the site header (and MobileSections in the drawer), not in Fumadocs' tab bar.
-        tabs={false}
-        slots={{ sidebar: { provider: SidebarProvider, root: Sidebar, trigger: MenuTrigger, useSidebar } }}
-        sidebar={{
-          collapsible: false,
-          banner: <MobileSections key="sections" tabs={tabs} />
-        }}
-      >
-        {/* Fumadocs' Ask AI placement: the panel takes the TOC's column, the trigger floats bottom right. */}
-        <AskAi labels={s.askAi} />
-        {children}
-      </DocsLayout>
+      {tree ? (
+        <DocsLayout
+          {...baseOptions(lang)}
+          tree={forSidebar(tree)}
+          // Section tabs live in the site header and the mobile drawer.
+          tabs={false}
+          slots={{ sidebar: { provider: SidebarProvider, root: Sidebar, trigger: MenuTrigger, useSidebar } }}
+          sidebar={{ collapsible: false, banner: <MobileSections key="sections" tabs={tabs} /> }}
+        >
+          {/* The Ask AI panel takes the TOC's column; the trigger floats bottom right. */}
+          <AskAi labels={s.askAi} />
+          {children}
+        </DocsLayout>
+      ) : (
+        <HomeLayout
+          {...baseOptions(lang)}
+          links={tabs.map((tab) => ({ text: tab.title, url: tab.url, active: 'nested-url' }))}
+          className="[&>#nd-nav]:md:hidden"
+        >
+          {children}
+        </HomeLayout>
+      )}
       <SiteFooter lang={lang} labels={s.footer} />
     </>
   )

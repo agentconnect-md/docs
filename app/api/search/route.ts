@@ -1,13 +1,13 @@
 import { createI18nSearchAPI } from 'fumadocs-core/search/server'
 import { i18n } from '@/lib/i18n'
-import { reference, source } from '@/lib/source'
+import { changelog, reference, source } from '@/lib/source'
 
-// Guides and API Reference in one index, per language.
+// All sections share one search index per language.
 export const { GET } = createI18nSearchAPI('advanced', {
   i18n,
   indexes: () =>
     i18n.languages.flatMap((locale) => [
-      ...source.getPages(locale).map((page) => ({
+      ...[...source.getPages(locale), ...changelog.getPages(locale)].map((page) => ({
         id: page.url,
         url: page.url,
         title: page.data.title ?? page.url,

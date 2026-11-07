@@ -8,6 +8,7 @@ Thumbs.db
 /.generated/
 /.source/
 /content/docs/(guides)/changelog.md
+/content/changelog/
 
 
 # build output
