@@ -276,6 +276,8 @@ A GitLab or Gitea instance presenting a certificate from a private authority nee
 
 A path that exists only on the host is not enough: an agent runs in a sandbox with its own filesystem view, so the bundle has to be mounted there too and the variables have to survive into the sandbox environment. Set them where the sandbox image and its environment are configured, not only on the host.
 
+Git and code-host API requests from agent sessions leave through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#trust-and-network), which verifies the instance with these same authorities, so the daemon process needs them even when its sessions run elsewhere.
+
 The Relay never dials the instance — it only receives webhook deliveries — so it needs no bundle and no outbound access.
 
 ## Production checklist

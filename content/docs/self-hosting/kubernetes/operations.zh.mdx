@@ -49,6 +49,7 @@ Daemon 池包含一个定时运行的调谐器，用于处理其 Agent 已不存
 - **HTTPRoute 未被 Accepted**：查看其状态，以及 Gateway 监听器的主机名、`sectionName` 和允许的路由命名空间。
 - **Setup 之后控制台不显示登录按钮**：控制台进程在启动时缓存了控制平面的配置快照。请在控制平面变为 Ready 之后重启控制台。
 - **Agent 报告其 Runtime 需要认证**：没有任何模型凭证到达它。请检查该 Agent 和组织的变量，如果安装实例提供了 `daemonPool.modelCredentials`，也一并检查。
+- **Agent Pod 发出的模型或 Git 请求连接失败**：这些请求由 Daemon 池代 Pod 发出。请确认 Daemon 池能通过 HTTPS 访问提供方端点和代码托管平台。
 - **登录后控制台返回 `401`**：确认 Logto 的 API Resource 与控制平面的 audience 完全一致；参见[登录](/self-hosting/sign-in#verify-the-setup)。
 
 完整的 values 参考和仅安装控制平面的示例，参见 Chart 的 [README](https://github.com/agentconnect-md/agentconnect/tree/main/charts/agentconnect)。

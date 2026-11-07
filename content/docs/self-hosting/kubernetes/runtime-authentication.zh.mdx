@@ -83,3 +83,13 @@ OpenCode 也会复用 `modelEgress.clients.claude`、`.codex` 和 `.deepseek` �
 对于 Codex 网关，请使用 `OPENAI_MODEL_TOKEN` 和 `OPENAI_MODEL_BASE_URL`，并填入该网关的 Codex 兼容 API 根地址。Daemon 会同时配置 Codex 的提供方 URL 和 API 密钥。当端点直接是 DeepSeek 时，使用其[文档中的 API 根地址](https://api-docs.deepseek.com/guides/responses_api/)，即 `https://api.deepseek.com`。
 
 要在部署完成后确认发现结果，请查看 Daemon 池的探测完成日志，并在控制台中检查该 Runtime 的模型选择器。即使镜像中已安装了某个 Runtime，如果它的 API 密钥、模型 ID 或端点有误，其选择器仍然可能为空。
+
+## 密钥留在 Daemon 池中 [#keys-stay-with-the-daemon-pool]
+
+端点为 HTTPS 时，安装实例自身的静态密钥不会进入 Agent Pod。Daemon 池从自己的环境中读取这些密钥，Pod 里的 Runtime 只拿到占位符，由池成员在每个发往提供方的请求上换成真实密钥。这只适用于在本 Chart 中配置的密钥：`modelCredentials` 中的内置凭证对、`modelEgress.clients.<client>.apiKey`，以及在 `runtimeEnvironment` 下映射的 `ANTHROPIC_API_KEY`、`OPENAI_API_KEY`、`DEEPSEEK_API_KEY` 和 `COPILOT_PROVIDER_API_KEY`。
+
+- Daemon 池需要能通过 HTTPS 访问这些密钥用到的每个提供方端点或网关。如果你的集群限制了发布命名空间的出站流量，请放行。
+- 以下情况密钥仍会留在 Pod 的环境中：端点是明文 `http://`；Daemon 无法为该 Runtime 对应到唯一端点；或者另一个变量也携带了这个密钥，例如内嵌了密钥的 `OPENCODE_CONFIG_CONTENT`。Daemon 会记录一次日志。
+- 密钥服务器签发的密钥和模型发现探测不受影响。
+
+其他 Daemon 上的同类行为见[凭证保护](/operate-govern/sandboxing/credential-protection#provider-api-keys)。

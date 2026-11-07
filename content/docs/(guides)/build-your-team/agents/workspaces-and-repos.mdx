@@ -51,7 +51,7 @@ The **Workspace** tab can switch between the primary checkout and worktrees belo
 
 ### Repository credentials
 
-For an app-installed repository, AgentConnect supplies short-lived credentials scoped to that repository and the access level you chose. The daemon does not save a long-lived Git credential to disk. Removing the repository grant or uninstalling the GitHub App stops future access.
+For an app-installed repository, the agent's session never holds a GitHub token. Git and `gh` requests leave through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials), which attaches a short-lived credential scoped to that repository and the access level you chose; a push to a **Read only** repository is refused. The daemon does not save a long-lived Git credential to disk. Removing the repository grant or uninstalling the GitHub App stops future access.
 
 ## The Workspace tab
 

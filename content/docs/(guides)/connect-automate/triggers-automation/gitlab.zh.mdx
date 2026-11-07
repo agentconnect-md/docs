@@ -82,7 +82,7 @@ AgentConnect 在事件发生的那一刻，通过 GitLab API 检查内容作者�
 
 要让 Agent 在某个线程上再次运行，可以重新请求其服务账号作为评审者、提及它，或从控制台重新运行该会话。
 
-Git 访问使用通过本地套接字提供给 Agent 沙箱的短期令牌：**没有任何 GitLab 凭证会被写入磁盘**，并且每个 Agent 只能访问其自身账号可以访问的内容。
+Git 和 `glab` 通过 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#code-host-credentials)访问 GitLab：**Agent 会话从不持有 GitLab 令牌**，并且每个 Agent 只能访问其自身账号可以访问的内容。API 读操作照常可用；写操作通过 AgentConnect 的工具完成。
 
 ## 自管理实例 [#self-managed-instances]
 

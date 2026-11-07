@@ -125,7 +125,7 @@ AgentConnect 在事件发生的那一刻，通过 Gitea API 检查内容作者�
 
 要让 Agent 在某个 Pull Request 上再次运行：在会话中写一条后续评论、推送新的修订，或重新请求机器人作为评审者。
 
-Git 访问使用提供给 Agent 沙箱的短期凭证：**没有任何 Gitea 凭证会被写入磁盘**。没有 Gitea 命令行包装器——Agent 通过 AgentConnect 的代码托管平台工具进行读写。
+Git 通过 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#code-host-credentials)访问 Gitea：**机器人令牌从不进入 Agent 会话**。没有 Gitea 命令行包装器——Agent 通过 AgentConnect 的代码托管平台工具进行读写。
 
 ## Gitea 拒绝的操作 [#what-gitea-refuses]
 

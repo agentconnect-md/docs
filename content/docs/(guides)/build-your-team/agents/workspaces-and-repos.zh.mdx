@@ -51,7 +51,7 @@ Daemon 克隆一个仓库和分支（可选择把 Agent 限定到某个子目录
 
 ### 仓库凭证 [#repository-credentials]
 
-对于通过 App 安装的仓库，AgentConnect 提供限定于该仓库和你所选访问级别的短期凭证。Daemon 不会把长期有效的 Git 凭证保存到磁盘。移除仓库授权或卸载 GitHub App 会停止后续访问。
+对于通过 App 安装的仓库，Agent 会话从不持有 GitHub 令牌。Git 和 `gh` 的请求经由 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#code-host-credentials)发出，代理会附上限定于该仓库和你所选访问级别的短期凭证；向**只读**仓库推送会被拒绝。Daemon 不会把长期有效的 Git 凭证保存到磁盘。移除仓库授权或卸载 GitHub App 会停止后续访问。
 
 ## 工作区标签页 [#the-workspace-tab]
 
