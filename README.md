@@ -20,6 +20,16 @@ titles and separators. A translation keeps the English page's headings one to on
 English heading's id (`## 连接 Gitea [#connect-gitea]`), so `#anchor` links and the table of contents
 work in both languages; images, diagrams and code blocks stay as they are.
 
+The Guides sidebar includes a Changelog at `/docs/changelog`. Each build refreshes it from the
+stable [GitHub Releases](https://github.com/agentconnect-md/agentconnect/releases), newest first,
+using only the text between the `agentconnect-release-summary:start` and
+`agentconnect-release-summary:end` markers. Versions without a complete summary are omitted.
+Each entry links back to its release for the technical notes and commits. The generated Markdown
+is ignored by Git and uses the normal docs search, table of contents, and Markdown export. Summaries
+stay in their original English, including on the Chinese site with its translation notice.
+To publish new or edited summaries, rebuild the docs through the existing deployment workflow.
+Builds use `GITHUB_TOKEN` when available to avoid GitHub's lower anonymous rate limit.
+
 Pages declare their canonical URL and language alternatives. The production sitemap at
 `/docs/sitemap.xml` includes guides and API operations with their available translations. English
 fallbacks use the English canonical and are omitted from language alternatives and the sitemap.

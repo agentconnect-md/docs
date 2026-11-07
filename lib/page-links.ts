@@ -6,7 +6,7 @@ export interface LinkedPage {
   slugs: string[]
   path: string
   url: string
-  data: { title: string }
+  data: { title: string; sourceUrl?: string }
 }
 
 // Each section's pages live under their own content directory and are served as Markdown under their own prefix.
@@ -25,8 +25,9 @@ export function markdownUrl(page: LinkedPage, lang: string, section: Section = '
 
 const REPO = 'https://github.com/agentconnect-md/docs'
 
-// The page's own file, which is the translation when there is one.
+// Generated pages link to their canonical source; written pages link to their own file.
 export function githubUrl(page: LinkedPage, view: 'blob' | 'edit' = 'blob', section: Section = 'docs'): string {
+  if (page.data.sourceUrl) return page.data.sourceUrl
   return `${REPO}/${view}/main/content/${section}/${page.path.split('/').map(encodeURIComponent).join('/')}`
 }
 
