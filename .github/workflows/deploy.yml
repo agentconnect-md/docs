@@ -51,6 +51,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - run: |
           if [ "$DOCS_CHANNEL" = test ]; then set -- --env test; fi
           pnpm run deploy -- "$@"
