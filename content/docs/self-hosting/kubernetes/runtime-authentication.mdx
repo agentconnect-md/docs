@@ -86,7 +86,7 @@ To confirm discovery after rollout, inspect the daemon pool's probe completion l
 
 ## Keys stay with the daemon pool
 
-Agent pods do not receive the install's provider keys for HTTPS endpoints. The daemon pool reads them from its own environment, the pod's runtime gets a placeholder, and the pool member puts the real key on each request to the provider. This covers the built-in pairs, `modelEgress.clients.<client>.apiKey`, and `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`, and `COPILOT_PROVIDER_API_KEY` mapped under `runtimeEnvironment`.
+The install's own static keys never enter agent pods when their endpoint is HTTPS. The daemon pool reads them from its own environment, the pod's runtime gets a placeholder, and the pool member puts the real key on each request to the provider. This covers only the keys configured in this chart: the built-in pairs in `modelCredentials`, `modelEgress.clients.<client>.apiKey`, and `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`, and `COPILOT_PROVIDER_API_KEY` mapped under `runtimeEnvironment`.
 
 - The daemon pool needs outbound HTTPS to every provider endpoint or gateway these keys use. If your cluster restricts egress from the release namespace, allow it.
 - A key stays in the pod's environment when its endpoint is plain `http://`, when the daemon cannot tie it to one endpoint for that runtime, or when another variable also carries it, such as an `OPENCODE_CONFIG_CONTENT` that embeds the key. The daemon logs this once.

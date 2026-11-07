@@ -86,7 +86,7 @@ OpenCode 也会复用 `modelEgress.clients.claude`、`.codex` 和 `.deepseek` �
 
 ## 密钥留在 Daemon 池中 [#keys-stay-with-the-daemon-pool]
 
-对于 HTTPS 端点，Agent Pod 拿不到安装实例的提供方密钥。Daemon 池从自己的环境中读取这些密钥，Pod 里的 Runtime 只拿到占位符，由池成员在每个发往提供方的请求上换成真实密钥。这适用于内置凭证对、`modelEgress.clients.<client>.apiKey`，以及在 `runtimeEnvironment` 下映射的 `ANTHROPIC_API_KEY`、`OPENAI_API_KEY`、`DEEPSEEK_API_KEY` 和 `COPILOT_PROVIDER_API_KEY`。
+端点为 HTTPS 时，安装实例自身的静态密钥不会进入 Agent Pod。Daemon 池从自己的环境中读取这些密钥，Pod 里的 Runtime 只拿到占位符，由池成员在每个发往提供方的请求上换成真实密钥。这只适用于在本 Chart 中配置的密钥：`modelCredentials` 中的内置凭证对、`modelEgress.clients.<client>.apiKey`，以及在 `runtimeEnvironment` 下映射的 `ANTHROPIC_API_KEY`、`OPENAI_API_KEY`、`DEEPSEEK_API_KEY` 和 `COPILOT_PROVIDER_API_KEY`。
 
 - Daemon 池需要能通过 HTTPS 访问这些密钥用到的每个提供方端点或网关。如果你的集群限制了发布命名空间的出站流量，请放行。
 - 以下情况密钥仍会留在 Pod 的环境中：端点是明文 `http://`；Daemon 无法为该 Runtime 对应到唯一端点；或者另一个变量也携带了这个密钥，例如内嵌了密钥的 `OPENCODE_CONFIG_CONTENT`。Daemon 会记录一次日志。
