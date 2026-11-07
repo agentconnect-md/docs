@@ -49,6 +49,7 @@ The `agent-sandbox` CRDs and controller are cluster-shared. A single AgentConnec
 - **An HTTPRoute is not Accepted:** inspect its status and the Gateway listener's hostname, `sectionName`, and allowed route namespaces.
 - **The console shows no sign-in button after Setup:** its process caches the Control Plane's configuration snapshot at startup. Restart the console after the Control Plane is Ready.
 - **An agent reports that its runtime needs authentication:** no model credential reached it. Check the agent's and organization's variables, and `daemonPool.modelCredentials` if the install supplies one.
+- **Model or Git requests from agent pods fail to connect:** the daemon pool makes these requests for its pods. Confirm it has outbound HTTPS to the provider endpoints and code hosts.
 - **The console returns `401` after sign-in:** verify that the Logto API Resource exactly matches the Control Plane audience; see [Sign-in](/self-hosting/sign-in#verify-the-setup).
 
 For the complete value reference and a control-plane-only installation example, see the chart's [README](https://github.com/agentconnect-md/agentconnect/tree/main/charts/agentconnect).

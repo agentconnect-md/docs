@@ -83,3 +83,13 @@ OpenCode also reuses the pairs supplied by `modelEgress.clients.claude`, `.codex
 For a Codex gateway, use `OPENAI_MODEL_TOKEN` and `OPENAI_MODEL_BASE_URL` with the gateway's Codex-compatible API root. The daemon configures Codex's provider URL as well as its API key. When the endpoint is DeepSeek directly, use its [documented API root](https://api-docs.deepseek.com/guides/responses_api/), `https://api.deepseek.com`.
 
 To confirm discovery after rollout, inspect the daemon pool's probe completion log and check the runtime's model picker in the console. A runtime installed in the image can still have an empty picker if its API key, model ID, or endpoint is wrong.
+
+## Keys stay with the daemon pool
+
+Agent pods do not receive the install's provider keys for HTTPS endpoints. The daemon pool reads them from its own environment, the pod's runtime gets a placeholder, and the pool member puts the real key on each request to the provider. This covers the built-in pairs, `modelEgress.clients.<client>.apiKey`, and `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`, and `COPILOT_PROVIDER_API_KEY` mapped under `runtimeEnvironment`.
+
+- The daemon pool needs outbound HTTPS to every provider endpoint or gateway these keys use. If your cluster restricts egress from the release namespace, allow it.
+- A key stays in the pod's environment when its endpoint is plain `http://`, when the daemon cannot tie it to one endpoint for that runtime, or when another variable also carries it, such as an `OPENCODE_CONFIG_CONTENT` that embeds the key. The daemon logs this once.
+- Keys issued by a key server, and the model-discovery probe, are unchanged.
+
+[Credential protection](/operate-govern/sandboxing/credential-protection#provider-api-keys) describes the same behavior on other daemons.

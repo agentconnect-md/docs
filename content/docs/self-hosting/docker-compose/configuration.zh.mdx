@@ -276,6 +276,8 @@ docker compose --env-file compose.env -f compose.yaml -f compose.file-transfer.y
 
 只存在于宿主机上的路径是不够的：Agent 在拥有独立文件系统视图的沙箱中运行，因此证书包也必须挂载到沙箱里，而且这些变量必须传递到沙箱环境中。请在配置沙箱镜像及其环境的地方设置它们，而不是只在宿主机上设置。
 
+Agent 会话发出的 Git 和代码托管平台 API 请求会经过 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#trust-and-network)，代理用同样这些颁发机构校验实例，因此即使会话运行在别处，Daemon 进程本身也需要它们。
+
 Relay 从不主动连接该实例——它只接收 Webhook 投递——因此它不需要证书包，也不需要出站访问。
 
 ## 生产环境检查清单 [#production-checklist]

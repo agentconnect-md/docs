@@ -32,11 +32,12 @@ import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-
 | 本地服务器         | 不发布到主机                               | 不发布到主机                       |
 | CPU 与内存         | 未配置按会话的限制                         | 可按虚拟机配置                     |
 | OAuth 凭证         | 工具规则（Claude/Codex）；其他情况无防护   | 与 SRT 相同                        |
-| 已保存的 API 密钥  | 工具规则（Claude/Codex）；其他情况无防护   | 主机代理（支持的已保存密钥）       |
+| 已保存的 API 密钥  | 主机代理（Claude Code、Codex、DeepSeek Harness、OpenCode）；其他情况无防护 | 主机代理（支持的已保存密钥） |
+| 代码托管平台令牌   | 主机代理；令牌从不进入沙箱                 | 与 SRT 相同                        |
 
 两种沙箱都会写入分配的工作区。共享工作区和可写的主机挂载仍然是共享的；microsandbox 会为每个会话单独保存其他虚拟机文件。
 
-工具规则限制 Runtime 的工具访问凭证。主机代理把真实的 API 密钥留在虚拟机之外。支持的 Runtime、登录方式和限制见[凭证保护](/operate-govern/sandboxing/credential-protection)。
+工具规则限制 Runtime 的工具访问凭证。主机代理把代码托管平台令牌和受支持的 API 密钥留在会话之外。支持的 Runtime、登录方式和限制见[凭证保护](/operate-govern/sandboxing/credential-protection)。
 
 技术背景：[SRT 隔离](https://github.com/anthropics/sandbox-runtime#how-it-works)与 [microsandbox](https://github.com/superradcompany/microsandbox)。
 

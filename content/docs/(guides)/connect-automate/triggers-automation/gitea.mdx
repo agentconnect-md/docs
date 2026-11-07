@@ -125,7 +125,7 @@ Each qualifying event starts a session on the agent's daemon with the event as c
 
 To run an agent again on a pull request: write a follow-up comment in the session, push a new revision, or re-request the bot as a reviewer.
 
-Git access uses short-lived credentials served to the agent's sandbox: **no Gitea credential is written to disk**. There is no Gitea command-line wrapper — an agent reads and writes through AgentConnect's provider tools.
+Git reaches Gitea through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials): **the bot's token never enters the agent's session**. There is no Gitea command-line wrapper — an agent reads and writes through AgentConnect's provider tools.
 
 ## What Gitea refuses
 

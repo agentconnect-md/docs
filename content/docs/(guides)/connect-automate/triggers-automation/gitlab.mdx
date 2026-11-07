@@ -82,7 +82,7 @@ Each qualifying event starts a session on the agent's daemon with the event as c
 
 To run an agent again on a thread, re-request its service account as a reviewer, mention it, or re-run the session from the console.
 
-Git access uses short-lived tokens served to the agent's sandbox over a local socket: **no GitLab credential is written to disk**, and each agent can only reach what its own account may reach.
+Git and `glab` reach GitLab through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials): **the agent's session never holds a GitLab token**, and each agent can only reach what its own account may reach. API reads work as usual; writes go through AgentConnect's tools.
 
 ## Self-managed instances
 

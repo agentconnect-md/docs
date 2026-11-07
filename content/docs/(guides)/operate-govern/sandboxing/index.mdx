@@ -32,11 +32,12 @@ import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-
 | Local servers      | Not published to the host                           | Not published to the host                     |
 | CPU and memory     | No per-session limits configured                    | Configurable per VM                           |
 | OAuth credentials  | Tool rules (Claude/Codex); otherwise unshielded     | Same as SRT                                   |
-| Saved API keys     | Tool rules (Claude/Codex); otherwise unshielded     | Host proxy (supported saved keys)             |
+| Saved API keys     | Host proxy (Claude Code, Codex, DeepSeek Harness, OpenCode); otherwise unshielded | Host proxy (supported saved keys) |
+| Code-host tokens   | Host proxy; never in the sandbox                    | Same as SRT                                   |
 
 Both sandboxes write to the assigned workspace. Shared workspaces and writable host mounts remain shared; microsandbox keeps other VM files separate for each session.
 
-Tool rules restrict credential access by the runtime's tools. The host proxy keeps real API keys outside the VM. See [Credential protection](/operate-govern/sandboxing/credential-protection) for supported runtimes, login methods, and limitations.
+Tool rules restrict credential access by the runtime's tools. The host proxy keeps code-host tokens and supported API keys outside the session. See [Credential protection](/operate-govern/sandboxing/credential-protection) for supported runtimes, login methods, and limitations.
 
 Technical background: [SRT isolation](https://github.com/anthropics/sandbox-runtime#how-it-works) and [microsandbox](https://github.com/superradcompany/microsandbox).
 
