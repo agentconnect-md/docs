@@ -32,7 +32,7 @@ import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-
 | Local servers      | Not published to the host                           | Not published to the host                     |
 | CPU and memory     | No per-session limits configured                    | Configurable per VM                           |
 | OAuth credentials  | Tool rules (Claude/Codex); otherwise unshielded     | Same as SRT                                   |
-| Saved API keys     | Host proxy (Claude Code, Codex, DeepSeek Harness, OpenCode); otherwise unshielded | Host proxy (supported saved keys) |
+| Saved API keys     | Host proxy (supported saved keys)                   | Same as SRT                                   |
 | Code-host tokens   | Host proxy; never in the sandbox                    | Same as SRT                                   |
 
 Both sandboxes write to the assigned workspace. Shared workspaces and writable host mounts remain shared; microsandbox keeps other VM files separate for each session.
