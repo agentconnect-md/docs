@@ -10,6 +10,7 @@ document. It deploys to Cloudflare Workers through OpenNext.
 | -------------------- | ---------------------------------------------------------------------------------------------- |
 | `content/docs/`      | Guides and Self-hosting, one MDX file per page; each folder's `meta.json` orders the sidebar   |
 | `content/api/`       | The API overview; the operation pages come from the OpenAPI document at build time             |
+| `content/changelog/` | Generated, paginated release summaries for the Changelog section                              |
 | `public/images/`     | Screenshots and diagrams, referenced from pages as `@/public/images/<file>`                    |
 
 A page's frontmatter carries its `title`, `description` and `icon`; icons are the names listed in
@@ -20,12 +21,13 @@ titles and separators. A translation keeps the English page's headings one to on
 English heading's id (`## 连接 Gitea [#connect-gitea]`), so `#anchor` links and the table of contents
 work in both languages; images, diagrams and code blocks stay as they are.
 
-The Guides sidebar includes a Changelog at `/docs/changelog`. Each build refreshes it from the
+The top navigation includes a standalone Changelog at `/docs/changelog`, with monthly timelines
+and ten versions per page. Each build refreshes it from the
 stable [GitHub Releases](https://github.com/agentconnect-md/agentconnect/releases), newest first,
 using only the text between the `agentconnect-release-summary:start` and
 `agentconnect-release-summary:end` markers. Versions without a complete summary are omitted.
 Each entry links back to its release for the technical notes and commits. The generated Markdown
-is ignored by Git and uses the normal docs search, table of contents, and Markdown export. Summaries
+is ignored by Git and uses the normal docs search, sitemap, and Markdown export on every page. Summaries
 stay in their original English, including on the Chinese site with its translation notice.
 To publish new or edited summaries, rebuild the docs through the existing deployment workflow.
 Builds use `GITHUB_TOKEN` when available to avoid GitHub's lower anonymous rate limit.

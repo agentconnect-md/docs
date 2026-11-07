@@ -3,6 +3,14 @@ const en = {
   guides: 'Guides',
   apiReference: 'API',
   selfHosting: 'Self-hosting',
+  changelog: {
+    title: 'Changelog',
+    description: 'New features, improvements, and important fixes in AgentConnect.',
+    releases: 'All releases on GitHub',
+    newer: 'Newer',
+    older: 'Older',
+    pagination: 'Changelog pages'
+  },
   theme: { label: 'Theme', light: 'Light', dark: 'Dark', system: 'System' },
   footer: { home: 'Home', blog: 'Blog', terms: 'Terms', privacy: 'Privacy' },
   release: 'Release',
@@ -46,6 +54,14 @@ const zh: Strings = {
   guides: '指南',
   apiReference: 'API',
   selfHosting: '自托管',
+  changelog: {
+    title: '更新日志',
+    description: 'AgentConnect 的新功能、改进与重要修复。',
+    releases: '在 GitHub 查看所有版本',
+    newer: '较新版本',
+    older: '较早版本',
+    pagination: '更新日志分页'
+  },
   theme: { label: '主题', light: '浅色', dark: '深色', system: '跟随系统' },
   footer: { home: '官网', blog: '博客', terms: '条款', privacy: '隐私' },
   release: '版本',

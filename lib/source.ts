@@ -23,6 +23,18 @@ export const source = loader({
   plugins: [iconsPlugin()]
 })
 
+const changelogDocs = defineDocs({
+  dir: 'content/changelog',
+  docs: {
+    schema: pageSchema.extend({
+      entries: z.array(z.object({ id: z.string(), title: z.string(), date: z.string(), url: z.string().url(), content: z.string() }))
+    }),
+    postprocess: { includeProcessedMarkdown: true }
+  }
+})
+
+export const changelog = loader({ baseUrl: '/changelog', source: changelogDocs.toFumadocsSource(), i18n })
+
 // Tag folder names: lower case, runs of anything else become one hyphen ("Organization variables & secrets").
 function slugify(name: string): string {
   return name

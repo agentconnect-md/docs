@@ -28,28 +28,42 @@ export async function fetchReleases({ fetcher = fetch, token = process.env.GITHU
   }
 }
 
-export function renderChangelog(releases) {
+export function renderChangelogPages(releases, perPage = 10) {
   const entries = releases
     .filter((release) => !release.draft && !release.prerelease && release.published_at)
     .map((release) => ({ ...release, summary: releaseSummary(release.body ?? '') }))
     .filter((release) => release.summary)
     .sort((a, b) => b.published_at.localeCompare(a.published_at))
-    .map((release) => [
-      `## ${release.tag_name}`,
-      `${release.published_at.slice(0, 10)} · [View release on GitHub](${RELEASES_URL}/tag/${encodeURIComponent(release.tag_name)})`,
-      release.summary
-    ].join('\n\n'))
+    .map((release) => ({
+      id: release.tag_name,
+      title: release.tag_name,
+      date: release.published_at,
+      url: `${RELEASES_URL}/tag/${encodeURIComponent(release.tag_name)}`,
+      content: release.summary
+    }))
 
+  return Array.from({ length: Math.max(1, Math.ceil(entries.length / perPage)) }, (_, index) => {
+    const page = entries.slice(index * perPage, (index + 1) * perPage)
+    return { name: index === 0 ? 'index' : String(index + 1), markdown: renderPage(page, index + 1) }
+  })
+}
+
+function renderPage(entries, page) {
   return [
     '---',
-    'title: Changelog',
+    `title: Changelog${page > 1 ? ` (page ${page})` : ''}`,
     'description: New features, improvements, and important fixes in AgentConnect.',
     'icon: ScrollText',
     `sourceUrl: ${RELEASES_URL}`,
+    `entries: ${JSON.stringify(entries)}`,
     '---',
     '',
     `Product updates from our stable releases. [All releases on GitHub](${RELEASES_URL}).`,
     '',
-    ...entries.map((entry) => `${entry}\n`)
+    ...entries.map((entry) => [
+      `## ${entry.title} [#${entry.id}]`,
+      `${entry.date.slice(0, 10)} · [View release on GitHub](${entry.url})`,
+      `${entry.content}\n`
+    ].join('\n\n'))
   ].join('\n')
 }

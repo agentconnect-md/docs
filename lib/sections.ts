@@ -1,7 +1,7 @@
 import { getLayoutTabs } from 'fumadocs-ui/layouts/shared'
 import type { NavTab } from '@/components/site-nav'
 import { localePath } from './i18n'
-import { reference, source } from './source'
+import { changelog, reference, source } from './source'
 import { t } from './strings'
 
 // Guides and Self-hosting are the root folders of content/docs, in that order; the API Reference is its own tree.
@@ -28,7 +28,8 @@ export function siteTabs(lang: string): NavTab[] {
   return [
     { id: 'guides', title: s.guides, url: start, urls: urlsOf(0) },
     { id: 'self-hosting', title: s.selfHosting, url: docsTabs[1]?.url ?? start, urls: urlsOf(1) },
-    { id: 'reference', title: s.apiReference, url: referenceHome, urls: [referenceHome, ...reference.getPages(lang).map((p) => p.url)] }
+    { id: 'reference', title: s.apiReference, url: referenceHome, urls: [referenceHome, ...reference.getPages(lang).map((p) => p.url)] },
+    { id: 'changelog', title: s.changelog.title, url: localePath(lang, '/changelog'), urls: changelog.getPages(lang).map((p) => p.url) }
   ]
 }
 

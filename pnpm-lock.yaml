@@ -17,6 +17,9 @@ importers:
       '@floating-ui/react-dom':
         specifier: ^2.1.9
         version: 2.1.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@fumadocs/changelog':
+        specifier: 0.1.0
+        version: 0.1.0
       '@fumadocs/language':
         specifier: ^0.2.7
         version: 0.2.7(4c552f57cc6f607f3ffec123248cff8a)
@@ -1026,6 +1029,9 @@ packages:
         optional: true
       takumi-js:
         optional: true
+
+  '@fumadocs/changelog@0.1.0':
+    resolution: {integrity: sha512-GtfquCcmJYVJHhCDchsKi2LmwxmtkoSuOVB9KfLLlbTqXZC8Ny1oXAc67KmgGNnz/BPnffV8bLDmWZNFcxo8Og==}
 
   '@fumadocs/json-schema@0.2.0':
     resolution: {integrity: sha512-I3sB2wwJr1Up5JSmaAThmQ2CSP4j2pM01igpbsuKDG3kHYuoHDXiKGEoFWmYK3a81VjQ98AOYx60SEs6xEXr7A==}
@@ -5283,6 +5289,8 @@ snapshots:
       - '@date-fns/tz'
       - date-fns
       - tailwindcss
+
+  '@fumadocs/changelog@0.1.0': {}
 
   '@fumadocs/json-schema@0.2.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
