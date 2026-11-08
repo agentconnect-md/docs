@@ -2,6 +2,7 @@
   "pages": [
     "github",
     "gitlab",
+    "azure-devops",
     "gitea",
     "linear",
     "webhooks",

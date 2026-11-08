@@ -157,6 +157,8 @@ One application and one secret serve Microsoft sign-in and Teams, so a rotation 
 
 An organization connects from an agent's **Add integration → Microsoft Teams → Connect with Microsoft**: a Teams or Global administrator signs in, and the app is published to that Microsoft 365 organization's app catalog with no Store listing. Microsoft Entra labels the application unverified until publisher verification, which organizations that allow only verified publishers require.
 
+The same application connects [Azure DevOps](/connect-automate/triggers-automation/azure-devops) organizations. Add the **Azure DevOps** connect page that the card shows as one more Web redirect URI; an administrator then connects from the console's Azure DevOps card. Microsoft's consent page shows the application's Entra display name, so choose one that does not name a single Microsoft product.
+
 ## Lark and Feishu tenant Apps
 
 The **Lark** and **Feishu** cards configure one regional Login App as the deployment's tenant anchor. AgentConnect uses it to accept multiple bot Apps only when they belong to the same trusted workspace; the Login App is not an AgentConnect chat bot.
