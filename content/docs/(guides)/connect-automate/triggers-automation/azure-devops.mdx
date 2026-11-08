@@ -1,0 +1,120 @@
+---
+title: "Azure DevOps"
+icon: AzureDevOps
+description: "Connect an Azure DevOps organization with one Microsoft sign-in, work in Azure Repos, and trigger agents from pull requests, comments and pushes."
+---
+
+import imgProjectAccess from '@/public/images/azure-devops-project-access.png'
+import imgCodeHosts from '@/public/images/azure-devops-code-hosts.png'
+import imgAddIntegration from '@/public/images/azure-devops-add-integration.png'
+import imgAgentCard from '@/public/images/azure-devops-agent-card.png'
+
+An Azure DevOps integration lets agents work in **Azure Repos**: a Git repository can be an agent's workspace or one of its additional repositories, and an agent can **watch a repository** so that pull requests, comments and pushes become sessions. The agent answers in the pull request's comment threads, can submit a formal review with a vote, and reports its run as a pull-request status.
+
+It works with **Azure DevOps Services** (`dev.azure.com`). Azure DevOps Server, TFVC repositories and SSH remotes are not supported.
+
+AgentConnect acts in Azure DevOps as **one identity per organization**: the AgentConnect application, which your Microsoft Entra tenant knows as a service principal. Everything every agent does — clone, push, comment, review, status — is attributed to that application.
+
+## Before you start
+
+- A **Microsoft work or school account** that is a **Project Collection Administrator** of the Azure DevOps organization and a member or guest of the organization's Microsoft Entra tenant. Personal Microsoft accounts cannot connect.
+- Agents that use Azure DevOps run on a **[daemon you operate](/build-your-team/daemons/install-the-daemon)**, with the **Host** or **Sandbox** (`srt`) [execution strategy](/operate-govern/sandboxing#pick-an-execution-strategy). AgentConnect Cloud's managed sessions, Kubernetes daemon pools and the VM strategy cannot reach Azure DevOps yet, and a session there is refused with the reason.
+
+## Connect Azure DevOps
+
+An organization connects once, in **Integrations → Code hosts → Azure DevOps → Connect with Microsoft**.
+
+1. **Sign in** with the administrator account above. If your tenant asks for administrator approval, a Microsoft Entra administrator grants consent to the AgentConnect application once, and then you sign in again.
+2. **Choose the organization.** AgentConnect lists the Azure DevOps organizations your account belongs to. If the organization lives in a different tenant than the one you signed in to, you are sent to sign in at that tenant.
+3. **Choose projects.** For each project agents need, pick a group and whether agents may be triggered there:
+
+   | Choice             | What it gives the application                                                     |
+   | ------------------ | --------------------------------------------------------------------------------- |
+   | **Readers**        | Read access: agents can clone and read, but not push.                             |
+   | **Contributors**   | Push and pull-request writes, for agents with write access.                       |
+   | **Allow triggers** | View and Edit subscriptions on the project, so AgentConnect can manage its service hooks. On by default with Contributors. |
+
+<Image src={imgProjectAccess} alt="Choose projects: Example Project with Contributors and Allow triggers, Example Docs with Readers only" width={480} />
+
+AgentConnect then adds the application to the organization with the **Basic** access level, which uses one paid licence, adds it to the groups you picked, and checks that it can see the repositories.
+
+Grant only the projects agents need. The application can reach everything its groups allow, and its token is valid across the whole organization; AgentConnect is what keeps each agent inside its own repositories (see [Access is enforced by the daemon](#access-is-enforced-by-the-daemon)).
+
+A **Project Administrator** who is not a Project Collection Administrator cannot add the application with Basic access. AgentConnect then shows a checklist: a Project Collection Administrator adds the application (named by its client ID) in **Organization settings → Users** with Basic access, and you continue from the card.
+
+### Manage project access
+
+**Manage project access** on the card runs the same sign-in again to add projects, change a project from Readers to Contributors, or allow triggers. It only adds: to take a project away or lower a group, change the application's groups in Azure DevOps.
+
+### Use your own application
+
+**Use your own application instead** connects an application registered in your own tenant: enter the organization, tenant ID, client ID and a client secret. Add that application's service principal to the organization (Basic) and its project groups yourself. For triggers, also grant it **View subscriptions** and **Edit subscriptions** for the project's service hooks.
+
+## Repositories
+
+A repository joins the organization the first time something uses it: pick it as an agent's [workspace](/build-your-team/agents/workspaces-and-repos), add it as an additional repository, or pick it in a trigger. The pickers list every repository the application can see.
+
+Each agent gets **read** or **write** on each repository. Write needs the project's **Contributors** group, and a `write` workspace on a repository the application cannot push to is refused when you save it.
+
+<Image src={imgCodeHosts} alt="The Azure DevOps card: the connected organization with Manage project access, and three repositories with their service-hook state" width={760} />
+
+Each repository row shows its triggers' state:
+
+| State                  | What it means                                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| _(no badge)_           | Service hooks are in place and Azure DevOps has delivered an event.                                   |
+| **Triggers unverified** | The service hooks exist, but no event has arrived yet.                                               |
+| **Triggers not allowed** | The project lacks **Allow triggers**. Turn it on in Manage project access.                          |
+| **paused by Azure DevOps** | Azure DevOps paused or disabled a service hook after failed deliveries. AgentConnect re-enables it. |
+
+The key icon on a row **rotates** the secret Azure DevOps uses to authenticate its deliveries. Choose **suspected leak** if the old secret may be exposed: the old one then stops working at once instead of after a grace period.
+
+## Access is enforced by the daemon
+
+Azure DevOps cannot issue a token limited to one repository or to read access. So **the token never enters an agent's session**: Git and the Azure CLI reach Azure DevOps through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials), which presents the real token only for the agent's own repositories and refuses a push or an API write below `write`.
+
+The **Azure CLI** with the `azure-devops` extension works unchanged in a session — `az repos show`, `az repos pr create`, `az repos pr update` and the rest. AgentConnect does not install it: install the Azure CLI and the extension on the daemon host. Listings that would reveal other repositories, such as `az repos list` or listing pull requests without `--repository`, are refused.
+
+Agents also get three tools that need no CLI: `azureDevOpsPullRequest` (open, edit, complete, abandon, reactivate, and labels), `azureDevOpsComment` (comment threads and replies), and `readAzureDevOpsPullRequest`. A pull request they open carries the agent's footer.
+
+## Watch a repository
+
+On the agent: **Integrations → Add integration → Azure DevOps**.
+
+<Image src={imgAddIntegration} alt="Add integration with Azure DevOps selected: pick a repository, then how eagerly the agent wakes up on pull requests and the review format" width={560} />
+
+The repository must already be the agent's workspace or one of its additional repositories, and its project must have **Allow triggers**. Choose how eagerly the agent wakes up on pull requests:
+
+- **opened** — when a pull request is opened.
+- **any update** — openings plus new commits, a review request to the AgentConnect application, a reopened pull request, and comments.
+- **@-mention** — only when a comment mentions the agent as `@<agent-name>`.
+
+AgentConnect creates and maintains the repository's **service hooks** itself — one per kind of event the agent's triggers need — and removes them when the last trigger goes away. Several agents watching one repository share them.
+
+<Image src={imgAgentCard} alt="An agent's Azure DevOps card with one watched repository and its pull-request trigger" width={640} />
+
+## Who may trigger an agent
+
+AgentConnect checks, at the moment of the event, whether the person who caused it may **contribute** to the repository: their own permissions and those of every group they belong to, read from Azure DevOps. A person who cannot push to the repository does not start an agent. For a review request or a reopened pull request, the pull request's author is checked. Edits to comments and likes never start a turn.
+
+The application's own comments and pushes never trigger an agent, with one exception: a pull request the application opened still enters review, which is how one agent reviews another's work.
+
+## What the agent does
+
+Each qualifying event starts a session on the agent's daemon, and the sessions appear in [Sessions](/operate-govern/sessions) linked back to the pull request.
+
+- **Reply** — a comment in the thread that triggered the turn, or a new thread on the pull request. The triggering comment gets a like when the turn starts.
+- **Reviews** — with a review format chosen on the trigger, the agent can submit a formal review: one comment thread per inline comment (a range of lines stays a range), a summary thread, and a vote — **Approved** (10) for an approval and **Waiting for author** (−5) for requested changes. A comment-only review leaves the vote alone.
+- **Run state** — a pull-request status named `agentconnect/<agent-name>`, linking to the session in the console. It blocks completion only if an administrator adds it as a required status check in a branch policy.
+
+To run an agent again on a pull request, comment in the session, push a new commit, or mention the agent.
+
+Every agent acts as the same application, so it has **one vote** on a pull request: the most recent review sets it. Each agent's own verdict stays in its summary thread and its status.
+
+## Disconnect
+
+**Disconnect** removes AgentConnect's service hooks and releases the connection; agents stop working on its repositories. To remove the application from Azure DevOps entirely, remove it from **Organization settings → Users** and, if you want, delete its enterprise application in Microsoft Entra.
+
+## Self-hosted deployments
+
+Everything above works the same on AgentConnect OSS. The operator configures the deployment's Microsoft application once and adds the console's Azure DevOps connect page as one more redirect URI: see [Microsoft Teams deployment app](/self-hosting/provider-apps#microsoft-teams-deployment-app). Without a deployment application, organizations use [their own application](#use-your-own-application).

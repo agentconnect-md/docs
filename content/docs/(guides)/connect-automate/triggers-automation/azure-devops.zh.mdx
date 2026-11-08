@@ -1,0 +1,120 @@
+---
+title: "Azure DevOps"
+icon: AzureDevOps
+description: "用一次 Microsoft 登录连接 Azure DevOps 组织，在 Azure Repos 中工作，并由 Pull Request、评论和推送触发 Agent。"
+---
+
+import imgProjectAccess from '@/public/images/azure-devops-project-access.png'
+import imgCodeHosts from '@/public/images/azure-devops-code-hosts.png'
+import imgAddIntegration from '@/public/images/azure-devops-add-integration.png'
+import imgAgentCard from '@/public/images/azure-devops-agent-card.png'
+
+Azure DevOps 集成让 Agent 在 **Azure Repos** 中工作：一个 Git 仓库可以作为 Agent 的工作区或附加仓库；Agent 也可以**监视一个仓库**，让 Pull Request、评论和推送成为会话。Agent 在 Pull Request 的评论线程中回复，可以提交带投票的正式评审，并把运行状态写成 Pull Request 状态。
+
+支持 **Azure DevOps Services**（`dev.azure.com`），不支持 Azure DevOps Server、TFVC 仓库和 SSH 远程地址。
+
+AgentConnect 在 Azure DevOps 中以**每个组织一个身份**行事：AgentConnect 应用，在你的 Microsoft Entra 租户中表现为一个服务主体。所有 Agent 做的一切——克隆、推送、评论、评审、状态——都记在这个应用名下。
+
+## 开始之前 [#before-you-start]
+
+- 一个 **Microsoft 工作或学校账户**：它是该 Azure DevOps 组织的 **Project Collection Administrator**，并且是组织所在 Microsoft Entra 租户的成员或来宾。个人 Microsoft 账户无法连接。
+- 使用 Azure DevOps 的 Agent 运行在**[你自己运行的 Daemon](/build-your-team/daemons/install-the-daemon)** 上，[执行策略](/operate-govern/sandboxing#pick-an-execution-strategy)为 **Host** 或 **Sandbox**（`srt`）。AgentConnect Cloud 的托管会话、Kubernetes Daemon 池和 VM 策略目前还无法访问 Azure DevOps，在那里启动的会话会被拒绝并给出原因。
+
+## 连接 Azure DevOps [#connect-azure-devops]
+
+组织在**集成 → 代码托管平台 → Azure DevOps → 使用 Microsoft 连接**中连接一次。
+
+1. 用上面的管理员账户**登录**。如果租户要求管理员批准，由 Microsoft Entra 管理员为 AgentConnect 应用授予一次同意，然后重新登录。
+2. **选择组织。** AgentConnect 列出你的账户所属的 Azure DevOps 组织。如果组织所在的租户不是你登录的租户，会引导你到那个租户重新登录。
+3. **选择项目。** 为 Agent 需要的每个项目选择一个组，以及是否允许在这里触发 Agent：
+
+   | 选项               | 给应用的权限                                                                 |
+   | ------------------ | ---------------------------------------------------------------------------- |
+   | **Readers**        | 读取权限：Agent 可以克隆和读取，但不能推送。                                 |
+   | **Contributors**   | 推送和 Pull Request 写操作，给有写权限的 Agent 用。                          |
+   | **允许触发**       | 项目上的查看和编辑订阅权限，让 AgentConnect 管理自己的 Service Hook。选 Contributors 时默认打开。 |
+
+<Image src={imgProjectAccess} alt="Choose projects: Example Project with Contributors and Allow triggers, Example Docs with Readers only" width={480} />
+
+随后 AgentConnect 以 **Basic** 访问级别把应用加入组织（占用一个付费许可证），加入你选择的组，并检查它能看到仓库。
+
+只授予 Agent 需要的项目。应用能访问它所在的组允许的一切，它的令牌在整个组织内有效；把每个 Agent 限制在自己仓库内的是 AgentConnect（见[访问由 Daemon 控制](#access-is-enforced-by-the-daemon)）。
+
+不是 Project Collection Administrator 的 **Project Administrator** 无法以 Basic 访问级别添加应用。这时 AgentConnect 会给出一份清单：由 Project Collection Administrator 在**组织设置 → 用户**中以 Basic 访问级别添加这个应用（按客户端 ID 查找），然后你在卡片上继续。
+
+### 管理项目访问 [#manage-project-access]
+
+卡片上的**管理项目访问**会再走一次同样的登录，用来添加项目、把项目从 Readers 改为 Contributors，或者允许触发。它只增不减：要移除项目或降低组，请在 Azure DevOps 中修改应用所在的组。
+
+### 使用自己的应用 [#use-your-own-application]
+
+**改用自己的应用**会连接一个在你自己租户中注册的应用：填入组织、租户 ID、客户端 ID 和客户端密码。请自行把这个应用的服务主体加入组织（Basic）和项目组。如果要用触发，还要为它授予项目 Service Hook 的**查看订阅**和**编辑订阅**权限。
+
+## 仓库 [#repositories]
+
+仓库在第一次被用到时加入组织：把它选为 Agent 的[工作区](/build-your-team/agents/workspaces-and-repos)、添加为附加仓库，或在触发器中选中它。选择器列出应用能看到的所有仓库。
+
+每个 Agent 对每个仓库有**读**或**写**权限。写权限需要项目的 **Contributors** 组；如果应用无法推送到某个仓库，以写权限把它设为工作区会在保存时被拒绝。
+
+<Image src={imgCodeHosts} alt="The Azure DevOps card: the connected organization with Manage project access, and three repositories with their service-hook state" width={760} />
+
+每个仓库行显示它的触发状态：
+
+| 状态                       | 含义                                                                       |
+| -------------------------- | -------------------------------------------------------------------------- |
+| _（无标记）_               | Service Hook 已就位，Azure DevOps 已送达过事件。                           |
+| **触发未验证**             | Service Hook 已存在，但还没有收到事件。                                    |
+| **未允许触发**             | 项目没有**允许触发**。请在管理项目访问中打开。                             |
+| **被 Azure DevOps 暂停**   | Azure DevOps 在投递失败后暂停或停用了某个 Service Hook，AgentConnect 会重新启用它。 |
+
+仓库行上的钥匙图标用来**轮换** Azure DevOps 投递时用于认证的密钥。如果旧密钥可能已泄露，选择**疑似泄露**：旧密钥会立即失效，而不是过一段宽限期再失效。
+
+## 访问由 Daemon 控制 [#access-is-enforced-by-the-daemon]
+
+Azure DevOps 无法签发只限一个仓库或只读的令牌，所以**令牌从不进入 Agent 的会话**：Git 和 Azure CLI 通过 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#code-host-credentials)访问 Azure DevOps，代理只为 Agent 自己的仓库出示真实令牌，并拒绝低于写权限的推送和 API 写操作。
+
+装有 `azure-devops` 扩展的 **Azure CLI** 在会话中可以照常使用——`az repos show`、`az repos pr create`、`az repos pr update` 等。AgentConnect 不负责安装：请在 Daemon 主机上安装 Azure CLI 和这个扩展。会暴露其他仓库的列表操作，例如 `az repos list`，或不带 `--repository` 列出 Pull Request，会被拒绝。
+
+Agent 还有三个不需要 CLI 的工具：`azureDevOpsPullRequest`（创建、编辑、完成、放弃、重新激活 Pull Request，以及标签）、`azureDevOpsComment`（评论线程和回复）和 `readAzureDevOpsPullRequest`。它们创建的 Pull Request 会带上 Agent 的署名。
+
+## 监视仓库 [#watch-a-repository]
+
+在 Agent 上：**集成 → 添加集成 → Azure DevOps**。
+
+<Image src={imgAddIntegration} alt="Add integration with Azure DevOps selected: pick a repository, then how eagerly the agent wakes up on pull requests and the review format" width={560} />
+
+仓库必须已经是 Agent 的工作区或附加仓库之一，并且它所在的项目已**允许触发**。选择 Agent 对 Pull Request 的响应时机：
+
+- **opened**——Pull Request 被创建时。
+- **any update**——创建，加上新提交、请求 AgentConnect 应用评审、重新打开 Pull Request，以及评论。
+- **@-mention**——只在评论中以 `@<agent-name>` 提到这个 Agent 时。
+
+AgentConnect 会自己创建和维护仓库的 **Service Hook**——触发器需要的每类事件一个——并在最后一个触发器移除后删除它们。监视同一个仓库的多个 Agent 共用这些 Service Hook。
+
+<Image src={imgAgentCard} alt="An agent's Azure DevOps card with one watched repository and its pull-request trigger" width={640} />
+
+## 谁可以触发 Agent [#who-may-trigger-an-agent]
+
+事件发生时，AgentConnect 会检查引发事件的人能否向仓库**贡献**：从 Azure DevOps 读取这个人自己的权限，以及他所在的每个组的权限。不能推送到仓库的人不会启动 Agent。对于评审请求和重新打开的 Pull Request，检查的是 Pull Request 的作者。编辑评论和点赞不会开始新一轮。
+
+应用自己的评论和推送不会触发 Agent，只有一个例外：应用自己创建的 Pull Request 仍会进入评审，这样一个 Agent 就能评审另一个 Agent 的工作。
+
+## Agent 会做什么 [#what-the-agent-does]
+
+每个符合条件的事件都会在 Agent 的 Daemon 上开启一个会话，会话出现在[会话](/operate-govern/sessions)中，并链接回 Pull Request。
+
+- **回复**——在触发这一轮的线程中回复，或在 Pull Request 上开一个新线程。这一轮开始时，触发它的评论会被点赞。
+- **评审**——在触发器上选择了评审格式后，Agent 可以提交正式评审：每条行内评论一个线程（多行范围仍是范围）、一个总结线程，以及一次投票——批准时为 **Approved**（10），要求修改时为 **Waiting for author**（−5）。只有评论的评审不改变投票。
+- **运行状态**——一个名为 `agentconnect/<agent-name>` 的 Pull Request 状态，链接到控制台中的会话。只有管理员在分支策略中把它设为必需的状态检查时，它才会阻止完成 Pull Request。
+
+要让 Agent 在 Pull Request 上再运行一次：在会话中发消息、推送新提交，或提到这个 Agent。
+
+所有 Agent 都以同一个应用的身份行事，所以在一个 Pull Request 上只有**一票**：最近的一次评审决定它。每个 Agent 自己的结论保留在它的总结线程和它的状态中。
+
+## 断开连接 [#disconnect]
+
+**断开连接**会删除 AgentConnect 的 Service Hook 并释放连接，Agent 随即停止在这些仓库上工作。要从 Azure DevOps 中彻底移除应用，请在**组织设置 → 用户**中移除它；如有需要，再在 Microsoft Entra 中删除它的企业应用。
+
+## 自托管部署 [#self-hosted-deployments]
+
+上面的内容在 AgentConnect OSS 上同样适用。运维人员只需配置一次部署的 Microsoft 应用，并把控制台的 Azure DevOps 连接页面再添加为一个重定向 URI：见 [Microsoft Teams 部署应用](/self-hosting/provider-apps#microsoft-teams-deployment-app)。没有部署应用时，组织可以使用[自己的应用](#use-your-own-application)。

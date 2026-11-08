@@ -3,6 +3,7 @@
     "github",
     "gitlab",
     "gitea",
+    "azure-devops",
     "linear",
     "webhooks",
     "schedules"
