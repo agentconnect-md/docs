@@ -86,8 +86,10 @@ Agent 还有三个不需要 CLI 的工具：`azureDevOpsPullRequest`（创建、
 仓库必须已经是 Agent 的工作区或附加仓库之一，并且它所在的项目已**允许触发**。选择 Agent 对 Pull Request 的响应时机：
 
 - **opened**——Pull Request 被创建时。
-- **any update**——创建，加上新提交、请求 AgentConnect 应用评审、重新打开 Pull Request，以及评论。
-- **@-mention**——只在评论中以 `@<agent-name>` 提到这个 Agent 时。
+- **any update**——创建，加上新提交、重新打开 Pull Request，以及评论。
+- **@-mention**——只在 Pull Request 的描述或评论中以 `@<agent-name>` 提到这个 Agent 时。
+
+无论选哪种时机，把 AgentConnect 应用加为 Pull Request 的评审者都会请求一次评审。Azure DevOps 的评审者选择器只列出人，所以这个请求要通过 REST API 或 `az repos pr reviewer add` 发出。
 
 AgentConnect 会自己创建和维护仓库的 **Service Hook**——触发器需要的每类事件一个——并在最后一个触发器移除后删除它们。监视同一个仓库的多个 Agent 共用这些 Service Hook。
 

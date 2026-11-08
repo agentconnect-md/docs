@@ -86,8 +86,10 @@ On the agent: **Integrations → Add integration → Azure DevOps**.
 The repository must already be the agent's workspace or one of its additional repositories, and its project must have **Allow triggers**. Choose how eagerly the agent wakes up on pull requests:
 
 - **opened** — when a pull request is opened.
-- **any update** — openings plus new commits, a review request to the AgentConnect application, a reopened pull request, and comments.
-- **@-mention** — only when a comment mentions the agent as `@<agent-name>`.
+- **any update** — openings plus new commits, a reopened pull request, and comments.
+- **@-mention** — only when the pull request's description or a comment mentions the agent as `@<agent-name>`.
+
+Whatever the cadence, adding the AgentConnect application to a pull request as a reviewer requests a review. Azure DevOps's reviewer picker lists people only, so this request comes from the REST API or `az repos pr reviewer add`.
 
 AgentConnect creates and maintains the repository's **service hooks** itself — one per kind of event the agent's triggers need — and removes them when the last trigger goes away. Several agents watching one repository share them.
 
