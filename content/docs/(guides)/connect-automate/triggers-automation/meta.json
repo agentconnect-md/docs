@@ -2,8 +2,8 @@
   "pages": [
     "github",
     "gitlab",
-    "gitea",
     "azure-devops",
+    "gitea",
     "linear",
     "webhooks",
     "schedules"
