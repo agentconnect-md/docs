@@ -34,7 +34,9 @@ AgentConnect 在 Azure DevOps 中以**每个组织一个身份**行事：AgentCo
    | **写**         | 还可以推送和创建 Pull Request（Contributors）。           |
    | **允许触发器** | Pull Request 可以启动 Agent（项目的 Service Hook 权限）。 |
 
-<Image src={imgProjectAccess} alt="Choose projects: Example Project with Write and Allow triggers, Example Docs with Read only" width={480} />
+   **所有项目**会把同样的选项授予每个项目，包括以后新建的项目，新项目不用再来这里勾选。只有 Project Collection Administrator 能打开它。
+
+<Image src={imgProjectAccess} alt="Choose projects: the All projects row unchecked, Example Project with Write and Allow triggers, Example Docs with Read only" width={480} />
 
 随后 AgentConnect 以 **Basic** 访问级别把应用加入组织（占用一个付费许可证），加入你选择的组，并检查它能看到仓库。
 
@@ -44,7 +46,7 @@ AgentConnect 在 Azure DevOps 中以**每个组织一个身份**行事：AgentCo
 
 ### 管理项目访问 [#manage-project-access]
 
-卡片上的**管理项目访问**会再走一次同样的登录，并显示应用当前的权限。应用后 Azure DevOps 会与页面一致：取消勾选项目、改为读或取消允许触发器，都会收回对应权限。
+卡片上的**管理项目访问**会再走一次同样的登录，并显示应用当前的权限。应用后 Azure DevOps 会与页面一致：取消勾选项目或**所有项目**、改为读或取消允许触发器，都会收回对应权限。
 
 ### 使用自己的应用 [#use-your-own-application]
 

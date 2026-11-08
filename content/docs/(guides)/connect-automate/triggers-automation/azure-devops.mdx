@@ -34,7 +34,9 @@ An organization connects once, in **Integrations → Code hosts → Azure DevOps
    | **Write**          | Agents can also push and open pull requests (Contributors).         |
    | **Allow triggers** | Pull requests can start agents (the project's service hook rights). |
 
-<Image src={imgProjectAccess} alt="Choose projects: Example Project with Write and Allow triggers, Example Docs with Read only" width={480} />
+   **All projects** grants the same choices on every project, including projects created later, so new projects need no visit here. Only a Project Collection Administrator can turn it on.
+
+<Image src={imgProjectAccess} alt="Choose projects: the All projects row unchecked, Example Project with Write and Allow triggers, Example Docs with Read only" width={480} />
 
 AgentConnect then adds the application to the organization with the **Basic** access level, which uses one paid licence, adds it to the groups you picked, and checks that it can see the repositories.
 
@@ -44,7 +46,7 @@ A **Project Administrator** who is not a Project Collection Administrator cannot
 
 ### Manage project access
 
-**Manage project access** on the card runs the same sign-in again and opens on the access the application has now. Apply makes Azure DevOps match the page: unchecking a project, switching it to Read, or clearing Allow triggers takes that access away.
+**Manage project access** on the card runs the same sign-in again and opens on the access the application has now. Apply makes Azure DevOps match the page: unchecking a project or **All projects**, switching to Read, or clearing Allow triggers takes that access away.
 
 ### Use your own application
 
