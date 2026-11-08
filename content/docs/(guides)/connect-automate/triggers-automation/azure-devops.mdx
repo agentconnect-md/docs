@@ -99,14 +99,14 @@ AgentConnect creates and maintains the repository's **service hooks** itself —
 
 AgentConnect checks, at the moment of the event, whether the person who caused it may **contribute** to the repository: their own permissions and those of every group they belong to, read from Azure DevOps. A person who cannot push to the repository does not start an agent. For a review request or a reopened pull request, the pull request's author is checked. Edits to comments and likes never start a turn.
 
-The application's own comments and pushes never trigger an agent, with one exception: a pull request the application opened still enters review, which is how one agent reviews another's work.
+The application's own comments never trigger an agent. A pull request the application opened in the same repository still enters review, which is how one agent reviews another's work, and a commit the application pushes to a pull request is a new revision like anyone else's.
 
 ## What the agent does
 
 Each qualifying event starts a session on the agent's daemon, and the sessions appear in [Sessions](/operate-govern/sessions) linked back to the pull request.
 
 - **Reply** — a comment in the thread that triggered the turn, or a new thread on the pull request. The triggering comment gets a like when the turn starts.
-- **Reviews** — with a review format chosen on the trigger, the agent can submit a formal review: one comment thread per inline comment (a range of lines stays a range), a summary thread, and a vote — **Approved** (10) for an approval and **Waiting for author** (−5) for requested changes. A comment-only review leaves the vote alone.
+- **Reviews** — with a review format chosen on the trigger, an opened pull request, a new commit or a review request gets a formal review: one comment thread per inline comment (a range of lines stays a range), a summary thread, and a vote — **Approved** (10) for an approval and **Waiting for author** (−5) for requested changes. A comment-only review leaves the vote alone. A mention gets a reply in its thread, not a formal review.
 - **Run state** — a pull-request status named `agentconnect/<agent-name>`, linking to the session in the console. It blocks completion only if an administrator adds it as a required status check in a branch policy.
 
 To run an agent again on a pull request, comment in the session, push a new commit, or mention the agent.

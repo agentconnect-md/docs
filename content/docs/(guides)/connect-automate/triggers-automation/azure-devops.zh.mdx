@@ -99,14 +99,14 @@ AgentConnect 会自己创建和维护仓库的 **Service Hook**——触发器�
 
 事件发生时，AgentConnect 会检查引发事件的人能否向仓库**贡献**：从 Azure DevOps 读取这个人自己的权限，以及他所在的每个组的权限。不能推送到仓库的人不会启动 Agent。对于评审请求和重新打开的 Pull Request，检查的是 Pull Request 的作者。编辑评论和点赞不会开始新一轮。
 
-应用自己的评论和推送不会触发 Agent，只有一个例外：应用自己创建的 Pull Request 仍会进入评审，这样一个 Agent 就能评审另一个 Agent 的工作。
+应用自己的评论不会触发 Agent。应用在同一仓库中创建的 Pull Request 仍会进入评审，这样一个 Agent 就能评审另一个 Agent 的工作；应用推送到 Pull Request 的提交和其他人的一样，算作一次新的修订。
 
 ## Agent 会做什么 [#what-the-agent-does]
 
 每个符合条件的事件都会在 Agent 的 Daemon 上开启一个会话，会话出现在[会话](/operate-govern/sessions)中，并链接回 Pull Request。
 
 - **回复**——在触发这一轮的线程中回复，或在 Pull Request 上开一个新线程。这一轮开始时，触发它的评论会被点赞。
-- **评审**——在触发器上选择了评审格式后，Agent 可以提交正式评审：每条行内评论一个线程（多行范围仍是范围）、一个总结线程，以及一次投票——批准时为 **Approved**（10），要求修改时为 **Waiting for author**（−5）。只有评论的评审不改变投票。
+- **评审**——在触发器上选择了评审格式后，新打开的 Pull Request、新提交或评审请求会得到一次正式评审：每条行内评论一个线程（多行范围仍是范围）、一个总结线程，以及一次投票——批准时为 **Approved**（10），要求修改时为 **Waiting for author**（−5）。只有评论的评审不改变投票。提及 Agent 会在该线程中得到回复，而不是正式评审。
 - **运行状态**——一个名为 `agentconnect/<agent-name>` 的 Pull Request 状态，链接到控制台中的会话。只有管理员在分支策略中把它设为必需的状态检查时，它才会阻止完成 Pull Request。
 
 要让 Agent 在 Pull Request 上再运行一次：在会话中发消息、推送新提交，或提到这个 Agent。
