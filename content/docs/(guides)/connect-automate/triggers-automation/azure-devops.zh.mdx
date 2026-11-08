@@ -26,15 +26,15 @@ AgentConnect 在 Azure DevOps 中以**每个组织一个身份**行事：AgentCo
 
 1. 用上面的管理员账户**登录**。如果租户要求管理员批准，由 Microsoft Entra 管理员为 AgentConnect 应用授予一次同意，然后重新登录。
 2. **选择组织。** AgentConnect 列出你的账户所属的 Azure DevOps 组织。如果组织所在的租户不是你登录的租户，会引导你到那个租户重新登录。
-3. **选择项目。** 为 Agent 需要的每个项目选择一个组，以及是否允许在这里触发 Agent：
+3. **选择项目。** 勾选 Agent 需要的项目。新勾选的项目默认为**写**并**允许触发器**：
 
-   | 选项               | 给应用的权限                                                                 |
-   | ------------------ | ---------------------------------------------------------------------------- |
-   | **Readers**        | 读取权限：Agent 可以克隆和读取，但不能推送。                                 |
-   | **Contributors**   | 推送和 Pull Request 写操作，给有写权限的 Agent 用。                          |
-   | **允许触发**       | 项目上的查看和编辑订阅权限，让 AgentConnect 管理自己的 Service Hook。选 Contributors 时默认打开。 |
+   | 选项           | 给应用的权限                                              |
+   | -------------- | --------------------------------------------------------- |
+   | **读**         | Agent 可以克隆和读取，但不能推送（项目的 Readers）。      |
+   | **写**         | 还可以推送和创建 Pull Request（Contributors）。           |
+   | **允许触发器** | Pull Request 可以启动 Agent（项目的 Service Hook 权限）。 |
 
-<Image src={imgProjectAccess} alt="Choose projects: Example Project with Contributors and Allow triggers, Example Docs with Readers only" width={480} />
+<Image src={imgProjectAccess} alt="Choose projects: Example Project with Write and Allow triggers, Example Docs with Read only" width={480} />
 
 随后 AgentConnect 以 **Basic** 访问级别把应用加入组织（占用一个付费许可证），加入你选择的组，并检查它能看到仓库。
 
@@ -44,7 +44,7 @@ AgentConnect 在 Azure DevOps 中以**每个组织一个身份**行事：AgentCo
 
 ### 管理项目访问 [#manage-project-access]
 
-卡片上的**管理项目访问**会再走一次同样的登录，用来添加项目、把项目从 Readers 改为 Contributors，或者允许触发。它只增不减：要移除项目或降低组，请在 Azure DevOps 中修改应用所在的组。
+卡片上的**管理项目访问**会再走一次同样的登录，并显示应用当前的权限。应用后 Azure DevOps 会与页面一致：取消勾选项目、改为读或取消允许触发器，都会收回对应权限。
 
 ### 使用自己的应用 [#use-your-own-application]
 
@@ -54,20 +54,18 @@ AgentConnect 在 Azure DevOps 中以**每个组织一个身份**行事：AgentCo
 
 仓库在第一次被用到时加入组织：把它选为 Agent 的[工作区](/build-your-team/agents/workspaces-and-repos)、添加为附加仓库，或在触发器中选中它。选择器列出应用能看到的所有仓库。
 
-每个 Agent 对每个仓库有**读**或**写**权限。写权限需要项目的 **Contributors** 组；如果应用无法推送到某个仓库，以写权限把它设为工作区会在保存时被拒绝。
+每个 Agent 对每个仓库有**读**或**写**权限。写权限需要项目上的**写**；如果应用无法推送到某个仓库，以写权限把它设为工作区会在保存时被拒绝。
 
-<Image src={imgCodeHosts} alt="The Azure DevOps card: the connected organization with Manage project access, and three repositories with their service-hook state" width={760} />
+<Image src={imgCodeHosts} alt="The Azure DevOps card: the connected organization with Manage project access, and three repositories with their trigger state" width={760} />
 
-每个仓库行显示它的触发状态：
+有触发器的仓库会显示最近一次事件的时间；需要处理时显示标记：
 
-| 状态                       | 含义                                                                       |
-| -------------------------- | -------------------------------------------------------------------------- |
-| _（无标记）_               | Service Hook 已就位，Azure DevOps 已送达过事件。                           |
-| **触发未验证**             | Service Hook 已存在，但还没有收到事件。                                    |
-| **未允许触发**             | 项目没有**允许触发**。请在管理项目访问中打开。                             |
-| **被 Azure DevOps 暂停**   | Azure DevOps 在投递失败后暂停或停用了某个 Service Hook，AgentConnect 会重新启用它。 |
+| 标记             | 怎么做                                       |
+| ---------------- | -------------------------------------------- |
+| **触发器待验证** | 无需处理，收到第一个事件后消失。             |
+| **未允许触发器** | 在管理项目访问中为该项目打开**允许触发器**。 |
 
-仓库行上的钥匙图标用来**轮换** Azure DevOps 投递时用于认证的密钥。如果旧密钥可能已泄露，选择**疑似泄露**：旧密钥会立即失效，而不是过一段宽限期再失效。
+仓库行上的钥匙图标用来**轮换** Azure DevOps 签名投递所用的密钥。旧密钥在 36 小时内仍然有效，已排队的投递仍能送达。
 
 ## 访问由 Daemon 控制 [#access-is-enforced-by-the-daemon]
 
@@ -83,7 +81,7 @@ Agent 还有三个不需要 CLI 的工具：`azureDevOpsPullRequest`（创建、
 
 <Image src={imgAddIntegration} alt="Add integration with Azure DevOps selected: pick a repository, then how eagerly the agent wakes up on pull requests and the review format" width={560} />
 
-仓库必须已经是 Agent 的工作区或附加仓库之一，并且它所在的项目已**允许触发**。选择 Agent 对 Pull Request 的响应时机：
+仓库必须已经是 Agent 的工作区或附加仓库之一，并且它所在的项目已**允许触发器**。选择 Agent 对 Pull Request 的响应时机：
 
 - **opened**——Pull Request 被创建时。
 - **any update**——创建，加上新提交、重新打开 Pull Request，以及评论。

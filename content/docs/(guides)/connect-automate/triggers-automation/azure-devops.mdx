@@ -26,15 +26,15 @@ An organization connects once, in **Integrations → Code hosts → Azure DevOps
 
 1. **Sign in** with the administrator account above. If your tenant asks for administrator approval, a Microsoft Entra administrator grants consent to the AgentConnect application once, and then you sign in again.
 2. **Choose the organization.** AgentConnect lists the Azure DevOps organizations your account belongs to. If the organization lives in a different tenant than the one you signed in to, you are sent to sign in at that tenant.
-3. **Choose projects.** For each project agents need, pick a group and whether agents may be triggered there:
+3. **Choose projects.** Check each project agents need. A checked project starts at **Write** with **Allow triggers**:
 
-   | Choice             | What it gives the application                                                     |
-   | ------------------ | --------------------------------------------------------------------------------- |
-   | **Readers**        | Read access: agents can clone and read, but not push.                             |
-   | **Contributors**   | Push and pull-request writes, for agents with write access.                       |
-   | **Allow triggers** | View and Edit subscriptions on the project, so AgentConnect can manage its service hooks. On by default with Contributors. |
+   | Choice             | What it gives the application                                       |
+   | ------------------ | ------------------------------------------------------------------- |
+   | **Read**           | Agents can clone and read, but not push (the project's Readers).    |
+   | **Write**          | Agents can also push and open pull requests (Contributors).         |
+   | **Allow triggers** | Pull requests can start agents (the project's service hook rights). |
 
-<Image src={imgProjectAccess} alt="Choose projects: Example Project with Contributors and Allow triggers, Example Docs with Readers only" width={480} />
+<Image src={imgProjectAccess} alt="Choose projects: Example Project with Write and Allow triggers, Example Docs with Read only" width={480} />
 
 AgentConnect then adds the application to the organization with the **Basic** access level, which uses one paid licence, adds it to the groups you picked, and checks that it can see the repositories.
 
@@ -44,7 +44,7 @@ A **Project Administrator** who is not a Project Collection Administrator cannot
 
 ### Manage project access
 
-**Manage project access** on the card runs the same sign-in again to add projects, change a project from Readers to Contributors, or allow triggers. It only adds: to take a project away or lower a group, change the application's groups in Azure DevOps.
+**Manage project access** on the card runs the same sign-in again and opens on the access the application has now. Apply makes Azure DevOps match the page: unchecking a project, switching it to Read, or clearing Allow triggers takes that access away.
 
 ### Use your own application
 
@@ -54,20 +54,18 @@ A **Project Administrator** who is not a Project Collection Administrator cannot
 
 A repository joins the organization the first time something uses it: pick it as an agent's [workspace](/build-your-team/agents/workspaces-and-repos), add it as an additional repository, or pick it in a trigger. The pickers list every repository the application can see.
 
-Each agent gets **read** or **write** on each repository. Write needs the project's **Contributors** group, and a `write` workspace on a repository the application cannot push to is refused when you save it.
+Each agent gets **read** or **write** on each repository. Write needs **Write** on the project; a `write` workspace on a repository the application cannot push to is refused when you save it.
 
-<Image src={imgCodeHosts} alt="The Azure DevOps card: the connected organization with Manage project access, and three repositories with their service-hook state" width={760} />
+<Image src={imgCodeHosts} alt="The Azure DevOps card: the connected organization with Manage project access, and three repositories with their trigger state" width={760} />
 
-Each repository row shows its triggers' state:
+A repository with triggers shows when its last event arrived, or a badge when something needs attention:
 
-| State                  | What it means                                                                                         |
-| ---------------------- | ----------------------------------------------------------------------------------------------------- |
-| _(no badge)_           | Service hooks are in place and Azure DevOps has delivered an event.                                   |
-| **Triggers unverified** | The service hooks exist, but no event has arrived yet.                                               |
-| **Triggers not allowed** | The project lacks **Allow triggers**. Turn it on in Manage project access.                          |
-| **paused by Azure DevOps** | Azure DevOps paused or disabled a service hook after failed deliveries. AgentConnect re-enables it. |
+| Badge                    | What to do                                                           |
+| ------------------------ | -------------------------------------------------------------------- |
+| **Triggers unverified**  | Nothing: it clears when the first event arrives.                     |
+| **Triggers not allowed** | Turn on **Allow triggers** for the project in Manage project access. |
 
-The key icon on a row **rotates** the secret Azure DevOps uses to authenticate its deliveries. Choose **suspected leak** if the old secret may be exposed: the old one then stops working at once instead of after a grace period.
+The key icon on a row **rotates** the secret Azure DevOps signs its deliveries with. The old secret keeps working for 36 hours, so deliveries already queued still arrive.
 
 ## Access is enforced by the daemon
 
