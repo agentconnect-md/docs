@@ -1,7 +1,7 @@
 ---
 title: "Runtime 认证"
 icon: FingerprintPattern
-description: "为 Kubernetes 中的 Runtime 提供 API 密钥和模型端点，同时用于模型发现和 Agent 会话。"
+description: "为 Kubernetes 中的 AgentConnect Runtime 配置 API 密钥和模型端点，通过共享 Secret 支持模型发现与 Agent 会话，让无人值守的 Runtime 无需交互式登录。"
 ---
 
 Daemon 池会在探测沙箱中启动每个已安装的 Runtime，以读取其模型。该探测没有 Agent 身份，因此无法读取组织或 Agent 的密钥。一个安装实例范围内共用的 Secret 可以同时为探测和 Agent 会话提供 API 密钥。对于无人值守的 Runtime，请使用 API 密钥认证；交互式 OAuth 登录无法在池探测中完成。

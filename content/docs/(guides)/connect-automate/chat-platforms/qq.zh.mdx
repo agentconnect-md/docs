@@ -1,7 +1,7 @@
 ---
-title: "QQ"
+title: "QQ 机器人集成"
 icon: QQ
-description: "在自托管部署上连接官方 QQ 机器人，支持私聊和群组 @ 提及。"
+description: "在自托管 AgentConnect 中连接官方 QQ 机器人，配置 AppID、AppSecret 和 IP 白名单，在沙箱中测试私聊与群组 @ 提及，并完成发布前的准备。"
 ---
 
 QQ **仅在自托管部署上**可用，AgentConnect Cloud 不提供。Helm chart 默认开启它（`features.qq`）；在 Docker Compose 上，把 `qq` 加入 [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) 中的 `FEATURE_FLAGS`，然后重新创建 `web`。在该开关打开之前，QQ 不会出现在集成选择器中。
