@@ -1,7 +1,7 @@
 ---
-title: "QQ"
+title: "QQ bot integration"
 icon: QQ
-description: "Connect an official QQ bot for private chats and group @mentions on a self-hosted deployment."
+description: "Connect an official QQ bot to self-hosted AgentConnect. Configure bot credentials and IP access, test private chats and group mentions, and prepare for publishing."
 ---
 
 QQ is available on **self-hosted deployments only**. AgentConnect Cloud does not offer it. The Helm chart turns it on by default (`features.qq`); on Docker Compose, add `qq` to `FEATURE_FLAGS` in [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) and recreate `web`. Until the flag is on, QQ does not appear in the integration picker.

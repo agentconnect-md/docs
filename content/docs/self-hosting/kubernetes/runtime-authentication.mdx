@@ -1,7 +1,7 @@
 ---
 title: "Runtime authentication"
 icon: FingerprintPattern
-description: "Give Kubernetes runtimes API keys and model endpoints for both discovery and agent sessions."
+description: "Configure API keys and model endpoints for AgentConnect runtimes on Kubernetes. Use a shared Secret for runtime discovery and agent sessions without interactive login."
 ---
 
 The daemon pool starts each installed runtime in a probe sandbox to read its models. That probe has no agent identity, so it cannot read organization or agent secrets. An install-wide Secret can supply API keys to both the probe and agent sessions. Use API-key authentication for unattended runtimes; an interactive OAuth login cannot complete in the pool probe.
