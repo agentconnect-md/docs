@@ -8,8 +8,7 @@ import imgGithubIntegration from '@/public/images/github-integration.png'
 import imgGithubInstallationPicker from '@/public/images/github-installation-picker.png'
 import imgGithubTrustedUsers from '@/public/images/github-trusted-users.png'
 import imgGithubWatchesCard from '@/public/images/github-watches-card.png'
-import imgGithubAppDialog from '@/public/images/github-app-dialog.png'
-import imgGithubAppsCard from '@/public/images/github-apps-card.png'
+import imgGithubAppPicker from '@/public/images/github-app-picker.jpg'
 
 GitHub 集成让 Agent **监视一个仓库**，或某个安装实例下的全部仓库：新的 Issue、Pull Request 和评论会成为会话，Agent 则可以用 PR / Issue 评论的形式回写。它依托部署的 [AgentConnect GitHub App](/build-your-team/agents/workspaces-and-repos)。AgentConnect Cloud 不需要为每个仓库配置 Webhook；AgentConnect OSS 的运维人员则在 Relay 上配置一个部署级别的 GitHub App Webhook。
 
@@ -128,11 +127,15 @@ AgentConnect 从不创建、重命名或删除这些团队；它们由你自己�
 每个 Agent 一开始都使用部署的**内置** GitHub App。使用它的所有 Agent 在 GitHub 上是同一个身份，而 GitHub 不接受 Pull Request 作者对自己的评审，所以评审 Agent 无法批准另一个 Agent 开的 Pull Request，也无法对它请求修改。给评审 Agent 一个单独的 App，它就成了另一个身份。
 
 1. 在 Agent 的 GitHub 卡片上选择 **GitHub App**。在**编辑工作区**中，同一个对话框位于 **GitHub App 已连接**旁的 **⋯ → 使用独立的 GitHub App…**。
-2. 选一个组织里空闲的 App，或选择**新建 GitHub App…** 并点击**在 GitHub 上继续**。AgentConnect 会填好 App 的权限、事件和 Webhook；你在 GitHub 上确认并安装它。
-3. 回到 AgentConnect 后，对话框会检查该 App 是否覆盖了 Agent 用到的一切：工作区仓库、已授权的仓库和安装实例，以及它监视的仓库。缺少的项会列出来并附带**去 GitHub 添加**。在 GitHub 上补上后，点击**重新检查**。
-4. 全部覆盖后，选择**切换**。
+2. 选一个 AgentConnect 组织里空闲的 App，或选择**新建 GitHub App…**。列表中的 App 图标可以帮助区分不同身份。
+3. 新建时选择 **App 归属**：**我的 GitHub 个人账号**，或点击**从我的 GitHub 组织中选择**，授权现有的内置 GitHub App，加载它可见的账号。请选择你有权管理 GitHub App 的组织。也可以选择**手动输入其他组织…**，填写 GitHub 组织名。
+4. 点击**在 GitHub 上继续**。AgentConnect 会填好 App 的权限、事件和 Webhook；GitHub 会检查你能否在所选账号下创建 App。确认创建后，把它安装到需要的账号并选择仓库。
+5. 回到 AgentConnect 后，对话框会检查该 App 是否覆盖了 Agent 用到的一切：工作区仓库、已授权的仓库和安装实例，以及它监视的仓库。缺少的项会列出来并附带**去 GitHub 添加**。在 GitHub 上补上后，点击**重新检查**。
+6. 全部覆盖后，选择**切换**。
 
-<Image src={imgGithubAppDialog} alt="GitHub App 对话框：acme-reviewer 覆盖了 Agent 的仓库、安装实例和评审监视项" width={520} />
+<Image src={imgGithubAppPicker} alt="GitHub App 选择器：内置 App 和空闲评审 App 均显示图标" width={552} />
+
+截图使用示例账号和 App 图标。**App 归属**是拥有 App 注册信息的 GitHub 账号，与安装 App 的账号相互独立。新 App 默认是 **public**，便于后续安装到其他账号。公开 App 不会把仓库变成公开仓库，也不会自动授予仓库访问权限；每次安装都需要单独授权。参见 [GitHub App 可见性](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private)。
 
 此后 Agent 的一切都通过该 App 进行——事件、仓库凭证、评审和 Check——它的 GitHub 卡片会显示**通过 `<app-slug>`**。`@<app-slug>` 只会叫到这个 Agent。组织中任一 App 开的 Pull Request 仍算作内部 Pull Request，所以使用不同 App 的 Agent 会自动评审彼此的 Pull Request。
 
@@ -140,7 +143,21 @@ AgentConnect 从不创建、重命名或删除这些团队；它们由你自己�
 
 组织的 App 列在**集成 → 代码托管平台 → GitHub** 中内置 App 的下方，并标出使用它的 Agent。展开一个 App 可以看到它安装在哪些账号上。所有者可以在那里把它从某个账号卸载，或删除空闲的 App；删除后的 App 仍留在 GitHub 上，直到你在 GitHub 上也删除它。
 
-<Image src={imgGithubAppsCard} alt="集成页的 GitHub 卡片：内置 App 和 acme-reviewer，后者展开显示它在 acme 上的安装" width={640} />
+### 找不到自己的组织 [#if-your-organization-is-missing]
+
+账号列表只包含**现有内置 GitHub App** 可见的组织，不一定包含你加入的所有组织。仅在个人资料中关联 GitHub 不会授予这项访问权限，也不需要另建 OAuth App。
+
+- 组织未列出时，可以选择**手动输入其他组织…**。GitHub 仍会检查你的创建权限；手动输入不会授予权限。
+- 要让已安装的组织出现在列表中，内置 App 需要 **Organization permissions → Members: Read-only**，且组织所有者需要为现有安装批准该权限。自托管运维人员可参见[更新现有 GitHub App](/self-hosting/provider-apps#update-an-existing-github-app)。
+- 批准后点击**刷新 GitHub 账号列表**。如果授权窗口被拦截，请允许控制台打开弹窗后重试。
+
+暂不批准 Members 更新时，安装保留原有权限。现有仓库访问、PR/Issue 操作和 Webhook 投递仍在原权限范围内工作，但组织列表可能不完整。
+
+### 把同一个 App 安装到其他账号 [#install-the-same-app-on-another-account]
+
+打开该 App 在 GitHub 上的公开页面，选择 **Install**；也可以访问 `https://github.com/apps/APP-SLUG/installations/new`，把 `APP-SLUG` 替换为自己的 App slug。选择新增的账号和仓库，并完成所需的组织所有者批准。覆盖检查中的**去 GitHub 添加**也会打开这一安装流程。
+
+已有安装的设置页只管理该安装的仓库访问范围，不能在那里增加另一个组织。如果较早创建的 App 是 private，App 所有者需要先[将可见性改为 public](https://docs.github.com/en/apps/maintaining-github-apps/modifying-a-github-app-registration)，其他账号才能安装。完成 App 切换前，回到 AgentConnect 点击**重新检查**。
 
 ## 管理监视项 [#manage-watches]
 

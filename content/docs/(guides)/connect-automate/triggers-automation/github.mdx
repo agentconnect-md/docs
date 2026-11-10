@@ -8,8 +8,7 @@ import imgGithubIntegration from '@/public/images/github-integration.png'
 import imgGithubInstallationPicker from '@/public/images/github-installation-picker.png'
 import imgGithubTrustedUsers from '@/public/images/github-trusted-users.png'
 import imgGithubWatchesCard from '@/public/images/github-watches-card.png'
-import imgGithubAppDialog from '@/public/images/github-app-dialog.png'
-import imgGithubAppsCard from '@/public/images/github-apps-card.png'
+import imgGithubAppPicker from '@/public/images/github-app-picker.jpg'
 
 A GitHub integration makes an agent **watch a repository**, or every repository of an installation: new issues, pull requests and comments become sessions, and the agent can write back as PR/issue comments. It rides the deployment's [AgentConnect GitHub app](/build-your-team/agents/workspaces-and-repos). AgentConnect Cloud does not require a webhook per repository; an AgentConnect OSS operator configures one deployment-level GitHub App webhook on the Relay.
 
@@ -128,11 +127,15 @@ AgentConnect never creates, renames or deletes these teams; they are yours to ma
 Every agent starts on the deployment's **built-in** GitHub App. All agents on it are one actor on GitHub, and GitHub refuses a review from a pull request's own author, so a reviewer cannot approve or request changes on a pull request another agent opened. Give the reviewer its own App to make it a separate actor.
 
 1. On the agent's GitHub card, choose **GitHub App**. In **Edit workspace**, the same dialog is under **⋯ → Use its own GitHub App…** beside **GitHub App connected**.
-2. Pick a free App of the organization, or **Create a new GitHub App…** and **Continue on GitHub**. AgentConnect fills in the App's permissions, events and webhook; you confirm it on GitHub and install it.
-3. Back in AgentConnect, the dialog checks that the App reaches everything the agent works on: its workspace repository, authorized repositories and installations, and the repositories it watches. Anything missing is listed with **Add on GitHub**. Add it there, then **Check again**.
-4. Choose **Switch** once everything is covered.
+2. Pick a free App of the AgentConnect organization, or choose **Create a new GitHub App…**. App logos help distinguish the available identities.
+3. For a new App, choose its **App owner**: **My personal GitHub account**, or **Choose from my GitHub organizations** to authorize the existing built-in GitHub App and load the accounts it can see. Pick an organization where you can manage GitHub Apps. You can also choose **Enter an organization manually…** and enter its GitHub organization name.
+4. Choose **Continue on GitHub**. AgentConnect fills in the App's permissions, events and webhook; GitHub checks your permission to create it under the selected owner. Confirm the App and install it on the account and repositories it needs.
+5. Back in AgentConnect, the dialog checks that the App reaches everything the agent works on: its workspace repository, authorized repositories and installations, and the repositories it watches. Anything missing is listed with **Add on GitHub**. Add it there, then **Check again**.
+6. Choose **Switch** once everything is covered.
 
-<Image src={imgGithubAppDialog} alt="The GitHub App dialog: acme-reviewer covers the agent's repository, installation and review watch" width={520} />
+<Image src={imgGithubAppPicker} alt="GitHub App picker with logos for the built-in App and a free reviewer App" width={552} />
+
+The screenshot uses example accounts and App logos. **App owner** is the GitHub account that owns the registration; it is separate from the accounts where you install the App. New Apps are **public** by default so you can install them on other accounts later. Public App visibility does not make a repository public or grant repository access: each installation grants access separately. See [GitHub App visibility](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private).
 
 From then on the agent works entirely through that App — its events, repository credentials, reviews and Checks — and its GitHub card reads **via `<app-slug>`**. `@<app-slug>` reaches only this agent. A pull request opened by any App of the organization still counts as internal, so agents on different Apps review each other's pull requests automatically.
 
@@ -140,7 +143,21 @@ An App serves one agent at a time. Moving the agent back to the built-in App, or
 
 The organization's Apps are listed under **Integrations → Code hosts → GitHub**, below the built-in App, each with the agent that uses it. Expand an App to see the accounts it is installed on. An owner can uninstall it from one account there, or delete a free App; a deleted App stays on GitHub until you delete it there too.
 
-<Image src={imgGithubAppsCard} alt="The GitHub card on Integrations: the built-in App and acme-reviewer, expanded to its installation on acme" width={640} />
+### If your organization is missing
+
+The account list is limited to organizations visible to the **existing built-in GitHub App**; it is not a list of every organization you belong to. Linking GitHub in your profile alone does not grant this access, and no separate OAuth App is needed.
+
+- Use **Enter an organization manually…** when the organization is absent. GitHub still checks your creation permission; manual entry does not grant it.
+- To make an installed organization discoverable, the built-in App needs **Organization permissions → Members: Read-only**, and an organization owner must approve that permission for its existing installation. Self-hosted operators can follow [Update an existing GitHub App](/self-hosting/provider-apps#update-an-existing-github-app).
+- After approval, choose **Refresh GitHub accounts**. If the authorization window is blocked, allow popups for the console and try again.
+
+Leaving the Members update unapproved keeps the installation's previous permissions. Existing repository access, PR/Issue operations and webhook delivery continue within those permissions; organization discovery can remain incomplete.
+
+### Install the same App on another account
+
+Open the App's public page on GitHub and choose **Install**, or visit `https://github.com/apps/APP-SLUG/installations/new` with your App's slug. Select the additional account and repositories, and complete any required organization-owner approval. **Add on GitHub** in the coverage check opens this same installation flow.
+
+The settings page for an existing installation manages only that installation's repository access; it does not add another organization. If an older App is private, its owner must first [change its visibility](https://docs.github.com/en/apps/maintaining-github-apps/modifying-a-github-app-registration) to public before other accounts can install it. Return to AgentConnect and choose **Check again** when completing an App switch.
 
 ## Manage watches
 

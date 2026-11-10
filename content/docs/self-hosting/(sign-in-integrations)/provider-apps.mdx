@@ -20,6 +20,7 @@ The generated App requests:
 
 | Scope                                                           | Access         |
 | --------------------------------------------------------------- | -------------- |
+| Organization members                                           | Read           |
 | Metadata and email addresses                                    | Read           |
 | Contents, issues, pull requests, Actions, Checks, and workflows | Read and write |
 
@@ -28,6 +29,17 @@ AgentConnect narrows each installation token to one authorized repository and th
 GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Setup can create the App for sign-in and repository installation but leaves webhook delivery disabled until you provide HTTPS ingress.
 
 See [GitHub](/connect-automate/triggers-automation/github) for triggers, reviews, and repository behavior.
+
+### Update an existing GitHub App
+
+Organization discovery reuses the deployment's GitHub App; it does not require a separate OAuth App. If Setup's **Check match** reports missing Members permission:
+
+1. On GitHub, open the existing App's **App settings → Permissions & events**.
+2. Set **Organization permissions → Members** to **Read-only** and save.
+3. Ask each GitHub organization owner to [approve the updated permissions](https://docs.github.com/en/apps/using-github-apps/approving-updated-permissions-for-a-github-app) on its existing App installation. Editing the registration alone does not update existing installations.
+4. Run **Check match** again, then choose **Refresh GitHub accounts** in the custom-App creation dialog.
+
+Only organizations accessible to this App can appear. Users can still enter a missing organization manually; GitHub checks their permission when they create the App. Installations that have not approved Members continue with their previous permissions, so existing repository, PR/Issue and webhook functionality is not disabled solely by leaving this update unapproved.
 
 ## GitLab
 
