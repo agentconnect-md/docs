@@ -8,19 +8,22 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 
 **集成**把一个 Agent 与一种触达它的方式绑定在一起。支持的类型如下：
 
-| 平台                                                          | Agent 响应的内容                                | 你需要提供                                        |
-| ------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------- |
-| [Slack](/connect-automate/chat-platforms/slack)               | 频道、线程和私信                                | Cloud 上的“添加到 Slack”，或自定义 Slack 应用     |
-| [Telegram](/connect-automate/chat-platforms/telegram)         | 私信和群组消息                                  | 来自 @BotFather 的机器人令牌                      |
-| [Discord](/connect-automate/chat-platforms/discord)           | 频道、线程和私信                                | 机器人令牌；AgentConnect 会生成邀请链接           |
-| [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)   | 群组 @ 提及和一对一聊天                         | 一键应用配置，或 App ID + 密钥                    |
-| [Google Chat](/connect-automate/chat-platforms/googlechat)    | 空间中的 @ 提及和私信                           | Chat 应用的服务账号密钥，或部署自带的应用         |
-| [GitHub](/connect-automate/triggers-automation/github)        | 所监视仓库中的 Issue、PR 和评论                 | AgentConnect 的 GitHub App                        |
-| [GitLab](/connect-automate/triggers-automation/gitlab)        | 所监视项目中的 Issue、Merge Request 和评论      | 一个 OAuth 连接；每个 Agent 拥有自己的机器人      |
-| [Azure DevOps](/connect-automate/triggers-automation/azure-devops) | 所监视仓库中的 PR 和评论 | 每个组织一个 Microsoft 应用 |
-| [Gitea](/connect-automate/triggers-automation/gitea)          | 所监视仓库中的 Issue、PR、评论和评审            | 每个组织一个机器人用户的令牌                      |
-| [Linear](/connect-automate/triggers-automation/linear)        | 委派给该应用的 Issue，或按名称的提及            | 在 Linear 弹窗中批准工作区                        |
-| [Webhook](/connect-automate/triggers-automation/webhooks)     | 任何能 POST JSON 的东西                         | 无需提供——我们为你生成端点                        |
+| 平台 | Agent 响应的内容 | 接入方式 |
+| --- | --- | --- |
+| [Slack](/connect-automate/chat-platforms/slack) | 频道、话题和私信 | 添加到 Slack，或连接自己的 Slack App |
+| [Microsoft Teams](/connect-automate/chat-platforms/msteams) | 一对一聊天、群聊和团队频道 | 管理员通过 Microsoft 登录连接，或注册自己的机器人 |
+| [Telegram](/connect-automate/chat-platforms/telegram) | 私信和群组消息 | 来自 @BotFather 的机器人令牌 |
+| [Discord](/connect-automate/chat-platforms/discord) | 频道、话题和私信 | 机器人令牌；AgentConnect 会生成邀请链接 |
+| [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu) | 群组消息和一对一聊天 | 一键应用配置，或 App ID 和密钥 |
+| [Google Chat](/connect-automate/chat-platforms/googlechat) | 空间中的 @ 提及和私信 | 创建 Chat 应用，连接其服务账号的 JSON 密钥 |
+| [钉钉](/connect-automate/chat-platforms/dingtalk) | 私信和群组 @ 提及 | 企业内部应用的 Client ID 和 Client Secret；选择国内版或国际版 |
+| [QQ](/connect-automate/chat-platforms/qq) | 私聊和群组 @ 提及 | 官方机器人的 AppID 和 AppSecret；仅限自托管 |
+| [GitHub](/connect-automate/triggers-automation/github) | Issue、PR、评论、部署和发布事件 | 安装 GitHub App，并授权 Agent 使用仓库 |
+| [GitLab](/connect-automate/triggers-automation/gitlab) | Issue、Merge Request、评论和发布事件 | 通过 OAuth 连接；AgentConnect 为各 Agent 创建服务账号 |
+| [Azure DevOps](/connect-automate/triggers-automation/azure-devops) | Azure Repos 中的 PR 和评论 | 通过 Microsoft 登录连接，或使用自己的应用 |
+| [Gitea / Forgejo](/connect-automate/triggers-automation/gitea) | Issue、PR、评论和评审 | 每个组织连接一个专用机器人用户的令牌 |
+| [Linear](/connect-automate/triggers-automation/linear) | 委派的 Issue 和 @ 提及 | 在 Linear 中授权工作区 |
+| [Webhook](/connect-automate/triggers-automation/webhooks) | 外部系统的 JSON 事件 | 创建 Webhook，将请求发送到生成的端点 |
 
 在 Agent 页面（**集成 → 添加集成**）或 Agent 列表中添加集成。
 
@@ -33,32 +36,44 @@ import imgAddIntegration from '@/public/images/add-integration.png'
 - 删除集成会**释放机器人**而不是销毁它——可以通过**使用已有机器人**选择器把它复用给另一个 Agent。
 - 机器人在**集成 → 消息应用**中按组织统一管理：参见[机器人](/connect-automate/chat-platforms/bots)。
 
-平台卡片会根据 Agent 所在 Daemon 支持的能力启用。在 AgentConnect Cloud 上，Slack 和 Lark / 飞书提供引导式设置，Telegram 和 Discord 从机器人令牌开始，Google Chat 则从你自己的 Chat 应用的服务账号密钥开始。自托管的运维人员可以在各平台的设置中选择直接连接，或由 Relay（中继）承接的回调；Google Chat 只通过回调投递。
+平台卡片会根据 Agent 所在 Daemon 支持的能力和部署设置启用。**QQ 仅限自托管**。**Azure DevOps** 需要 Agent 运行在你自己的 Daemon 上，使用 Host 或 Sandbox（`srt`）执行策略；目前不支持 Cloud 托管会话。具体前提和自托管配置见各平台指南。
 
 ## 绑定频道 [#binding-channels]
 
-没有频道选择器：**把机器人邀请进频道，它就会出现在 AgentConnect 中**。在 Agent 的集成卡片上打开频道设置，先选择**会话模式**。选择**按话题**或**单一会话**时，如果平台支持，再通过**触发条件**选择哪些消息会激活 Agent：
+没有频道选择器：**把机器人邀请进频道，它就会出现在 AgentConnect 中**。在 Agent 的集成卡片上打开频道设置，先选择**会话模式**。
+
+### 会话模式 [#session-mode]
+
+**会话模式**决定 Agent 如何组织这个对话中的工作：
+
+- **自动**——协调会话阅读频道主聊天中的消息，以及没有任务负责的话题消息。它可以把请求交给正在处理同一件事的任务、在消息的话题中开启新任务、直接回答简单问题，或保持安静。@ 提及 Agent 的消息必须被处理；如果协调会话未能处理，就会为它开启任务。之后大家直接在任务的话题中与任务交流。协调会话决定期间，支持消息反应的平台会显示 🤔。
+- **按话题**——每条通过触发条件的主聊天消息开启自己的会话，话题内的回复延续该会话。
+- **单一会话**——对话中通过触发条件的消息，无论在主聊天还是话题中，都进入同一个长会话。发送 `!new` 可开始新会话。
+
+自动模式由协调会话判断哪些消息需要回复，无需再配置下面的触发条件；菜单会隐藏这一组，底部仍可选择**关闭**。自动模式不能与**按决策**或共享机器人的**或按决策选择**同时使用；请先把该行切换为**按话题**。
+
+在任务的话题中，`!new` 会重新开始该任务，`!stop` 会停止它，直到有人在那里再次提及该 Agent。在对话根部，`!new` 会开启新的协调会话，已开启的任务保持不变；`!stop` 会停止协调会话当前的一轮。在[会话](/operate-govern/sessions)中打开协调会话，可在**任务**标签页查看它的任务，以及每个任务为自身进度保留的摘要。
+
+自托管的守护进程默认运行自动模式，除非其 `config.json` 设置了 `"features": { "autoSessionMode": false }`；这样的守护进程会按**按话题**处理自动模式的对话。
+
+### 触发条件：按话题和单一会话 [#respond-to-per-thread-and-single-session]
+
+选择**按话题**或**单一会话**后，再通过**触发条件**选择哪些消息会激活 Agent。可用选项取决于平台：
 
 - **@ 提及**——被提及时回复；未提及的后续消息会在 Agent 已加入的话题（thread）中继续。
 - **所有消息**——对频道里的每条消息都运行该频道的 Agent。
 
 通过频道行上独立的 **+ 决策**控件添加[决策](/build-your-team/decisions#respond-in-a-channel)，让 Agent 只在判断结果符合规则时回复。已有的规则显示为**按决策**；点击它的 × 控件移除规则，即可回到普通频道设置。
 
+[Linear](/connect-automate/triggers-automation/linear) 的形态相同，只是名单不同：它的对话是工作区的**团队**，在你连接的那一刻就会列出；团队行只接受 **@ 提及**、**按决策**或**关闭**——每个 Linear 事件本来就是发给该应用的。
+
+### 关闭对话 [#turn-off-a-conversation]
+
 **关闭**单独放在菜单底部，停止对该频道消息的响应，包括提及、已有的话题关联、控制命令或共享机器人回退。收起菜单后，按钮显示**自动**、**按话题 · @ 提及**或其他已选设置；关闭时只显示**关闭**。选择一种会话模式会重新启用已关闭的对话。
 
 关闭会让机器人留在频道中、保留过去的会话，只是屏蔽入站激活。定时任务或另一个 Agent 的主动交接仍然可以在那里发消息。机器人实际的频道或服务器成员身份请在聊天平台上管理。
 
-[Linear](/connect-automate/triggers-automation/linear) 的形态相同，只是名单不同：它的对话是工作区的**团队**，在你连接的那一刻就会列出；团队行只接受 **@ 提及**、**按决策**或**关闭**——每个 Linear 事件本来就是发给该应用的。
-
-### 会话模式 [#session-mode]
-
-**会话模式**决定通过触发条件的消息进入哪个会话：
-
-- **自动**——协调会话阅读频道主聊天中的消息，以及没有任务负责的话题消息。它可以把请求交给正在处理同一件事的任务、在消息的话题中开启新任务、直接回答简单问题，或保持安静。@ 提及 Agent 的消息必须被处理；如果协调会话未能处理，就会为它开启任务。之后大家直接在任务的话题中与任务交流。协调会话决定期间，支持消息反应的平台会显示 🤔。
-- **按话题**——每条通过触发条件的主聊天消息开启自己的会话，话题内的回复延续该会话。
-- **单一会话**——对话中通过触发条件的消息，无论在主聊天还是话题中，都进入同一个长会话。发送 `!new` 可开始新会话。
-
-自动模式由协调会话判断哪些消息需要回复，因此菜单会隐藏**触发条件**，底部仍可选择**关闭**。自动模式不能与**按决策**或共享机器人的**或按决策选择**同时使用；请先把该行切换为**按话题**。
+### 新频道默认 [#new-channel-defaults]
 
 Agent 集成卡片底部的**新频道默认**设置决定新发现的频道和群组对话如何开始：
 
@@ -66,11 +81,7 @@ Agent 集成卡片底部的**新频道默认**设置决定新发现的频道和�
 - **@ 提及 · 按话题**——每个话题使用独立会话，通过提及激活。
 - **关闭**——等待有编辑权限的人启用对话。
 
-修改默认值不会影响已有对话和一对一私信。受限 Agent 的对话，以及平台识别为外部的对话，仍然初始为关闭。助手模式下，支持的对话在自动模式可用时固定使用协调会话，覆盖普通的会话模式选择，但保留关闭状态。
-
-在任务的话题中，`!new` 会重新开始该任务，`!stop` 会停止它，直到有人在那里再次提及该 Agent。在对话根部，`!new` 会开启新的协调会话，已开启的任务保持不变；`!stop` 会停止协调会话当前的一轮。在[会话](/operate-govern/sessions)中打开协调会话，可在**任务**标签页查看它的任务，以及每个任务为自身进度保留的摘要。
-
-自托管的守护进程默认运行自动模式，除非其 `config.json` 设置了 `"features": { "autoSessionMode": false }`；这样的守护进程会按**按话题**处理自动模式的对话。
+修改默认值不会影响已有对话和一对一私信。受限 Agent 的对话，以及平台识别为外部的对话，仍然初始为关闭。助手模式下，支持的对话在自动模式可用时固定使用协调会话，否则固定为单一会话；这会覆盖普通的会话模式选择，但保留关闭状态。
 
 ### 私信 [#direct-messages]
 
