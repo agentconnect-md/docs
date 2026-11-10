@@ -20,6 +20,7 @@ Setup Server 管理着向代码托管平台和聊天平台标识你的部署的�
 
 | 范围                                                     | 访问权限 |
 | -------------------------------------------------------- | -------- |
+| 组织成员（Members）                                     | 读取     |
 | 元数据和邮箱地址                                         | 读取     |
 | 内容、Issue、Pull Request、Actions、Checks 和工作流      | 读写     |
 
@@ -28,6 +29,17 @@ AgentConnect 会把每个安装令牌收窄到一个已授权的仓库和该 Age
 GitHub Webhook 需要一个可访问的 HTTPS Relay。在默认的本地 HTTP 栈上，Setup 可以创建用于登录和仓库安装的 App，但在你提供 HTTPS 入口之前，Webhook 投递会保持禁用。
 
 触发器、评审和仓库行为参见 [GitHub](/connect-automate/triggers-automation/github)。
+
+### 更新现有 GitHub App [#update-an-existing-github-app]
+
+组织下拉框复用部署的 GitHub App，不需要另建 OAuth App。如果 Setup 的**检查匹配**提示缺少 Members 权限：
+
+1. 在 GitHub 打开现有 App 的 **App settings → Permissions & events**。
+2. 将 **Organization permissions → Members** 设置为 **Read-only**，保存。
+3. 请各 GitHub 组织所有者在该 App 的现有安装中[批准更新后的权限](https://docs.github.com/en/apps/using-github-apps/approving-updated-permissions-for-a-github-app)。只修改 App 注册信息不会自动更新现有安装。
+4. 重新运行**检查匹配**，然后在创建自定义 App 的对话框中点击**刷新 GitHub 账号列表**。
+
+这里只能列出该 App 可访问的组织。用户仍可手动输入未列出的组织名，GitHub 会在创建时检查权限。暂不批准 Members 权限的安装继续使用原有权限；原有仓库、PR/Issue 和 Webhook 功能不会仅因未批准这项更新而失效。
 
 ## GitLab [#gitlab]
 
