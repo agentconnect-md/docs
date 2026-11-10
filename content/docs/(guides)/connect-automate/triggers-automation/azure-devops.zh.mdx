@@ -19,8 +19,6 @@ AgentConnect 在 Azure DevOps 中以**每个组织一个身份**行事：AgentCo
 
 你需要一个 **Microsoft 工作或学校账户**：它是该 Azure DevOps 组织的 **Project Collection Administrator**，并且是组织所在 Microsoft Entra 租户的成员或来宾。个人 Microsoft 账户无法连接。
 
-Agent 可以在 **AgentConnect Cloud** 或**[你自己运行的 Daemon](/build-your-team/daemons/install-the-daemon)** 上使用 Azure DevOps，包括 Kubernetes 池、VM 和远程执行器。各执行环境均通过凭证代理落实仓库权限。
-
 ## 连接 Azure DevOps [#connect-azure-devops]
 
 组织在**集成 → 代码托管平台 → Azure DevOps → 使用 Microsoft 连接**中连接一次。
@@ -74,7 +72,7 @@ Agent 可以在 **AgentConnect Cloud** 或**[你自己运行的 Daemon](/build-y
 
 Azure DevOps 无法签发只限一个仓库或只读的令牌，所以**令牌从不进入 Agent 的会话**：Git 和 Azure CLI 通过 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#code-host-credentials)访问 Azure DevOps，代理只为 Agent 自己的仓库出示真实令牌，并拒绝低于写权限的推送和 API 写操作。
 
-装有 `azure-devops` 扩展的 **Azure CLI** 在会话中可以照常使用——`az repos show`、`az repos pr create`、`az repos pr update` 等。CLI 是可选的，AgentConnect 不负责安装：请确保 Agent 的实际执行环境（例如主机或沙箱镜像）中有 CLI 和扩展。支持 Azure Repos 不代表每个 Cloud 镜像或执行器都预装了 CLI。会暴露其他仓库的列表操作，例如 `az repos list`，或不带 `--repository` 列出 Pull Request，会被拒绝。
+装有 `azure-devops` 扩展的 **Azure CLI** 在会话中可以照常使用——`az repos show`、`az repos pr create`、`az repos pr update` 等。如果你自己运行 Daemon，请在 Agent 的执行环境中安装 CLI 和扩展。会暴露其他仓库的列表操作，例如 `az repos list`，或不带 `--repository` 列出 Pull Request，会被拒绝。
 
 Agent 还有三个不需要 CLI 的工具：`azureDevOpsPullRequest`（创建、编辑、完成、放弃、重新激活 Pull Request，以及标签）、`azureDevOpsComment`（评论线程和回复）和 `readAzureDevOpsPullRequest`。它们创建的 Pull Request 会带上 Agent 的署名。
 
