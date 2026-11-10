@@ -37,12 +37,14 @@ Platform tiles are enabled based on what the agent's daemon supports. On AgentCo
 
 ## Binding channels
 
-There's no channel picker: **invite the bot to a channel and it appears in AgentConnect.** Each joined channel then shows up on the agent's Integrations card with a per-channel trigger:
+There's no channel picker: **invite the bot to a channel and it appears in AgentConnect.** On the agent's Integrations card, open a channel's settings to choose its **Session mode** first. With **Per thread** or **Single session**, **Respond to** chooses which messages activate the agent, where the platform offers that choice:
 
-- **@-mention** — the default; unmentioned follow-ups continue in a thread the agent already joined.
-- **Any message** — run the channel's agent for every message.
-- **By decision** — judge each message with a [Decision](/build-your-team/decisions#respond-in-a-channel) and respond only when its answer matches your rules.
-- **Off** — do not respond in that channel, including to mentions, existing thread affinity, control commands, or shared-bot fallback.
+- **@-mentions** — respond when mentioned; unmentioned follow-ups continue in a thread the agent already joined.
+- **All messages** — run the channel's agent for every message.
+
+Use the row's separate **+ Decision** control to judge messages with a [Decision](/build-your-team/decisions#respond-in-a-channel) and respond only when its answer matches your rules. An existing gate is shown as **By decision**; remove it with its × control to return to ordinary channel settings.
+
+**Off** is separate at the bottom of the menu. It stops responses in that channel, including to mentions, existing thread affinity, control commands, or shared-bot fallback. The closed button reads **Auto**, **Per thread · @-mentions**, or the other selected settings; when disabled, it reads **Off**. Picking a session mode turns an Off conversation back on.
 
 Off keeps the bot in the channel, preserves past sessions, and only mutes inbound activation. A schedule or another agent's deliberate handoff can still post there. Manage the bot's actual channel or server membership on the chat platform.
 
@@ -50,13 +52,21 @@ Off keeps the bot in the channel, preserves past sessions, and only mutes inboun
 
 ### Session mode
 
-A channel row also has a **Session mode**, which decides which session a message joins:
+**Session mode** decides which session an admitted message joins:
 
-- **Auto** — a coordinator reads every message in the conversation and decides what to do with it: hand it to a task already working on that topic, open a new task in the message's thread, answer a quick question itself, or let a message that isn't for the agent pass. A message that @-mentions the agent is always answered. People then talk to the task in its thread, without the coordinator. While the coordinator decides, the message shows 🤔.
-- **Per thread** — each new message starts its own session, and replies in its thread continue it.
-- **Single session** — every message in the conversation, at the root or in a thread, joins one long session. Send `!new` to start a fresh one.
+- **Auto** — a coordinator reads root messages and messages in threads not owned by a task. It hands a request to a task already working on that topic, opens a new task in the message's thread, answers a quick question itself, or stays quiet. A message that @-mentions the agent must be handled; if the coordinator fails to handle it, a task opens for it. People then talk directly to the task in its thread. While the coordinator decides, platforms with reactions show 🤔.
+- **Per thread** — each admitted root message starts its own session, and replies in its thread continue it.
+- **Single session** — every admitted message in the conversation, at the root or in a thread, joins one long session. Send `!new` to start a fresh one.
 
-A channel or group conversation the bot joins starts on **Auto** when the agent's daemon supports it, and on **Per thread** otherwise. Conversations you already have keep their mode, and one-to-one DMs don't use Auto. Under Auto the coordinator sees every message, so **Respond to** offers only **Off** beside **Decided by the coordinator**. Auto can't be combined with **By decision** or a shared bot's **Or pick by decision**; switch the row to **Per thread** first.
+Under Auto, **Respond to** is hidden because the coordinator decides what needs a reply; **Off** remains available at the bottom. Auto can't be combined with **By decision** or a shared bot's **Or pick by decision**; switch the row to **Per thread** first.
+
+At the bottom of the agent's Integrations card, **New channels start on** sets the initial behavior for newly discovered channels and group conversations:
+
+- **Auto** — the default where the platform and the agent's daemon support it; otherwise the conversation starts on **Per thread** with **@-mentions**.
+- **@-mentions · Per thread** — start with a separate session per thread, activated by mentions.
+- **Off** — wait for an editor to enable the conversation.
+
+Changing this default leaves existing conversations and one-to-one DMs unchanged. Restricted agents and conversations the platform identifies as external still start Off. In assistant mode, supported places use a fixed coordinator session where Auto is available; this overrides their ordinary session-mode choice while preserving Off.
 
 In a task's thread, `!new` restarts that task and `!stop` stops it until someone mentions the agent there. At the conversation's root, `!new` starts a new coordinator, which keeps the open tasks, and `!stop` stops the coordinator's current turn. Open the coordinator's session in [Sessions](/operate-govern/sessions) to see its tasks, each with the summary it keeps of its own progress, on the **Tasks** tab.
 
@@ -64,7 +74,7 @@ A self-hosted daemon runs Auto unless its `config.json` sets `"features": { "aut
 
 ### Direct messages
 
-A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. One-to-one DMs use **On / Off**. Group conversations use the same trigger choices and session modes as channels. Conversations for a restricted agent start Off until an allowed editor enables them.
+A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. One-to-one DMs use **On / Off** for responding. Slack also offers **Per thread** and **Single session**; in assistant mode, a Slack DM uses its coordinator where Auto is supported. Telegram, Discord and Lark / Feishu already keep one continuous session for a one-to-one DM. Group conversations use the session modes their platform supports, including all three for Slack group DMs. Conversations for a restricted agent start Off until an allowed editor enables them.
 
 ### Shared bots
 
@@ -116,7 +126,7 @@ Use these commands to control the current conversation without asking the model 
 | Change model, effort, or permission | `/models`, `/effort`, `/permission` | The same commands with `!` |
 | Toggle fast mode                    | `/fast on`, `/fast off`             | `!fast on`, `!fast off`    |
 
-**Stop** also mutes the conversation until someone mentions the agent again or uses **resume**. **Cancel** interrupts only the current turn.
+In Per thread and an Auto task's thread, **Stop** also mutes that thread until someone mentions the agent again or uses **resume**. In Single session and at an Auto conversation's root, **Stop** interrupts the current turn without muting the conversation; use **Off** to silence it. **Cancel** interrupts only the current turn.
 
 The runtime-setting commands (`/models`, `/effort`, `/permission`, `/fast`) work only when the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) is **Talk, approve and change settings**. On Slack with **Follow Slack access** on, they work only for the agent's editors, and anyone else is told privately who can change them. On Telegram and Discord these commands appear in the native command menu, where the registered name is `/models` rather than `/model` (both are accepted when typed).
 
