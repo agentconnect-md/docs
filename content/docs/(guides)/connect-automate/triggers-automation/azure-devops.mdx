@@ -17,8 +17,9 @@ AgentConnect acts in Azure DevOps as **one identity per organization**: the Agen
 
 ## Before you start
 
-- A **Microsoft work or school account** that is a **Project Collection Administrator** of the Azure DevOps organization and a member or guest of the organization's Microsoft Entra tenant. Personal Microsoft accounts cannot connect.
-- Agents that use Azure DevOps run on a **[daemon you operate](/build-your-team/daemons/install-the-daemon)**, with the **Host** or **Sandbox** (`srt`) [execution strategy](/operate-govern/sandboxing#pick-an-execution-strategy). AgentConnect Cloud's managed sessions, Kubernetes daemon pools and the VM strategy cannot reach Azure DevOps yet, and a session there is refused with the reason.
+You need a **Microsoft work or school account** that is a **Project Collection Administrator** of the Azure DevOps organization and a member or guest of the organization's Microsoft Entra tenant. Personal Microsoft accounts cannot connect.
+
+Agents can use Azure DevOps in **AgentConnect Cloud** or on a **[daemon you operate](/build-your-team/daemons/install-the-daemon)**, including Kubernetes pools, VMs and remote executors. Repository permissions are enforced through the credential proxy in each execution environment.
 
 ## Connect Azure DevOps
 
@@ -73,7 +74,7 @@ The key icon on a row **rotates** the secret Azure DevOps signs its deliveries w
 
 Azure DevOps cannot issue a token limited to one repository or to read access. So **the token never enters an agent's session**: Git and the Azure CLI reach Azure DevOps through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials), which presents the real token only for the agent's own repositories and refuses a push or an API write below `write`.
 
-The **Azure CLI** with the `azure-devops` extension works unchanged in a session — `az repos show`, `az repos pr create`, `az repos pr update` and the rest. AgentConnect does not install it: install the Azure CLI and the extension on the daemon host. Listings that would reveal other repositories, such as `az repos list` or listing pull requests without `--repository`, are refused.
+The **Azure CLI** with the `azure-devops` extension works unchanged in a session — `az repos show`, `az repos pr create`, `az repos pr update` and the rest. It is optional, and AgentConnect does not install it: make the CLI and extension available in the agent's execution environment, such as its host or sandbox image. Azure Repos support does not mean every Cloud image or executor includes the CLI. Listings that would reveal other repositories, such as `az repos list` or listing pull requests without `--repository`, are refused.
 
 Agents also get three tools that need no CLI: `azureDevOpsPullRequest` (open, edit, complete, abandon, reactivate, and labels), `azureDevOpsComment` (comment threads and replies), and `readAzureDevOpsPullRequest`. A pull request they open carries the agent's footer.
 
