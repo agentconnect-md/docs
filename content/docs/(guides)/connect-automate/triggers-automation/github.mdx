@@ -9,9 +9,6 @@ import imgGithubInstallationPicker from '@/public/images/github-installation-pic
 import imgGithubTrustedUsers from '@/public/images/github-trusted-users.png'
 import imgGithubWatchesCard from '@/public/images/github-watches-card.png'
 import imgGithubAppPicker from '@/public/images/github-app-picker.jpg'
-import imgGithubAppOwner from '@/public/images/github-app-owner.jpg'
-import imgGithubAppDialog from '@/public/images/github-app-coverage.jpg'
-import imgGithubAppsCard from '@/public/images/github-apps-card.png'
 
 A GitHub integration makes an agent **watch a repository**, or every repository of an installation: new issues, pull requests and comments become sessions, and the agent can write back as PR/issue comments. It rides the deployment's [AgentConnect GitHub app](/build-your-team/agents/workspaces-and-repos). AgentConnect Cloud does not require a webhook per repository; an AgentConnect OSS operator configures one deployment-level GitHub App webhook on the Relay.
 
@@ -138,19 +135,13 @@ Every agent starts on the deployment's **built-in** GitHub App. All agents on it
 
 <Image src={imgGithubAppPicker} alt="GitHub App picker with logos for the built-in App and a free reviewer App" width={552} />
 
-<Image src={imgGithubAppOwner} alt="App owner menu with a personal account, a GitHub organization, and manual organization entry" width={544} />
-
-The screenshots use example accounts and App logos. **App owner** is the GitHub account that owns the registration; it is separate from the accounts where you install the App. New Apps are **public** by default so you can install them on other accounts later. Public App visibility does not make a repository public or grant repository access: each installation grants access separately. See [GitHub App visibility](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private).
-
-<Image src={imgGithubAppDialog} alt="The GitHub App dialog: example-reviewer covers the agent's workspace, installation and review watch" width={544} />
+The screenshot uses example accounts and App logos. **App owner** is the GitHub account that owns the registration; it is separate from the accounts where you install the App. New Apps are **public** by default so you can install them on other accounts later. Public App visibility does not make a repository public or grant repository access: each installation grants access separately. See [GitHub App visibility](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private).
 
 From then on the agent works entirely through that App — its events, repository credentials, reviews and Checks — and its GitHub card reads **via `<app-slug>`**. `@<app-slug>` reaches only this agent. A pull request opened by any App of the organization still counts as internal, so agents on different Apps review each other's pull requests automatically.
 
 An App serves one agent at a time. Moving the agent back to the built-in App, or deleting the agent, leaves its App free for another agent.
 
 The organization's Apps are listed under **Integrations → Code hosts → GitHub**, below the built-in App, each with the agent that uses it. Expand an App to see the accounts it is installed on. An owner can uninstall it from one account there, or delete a free App; a deleted App stays on GitHub until you delete it there too.
-
-<Image src={imgGithubAppsCard} alt="The GitHub card on Integrations: the built-in App and acme-reviewer, expanded to its installation on acme" width={640} />
 
 ### If your organization is missing
 

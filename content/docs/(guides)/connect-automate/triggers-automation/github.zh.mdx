@@ -9,9 +9,6 @@ import imgGithubInstallationPicker from '@/public/images/github-installation-pic
 import imgGithubTrustedUsers from '@/public/images/github-trusted-users.png'
 import imgGithubWatchesCard from '@/public/images/github-watches-card.png'
 import imgGithubAppPicker from '@/public/images/github-app-picker.jpg'
-import imgGithubAppOwner from '@/public/images/github-app-owner.jpg'
-import imgGithubAppDialog from '@/public/images/github-app-coverage.jpg'
-import imgGithubAppsCard from '@/public/images/github-apps-card.png'
 
 GitHub 集成让 Agent **监视一个仓库**，或某个安装实例下的全部仓库：新的 Issue、Pull Request 和评论会成为会话，Agent 则可以用 PR / Issue 评论的形式回写。它依托部署的 [AgentConnect GitHub App](/build-your-team/agents/workspaces-and-repos)。AgentConnect Cloud 不需要为每个仓库配置 Webhook；AgentConnect OSS 的运维人员则在 Relay 上配置一个部署级别的 GitHub App Webhook。
 
@@ -138,19 +135,13 @@ AgentConnect 从不创建、重命名或删除这些团队；它们由你自己�
 
 <Image src={imgGithubAppPicker} alt="GitHub App 选择器：内置 App 和空闲评审 App 均显示图标" width={552} />
 
-<Image src={imgGithubAppOwner} alt="App 归属菜单：个人账号、GitHub 组织和手动输入组织选项" width={544} />
-
 截图使用示例账号和 App 图标。**App 归属**是拥有 App 注册信息的 GitHub 账号，与安装 App 的账号相互独立。新 App 默认是 **public**，便于后续安装到其他账号。公开 App 不会把仓库变成公开仓库，也不会自动授予仓库访问权限；每次安装都需要单独授权。参见 [GitHub App 可见性](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private)。
-
-<Image src={imgGithubAppDialog} alt="GitHub App 对话框：example-reviewer 覆盖了 Agent 的工作区、安装实例和评审监视项" width={544} />
 
 此后 Agent 的一切都通过该 App 进行——事件、仓库凭证、评审和 Check——它的 GitHub 卡片会显示**通过 `<app-slug>`**。`@<app-slug>` 只会叫到这个 Agent。组织中任一 App 开的 Pull Request 仍算作内部 Pull Request，所以使用不同 App 的 Agent 会自动评审彼此的 Pull Request。
 
 一个 App 同一时间只服务一个 Agent。把 Agent 改回内置 App，或删除该 Agent，它的 App 就会空闲出来，供其他 Agent 使用。
 
 组织的 App 列在**集成 → 代码托管平台 → GitHub** 中内置 App 的下方，并标出使用它的 Agent。展开一个 App 可以看到它安装在哪些账号上。所有者可以在那里把它从某个账号卸载，或删除空闲的 App；删除后的 App 仍留在 GitHub 上，直到你在 GitHub 上也删除它。
-
-<Image src={imgGithubAppsCard} alt="集成页的 GitHub 卡片：内置 App 和 acme-reviewer，后者展开显示它在 acme 上的安装" width={640} />
 
 ### 找不到自己的组织 [#if-your-organization-is-missing]
 
