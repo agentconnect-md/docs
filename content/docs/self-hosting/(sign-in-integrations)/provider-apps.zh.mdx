@@ -153,6 +153,14 @@ Setup 会像 Agent 向导一样向 Google 验证项目和密钥，并以只写�
 
 Workspace 在 Google Chat 里自行完成连接。连接之前，应用会对消息回复一条只有发送者能看到的 **Configure** 提示，被添加到空间时则发一张 **Connect** 卡片。两者都会进入控制台：组织的所有者或协作者用自己在 Google Chat 中使用的 Google 账号登录，选择组织，然后点击**连接**。一个 Workspace 同一时间只能连接到一个组织。从 **AgentConnect** Agent 上移除 Google Chat 集成即可断开连接。
 
+要启用绑定冲突时的管理员恢复：
+
+- 在 Google 登录 OAuth 客户端所属项目中启用 **Admin SDK API**。
+- 将控制台的 `/googlechat/recover` 地址加入该客户端的授权重定向 URI。Setup 的 **Google** 区域会列出完整地址。
+- 在 Google Auth Platform 中配置 `openid` 和 `https://www.googleapis.com/auth/admin.directory.user.readonly`，完成 Google 对该权限要求的 OAuth 验证或 Workspace 应用审批。
+
+只有当前 Workspace 超级管理员选择恢复时，才会请求这些权限。AgentConnect 读取该管理员的 Directory 记录和客户 ID，然后让其确认目标组织；不会申请离线访问或全域委派。用户操作和人工处理方式见[恢复 Workspace 连接](/connect-automate/chat-platforms/googlechat#recover-a-workspace-connection)。
+
 在 Google Workspace Marketplace 上公开发布之前，只有你自己的 Workspace 能使用这个应用。
 
 ## Microsoft Teams 部署应用 [#microsoft-teams-deployment-app]

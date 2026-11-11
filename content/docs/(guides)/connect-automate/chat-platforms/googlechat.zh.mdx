@@ -57,6 +57,25 @@ AgentConnect 会先向 Google 验证密钥，再保存；每次尝试之后都�
 
 与应用的**私信**只对发送者本人可见。发送者用同一个 Google 账号登录控制台，或在个人资料中关联了它之后，就能在控制台中打开；其他人都不能，组织所有者也不例外。**空间**中的对话对整个组织可见，无论空间里有谁。
 
+## 恢复 Workspace 连接 [#recover-a-workspace-connection]
+
+如果使用部署自带的共享 Chat 应用，一个 Google Workspace 客户只连接一个 AgentConnect 组织。如果应用提示 Workspace 已连接到其他组织，需要先解除原连接。
+
+如果你能访问原来的 AgentConnect 组织，请让内置 **AgentConnect** Agent 的编辑者在该 Agent 的**集成**页删除 Google Chat 集成。这会释放 Workspace 绑定。然后在 Google Chat 中给应用发送一条新消息，通过它提供的连接链接选择目标组织。
+
+如果无法访问原组织，**当前的 Google Workspace 超级管理员**可以恢复连接：
+
+1. 在与共享应用的私聊中发送 `/help`，打开 **Manage Workspace connection**。
+2. 用同一个 Google 账号登录，选择目标 AgentConnect 组织，点击**连接**。你需要是该组织的所有者或协作者。
+3. 页面提示 Workspace 已连接到其他组织时，点击**验证 Workspace 管理员**，完成 Google 的只读管理员验证。
+4. 确认目标组织，点击**恢复连接**。仅完成验证不会改变绑定，确认前可以取消。
+
+原连接将停止工作。历史会话和 Agent 保留在原组织，连接设置不会转移；请在目标组织中重新配置新连接。即使最初安装应用的管理员已经离职，也不需要其参与。首次连接不需要这次额外验证。
+
+如果验证不可用，或你是委派管理员而非超级管理员，请联系 [contact@agentconnect.md](mailto:contact@agentconnect.md)，提供 Workspace 域名、应用名称和目标组织。自托管用户请联系部署运维者，由其[配置管理员恢复](/self-hosting/provider-apps#google-chat-deployment-app)。
+
+目前，在 Google Workspace 中卸载或重新安装应用都不会释放它在 AgentConnect 中的绑定。从某个空间或私聊中移除应用，也不会解除 Workspace 绑定。这些步骤适用于部署自带的共享应用；你自行注册的应用按下方说明删除集成即可。
+
 ## 说明 [#notes]
 
 - 你自己的 Chat 应用绑定一个 Agent，一个 Google Cloud 项目只容纳一个 Chat 应用。删除集成会释放该应用以供复用（下次选择**使用已有机器人**）。
