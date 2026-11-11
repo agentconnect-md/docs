@@ -1,0 +1,138 @@
+---
+title: "添加电脑"
+icon: Download
+description: "用一条命令把 Linux、macOS 或 Windows 桌面，或者桌面容器注册为电脑。检查健康状况、管理桌面守护进程、共享，以及吊销或删除。"
+---
+
+添加电脑会在一台机器上安装**桌面守护进程**，并把它注册到你的组织。你将成为它的所有者。所有者和协作者可以添加电脑，查看者不能。
+
+## 开始之前 [#before-you-start]
+
+- **已登录的桌面。**守护进程运行在图形会话内，所以请以你自己的身份登录这台机器的桌面。只有 SSH 会话的机器无法被截屏。
+- 那台机器上装有 **Node.js 24.12 或更高版本**。
+- **以你自己的身份运行**，不要用 root 或管理员。守护进程以已登录的人的身份操作。
+
+| 平台                    | 需要做什么                                                                 |
+| ----------------------- | -------------------------------------------------------------------------- |
+| Linux，X11              | 无需任何批准                                                               |
+| Linux，GNOME（Wayland） | 批准一次远程交互和屏幕共享，然后注销并重新登录一次                         |
+| macOS                   | 为 AgentConnect Computer 应用允许**辅助功能**和**屏幕录制**                |
+| Windows 10 和 11        | 一次管理员批准，用于安装后台服务                                           |
+| Docker                  | 一台 `amd64` 或 `arm64` 的 Docker 服务器；不需要桌面                       |
+
+## 从控制台添加 [#add-it-from-the-console]
+
+1. 打开**基础设施**，找到**电脑**分区，选择**添加电脑**。
+2. 可以填写**名称**。不填时电脑使用自己的主机名。
+3. 选择谁能看到它。除非你共享，否则只有你能看到，见[可见范围](#visibility)。
+4. 复制命令，在那台电脑的桌面会话里打开终端运行。
+
+```bash
+npx -y @agentconnect.md/cli@latest computer install --register "<token>" --cp-url "<exchange URL>"
+```
+
+这条命令在 Linux、macOS 和 Windows 上相同。它只显示一次、只能使用一次，并在一小时后过期；**创建新命令**可以再生成一条。
+
+对话框会跟随注册进度：先是**正在等待电脑注册**，然后是**已注册，正在等待连接**，最后是**电脑已连接**。选择**打开电脑**进入它的页面。
+
+这条命令会做这些事：
+
+1. 从 npm 下载桌面守护进程并校验。
+2. 下载固定版本的屏幕驱动和 ffmpeg，并核对校验和。
+3. 请求操作系统要求的各项批准。
+4. 安装后台服务，在你登录桌面时启动。
+5. 把电脑注册到你的组织，并运行健康检查。
+
+## 平台说明 [#platform-notes]
+
+### Linux [#linux]
+
+在桌面会话内的终端里运行命令。通过 SSH 运行时，它会安装服务，服务在下次登录桌面时启动。
+
+- **X11** 无需批准。
+- **GNOME（Wayland）**在安装过程中会询问两次：打开 **Allow Remote Interaction** 并保留 **Remember This Selection**，然后批准屏幕共享。安装还会装一个 GNOME Shell 扩展，所以需要注销并重新登录一次。Wayland 会话上无法输入需要输入法的文字，例如中文。
+- **每个 Agent 一个桌面。**默认情况下，每个 Agent 在自己的虚拟桌面上工作，而不是在你的屏幕上。这需要 Xvfb 和 Xfce；缺少时安装程序会提示安装。见[轮流使用](/build-your-team/computers/give-agents-a-computer#taking-turns)。
+
+X11 上有托盘图标显示状态：就绪时为绿色，Agent 正在控制时为琥珀色，已暂停时为红色，连接不上控制平面时为灰色。
+
+### macOS [#macos]
+
+在 Mac 上的终端里运行命令，或者在有人登录其桌面时通过 SSH 运行。它会把 **AgentConnect Computer** 安装到 `~/Applications`，macOS 把权限授予这个应用：
+
+- **辅助功能**，macOS 27 中名为 **Device Control and Data Access**。只出现在列表里还不够：开关必须打开，否则点击和按键会被静默丢弃。
+- **屏幕录制**。
+
+安装程序会打开对应的系统设置面板并等待。菜单栏图标显示谁在控制，以及是否缺少某项权限或与控制平面的连接。
+
+### Windows [#windows]
+
+在桌面上的普通（非管理员）PowerShell 里运行命令。安装程序会请求一次管理员批准，然后安装一个服务，在当前登录用户的会话中运行守护进程。Agent 启动的应用以你的身份运行。
+
+任务栏图标（固定之前位于溢出区）显示谁在控制。它的 **Administrator Prompts** 菜单决定 Agent 控制期间弹出的 UAC 提示由谁回答；这与电脑[使用策略](/build-your-team/computers/give-agents-a-computer#usage-policy)里的是同一个设置。
+
+### Docker [#docker]
+
+在 **Docker** 标签页上，**添加电脑**显示的是一条 `docker run` 命令。它在容器里启动一个带 Chromium 和 LibreOffice 的 Linux 桌面，与服务器隔离：
+
+```bash
+docker run -d --name agentconnect-computer --hostname agentconnect-computer --restart unless-stopped \
+  --shm-size=1g -v agentconnect-computer:/home/computer -e LISTEN_HOST=127.0.0.1 \
+  -e AGENTCONNECT_CP_URL="<exchange URL>" \
+  -e AGENTCONNECT_REGISTER_TOKEN="<token>" ghcr.io/agentconnect-md/computer:<version>
+```
+
+卷里保存着电脑的密钥、浏览器配置和文件，所以保留这个卷，同一条命令就可以再次运行。Docker Compose、观看视频直连和升级见[自托管：电脑](/self-hosting/computers#run-a-desktop-container)。
+
+## 检查健康状况 [#check-its-health]
+
+电脑页面默认打开**概览**，其中列出守护进程的各项检查：失败的排在前面并附带修复方法，通过的折叠在一个计数后面。在机器上可以运行同样的检查：
+
+```bash
+npx -y @agentconnect.md/cli computer doctor
+```
+
+| 状态               | 含义                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| **在线**           | 已连接，可供 Agent 使用                                      |
+| **Agent 正在操作** | 有 Agent 正在控制                                            |
+| **有人正在操作**   | 有人正在使用它，或在查看器里接管了控制；Agent 的输入已暂停   |
+| **已暂停**         | 已从控制台或在机器上停止，直到恢复                           |
+| **已锁屏**         | 屏幕已锁定；锁定的屏幕无法截屏或操作                         |
+| **离线**           | 守护进程未连接，例如已注销、休眠或关机                       |
+| **休眠中**         | 云电脑正在休眠，下次使用时唤醒                               |
+| **已吊销**         | 它的密钥已被吊销；重新注册即可恢复                           |
+
+## 在机器上管理 [#manage-it-on-the-machine]
+
+```bash
+npx -y @agentconnect.md/cli computer status     # version, service, and whether the daemon answers
+npx -y @agentconnect.md/cli computer upgrade    # install the latest release, restart, roll back if unhealthy
+npx -y @agentconnect.md/cli computer restart    # also: stop, start
+npx -y @agentconnect.md/cli computer uninstall  # remove the service and the installed versions
+```
+
+升级会保留注册：配置和电脑的密钥留在守护进程的数据目录里，在 Linux 和 macOS 上是 `~/.agentconnect/computer`。`uninstall --purge` 会把它们一并删除。
+
+## 可见范围 [#visibility]
+
+电脑的可见范围决定哪些成员能看到它，而能看到它的成员可以把它授予自己的 Agent。你添加的电脑一开始只有你能看到。要共享它，打开这台电脑，在**详情**里找到**可见范围**，选择**修改可见范围**。
+
+共享你自己的桌面，意味着其他成员可以让他们的 Agent 使用它。**所有人**和**指定成员**的含义见[团队可见范围](/operate-govern/permissions-overview/team-visibility)。
+
+## 吊销或删除 [#revoke-or-delete]
+
+两者都在电脑页面的操作菜单里。
+
+- **吊销**会立即断开电脑并吊销其密钥。Agent 立刻失去访问权限。桌面守护进程仍然安装着，但会拒绝输入、截图和观看，直到你用一条新命令重新注册该桌面。
+- **删除**会移除电脑及其密钥。它的活动记录和已保存的截图不再显示。此操作无法撤销。
+
+成员离开组织时，他们拥有的电脑会被吊销。要从机器上移除守护进程，请在那台机器上运行 `computer uninstall`。
+
+## 故障排查 [#troubleshooting]
+
+- **对话框一直在等待**——命令还没有在电脑上运行完，或者已经过期。检查终端，或选择**创建新命令**。
+- **已注册但始终不在线**——机器连不上部署。守护进程需要能通过出站 HTTPS 和 WebSocket 访问控制平面和 Relay。
+- **重启后显示离线**——没有人登录桌面。守护进程随图形会话启动，而不是随机器启动。
+- **在 macOS 上点击没有反应**——AgentConnect Computer 的辅助功能开关是关闭的。打开它，然后运行 `computer doctor`。
+- **中文等需要输入法的文字丢失**——GNOME（Wayland）会话只能输入键码。请改为登录 X11 会话。
+- **某项检查失败**——**概览**页在每项失败的检查旁边显示修复方法。

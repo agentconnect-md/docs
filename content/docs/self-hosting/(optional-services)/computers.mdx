@@ -1,0 +1,192 @@
+---
+title: "Computers"
+icon: Monitor
+description: "Turn on Computers in a self-hosted AgentConnect deployment, run Linux desktop containers with Docker Compose, configure STUN and TURN for viewer video, store screenshots, and run cloud computers on Kubernetes."
+---
+
+[Computers](/build-your-team/computers) let agents see and operate a graphical desktop. The Control Plane and the relay serve them in every deployment; this page covers what an operator turns on around that.
+
+| Piece                                   | Needed for                                                    | Default                    |
+| --------------------------------------- | ------------------------------------------------------------- | -------------------------- |
+| [Console feature](#turn-on-the-console) | Showing Computers in the console at all                       | Off                        |
+| [Desktop container](#run-a-desktop-container) | A Linux desktop on a server instead of a person's machine | Not running                |
+| [STUN and TURN](#viewer-video)          | Live video when browser and desktop are on different networks | Off; the viewer polls screenshots |
+| [Screenshot storage](#store-screenshots) | Keeping the screenshots agents take, for the session timeline | Off                        |
+| [Computer pool](#cloud-computers-on-kubernetes) | Cloud computers the deployment creates on demand       | Off                        |
+
+## Turn on the console
+
+The console hides everything about Computers until its `computer-use` feature is on: the **Computers** section of **Infra**, a computer's page, the **Computers** card on an agent's Tools tab, and computer usage in Analytics.
+
+**Helm:**
+
+```yaml
+features:
+  computerUse: true
+```
+
+**Docker Compose:** add `computer-use` to `FEATURE_FLAGS` in [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment), then recreate `web`:
+
+```dotenv
+FEATURE_FLAGS=computer-use
+```
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate web
+```
+
+`FEATURE_FLAGS` is a comma-separated list, so keep the entries it already has.
+
+## What a desktop must reach
+
+A desktop only dials out. Whether it is a person's machine or a container, it needs:
+
+| Connection                                             | Purpose                                                              |
+| ------------------------------------------------------ | -------------------------------------------------------------------- |
+| HTTPS and WSS to the Control Plane's public URL        | Registration, then status, policy and control turns                  |
+| WSS to each relay's daemon address                     | Agents' tool calls, and the viewer's signaling and screenshots       |
+| HTTPS to `github.com`, on the first start              | The pinned, checksummed ffmpeg build the viewer's video needs        |
+| UDP or TCP to the TURN server, when you run one        | Viewer video when the browser cannot reach the desktop directly      |
+
+These are the addresses a daemon uses: `AGENTCONNECT_PUBLIC_CP_URL` and `AGENTCONNECT_RELAY_DAEMON_URL` in the Compose stack. A stack that publishes them as `localhost` is reachable only from its own host, so publish it under an address other machines reach, as in [Network and public URLs](/self-hosting/docker-compose/configuration#network-and-public-urls), before adding a desktop elsewhere.
+
+## Run a desktop container
+
+The `computer` image is a Linux desktop with Chromium, LibreOffice and common language toolchains, running the same desktop daemon as a person's machine. It needs Docker on `amd64` or `arm64`, about 2 GB of disk, and 1 to 3 GB of memory.
+
+The quickest start is the `docker run` command on the **Docker** tab of **Add computer**; see [Add a computer](/build-your-team/computers/add-a-computer#docker). Docker Compose keeps the settings in a file and makes upgrades one command:
+
+```bash
+mkdir agentconnect-computer && cd agentconnect-computer
+base=https://raw.githubusercontent.com/agentconnect-md/agentconnect/main/packages/computer/docker
+curl -fsSLO "$base/compose.yaml"
+curl -fsSL "$base/compose.env.example" -o .env
+```
+
+Create a token with **Add computer** in the console, then set the two required values in `.env`:
+
+```dotenv
+AGENTCONNECT_CP_URL=https://cp.example.com
+AGENTCONNECT_REGISTER_TOKEN=<one-time token>
+```
+
+```bash
+docker compose up -d
+docker compose ps        # STATUS turns (healthy) once the daemon passes its own checks
+```
+
+| Setting                            | Meaning                                                                               |
+| ---------------------------------- | ------------------------------------------------------------------------------------- |
+| `AGENTCONNECT_CP_URL`              | The Control Plane, as the console printed it                                          |
+| `AGENTCONNECT_REGISTER_TOKEN`      | The one-time token; spent on the first start                                          |
+| `AGENTCONNECT_REGISTER_TOKEN_FILE` | A file holding the token instead, such as a Docker secret                             |
+| `AGENTCONNECT_COMPUTER_NAME`       | The name, when the console gave none; otherwise the hostname                          |
+| `AGENTCONNECT_VERSION`             | The image tag; pin the release your Control Plane runs                                |
+| `AGENTCONNECT_COMPUTER_RESOLUTION` | The screen, `1280x800x24` by default, which agents' screenshots show one to one       |
+| `AGENTCONNECT_COMPUTER_BROWSER`    | The browser kept open and maximized, `chromium`; `none` for none                      |
+| `RTC_ADDRESS`                      | The public IP browsers reach this server on, for direct viewer video                  |
+| `AGENTCONNECT_COMPUTER_RTC_PORTS`  | The UDP range published for direct video, `7700-7709` by default                      |
+
+The volume holds the computer's key, its browser profile and its files:
+
+- **Upgrade.** Set `AGENTCONNECT_VERSION`, then `docker compose pull && docker compose up -d`.
+- **Register again.** After a revoke, put a new token in `.env` and run `docker compose up -d`.
+- **Remove.** Delete the computer in the console, then `docker compose down -v`.
+- **Several desktops on one server.** Give each its own directory, token and UDP range.
+
+`docker inspect` shows a container's environment, so prefer `AGENTCONNECT_REGISTER_TOKEN_FILE` where that matters. The token is useless once spent.
+
+<Callout type="warn">
+The container is the only boundary around its browser, which runs without Chromium's own sandbox. Do not mount host directories or credentials into it that an agent should not reach.
+</Callout>
+
+The repository's [desktop container guide](https://github.com/agentconnect-md/agentconnect/blob/main/docs/self-host-computer-container.md) covers secret files, host networking, and evaluating on the stack's own host.
+
+## Viewer video
+
+Watching a computer needs nothing published: signaling and screenshots go through the relay over the desktop's outbound link. Without anything more, the viewer shows **Screenshots**, a few frames a second. Live video needs a path between the browser and the desktop:
+
+| Option                    | What it gives                                                                               | Compose overlay            | Helm values                    |
+| ------------------------- | ------------------------------------------------------------------------------------------- | -------------------------- | ------------------------------ |
+| A published UDP range     | Direct video from a desktop container with a public address                                 | The container's own `.env` | —                              |
+| STUN on the relay         | Peer-to-peer video across NATs; the relay only helps both ends find each other              | `compose.stun.yaml`        | `relay.stun`                   |
+| TURN on the relay         | Relayed video when nothing direct connects: symmetric NATs, blocked UDP                     | `compose.relay-turn.yaml`  | `relay.turn`                   |
+| An external TURN server   | The same, through your own coturn or Cloudflare Realtime TURN; it takes precedence          | `compose.turn.yaml`        | `computerViewer.turn`          |
+
+**STUN on the relay.** Set the address browsers and desktops reach the host on, add the overlay, and open that UDP port:
+
+```dotenv
+AGENTCONNECT_STUN_HOST=203.0.113.10
+# AGENTCONNECT_STUN_PORT=3479
+```
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.stun.yaml up -d
+```
+
+Peer to peer shows the desktop's public IP address to the viewer's browser, so each computer's **Peer-to-peer viewing** policy decides whether it is used.
+
+**TURN on the relay.** Open the port for UDP and TCP; there is no secret to set and no port range:
+
+```dotenv
+AGENTCONNECT_RELAY_TURN_HOST=203.0.113.10
+# AGENTCONNECT_RELAY_TURN_PORT=3480
+```
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.relay-turn.yaml up -d
+```
+
+The Control Plane mints short-lived credentials per viewer and per desktop, and the relay forwards video only between its own allocations. For networks that let only port 443 out, the relay can also serve TURN over TLS.
+
+**An external TURN server.** `compose.turn.yaml` adds coturn and points the Control Plane at it:
+
+```dotenv
+AGENTCONNECT_TURN_SECRET=<openssl rand -hex 32>
+AGENTCONNECT_TURN_EXTERNAL_IP=203.0.113.10
+```
+
+Open UDP and TCP `3478` and UDP `49160-49199` on that host, and run no other UDP service on that address. For Cloudflare Realtime TURN, set `COMPUTER_TURN_CLOUDFLARE_KEY_ID` and `COMPUTER_TURN_CLOUDFLARE_API_TOKEN` instead, without the overlay.
+
+In the Helm chart, `relay.stun` and `relay.turn` each add one Service per relay pod and need a public `host` for it; the [chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md) lists every value.
+
+## Store screenshots
+
+By default the screenshots agents take reach the model and are not kept. With storage on, the session timeline shows them, each computer's **Keep screenshots** policy sets how long, and the bytes go straight from the desktop to the bucket on signed URLs. The Control Plane signs and keeps metadata only.
+
+**Helm**, with a [Source Cache](/self-hosting/kubernetes/deploy#object-store-source-cache-and-file-transfer) bucket configured:
+
+```yaml
+computerScreenshots:
+  enabled: true
+  retentionDays: 30     # for a computer whose policy sets none
+  maxRetentionDays: 365 # the most a computer's policy may ask for
+```
+
+**Docker Compose:** set `AC_COMPUTER_SCREENSHOTS` in `compose.env` to a one-line JSON document with the same bucket fields as [`AC_FILE_TRANSFER`](/self-hosting/docker-compose/configuration#external-bucket), plus an optional `retention` object with `defaultDays` and `maxDays`.
+
+Expired screenshots are deleted by the Control Plane, so the bucket needs no lifecycle rule for them.
+
+## Cloud computers on Kubernetes
+
+With the chart's [daemon pool](/self-hosting/kubernetes/deploy), the deployment can also create desktops itself. They appear in the console as **Cloud computers**: a member adds a shared one, or an agent gets one for each session or one of its own. See [Cloud computers](/build-your-team/computers/give-agents-a-computer#cloud-computers).
+
+```yaml
+computerPool:
+  enabled: true
+```
+
+It needs `daemonPool.enabled` and a public Control Plane URL (`apiHost` or `publicUrl`), because desktop pods register there.
+
+| Value                               | Default       | Meaning                                                                     |
+| ----------------------------------- | ------------- | --------------------------------------------------------------------------- |
+| `computerPool.warmReplicas`         | `1`           | Prewarmed desktops, so a session gets one in seconds; `0` starts cold       |
+| `computerPool.home.size`            | `5Gi`         | A desktop's home volume, kept while it sleeps                               |
+| `computerPool.resources`            | 1 Gi to 3 Gi  | Memory request and limit of a desktop pod                                   |
+| `computerPool.ephemeralIdleSeconds` | `600`         | Idle time before a per-session desktop is deleted                           |
+| `computerPool.sleepIdleSeconds`     | `1800`        | Idle time before a per-agent or shared desktop sleeps                       |
+| `computerPlan.quotas`               | built-in      | Per-organization limits on running and held desktops, hours and storage     |
+
+A cloud computer's pod has no UDP port a browser can reach, so watching one uses TURN. Turn on `relay.turn` or `computerViewer.turn` for live video; without it the viewer shows screenshots.
+
+Without your own limits, an organization may run 3 cloud computers at once, hold 10, and use 300 desktop hours a month. Usage appears under **Analytics**.
