@@ -153,6 +153,14 @@ Setup validates the project and key with Google the same way the agent wizard do
 
 A Workspace connects itself from Google Chat. Until it does, the app answers a message with a private **Configure** prompt, and being added to a space with a **Connect** card. Either leads to the console, where an Owner or Collaborator signs in with the Google account they use in Google Chat, chooses the organization, and clicks **Connect**. A Workspace connects to one organization at a time. Removing the Google Chat integration from the **AgentConnect** agent disconnects it.
 
+To enable administrator recovery of a conflicting Workspace binding:
+
+- Enable **Admin SDK API** in the project that owns your Google sign-in OAuth client.
+- Add the console's `/googlechat/recover` URL to that client's authorized redirect URIs. Setup lists the full URL under **Google**.
+- Configure `openid` and `https://www.googleapis.com/auth/admin.directory.user.readonly` in Google Auth Platform, and complete any Google OAuth verification or Workspace app approval required for that scope.
+
+These permissions are requested only when a current Workspace super administrator chooses recovery. AgentConnect reads that administrator's Directory entry and customer ID, then asks them to confirm the destination organization. It does not request offline access or domain-wide delegation. See [Recover a Workspace connection](/connect-automate/chat-platforms/googlechat#recover-a-workspace-connection) for the user flow and manual fallback.
+
 Until the app is published publicly on the Google Workspace Marketplace, only your own Workspace can use it.
 
 ## Microsoft Teams deployment app

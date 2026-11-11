@@ -57,6 +57,25 @@ See [In-conversation commands](/connect-automate/integrations-overview#in-conver
 
 A **direct message** with the app stays private to the person who sent it. They can open it in the console after signing in with the same Google account, or linking it on their profile; nobody else can, organization Owners included. Conversations in a **space** are visible to the organization, whoever is in the space.
 
+## Recover a Workspace connection
+
+If you use the deployment's shared Chat app, one Google Workspace customer connects to one AgentConnect organization. If the app says the Workspace is already connected elsewhere, the existing connection must be released first.
+
+If you have access to the original AgentConnect organization, ask an editor of its built-in **AgentConnect** agent to delete the Google Chat integration from the agent's **Integrations** tab. This releases the Workspace binding. Send the app a new message in Google Chat and follow its connection link to connect to the intended organization.
+
+If you cannot access the original organization, a **current Google Workspace super administrator** can recover the connection:
+
+1. Send `/help` to the shared app in a direct message and open **Manage Workspace connection**.
+2. Sign in with that same Google account, choose the intended AgentConnect organization, and select **Connect**. You must be an Owner or Collaborator of that organization.
+3. When the page says the Workspace is connected elsewhere, select **Verify Workspace administrator** and complete Google's read-only administrator verification.
+4. Check the destination organization and select **Recover connection**. Verification alone does not change the binding; you can cancel before this confirmation.
+
+The original connection stops working. Session history and agents stay in the original organization; connection settings are not transferred. Configure the new connection in the destination organization. The original installer does not need to participate, including when they have left the company. First-time connections do not require this extra verification.
+
+If verification is unavailable, or you have a delegated administrator role rather than super administrator, contact [contact@agentconnect.md](mailto:contact@agentconnect.md). Include the Workspace domain, app name, and intended organization. Self-hosted users should contact their deployment operator, who can [configure administrator recovery](/self-hosting/provider-apps#google-chat-deployment-app).
+
+Uninstalling or reinstalling the app in Google Workspace does not currently release its AgentConnect binding. Removing it from a space or direct message also leaves the Workspace binding in place. These steps apply to the deployment's shared app; an app you registered yourself follows the normal integration removal flow below.
+
 ## Notes
 
 - Your own Chat app binds to one agent, and a Google Cloud project holds one Chat app. Deleting the integration frees the app for reuse (**Use an existing bot** next time).
