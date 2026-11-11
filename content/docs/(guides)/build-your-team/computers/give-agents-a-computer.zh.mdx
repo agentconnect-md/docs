@@ -4,12 +4,17 @@ icon: MousePointerClick
 description: "在 Agent 的工具页把 Computer 授予它，然后控制它能做什么：仅查看还是可控制、第一次输入前的批准、Agent 之间的轮流、命令与文件，以及使用策略里的各项限制。"
 ---
 
+import imgAgentComputersCard from '@/public/images/agent-computers-card.png'
+import imgComputerUsagePolicy from '@/public/images/computer-usage-policy.png'
+
 新 Computer 不对任何 Agent 开放。访问权限按 Agent 逐个授予，之后由 Computer 的**使用策略**决定每个有访问权限的 Agent 能做什么。
 
 ## 把 Computer 授予 Agent [#give-a-computer-to-an-agent]
 
 1. 打开 Agent，进入它的**工具**页。
-2. 在 **Computer** 卡片里选择**添加 Computer**，从**你可以看到的 Computer** 中选一台。
+2. 在 **Computer** 卡片里选择**添加**，从**你可以看到的 Computer** 中选一台。
+
+<Image src={imgAgentComputersCard} alt="Agent 工具页上的 Computer 卡片：托管 Computer 设置，以及授予该 Agent 的一台 Computer" width={720} />
 
 Agent 的下一个新会话就会拥有 `computer_*` 工具。要收回 Computer，在同一张卡片里对应的行上使用**撤销此 Agent 的访问权限**。
 
@@ -63,6 +68,8 @@ Agent 的下一个新会话就会拥有 `computer_*` 工具。要收回 Computer
 
 Computer 页面的**使用策略**页包含下面的设置。它们适用于每个有访问权限的 Agent。只有所有者可以修改，其他人只读。
 
+<Image src={imgComputerUsagePolicy} alt="一台 Cloud Computer 的使用策略页：查看和控制、每个会话询问一次已开启，并且允许命令和文件" width={820} />
+
 | 设置                  | 作用                                                                           | 默认值                   |
 | --------------------- | ------------------------------------------------------------------------------ | ------------------------ |
 | **Agent 可以**        | **仅查看**只允许截图；**查看和控制**还允许点击和输入                           | 查看和控制               |
@@ -79,7 +86,7 @@ Computer 页面的**使用策略**页包含下面的设置。它们适用于每�
 | **开放驱动工具**      | 同时向 Agent 提供驱动自带的窗口级工具                                          | 关                       |
 | **点对点观看**        | 允许观看视频跨网络直接在浏览器和桌面之间传输，这会向观看者暴露桌面的公网 IP    | 只有所有者可以观看时开启 |
 
-这些默认值适用于你自己添加的 Computer。Cloud Computer 默认允许命令和文件访问，也不要求批准，因为上面没有任何属于个人的东西。
+这些默认值适用于你自己添加的 Computer。Cloud Computer 默认允许命令和文件访问，如上图所示。为 Agent 创建的 Cloud Computer 也不要求批准，因为上面没有任何属于个人的东西；你添加的共享 Cloud Computer 仍然每个会话询问一次。
 
 要求输入管理员密码的 Windows 管理员提示，永远不会由 Agent 或某项设置批准；需要有人在机器上回答。
 

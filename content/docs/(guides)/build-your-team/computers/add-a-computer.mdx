@@ -4,6 +4,9 @@ icon: Download
 description: "Register a Linux, macOS or Windows desktop, or a desktop container, as a Computer with one command. Check its health, manage the desktop daemon, share it, and revoke or delete it."
 ---
 
+import imgComputerAdd from '@/public/images/computer-add.png'
+import imgComputerChecks from '@/public/images/computer-checks.png'
+
 Adding a computer installs the **desktop daemon** on a machine and registers it with your organization. You become its owner. Owners and Collaborators can add computers; Viewers cannot.
 
 ## Before you start
@@ -30,6 +33,8 @@ Adding a computer installs the **desktop daemon** on a machine and registers it 
 ```bash
 npx -y @agentconnect.md/cli@latest computer install --register "<token>" --cp-url "<exchange URL>"
 ```
+
+<Image src={imgComputerAdd} alt="The Add computer dialog with example values: the one-time command, the registration progress, an optional name, and the visibility choice" width={560} />
 
 The command is the same on Linux, macOS and Windows. It is shown only once, works once, and expires after an hour; **Create new command** makes another.
 
@@ -90,6 +95,8 @@ A computer's page opens on **Overview**, which lists the daemon's checks: failed
 ```bash
 npx -y @agentconnect.md/cli computer doctor
 ```
+
+<Image src={imgComputerChecks} alt="A computer's Overview: its details and agent access, and three failing checks, each with its fix" width={820} />
 
 | Status                | Meaning                                                                     |
 | --------------------- | --------------------------------------------------------------------------- |

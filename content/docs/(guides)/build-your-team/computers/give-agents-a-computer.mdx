@@ -4,12 +4,17 @@ icon: MousePointerClick
 description: "Give a Computer to an agent from its Tools tab, then control what it may do: view or control, approval before the first input, turns between agents, commands and files, and the limits in the usage policy."
 ---
 
+import imgAgentComputersCard from '@/public/images/agent-computers-card.png'
+import imgComputerUsagePolicy from '@/public/images/computer-usage-policy.png'
+
 No agent can use a new computer. Access is given per agent, and the computer's **usage policy** then decides what every agent with access may do.
 
 ## Give a computer to an agent
 
 1. Open the agent and go to its **Tools** tab.
-2. In the **Computers** card, select **Add computer** and pick one from **Computers you can see**.
+2. In the **Computers** card, select **Add** and pick one from **Computers you can see**.
+
+<Image src={imgAgentComputersCard} alt="The Computers card on an agent's Tools tab: the Managed computer setting and one computer given to the agent" width={720} />
 
 The agent's next new session has the `computer_*` tools. To take the computer away, use **Take away this agent's access** on its row in the same card.
 
@@ -63,6 +68,8 @@ On macOS and Windows, and on Linux where virtual desktops are unavailable, a com
 
 The **Usage policy** tab of a computer's page holds the settings below. They apply to every agent with access. Only the owner can change them; everyone else sees them read-only.
 
+<Image src={imgComputerUsagePolicy} alt="The Usage policy tab of a cloud computer: view and control, Ask once per session on, and commands and files allowed" width={820} />
+
 | Setting                            | What it does                                                                                              | Default                                 |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | **Agents may**                     | **View only** allows screenshots; **View and control** also allows clicks and typing                      | View and control                        |
@@ -79,7 +86,7 @@ The **Usage policy** tab of a computer's page holds the settings below. They app
 | **Expose driver tools**            | Also offers agents the driver's own window-level tools                                                    | Off                                     |
 | **Peer-to-peer viewing**           | Lets viewer video go straight between browser and desktop across networks, showing viewers its public IP  | On while only the owner may watch       |
 
-The defaults are those of a computer you add yourself. A cloud computer allows commands and file access and asks for no approval, because nothing on it belongs to a person.
+The defaults are those of a computer you add yourself. A cloud computer allows commands and file access by default, as in the picture above. One created for an agent also asks for no approval, because nothing on it belongs to a person; a shared one you add still asks once per session.
 
 A Windows administrator prompt that asks for an administrator's password is never approved by an agent or by a setting; a person answers it at the machine.
 

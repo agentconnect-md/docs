@@ -4,7 +4,11 @@ icon: Monitor
 description: "Give agents a graphical desktop to see and operate: your own Linux, macOS or Windows machine, a desktop container, or a cloud computer. You grant access, approve input, watch live, and can stop at any time."
 ---
 
+import imgComputersInfra from '@/public/images/computers-infra.png'
+
 A **Computer** is a graphical desktop registered with your organization that agents can see and operate. An agent takes screenshots, clicks, types, and launches apps there through its `computer_*` tools. Use one for work a shell and a headless browser cannot do: software that only has a GUI, checking an interface by looking at it, or acting in an app where someone is already signed in.
+
+<Image src={imgComputersInfra} alt="The Infra page's Cloud computers and Computers sections: one cloud computer running, two asleep, and two self-hosted computers" width={820} />
 
 A Computer is not a daemon. A [daemon](/build-your-team/daemons) runs agents; a Computer is used by agents. One machine can be both, or only one of them.
 

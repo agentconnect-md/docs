@@ -4,7 +4,11 @@ icon: Monitor
 description: "给 Agent 一个可以查看和操作的图形桌面：你自己的 Linux、macOS 或 Windows 机器、桌面容器，或 Cloud Computer。由你授予访问、批准输入、实时观看，并且随时可以停止。"
 ---
 
+import imgComputersInfra from '@/public/images/computers-infra.png'
+
 **Computer** 是注册到组织里的图形桌面，Agent 可以查看并操作它。Agent 通过 `computer_*` 工具在上面截图、点击、输入和启动应用。当 shell 和无头浏览器做不到时就用它：只有图形界面的软件、需要亲眼看界面才能确认的检查，或者要在某人已经登录的应用里操作。
+
+<Image src={imgComputersInfra} alt="基础设施页面的 Cloud Computer 和 Computer 分区：一台 Cloud Computer 运行中、两台休眠，以及两台自托管 Computer" width={820} />
 
 Computer 不是 Daemon。[Daemon](/build-your-team/daemons) 运行 Agent；Computer 则被 Agent 使用。一台机器可以两者都是，也可以只是其中之一。
 
