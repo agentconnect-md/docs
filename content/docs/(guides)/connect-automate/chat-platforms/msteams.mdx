@@ -24,6 +24,16 @@ People add the app to a 1:1 chat from **Apps → Built for your org**, where the
 
 A Microsoft 365 organization connects to one AgentConnect organization, and through this app to one agent. To use another agent in the same Microsoft 365 organization, register your own bot for it.
 
+## Recover a connection held by another organization
+
+If Teams says your Microsoft 365 organization is already connected elsewhere, click **Verify administrator access** on the connection page. Sign in as a current **Teams Administrator** or **Global Administrator** of that Microsoft 365 tenant. A Team owner or an AgentConnect Owner alone cannot recover it. Activate an eligible administrator role first if your organization uses PIM.
+
+Check the destination AgentConnect organization, then click **Recover connection**. Verification alone changes nothing; you can cancel before confirming. The original installer does not need to participate, including if they have left your organization.
+
+Recovery removes the previous organization's Teams connections that use the deployment app and connects your selected agent. Its agents and history stay in the original organization; connection settings are not transferred. Organization-owned bots are unaffected. If the app still shows the old agent's name or icon, use **Update in Teams** afterward.
+
+Removing the app from a chat or Team does not release the whole tenant's connection. If administrator verification is unavailable, use **Contact support**; support verifies current tenant authority before releasing a binding. Never send passwords, tokens or client secrets.
+
 ## Register your own bot
 
 <Image src={imgRegister} alt="Register your own Teams bot: the messaging endpoint, then the App (bot) ID, Directory (tenant) ID, and client secret" width={640} />
