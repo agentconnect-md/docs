@@ -1,0 +1,192 @@
+---
+title: "Computer"
+icon: Monitor
+description: "在自托管的 AgentConnect 部署中开启 Computer 功能，用 Docker Compose 运行 Linux 桌面容器，为观看视频配置 STUN 和 TURN，保存截图，并在 Kubernetes 上运行 Cloud Computer。"
+---
+
+[Computer](/build-your-team/computers) 让 Agent 可以查看和操作图形桌面。控制平面和 Relay 在每个部署里都提供这项服务；本页介绍运维者需要在此之外开启的部分。
+
+| 组成部分                                      | 用途                                             | 默认                 |
+| --------------------------------------------- | ------------------------------------------------ | -------------------- |
+| [控制台功能](#turn-on-the-console)            | 让控制台显示 Computer                                 | 关闭                 |
+| [桌面容器](#run-a-desktop-container)          | 在服务器上而不是某个人的机器上运行 Linux 桌面    | 未运行               |
+| [STUN 与 TURN](#viewer-video)                 | 浏览器和桌面不在同一网络时的实时视频             | 关闭；查看器轮询截图 |
+| [截图存储](#store-screenshots)                | 保留 Agent 截取的截图，用于会话时间线            | 关闭                 |
+| [Computer 池](#cloud-computers-on-kubernetes)  | 由部署按需创建的 Cloud Computer                           | 关闭                 |
+
+## 开启控制台功能 [#turn-on-the-console]
+
+在 `computer-use` 功能开启之前，控制台会隐藏与 Computer 有关的一切：**基础设施**里的 **Computer** 分区、Computer 的页面、Agent 工具页上的 **Computer** 卡片，以及分析里的 Computer 用量。
+
+**Helm：**
+
+```yaml
+features:
+  computerUse: true
+```
+
+**Docker Compose：**在 [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) 的 `FEATURE_FLAGS` 里加入 `computer-use`，然后重建 `web`：
+
+```dotenv
+FEATURE_FLAGS=computer-use
+```
+
+```bash
+docker compose --env-file compose.env up -d --force-recreate web
+```
+
+`FEATURE_FLAGS` 是逗号分隔的列表，请保留其中已有的条目。
+
+## 桌面需要访问什么 [#what-a-desktop-must-reach]
+
+桌面只向外发起连接。无论它是某个人的机器还是容器，都需要：
+
+| 连接                                         | 用途                                               |
+| -------------------------------------------- | -------------------------------------------------- |
+| 到控制平面公开 URL 的 HTTPS 和 WSS           | 注册，之后是状态、策略和控制权的轮转               |
+| 到每个 Relay 的 Daemon 地址的 WSS            | Agent 的工具调用，以及查看器的信令和截图           |
+| 首次启动时到 `github.com` 的 HTTPS           | 查看器视频所需的、固定版本并经过校验的 ffmpeg 构建 |
+| 到 TURN 服务器的 UDP 或 TCP（如果你运行了）  | 浏览器无法直接连到桌面时的观看视频                 |
+
+这些就是 Daemon 使用的地址：Compose 栈里的 `AGENTCONNECT_PUBLIC_CP_URL` 和 `AGENTCONNECT_RELAY_DAEMON_URL`。把它们公布为 `localhost` 的栈只能从本机访问，所以在别处添加桌面之前，请先按[网络与公开 URL](/self-hosting/docker-compose/configuration#network-and-public-urls) 把栈公布到其他机器能访问的地址上。
+
+## 运行桌面容器 [#run-a-desktop-container]
+
+`computer` 镜像是一个带 Chromium、LibreOffice 和常用语言工具链的 Linux 桌面，运行与个人机器上相同的桌面守护进程。它需要 `amd64` 或 `arm64` 上的 Docker、约 2 GB 磁盘和 1 到 3 GB 内存。
+
+最快的方式是**添加 Computer** 的 **Docker** 标签页上的 `docker run` 命令，见[添加 Computer](/build-your-team/computers/add-a-computer#docker)。Docker Compose 把设置放在文件里，升级只需一条命令：
+
+```bash
+mkdir agentconnect-computer && cd agentconnect-computer
+base=https://raw.githubusercontent.com/agentconnect-md/agentconnect/main/packages/computer/docker
+curl -fsSLO "$base/compose.yaml"
+curl -fsSL "$base/compose.env.example" -o .env
+```
+
+在控制台用**添加 Computer** 创建令牌，然后在 `.env` 里填写两个必填值：
+
+```dotenv
+AGENTCONNECT_CP_URL=https://cp.example.com
+AGENTCONNECT_REGISTER_TOKEN=<one-time token>
+```
+
+```bash
+docker compose up -d
+docker compose ps        # STATUS turns (healthy) once the daemon passes its own checks
+```
+
+| 设置                               | 含义                                                         |
+| ---------------------------------- | ------------------------------------------------------------ |
+| `AGENTCONNECT_CP_URL`              | 控制平面地址，按控制台显示的填写                             |
+| `AGENTCONNECT_REGISTER_TOKEN`      | 一次性令牌；首次启动时用掉                                   |
+| `AGENTCONNECT_REGISTER_TOKEN_FILE` | 改为从文件读取令牌，例如 Docker secret                       |
+| `AGENTCONNECT_COMPUTER_NAME`       | 控制台没有给名称时使用的名称；否则使用主机名                 |
+| `AGENTCONNECT_VERSION`             | 镜像标签；请固定为控制平面运行的版本                         |
+| `AGENTCONNECT_COMPUTER_RESOLUTION` | 屏幕，默认 `1280x800x24`，Agent 的截图按 1:1 显示它          |
+| `AGENTCONNECT_COMPUTER_BROWSER`    | 保持打开并最大化的浏览器，默认 `chromium`；`none` 表示不打开 |
+| `RTC_ADDRESS`                      | 浏览器访问这台服务器所用的公网 IP，用于观看视频直连          |
+| `AGENTCONNECT_COMPUTER_RTC_PORTS`  | 为直连视频发布的 UDP 端口范围，默认 `7700-7709`              |
+
+卷里保存着 Computer 的密钥、浏览器配置和文件：
+
+- **升级。**设置 `AGENTCONNECT_VERSION`，然后 `docker compose pull && docker compose up -d`。
+- **重新注册。**吊销之后，把新令牌写进 `.env` 并运行 `docker compose up -d`。
+- **移除。**在控制台删除 Computer，然后 `docker compose down -v`。
+- **一台服务器上运行多个桌面。**每个桌面使用自己的目录、令牌和 UDP 端口范围。
+
+`docker inspect` 会显示容器的环境变量，所以在意这一点时请优先使用 `AGENTCONNECT_REGISTER_TOKEN_FILE`。令牌用掉之后就没有用了。
+
+<Callout type="warn">
+容器是它的浏览器之外唯一的边界，浏览器运行时没有启用 Chromium 自身的沙箱。不要把 Agent 不该接触到的主机目录或凭证挂载进去。
+</Callout>
+
+仓库里的[桌面容器指南](https://github.com/agentconnect-md/agentconnect/blob/main/docs/self-host-computer-container.md)介绍了 secret 文件、主机网络，以及在栈所在的主机上试用。
+
+## 观看视频 [#viewer-video]
+
+观看 Computer 不需要发布任何端口：信令和截图经由 Relay，走桌面的出站连接。不做其他配置时，查看器显示**截图**，每秒几帧。实时视频需要浏览器和桌面之间有一条通路：
+
+| 选项                | 效果                                                           | Compose overlay            | Helm values           |
+| ------------------- | -------------------------------------------------------------- | -------------------------- | --------------------- |
+| 发布 UDP 端口范围   | 有公网地址的桌面容器直连传输视频                               | 容器自己的 `.env`          | —                     |
+| Relay 上的 STUN     | 跨 NAT 的点对点视频；Relay 只帮助双方找到彼此                  | `compose.stun.yaml`        | `relay.stun`          |
+| Relay 上的 TURN     | 无法直连时中继视频：对称 NAT、UDP 被拦截                       | `compose.relay-turn.yaml`  | `relay.turn`          |
+| 外部 TURN 服务器    | 同上，经由你自己的 coturn 或 Cloudflare Realtime TURN；优先使用 | `compose.turn.yaml`        | `computerViewer.turn` |
+
+**Relay 上的 STUN。**设置浏览器和桌面访问该主机所用的地址，加上 overlay，并开放这个 UDP 端口：
+
+```dotenv
+AGENTCONNECT_STUN_HOST=203.0.113.10
+# AGENTCONNECT_STUN_PORT=3479
+```
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.stun.yaml up -d
+```
+
+点对点会向观看者的浏览器暴露桌面的公网 IP 地址，所以是否使用它由每台 Computer 的**点对点观看**策略决定。
+
+**Relay 上的 TURN。**为 UDP 和 TCP 开放该端口；不需要设置密钥，也没有端口范围：
+
+```dotenv
+AGENTCONNECT_RELAY_TURN_HOST=203.0.113.10
+# AGENTCONNECT_RELAY_TURN_PORT=3480
+```
+
+```bash
+docker compose --env-file compose.env -f compose.yaml -f compose.relay-turn.yaml up -d
+```
+
+控制平面为每个观看者和每个桌面签发短期凭证，Relay 只在自己的分配之间转发视频。对于只允许 443 端口出站的网络，Relay 还可以通过 TLS 提供 TURN。
+
+**外部 TURN 服务器。**`compose.turn.yaml` 会加入 coturn，并让控制平面指向它：
+
+```dotenv
+AGENTCONNECT_TURN_SECRET=<openssl rand -hex 32>
+AGENTCONNECT_TURN_EXTERNAL_IP=203.0.113.10
+```
+
+在该主机上开放 UDP 和 TCP `3478` 以及 UDP `49160-49199`，并且不要在这个地址上运行其他 UDP 服务。使用 Cloudflare Realtime TURN 时，改为设置 `COMPUTER_TURN_CLOUDFLARE_KEY_ID` 和 `COMPUTER_TURN_CLOUDFLARE_API_TOKEN`，不需要这个 overlay。
+
+在 Helm chart 里，`relay.stun` 和 `relay.turn` 各为每个 Relay Pod 增加一个 Service，并需要为它配置公开的 `host`；[chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md) 列出了所有取值。
+
+## 保存截图 [#store-screenshots]
+
+默认情况下，Agent 截取的截图会送到模型，但不会保留。开启存储后，会话时间线会显示它们，每台 Computer 的**截图保留**策略决定保留多久，字节通过签名 URL 从桌面直接写入存储桶。控制平面只负责签名并保存元数据。
+
+**Helm**，需要已配置 [Source Cache](/self-hosting/kubernetes/deploy#object-store-source-cache-and-file-transfer) 存储桶：
+
+```yaml
+computerScreenshots:
+  enabled: true
+  retentionDays: 30     # for a computer whose policy sets none
+  maxRetentionDays: 365 # the most a computer's policy may ask for
+```
+
+**Docker Compose：**在 `compose.env` 里把 `AC_COMPUTER_SCREENSHOTS` 设为一行 JSON 文档，存储桶字段与 [`AC_FILE_TRANSFER`](/self-hosting/docker-compose/configuration#external-bucket) 相同，另外可以加一个可选的 `retention` 对象，包含 `defaultDays` 和 `maxDays`。
+
+过期的截图由控制平面删除，所以存储桶不需要为它们配置生命周期规则。
+
+## 在 Kubernetes 上运行 Cloud Computer [#cloud-computers-on-kubernetes]
+
+借助 chart 的 [Daemon 池](/self-hosting/kubernetes/deploy)，部署还可以自己创建桌面。它们在控制台里显示为 **Cloud Computer**：成员可以添加一台共享的，Agent 也可以为每个会话获得一台，或拥有自己专属的一台。见 [Cloud Computer](/build-your-team/computers/give-agents-a-computer#cloud-computers)。
+
+```yaml
+computerPool:
+  enabled: true
+```
+
+它需要 `daemonPool.enabled` 和控制平面的公开 URL（`apiHost` 或 `publicUrl`），因为桌面 Pod 要在那里注册。
+
+| 取值                                | 默认值        | 含义                                                   |
+| ----------------------------------- | ------------- | ------------------------------------------------------ |
+| `computerPool.warmReplicas`         | `1`           | 预热的桌面数，让会话几秒内拿到桌面；`0` 表示冷启动     |
+| `computerPool.home.size`            | `5Gi`         | 桌面的主目录卷，休眠期间保留                           |
+| `computerPool.resources`            | 1 Gi 到 3 Gi  | 桌面 Pod 的内存请求和上限                              |
+| `computerPool.ephemeralIdleSeconds` | `600`         | 按会话创建的桌面空闲多久后被删除                       |
+| `computerPool.sleepIdleSeconds`     | `1800`        | Agent 专属或共享的桌面空闲多久后休眠                   |
+| `computerPlan.quotas`               | 内置          | 每个组织在运行中和持有的桌面数、时长和存储上的限额     |
+
+Cloud Computer 的 Pod 没有浏览器可以访问的 UDP 端口，所以观看 Cloud Computer 要使用 TURN。开启 `relay.turn` 或 `computerViewer.turn` 以获得实时视频；否则查看器显示截图。
+
+不设置自己的限额时，一个组织可以同时运行 3 台 Cloud Computer、持有 10 台，每月使用 300 个桌面小时。用量显示在**分析**里。
