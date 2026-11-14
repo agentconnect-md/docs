@@ -9,20 +9,39 @@ An agent is an [Agent Host Protocol](https://github.com/microsoft/agent-host-pro
 ![A chat with an agent in VS Code, with a file from its workspace open beside it](/images/vscode-agent.gif)
 
 <Callout type="warn">
-This is a preview, and one step is not available yet. VS Code 1.146 has no sign-in for AgentConnect, so it connects to the agent and then cannot send. Signing in will come with an AgentConnect extension for VS Code, which is not released. Until then the same endpoint works [from a script](#from-a-script), with an API key.
+This is a preview. VS Code has no sign-in for AgentConnect of its own, so you install the AgentConnect extension by hand: it is not on the Marketplace, because it uses a VS Code API that is still proposed.
 </Callout>
 
-It takes three steps:
+It takes four steps:
 
 1. Add the AHP API to the agent.
-2. Add the agent's endpoint to VS Code.
-3. Sign in.
+2. Install the AgentConnect extension.
+3. Add the agent's endpoint to VS Code.
+4. Sign in.
 
 ## Add the API to the agent [#add-the-api]
 
 An agent accepts AHP clients only after its owner adds the API. Open the agent, then **Integrations → Add integration**, pick **API** under **Workflow**, choose the AHP protocol and click **Add API**.
 
 The agent's Integrations tab now shows an **API** card. Its **Quickstart** shows the WebSocket endpoint for this agent, `wss://<relay-url>/ahp/agents/<agent-id>`. An organization whose AHP access is still a pilot shows **Pilot** on the protocol, and only approved members can connect.
+
+## Install the extension [#install-the-extension]
+
+The extension is built from the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect). With Node and pnpm installed:
+
+```bash
+git clone https://github.com/agentconnect-md/agentconnect.git
+cd agentconnect
+pnpm install
+pnpm --filter agentconnect-vscode package
+code --install-extension packages/vscode/agentconnect-vscode-0.1.0.vsix
+```
+
+Then allow the extension to use the proposed API. In VS Code, run **Preferences: Configure Runtime Arguments** from the Command Palette, add this line to the `argv.json` it opens, and restart VS Code:
+
+```json
+{ "enable-proposed-api": ["agentconnect.agentconnect-vscode"] }
+```
 
 ## Add the agent to VS Code [#add-the-agent]
 
@@ -44,7 +63,11 @@ The address takes no query string, so a key or token cannot go in it.
 
 ## Sign in [#sign-in]
 
-Not available yet; see the note at the top. Each agent is its own endpoint, so each agent you add is a separate sign-in.
+Run **AgentConnect: Sign In to an Agent** from the Command Palette. Your browser opens the AgentConnect console: sign in if asked, and approve VS Code's access to the agent. VS Code then connects, and the agent's name replaces the placeholder in the chat's session types.
+
+- The sign-in lasts until you run **AgentConnect: Sign Out**, or disconnect VS Code under **Profile** in the console.
+- Each agent is its own endpoint and its own approval.
+- Sign in to one agent of an organization at a time. With two signed in, VS Code sends the newer sign-in to both, and the first agent refuses it.
 
 ## What you see [#what-you-see]
 
@@ -64,6 +87,8 @@ An edit shows in the chat with its added and removed line counts. Click the file
 ### The agent's files [#files]
 
 VS Code reads files from the agent's workspace, read-only. A file you have open reloads when the agent edits it.
+
+To browse the workspace, open a chat with the agent and run **AgentConnect: Add an Agent's Workspace to the Explorer**. It adds the session's working directory as a folder in the Explorer.
 
 ![A chat beside a file from the agent's workspace](/images/vscode-agent-chat.png)
 
@@ -94,7 +119,8 @@ Daemons serve AHP from v2.14.0 without a setting.
 
 ## Troubleshooting [#troubleshooting]
 
-- **Connected, but nothing happens and messages do not send**: VS Code is not signed in; see the note at the top.
+- **Connected, but nothing happens and messages do not send**: VS Code is not signed in. Check that the extension is installed and listed under `enable-proposed-api`, then [sign in](#sign-in).
+- **"The terminal process failed to launch: Unknown method" in the Agents window**: the Agents window asks the agent for a terminal, which is not available. Chat is not affected.
 - **"Unknown method" in the chat**: the agent's daemon is older than v2.14.0. [Upgrade it](/build-your-team/daemons/upgrade-the-daemon).
 - **The connection is refused**: AHP is off for the organization, or the agent has no AHP API. Add the API to the agent (above).
 - **A file does not open**: it is larger than about 44 KiB, or it is a symbolic link.
