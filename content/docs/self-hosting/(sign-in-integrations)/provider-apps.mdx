@@ -177,6 +177,18 @@ One application and one secret serve Microsoft sign-in and Teams, so a rotation 
 
 An organization connects from an agent's **Add integration → Microsoft Teams → Connect with Microsoft**: a Teams or Global administrator signs in, and the app is published to that Microsoft 365 organization's app catalog with no Store listing. Microsoft Entra labels the application unverified until publisher verification, which organizations that allow only verified publishers require.
 
+### Agent bots
+
+The Teams app's bot serves one agent in each Microsoft 365 organization. With agent bots, every further agent gets a bot of its own: a Microsoft Entra agent identity that the deployment creates in the customer's tenant from a blueprint in your home tenant, with an Azure Bot registration in your subscription. The **Agent bots** group appears under **Microsoft** once the Teams app is configured. Do these once:
+
+1. To create the blueprint from Setup, grant the application three Microsoft Graph application permissions in its home tenant, with administrator consent: `AgentIdentityBlueprint.Create`, `AgentIdentityBlueprint.AddRemoveCreds.All` and `AgentIdentityBlueprintPrincipal.Create`. Only **Create blueprint** uses them, so you may remove them afterwards.
+2. Assign the application's service principal the **Contributor** role on the Azure resource group for the bot registrations.
+3. Register the `Microsoft.BotService` resource provider on the subscription.
+
+Enter the **Azure subscription ID**, the **Resource group** and your own Microsoft Entra user as the blueprint's owner and sponsor, and click **Create blueprint**; its secret goes straight into the deployment secret store and is never shown. A blueprint made by hand in the Microsoft Entra admin center works too: open it to accounts in any organizational directory, add a client secret, and enter both with **Save blueprint**. Restart AgentConnect to apply the settings.
+
+Each customer tenant's administrators see these agents in the Microsoft Entra admin center under your blueprint, with the person who connected each one as its sponsor, and can disable them there.
+
 The same application connects [Azure DevOps](/connect-automate/triggers-automation/azure-devops) organizations. Add the **Azure DevOps** connect page that the card shows as one more Web redirect URI; an administrator then connects from the console's Azure DevOps card. Microsoft's consent page shows the application's Entra display name, so choose one that does not name a single Microsoft product.
 
 ## Lark and Feishu tenant Apps
