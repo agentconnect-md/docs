@@ -27,15 +27,13 @@ The agent's Integrations tab now shows an **API** card. Its **Quickstart** shows
 
 ## Install the extension [#install-the-extension]
 
-The extension is built from the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect). With Node and pnpm installed:
+Download [`agentconnect-vscode.vsix`](https://github.com/agentconnect-md/agentconnect/releases/latest/download/agentconnect-vscode.vsix) from the latest AgentConnect release, then install it:
 
 ```bash
-git clone https://github.com/agentconnect-md/agentconnect.git
-cd agentconnect
-pnpm install
-pnpm --filter agentconnect-vscode package
-code --install-extension packages/vscode/agentconnect-vscode-0.1.0.vsix
+code --install-extension agentconnect-vscode.vsix
 ```
+
+Or, in VS Code, run **Extensions: Install from VSIX...** from the Command Palette and pick the file.
 
 Then allow the extension to use the proposed API. In VS Code, run **Preferences: Configure Runtime Arguments** from the Command Palette, add this line to the `argv.json` it opens, and restart VS Code:
 

@@ -27,15 +27,13 @@ Agent 的所有者添加 API 之后，Agent 才接受 AHP 客户端。打开 Age
 
 ## 安装扩展 [#install-the-extension]
 
-扩展从 [AgentConnect 仓库](https://github.com/agentconnect-md/agentconnect)构建。装好 Node 和 pnpm 之后：
+从最新的 AgentConnect 发布版下载 [`agentconnect-vscode.vsix`](https://github.com/agentconnect-md/agentconnect/releases/latest/download/agentconnect-vscode.vsix)，然后安装：
 
 ```bash
-git clone https://github.com/agentconnect-md/agentconnect.git
-cd agentconnect
-pnpm install
-pnpm --filter agentconnect-vscode package
-code --install-extension packages/vscode/agentconnect-vscode-0.1.0.vsix
+code --install-extension agentconnect-vscode.vsix
 ```
+
+也可以在 VS Code 的命令面板运行 **Extensions: Install from VSIX...**，然后选择这个文件。
 
 然后允许扩展使用提案 API。在 VS Code 的命令面板运行 **Preferences: Configure Runtime Arguments**，在打开的 `argv.json` 里加入这一行，并重启 VS Code：
 
