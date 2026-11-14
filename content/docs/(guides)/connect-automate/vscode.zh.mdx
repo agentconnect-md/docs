@@ -1,0 +1,100 @@
+---
+title: "VS Code"
+icon: CodeXml
+description: "在 VS Code 里和 Agent 对话，查看它工作区里的文件，并以整文件 diff 的方式审阅它的修改。"
+---
+
+Agent 是一个 [Agent Host Protocol](https://github.com/microsoft/agent-host-protocol)（AHP）主机，所以 VS Code 可以把它作为远程 agent host 打开。你在 VS Code 的聊天里和 Agent 对话，以 diff 审阅每一处修改，并读取它工作区里的文件。Agent 仍然运行在原来的地方，VS Code 只是多了一个看它的窗口。
+
+![在 VS Code 里和 Agent 对话，旁边打开着它工作区里的一个文件](/images/vscode-agent.gif)
+
+<Callout type="warn">
+这是预览功能，其中一步目前还不可用。VS Code 1.146 没有 AgentConnect 的登录方式，所以它能连上 Agent，但发不出消息。登录会由 AgentConnect 的 VS Code 扩展提供，该扩展尚未发布。在此之前，同一个接口可以用 API 密钥[从脚本访问](#from-a-script)。
+</Callout>
+
+一共三步：
+
+1. 给 Agent 添加 AHP API。
+2. 把 Agent 的接口加到 VS Code。
+3. 登录。
+
+## 给 Agent 添加 API [#add-the-api]
+
+Agent 的所有者添加 API 之后，Agent 才接受 AHP 客户端。打开 Agent，进入 **集成 → 添加集成**，在 **工作流** 下选 **API**，选择 AHP 协议，点 **添加 API**。
+
+之后 Agent 的集成页会出现一张 **API** 卡片。它的 **快速开始** 里有这个 Agent 的 WebSocket 接口：`wss://<relay-url>/ahp/agents/<agent-id>`。如果组织的 AHP 访问还在试点阶段，协议上会显示 **试点**，只有获批的成员可以连接。
+
+## 把 Agent 加到 VS Code [#add-the-agent]
+
+在一个你信任的文件夹里，把接口写进 `.vscode/settings.json`：
+
+```json
+{
+  "chat.workspaceRemoteAgentHosts": [
+    { "name": "AgentConnect", "address": "wss://<relay-url>/ahp/agents/<agent-id>" }
+  ]
+}
+```
+
+新建一个聊天，在会话类型里选这个 Agent。它以自己的名字列出，后面跟着你给这一项起的名字。
+
+如果用的是 VS Code 的 Agents 窗口，改为在命令面板运行 **Add Remote Agent Host...**，或者在用户设置里配置 `chat.remoteAgentHosts`。编辑器窗口只读取工作区设置。
+
+地址不接受查询字符串，所以密钥或令牌不能放在地址里。
+
+## 登录 [#sign-in]
+
+目前还不可用，见页面顶部的说明。每个 Agent 是一个独立的接口，所以每添加一个 Agent 都要单独登录一次。
+
+## 你会看到什么 [#what-you-see]
+
+### 对话 [#chat]
+
+每个聊天是这个 Agent 的一个会话，会实时显示 Agent 的回复、工具调用和修改。
+
+- Agent 使用它自己配置的模型。VS Code 的模型选择器只有一项，选择不起作用。
+- 每条消息只有一张图片会送到 Agent，其他附件会被丢弃。
+
+### 以整文件 diff 查看修改 [#diffs]
+
+每处修改会在聊天里显示增删行数。点击文件可以打开整个文件的 diff，而不只是改动的那几行。
+
+![Agent 一处修改的 diff，显示整个文件](/images/vscode-agent-diff.png)
+
+### Agent 的文件 [#files]
+
+VS Code 以只读方式读取 Agent 工作区里的文件。你打开着的文件会在 Agent 修改它之后自动刷新。
+
+![聊天旁边打开着 Agent 工作区里的一个文件](/images/vscode-agent-chat.png)
+
+## 限制 [#limits]
+
+- 文件只读，大于约 44 KiB 的文件打不开。
+- 只要被修改的那几行还保持 Agent 改完时的样子，diff 就显示整个文件。同样的行被再次修改之后，diff 只显示改动的行。
+- 打开的文件会在 Agent 自己修改之后刷新。Agent 运行的命令造成的改动不会通知 VS Code。
+- 符号链接不会列出，也打不开。
+- 文件内容里 Agent 的[密钥值](/build-your-team/variables-and-secrets)会被掩码，和工具输出一样。
+
+## 从脚本访问 [#from-a-script]
+
+API 卡片的 **快速开始** 里有一个基于微软 `@microsoft/agent-host-protocol` 客户端的 Node 示例。它用一个能看到该 Agent 的成员的 **完全访问** [API 密钥](/api#create-a-key)登录；**Agent 对话** 密钥会被拒绝。把密钥放在你信任的服务器上，不要放进 URL 或命令行参数。
+
+## 在 AgentConnect OSS 上 [#oss]
+
+AHP 默认关闭。设置以下各项并重启服务：
+
+| 服务 | 设置 | 值 |
+| --- | --- | --- |
+| 控制平面和每个 relay | `AHP_MODE` | `on` |
+| 控制平面 | `PUBLIC_RELAY_URL` | relay 的公开 URL。 |
+| 每个 relay | `AHP_AUTHORIZATION_SERVER` | 控制平面的 OAuth issuer，VS Code 向它登录。 |
+| 控制平面 | `AHP_PUBLIC_ACCESS` | `true` 表示放行所有成员。试点阶段保持 `false`，并在 `AHP_TEST_USER_IDS` 里列出成员。 |
+
+守护进程从 v2.14.0 起无需设置即提供 AHP。
+
+## 故障排查 [#troubleshooting]
+
+- **连上了，但没有任何反应，消息发不出去**：VS Code 没有登录，见页面顶部的说明。
+- **聊天里出现 “Unknown method”**：Agent 的守护进程早于 v2.14.0。[升级它](/build-your-team/daemons/upgrade-the-daemon)。
+- **连接被拒绝**：组织没有开启 AHP，或者 Agent 没有添加 AHP API。按上面的步骤给 Agent 添加 API。
+- **文件打不开**：它大于约 44 KiB，或者是符号链接。
