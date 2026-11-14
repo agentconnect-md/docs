@@ -5,11 +5,14 @@ description: "Connect an agent to Microsoft Teams for 1:1 chats, group chats, an
 ---
 
 import imgConnect from '@/public/images/msteams-connect-en.png'
+import imgWaiting from '@/public/images/msteams-waiting-approval.png'
+import imgPublish from '@/public/images/msteams-admin-publish.png'
+import imgMention from '@/public/images/msteams-agent-mention.png'
 import imgRegister from '@/public/images/msteams-register-en.png'
 
 A Microsoft Teams integration connects an agent to your Microsoft 365 organization. Teams delivers messages to bots over HTTPS only, so the deployment needs a public callback endpoint. AgentConnect Cloud has one.
 
-There are two ways to connect. **Connect with Microsoft** uses the deployment's own Teams app, and an administrator only signs in. **Register your own bot** uses a bot your organization registers and installs itself, and works for any agent.
+There are two ways to connect. **Connect with Microsoft** gives the agent a Teams app and bot from AgentConnect, with no bot to register. **Use your own Teams bot** uses a bot your organization registers and installs itself.
 
 ## Connect with Microsoft
 
@@ -17,12 +20,24 @@ On your agent, open **Integrations → Add integration → Microsoft Teams** and
 
 <Image src={imgConnect} alt="The Add integration dialog with Microsoft Teams selected and the Connect with Microsoft button" width={640} />
 
-1. Sign in as a Teams or Global administrator of your Microsoft 365 organization, and approve the app for the organization.
-2. Back in AgentConnect, choose the teams the agent joins, and click **Add to teams**. The agent answers in those teams' channels right away.
+Every agent appears in Teams as a bot of its own, under its name and icon.
 
-People add the app to a 1:1 chat from **Apps → Built for your org**, where their app setup policy allows it.
+- **The first connection** is your organization's built-in agent's. A Teams or Global administrator signs in and approves the app for the Microsoft 365 organization, and the app is added to the organization's apps.
+- **Each further agent** gets a Teams app of its own. Once an administrator has connected the organization, anyone in it can connect another agent: sign in with your Microsoft 365 account, and the request waits for a Teams administrator to publish the agent's app.
 
-A Microsoft 365 organization connects to one AgentConnect organization, and through this app to one agent. To use another agent in the same Microsoft 365 organization, register your own bot for it.
+<Image src={imgWaiting} alt="Waiting for approval: open the app in the Teams admin center, or copy the link for an administrator" width={480} />
+
+A Teams administrator opens the link and chooses **Publish** in the Teams admin center. You do not need to keep the page open: AgentConnect finishes the connection once the app is published, and the agent's Teams card in the console shows the request until then, with **Check again** and **Cancel request**.
+
+<Image src={imgPublish} alt="The agent's app in the Teams admin center, pending, with the Publish button" width={640} />
+
+Then mention the agent in any channel. Teams adds it to that team, and it answers there. People add the app to a 1:1 chat from **Apps → Built for your org**, where their app setup policy allows it.
+
+<Image src={imgMention} alt="The Teams mention picker listing two agents, each under its own name and icon" width={640} />
+
+- A newly published agent can take a few hours before Teams delivers messages to it. Messages sent before then are not delivered later, so send them again once the agent answers.
+- Two agents of one Microsoft 365 organization cannot share a name in Teams. Rename one, then connect again.
+- A Microsoft 365 organization connects to one AgentConnect organization.
 
 ## Recover a connection held by another organization
 
@@ -34,11 +49,11 @@ Recovery removes the previous organization's Teams connections that use the depl
 
 Removing the app from a chat or Team does not release the whole tenant's connection. If administrator verification is unavailable, use **Contact support**; support verifies current tenant authority before releasing a binding. Never send passwords, tokens or client secrets.
 
-## Register your own bot
+## Use your own Teams bot [#register-your-own-bot]
 
 <Image src={imgRegister} alt="Register your own Teams bot: the messaging endpoint, then the App (bot) ID, Directory (tenant) ID, and client secret" width={640} />
 
-Choose **Register your own bot instead** in the wizard. In the [Teams Developer Portal](https://dev.teams.microsoft.com/tools/bots), signed in to your Microsoft 365 organization:
+Choose **Use your own Teams bot instead** in the wizard. In the [Teams Developer Portal](https://dev.teams.microsoft.com/tools/bots), signed in to your Microsoft 365 organization:
 
 1. Open **Bot management → New Bot**, name it, and click **Add**. The portal also creates the bot's app registration in Microsoft Entra.
 2. Under **Configure**, paste the **messaging endpoint** the wizard shows as the endpoint address, and click **Save**.
@@ -84,10 +99,10 @@ An Owner can make Teams sessions visible only to the people in each conversation
 
 ## Notes
 
-- Files and attachments are not supported yet.
+- Files work in 1:1 chats. Attach a file for the agent to read, or ask it to share one: Teams asks you to allow the file, then saves it to your OneDrive and shows it in the chat. Allowing a file needs the app added for you, from **Apps → Built for your org**. Files in channels and group chats are not supported yet.
 - One Teams bot binds to one agent. Deleting the integration frees your own bot for reuse (**Use an existing bot** next time); it does not delete the bot or its app registration.
 - Replace your own bot's client secret under **Integrations → Messaging apps → Microsoft Teams**. The bot's conversations are unchanged. The deployment app's secret is managed in the [Setup Server](/self-hosting/provider-apps#microsoft-teams-deployment-app).
 
 ## Self-hosting
 
-A self-hosted deployment needs its public callback endpoint configured, as for [Linear](/connect-automate/triggers-automation/linear#before-you-connect). **Connect with Microsoft** appears once an operator configures the [Microsoft Teams deployment app](/self-hosting/provider-apps#microsoft-teams-deployment-app).
+A self-hosted deployment needs its public callback endpoint configured, as for [Linear](/connect-automate/triggers-automation/linear#before-you-connect). **Connect with Microsoft** appears once an operator configures the [Microsoft Teams deployment app](/self-hosting/provider-apps#microsoft-teams-deployment-app). Without [agent bots](/self-hosting/provider-apps#agent-bots), that app serves one agent per Microsoft 365 organization, and further agents use their own Teams bots.

@@ -5,11 +5,14 @@ description: "把 Agent 连接到 Microsoft Teams，用于一对一聊天、群�
 ---
 
 import imgConnect from '@/public/images/msteams-connect.png'
+import imgWaiting from '@/public/images/msteams-waiting-approval.png'
+import imgPublish from '@/public/images/msteams-admin-publish.png'
+import imgMention from '@/public/images/msteams-agent-mention.png'
 import imgRegister from '@/public/images/msteams-register.png'
 
 Microsoft Teams 集成把 Agent 连接到你的 Microsoft 365 组织。Teams 只通过 HTTPS 向机器人投递消息，所以部署需要一个公开的回调地址。AgentConnect Cloud 已经提供。
 
-连接方式有两种。**使用 Microsoft 连接**用的是部署自带的 Teams 应用，只需管理员登录一次。**注册自己的 Bot**用的是你的组织自行注册和安装的机器人，适用于任何 Agent。
+连接方式有两种。**使用 Microsoft 连接**由 AgentConnect 为 Agent 提供 Teams 应用和机器人，无需自己注册。**改用你自己的 Teams Bot**用的是你的组织自行注册和安装的机器人。
 
 ## 使用 Microsoft 连接 [#connect-with-microsoft]
 
@@ -17,12 +20,24 @@ Microsoft Teams 集成把 Agent 连接到你的 Microsoft 365 组织。Teams 只
 
 <Image src={imgConnect} alt="选中 Microsoft Teams 的添加集成对话框，以及使用 Microsoft 连接按钮" width={640} />
 
-1. 用你所在 Microsoft 365 组织的 Teams 管理员或全局管理员账号登录，并为组织批准这个应用。
-2. 回到 AgentConnect，选择 Agent 要加入的团队，点击**添加到团队**。Agent 马上就能在这些团队的频道里回复。
+每个 Agent 在 Teams 里都是一个独立的机器人，用自己的名字和图标。
 
-在应用设置策略允许的情况下，成员可以在**应用 → 为你的组织构建**中把应用添加到一对一聊天。
+- **第一次连接**的是组织的内置 Agent。由 Microsoft 365 组织的 Teams 管理员或全局管理员登录并为组织批准应用，之后应用会加入组织的应用目录。
+- **其他 Agent** 各自获得一个 Teams 应用。管理员连接过组织之后，组织里的任何人都可以再连接别的 Agent：用你的 Microsoft 365 账号登录，申请会等 Teams 管理员发布这个 Agent 的应用。
 
-一个 Microsoft 365 组织只连接一个 AgentConnect 组织，并通过这个应用连接一个 Agent。如果同一个 Microsoft 365 组织里还要用别的 Agent，请为它注册自己的 Bot。
+<Image src={imgWaiting} alt="等待审批：在 Teams 管理中心打开应用，或复制链接发给管理员" width={480} />
+
+Teams 管理员打开链接，在 Teams 管理中心点击 **Publish**。页面不用一直开着：应用发布后 AgentConnect 会自动完成连接；在此之前，控制台里这个 Agent 的 Teams 卡片会显示这条申请，并提供**再查一次**和**取消申请**。
+
+<Image src={imgPublish} alt="Teams 管理中心里待发布的 Agent 应用和 Publish 按钮" width={640} />
+
+之后在任意频道里 @ 这个 Agent，Teams 会把它加进那个团队，它会在那里回复。在应用设置策略允许的情况下，成员可以在**应用 → 为你的组织构建**中把应用添加到一对一聊天。
+
+<Image src={imgMention} alt="Teams 的 @ 提及列表里有两个 Agent，各自显示自己的名字和图标" width={640} />
+
+- 刚发布的 Agent 可能要过几个小时，Teams 才开始给它投递消息。在那之前发的消息之后也不会补投，等 Agent 能回复后请重新发送。
+- 同一个 Microsoft 365 组织里的两个 Agent 不能在 Teams 里重名。改掉其中一个的名字，再重新连接。
+- 一个 Microsoft 365 组织只连接一个 AgentConnect 组织。
 
 ## 恢复被其他组织占用的连接 [#recover-a-connection-held-by-another-organization]
 
@@ -34,11 +49,11 @@ Microsoft Teams 集成把 Agent 连接到你的 Microsoft 365 组织。Teams 只
 
 从某个聊天或团队移除应用，不会释放整个租户的连接。如果无法完成管理员验证，请点击**联系支持**；支持人员会先验证当前租户管理权限，再处理解绑。不要发送密码、令牌或客户端密码。
 
-## 注册自己的 Bot [#register-your-own-bot]
+## 改用你自己的 Teams Bot [#register-your-own-bot]
 
 <Image src={imgRegister} alt="注册自己的 Teams 机器人：消息传送终结点，以及应用(机器人) ID、目录(租户) ID 和客户端密码" width={640} />
 
-在向导中选择**改为注册自己的 Bot**。登录你的 Microsoft 365 组织，在 [Teams 开发人员门户](https://dev.teams.microsoft.com/tools/bots)中：
+在向导中选择**改用你自己的 Teams Bot**。登录你的 Microsoft 365 组织，在 [Teams 开发人员门户](https://dev.teams.microsoft.com/tools/bots)中：
 
 1. 打开 **Bot management → New Bot**，命名后点击 **Add**。门户会同时在 Microsoft Entra 中创建机器人的应用注册。
 2. 在 **Configure** 下，把向导显示的**消息端点**粘贴为端点地址，点击 **Save**。
@@ -84,10 +99,10 @@ Agent 的名称和图标保存在 Teams 应用里。它们变化后，**集成 �
 
 ## 说明 [#notes]
 
-- 暂不支持文件和附件。
+- 一对一聊天支持文件。可以附上文件让 Agent 读，也可以让它发文件给你：Teams 会先请你允许，然后把文件存到你的 OneDrive 并显示在聊天里。允许文件需要你自己添加过这个应用（**应用 → 为你的组织构建**）。频道和群聊暂不支持文件。
 - 一个 Teams 机器人绑定一个 Agent。删除集成会释放你自己的机器人以供复用（下次选择**使用已有机器人**），不会删除机器人或它的应用注册。
 - 在**集成 → 消息应用 → Microsoft Teams** 中更换你自己机器人的客户端密码，机器人的对话不受影响。部署自带 Teams 应用的密码在 [Setup Server](/self-hosting/provider-apps#microsoft-teams-deployment-app) 中管理。
 
 ## 自托管 [#self-hosting]
 
-自托管部署需要先配置好公开的回调地址，和 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 的要求一样。运维者配置好 [Microsoft Teams 部署应用](/self-hosting/provider-apps#microsoft-teams-deployment-app)之后，向导里才会出现**使用 Microsoft 连接**。
+自托管部署需要先配置好公开的回调地址，和 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 的要求一样。运维者配置好 [Microsoft Teams 部署应用](/self-hosting/provider-apps#microsoft-teams-deployment-app)之后，向导里才会出现**使用 Microsoft 连接**。没有配置 [Agent Bot](/self-hosting/provider-apps#agent-bots) 时，这个应用在每个 Microsoft 365 组织里只服务一个 Agent，其他 Agent 需要用自己的 Teams Bot。

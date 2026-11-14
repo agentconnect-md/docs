@@ -177,6 +177,18 @@ Microsoft 登录和 Teams 共用一个应用和一个密码，轮换一次两者
 
 组织从 Agent 的**添加集成 → Microsoft Teams → 使用 Microsoft 连接**接入：由 Teams 管理员或全局管理员登录，应用随即发布到该 Microsoft 365 组织的应用目录，不需要上架 Teams 商店。在完成发布者验证之前，Microsoft Entra 会把这个应用标为未验证；只允许已验证发布者的组织需要先完成这项验证。
 
+### Agent Bot [#agent-bots]
+
+Teams 应用的机器人在每个 Microsoft 365 组织里只服务一个 Agent。配置 Agent Bot 后，其他每个 Agent 都会有自己的机器人：部署用你主租户里的一个 blueprint，在客户租户里创建 Microsoft Entra agent identity，并在你的订阅里注册对应的 Azure Bot。配置好 Teams 应用后，**Microsoft** 下面会出现 **Agent bots** 分组。以下操作只需做一次：
+
+1. 如果要在 Setup 里创建 blueprint，在应用的主租户里给它授予三个 Microsoft Graph 应用权限并完成管理员同意：`AgentIdentityBlueprint.Create`、`AgentIdentityBlueprint.AddRemoveCreds.All` 和 `AgentIdentityBlueprintPrincipal.Create`。只有 **Create blueprint** 会用到它们，之后可以移除。
+2. 在存放机器人注册的 Azure 资源组上，给应用的服务主体分配 **Contributor** 角色。
+3. 在订阅上注册 `Microsoft.BotService` 资源提供程序。
+
+填入 **Azure subscription ID**、**Resource group**，以及作为 blueprint 所有者和担保人的你自己的 Microsoft Entra 用户，点击 **Create blueprint**；它的密钥直接存入部署的密钥存储，不会显示出来。也可以用在 Microsoft Entra 管理中心手动创建的 blueprint：先把它开放给任意组织目录中的账号并添加客户端密码，再用 **Save blueprint** 填入两者。最后重启 AgentConnect 使设置生效。
+
+每个客户租户的管理员都能在 Microsoft Entra 管理中心的这个 blueprint 下看到这些 Agent，以及连接每个 Agent 的人（作为担保人），也可以在那里停用它们。
+
 同一个应用也用来连接 [Azure DevOps](/connect-automate/triggers-automation/azure-devops) 组织。把卡片上显示的 **Azure DevOps** 连接页面再添加为一个 Web 重定向 URI，之后由管理员在控制台的 Azure DevOps 卡片上连接。Microsoft 的同意页面会显示应用在 Entra 中的显示名称，所以名称里不要只写某一个 Microsoft 产品。
 
 ## Lark 和飞书租户应用 [#lark-and-feishu-tenant-apps]
