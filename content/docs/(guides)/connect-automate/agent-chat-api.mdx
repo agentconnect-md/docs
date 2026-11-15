@@ -12,6 +12,30 @@ It takes three steps:
 2. Create a key limited to agent chat.
 3. Post turns to the chat endpoint with the key.
 
+## Choose a protocol [#choose-a-protocol]
+
+An agent's API speaks three protocols, and an agent can add more than one. This page covers **AI SDK UI**. **AG-UI** is the same chat for an AG-UI client. **AHP** is for a client that opens the agent itself, such as [VS Code](/connect-automate/vscode).
+
+| | AI SDK UI | AG-UI | AHP v1 |
+| --- | --- | --- | --- |
+| Made for | A chat UI built on `useChat` | A chat UI built on an AG-UI client, such as CopilotKit | An agent client, such as VS Code |
+| Transport | One HTTP POST per turn, answered as an event stream | The same | One WebSocket for the whole connection |
+| Endpoint | `<relay-url>/ai-sdk/agents/<agent-id>/chat` | `<relay-url>/ag-ui/agents/<agent-id>/chat` | `wss://<relay-url>/ahp/agents/<agent-id>` |
+| Credential | An **Agent chat** or **Full access** key | The same | A **Full access** key, or a sign-in from the client |
+| Reply and thinking | Yes | Yes | Yes |
+| Tool calls | Title and status | Title and status | Input and output |
+| File edits | Not shown | Not shown | Before and after, as a diff |
+| The agent's files | No | No | Read-only |
+| Questions and approvals | The caller answers | Not handed to the caller | The caller answers |
+| Sessions | The caller keeps the conversation id | The caller keeps the thread id | Listed, with their earlier turns |
+| Stopping a turn | No: closing the request leaves it running | No: the same | Yes |
+| A dropped connection | The rest of the turn is only in the console | The same | Reconnect and keep reading |
+| Message input | The text of the last message | The same | Text and one image |
+
+Pick AI SDK UI or AG-UI to put an agent behind your own chat UI: a turn is one request, and an **Agent chat** key can do nothing but chat. Pick AHP when the client should see the agent's work and not only its replies.
+
+An AG-UI request is a `RunAgentInput` whose `threadId` names the conversation. Tool activity, the plan and notices arrive as `ACTIVITY_SNAPSHOT` events, and the session title as a `CUSTOM` event named `session_info`. Keys, limits and refusals are the ones on this page.
+
 ## Add the API to the agent [#add-the-api]
 
 An agent accepts API calls only after its owner adds the API. Open the agent, then **Integrations → Add integration**, pick **API** under **Workflow**, choose **AI SDK UI** and click **Add API**.
