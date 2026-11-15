@@ -12,6 +12,30 @@ Agent 对话 API 可以把 Agent 接到任何基于 [AI SDK](https://ai-sdk.dev)
 2. 创建一个仅限 Agent 对话的密钥。
 3. 用密钥向对话接口发送每一轮对话。
 
+## 选择协议 [#choose-a-protocol]
+
+Agent 的 API 支持三种协议，一个 Agent 可以添加不止一种。本页讲的是 **AI SDK UI**。**AG-UI** 是面向 AG-UI 客户端的同一种对话。**AHP** 面向直接打开 Agent 的客户端，例如 [VS Code](/connect-automate/vscode)。
+
+| | AI SDK UI | AG-UI | AHP v1 |
+| --- | --- | --- | --- |
+| 适用于 | 基于 `useChat` 的聊天界面 | 基于 AG-UI 客户端（如 CopilotKit）的聊天界面 | Agent 客户端，例如 VS Code |
+| 传输 | 每一轮一次 HTTP POST，以事件流返回 | 相同 | 整个连接使用一条 WebSocket |
+| 接口 | `<relay-url>/ai-sdk/agents/<agent-id>/chat` | `<relay-url>/ag-ui/agents/<agent-id>/chat` | `wss://<relay-url>/ahp/agents/<agent-id>` |
+| 凭证 | **Agent 对话** 或 **完全访问** 密钥 | 相同 | **完全访问** 密钥，或在客户端里登录 |
+| 回复和思考 | 有 | 有 | 有 |
+| 工具调用 | 标题和状态 | 标题和状态 | 输入和输出 |
+| 文件修改 | 不显示 | 不显示 | 修改前后的内容，以 diff 呈现 |
+| Agent 的文件 | 没有 | 没有 | 只读 |
+| 提问与审批 | 由调用方回答 | 不交给调用方 | 由调用方回答 |
+| 会话 | 调用方自己保存会话 id | 调用方自己保存 thread id | 可列出，并带有之前的对话 |
+| 停止一轮对话 | 不能：关闭请求后它继续运行 | 不能：相同 | 能 |
+| 连接中断 | 这一轮剩下的内容只能在控制台里看 | 相同 | 重新连接后继续读取 |
+| 消息输入 | 最后一条消息的文本 | 相同 | 文本和一张图片 |
+
+要把 Agent 放到你自己的聊天界面后面，选 AI SDK UI 或 AG-UI：一轮对话就是一次请求，而且 **Agent 对话** 密钥除了对话什么都做不了。如果客户端要看到 Agent 做了什么，而不只是它的回复，选 AHP。
+
+AG-UI 的请求是一个 `RunAgentInput`，其中的 `threadId` 标识会话。工具活动、计划和通知以 `ACTIVITY_SNAPSHOT` 事件到达，会话标题以名为 `session_info` 的 `CUSTOM` 事件到达。密钥、限制和拒绝情形与本页所述相同。
+
 ## 给 Agent 添加 API [#add-the-api]
 
 Agent 的所有者添加 API 之后，Agent 才接受 API 调用。打开 Agent，进入 **集成 → 添加集成**，在 **工作流** 下选 **API**，选择 **AI SDK UI**，点 **添加 API**。
