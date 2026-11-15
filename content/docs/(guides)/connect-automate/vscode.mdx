@@ -21,27 +21,59 @@ It takes four steps:
 
 ## Add the API to the agent [#add-the-api]
 
-An agent accepts AHP clients only after its owner adds the API. Open the agent, then **Integrations → Add integration**, pick **API** under **Workflow**, choose the AHP protocol and click **Add API**.
+An agent accepts AHP clients only after its owner adds the API to it. Before you start, check that the agent's daemon runs v2.14.0 or later; [upgrade it](/build-your-team/daemons/upgrade-the-daemon) if not.
 
-The agent's Integrations tab now shows an **API** card. Its **Quickstart** shows the WebSocket endpoint for this agent, `wss://<relay-url>/ahp/agents/<agent-id>`. An organization whose AHP access is still a pilot shows **Pilot** on the protocol, and only approved members can connect.
+1. In the console, open the agent and go to its **Integrations** tab.
+2. Click **Add integration** and pick **API** under **Workflow**.
+3. Under **Protocol**, select **AHP v1**.
+4. Click **Add API**.
+
+![The Add integration dialog with the AHP v1 protocol selected](/images/vscode-add-ahp-api.png)
+
+The protocol can carry a badge:
+
+| Badge | What it means |
+| --- | --- |
+| None | Every member who can see the agent can connect. |
+| **Pilot** | You can add the API, but only members approved for the pilot can connect. |
+| **Disabled** | AHP is off on this deployment, and the protocol cannot be selected. On AgentConnect OSS, [turn it on](#oss). |
+
+The Integrations tab now shows an **API** card. Open its **Quickstart** and copy the **WebSocket endpoint**, which is this agent's address for VS Code:
+
+![The API card on the Integrations tab, with its Quickstart button](/images/vscode-ahp-api-card.png)
+
+```text
+wss://<relay-url>/ahp/agents/<agent-id>
+```
+
+Each agent has its own endpoint, so add the API to every agent you want to open in VS Code.
 
 ## Install the extension [#install-the-extension]
 
-The extension is built from the [AgentConnect repository](https://github.com/agentconnect-md/agentconnect). With Node and pnpm installed:
+Every stable AgentConnect release from v2.15.0 carries the extension as a VSIX file.
+
+1. Download [`agentconnect-vscode.vsix`](https://github.com/agentconnect-md/agentconnect/releases/latest/download/agentconnect-vscode.vsix). The link always serves the latest release's file.
+2. Install it. In VS Code, run **Extensions: Install from VSIX...** from the Command Palette and pick the file, or run this from a terminal:
+
+   ```bash
+   code --install-extension agentconnect-vscode.vsix
+   ```
+
+3. Allow the extension to use the proposed API. Run **Preferences: Configure Runtime Arguments** from the Command Palette and add this line to the `argv.json` it opens:
+
+   ```json
+   { "enable-proposed-api": ["agentconnect.agentconnect-vscode"] }
+   ```
+
+4. Restart VS Code.
+
+To try it without editing `argv.json`, start VS Code once with the flag instead:
 
 ```bash
-git clone https://github.com/agentconnect-md/agentconnect.git
-cd agentconnect
-pnpm install
-pnpm --filter agentconnect-vscode package
-code --install-extension packages/vscode/agentconnect-vscode-0.1.0.vsix
+code --enable-proposed-api=agentconnect.agentconnect-vscode
 ```
 
-Then allow the extension to use the proposed API. In VS Code, run **Preferences: Configure Runtime Arguments** from the Command Palette, add this line to the `argv.json` it opens, and restart VS Code:
-
-```json
-{ "enable-proposed-api": ["agentconnect.agentconnect-vscode"] }
-```
+The extension does not update itself. To update, download the file again and install it over the old one.
 
 ## Add the agent to VS Code [#add-the-agent]
 
