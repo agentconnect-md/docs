@@ -28,6 +28,8 @@ Agent 的所有者给它添加 API 之后，Agent 才接受 AHP 客户端。开�
 3. 在 **协议** 下选 **AHP v1**。
 4. 点 **添加 API**。
 
+![添加集成对话框，已选中 AHP v1 协议](/images/vscode-add-ahp-api.png)
+
 协议上可能带有一个标记：
 
 | 标记 | 含义 |
@@ -37,6 +39,8 @@ Agent 的所有者给它添加 API 之后，Agent 才接受 AHP 客户端。开�
 | **未启用** | 当前部署没有开启 AHP，协议无法选择。在 AgentConnect OSS 上，先[开启它](#oss)。 |
 
 之后集成页会出现一张 **API** 卡片。打开它的 **快速开始**，复制其中的 **WebSocket 地址**，这就是在 VS Code 里用的 Agent 地址：
+
+![集成页上的 API 卡片和它的快速开始按钮](/images/vscode-ahp-api-card.png)
 
 ```text
 wss://<relay-url>/ahp/agents/<agent-id>

@@ -28,6 +28,8 @@ An agent accepts AHP clients only after its owner adds the API to it. Before you
 3. Under **Protocol**, select **AHP v1**.
 4. Click **Add API**.
 
+![The Add integration dialog with the AHP v1 protocol selected](/images/vscode-add-ahp-api.png)
+
 The protocol can carry a badge:
 
 | Badge | What it means |
@@ -37,6 +39,8 @@ The protocol can carry a badge:
 | **Disabled** | AHP is off on this deployment, and the protocol cannot be selected. On AgentConnect OSS, [turn it on](#oss). |
 
 The Integrations tab now shows an **API** card. Open its **Quickstart** and copy the **WebSocket endpoint**, which is this agent's address for VS Code:
+
+![The API card on the Integrations tab, with its Quickstart button](/images/vscode-ahp-api-card.png)
 
 ```text
 wss://<relay-url>/ahp/agents/<agent-id>
