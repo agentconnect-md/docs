@@ -21,25 +21,55 @@ Agent 是一个 [Agent Host Protocol](https://github.com/microsoft/agent-host-pr
 
 ## 给 Agent 添加 API [#add-the-api]
 
-Agent 的所有者添加 API 之后，Agent 才接受 AHP 客户端。打开 Agent，进入 **集成 → 添加集成**，在 **工作流** 下选 **API**，选择 AHP 协议，点 **添加 API**。
+Agent 的所有者给它添加 API 之后，Agent 才接受 AHP 客户端。开始之前，先确认 Agent 所在的 Daemon 是 v2.14.0 或更新的版本；不是的话先[升级](/build-your-team/daemons/upgrade-the-daemon)。
 
-之后 Agent 的集成页会出现一张 **API** 卡片。它的 **快速开始** 里有这个 Agent 的 WebSocket 接口：`wss://<relay-url>/ahp/agents/<agent-id>`。如果组织的 AHP 访问还在试点阶段，协议上会显示 **试点**，只有获批的成员可以连接。
+1. 在控制台打开 Agent，进入它的 **集成** 页。
+2. 点 **添加集成**，在 **工作流** 下选 **API**。
+3. 在 **协议** 下选 **AHP v1**。
+4. 点 **添加 API**。
+
+协议上可能带有一个标记：
+
+| 标记 | 含义 |
+| --- | --- |
+| 无 | 能看到这个 Agent 的成员都可以连接。 |
+| **试点** | 可以添加 API，但只有获批参加试点的成员可以连接。 |
+| **未启用** | 当前部署没有开启 AHP，协议无法选择。在 AgentConnect OSS 上，先[开启它](#oss)。 |
+
+之后集成页会出现一张 **API** 卡片。打开它的 **快速开始**，复制其中的 **WebSocket 地址**，这就是在 VS Code 里用的 Agent 地址：
+
+```text
+wss://<relay-url>/ahp/agents/<agent-id>
+```
+
+每个 Agent 有自己的接口，所以要在 VS Code 里打开的每个 Agent 都要添加 API。
 
 ## 安装扩展 [#install-the-extension]
 
-从最新的 AgentConnect 发布版下载 [`agentconnect-vscode.vsix`](https://github.com/agentconnect-md/agentconnect/releases/latest/download/agentconnect-vscode.vsix)，然后安装：
+从 v2.15.0 起，每个 AgentConnect 正式发布版都附带这个扩展的 VSIX 文件。
+
+1. 下载 [`agentconnect-vscode.vsix`](https://github.com/agentconnect-md/agentconnect/releases/latest/download/agentconnect-vscode.vsix)。这个链接始终指向最新发布版的文件。
+2. 安装。在 VS Code 的命令面板运行 **Extensions: Install from VSIX...** 并选择这个文件，或者在终端里运行：
+
+   ```bash
+   code --install-extension agentconnect-vscode.vsix
+   ```
+
+3. 允许扩展使用提案 API。在命令面板运行 **Preferences: Configure Runtime Arguments**，在打开的 `argv.json` 里加入这一行：
+
+   ```json
+   { "enable-proposed-api": ["agentconnect.agentconnect-vscode"] }
+   ```
+
+4. 重启 VS Code。
+
+如果只想试用而不改 `argv.json`，可以带上这个参数启动一次 VS Code：
 
 ```bash
-code --install-extension agentconnect-vscode.vsix
+code --enable-proposed-api=agentconnect.agentconnect-vscode
 ```
 
-也可以在 VS Code 的命令面板运行 **Extensions: Install from VSIX...**，然后选择这个文件。
-
-然后允许扩展使用提案 API。在 VS Code 的命令面板运行 **Preferences: Configure Runtime Arguments**，在打开的 `argv.json` 里加入这一行，并重启 VS Code：
-
-```json
-{ "enable-proposed-api": ["agentconnect.agentconnect-vscode"] }
-```
+扩展不会自动更新。要更新时，重新下载文件并覆盖安装。
 
 ## 把 Agent 加到 VS Code [#add-the-agent]
 
