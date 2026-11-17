@@ -63,7 +63,9 @@ import {
   MicrosoftTeamsMark,
   QQMark,
   SlackMark,
-  TelegramMark
+  TelegramMark,
+  WeChatMark,
+  WeComMark
 } from '@/components/brand-marks'
 
 // The icons pages name in their frontmatter `icon`. Only these are bundled: lucide's full map, which Fumadocs' plugin
@@ -130,7 +132,9 @@ const ICONS: Record<string, ComponentType> = {
   MicrosoftTeams: MicrosoftTeamsMark,
   QQ: QQMark,
   Slack: SlackMark,
-  Telegram: TelegramMark
+  Telegram: TelegramMark,
+  WeChat: WeChatMark,
+  WeCom: WeComMark
 }
 
 // Fumadocs' lucide icons plugin, resolving names from the list above.
