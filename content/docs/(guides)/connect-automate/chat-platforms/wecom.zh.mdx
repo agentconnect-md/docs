@@ -4,6 +4,8 @@ icon: WeCom
 description: "把企业微信智能机器人连接到 AgentConnect 的 Agent，支持单聊和群里 @ 提及，回复流式输出，可收发文件，提问可点选作答。"
 ---
 
+import imgIntegration from '@/public/images/wecom-integration.png'
+
 企业微信默认关闭。自托管部署用 Helm chart 的 `features.wecom` 开启；在 Docker Compose 上，把 `wecom` 加入 [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) 中的 `FEATURE_FLAGS`，然后重新创建 `web`。开关打开之前，集成选择器里不会出现企业微信。AgentConnect Cloud 暂未提供。
 
 每个组织用自己企业微信里的智能机器人连接。Daemon 通过智能机器人的长连接主动向外连接，因此不需要公网回调 URL。不支持私有化部署的企业微信。
@@ -21,6 +23,8 @@ description: "把企业微信智能机器人连接到 AgentConnect 的 Agent，�
 ## 连接 [#connect-it]
 
 在你的 Agent 上打开**集成 → 添加集成 → 企业微信**，粘贴 BotID 和 Secret，然后点击**连接**。AgentConnect 会先向企业微信校验这对凭证再保存；如果机器人的 API 模式不是长连接，会提示你要改什么。
+
+<Image src={imgIntegration} alt="添加企业微信集成：填写 BotID 和 Secret" width={640} />
 
 ## 使用 [#use-it]
 

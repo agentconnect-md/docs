@@ -4,6 +4,8 @@ icon: WeCom
 description: "Connect a WeCom smart bot to an AgentConnect agent for direct chats and group @mentions, with streamed replies, files, and tap-to-answer questions."
 ---
 
+import imgIntegration from '@/public/images/wecom-integration-en.png'
+
 WeCom is off by default. On a self-hosted deployment, turn it on with `features.wecom` in the Helm chart; on Docker Compose, add `wecom` to `FEATURE_FLAGS` in [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) and recreate `web`. Until the flag is on, WeCom does not appear in the integration picker. AgentConnect Cloud does not offer it yet.
 
 Each organization connects a smart bot from its own WeCom. The daemon connects outbound through the smart bot's long connection, so no public callback URL is required. Privately deployed WeCom is not supported.
@@ -21,6 +23,8 @@ A smart bot allows one long connection at a time. Give AgentConnect a bot nothin
 ## Connect it
 
 On your agent, open **Integrations → Add integration → WeCom**, paste the BotID and Secret, and click **Connect**. AgentConnect checks the pair with WeCom before saving it; a bot whose API mode is not long connection is refused with what to change.
+
+<Image src={imgIntegration} alt="Add a WeCom integration with a BotID and Secret" width={640} />
 
 ## Use it
 
