@@ -2,10 +2,10 @@
   "pages": [
     "slack",
     "msteams",
-    "telegram",
-    "discord",
-    "lark-feishu",
     "googlechat",
+    "discord",
+    "telegram",
+    "lark-feishu",
     "dingtalk",
     "wecom",
     "wechat",

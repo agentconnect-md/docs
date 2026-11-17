@@ -9,9 +9,7 @@ import imgApiConfig from '@/public/images/wecom-api-config.png'
 import imgUsageMode from '@/public/images/wecom-usage-mode.png'
 import imgIntegration from '@/public/images/wecom-integration.png'
 
-企业微信默认关闭。自托管部署用 Helm chart 的 `features.wecom` 开启；在 Docker Compose 上，把 `wecom` 加入 [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) 中的 `FEATURE_FLAGS`，然后重新创建 `web`。开关打开之前，集成选择器里不会出现企业微信。AgentConnect Cloud 暂未提供。
-
-每个组织用自己企业微信里的智能机器人连接。Daemon 通过智能机器人的长连接主动向外连接，因此不需要公网回调 URL。不支持私有化部署的企业微信。
+AgentConnect Cloud 和自托管部署都支持企业微信。每个组织用自己企业微信里的智能机器人连接。Daemon 通过智能机器人的长连接主动向外连接，因此不需要公网回调 URL。不支持私有化部署的企业微信。
 
 ## 创建智能机器人 [#create-the-smart-bot]
 
@@ -59,3 +57,7 @@ import imgIntegration from '@/public/images/wecom-integration.png'
 - 群只有“被 @ 时回复”和“关闭”两种状态，AgentConnect 也无法把机器人移出群，请在企业微信里移除。
 - 一个企业微信机器人绑定一个 Agent。删除集成会释放机器人以供复用（下次选择**未使用的企业微信机器人**），但不会删除企业微信里的智能机器人。
 - 在**集成 → 消息应用 → 企业微信 → 更换密钥**中更换 Secret。测试新的 Secret 会断开正在运行的机器人，所以 AgentConnect 不做测试；如果更换后机器人不再回复，请从企业微信重新复制 Secret。
+
+## 自托管 [#self-hosting]
+
+自托管部署上企业微信默认关闭。用 Helm chart 的 `features.wecom` 开启；在 Docker Compose 上，把 `wecom` 加入 [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) 中的 `FEATURE_FLAGS`，然后重新创建 `web`。开关打开之前，集成选择器里不会出现企业微信。
