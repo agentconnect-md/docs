@@ -4,9 +4,9 @@ icon: WeCom
 description: "Connect a WeCom smart bot to an AgentConnect agent for direct chats and group @mentions, with streamed replies, files, and tap-to-answer questions."
 ---
 
-import imgCreateBot from '@/public/images/wecom-create-bot.png'
-import imgApiConfig from '@/public/images/wecom-api-config.png'
-import imgUsageMode from '@/public/images/wecom-usage-mode.png'
+import imgCreateBot from '@/public/images/wecom-create-bot-en.png'
+import imgApiConfig from '@/public/images/wecom-api-config-en.png'
+import imgUsageMode from '@/public/images/wecom-usage-mode-en.png'
 import imgIntegration from '@/public/images/wecom-integration-en.png'
 
 WeCom is off by default. On a self-hosted deployment, turn it on with `features.wecom` in the Helm chart; on Docker Compose, add `wecom` to `FEATURE_FLAGS` in [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) and recreate `web`. Until the flag is on, WeCom does not appear in the integration picker. AgentConnect Cloud does not offer it yet.
@@ -17,19 +17,21 @@ Each organization connects a smart bot from its own WeCom. The daemon connects o
 
 In the [WeCom admin console](https://work.weixin.qq.com/wework_admin/frame#/aiHelper/create), signed in as an admin of your organization:
 
-1. Fill in the bot's name, introduction, and avatar with your agent's. WeCom shows them in chats, and AgentConnect cannot set them for you. Then choose **API 模式** (API mode).
+1. Fill in the bot's **Name**, **Overview**, and **Profile Photo** with your agent's. WeCom shows them in chats, and AgentConnect cannot set them for you. Then choose **API 模式** (API mode).
 
-   <Image src={imgCreateBot} alt="Create a smart bot: a name, an introduction, and API mode selected" width={640} />
+   <Image src={imgCreateBot} alt="Create a smart robot: a name, an overview, and API mode selected" width={640} />
 
-2. Under **API 配置** (API configuration), keep **连接方式** (connection method) on **使用长连接** (long connection).
+2. Under **API Configuration**, keep **Connection method** on **Use a long connection**.
 
-   <Image src={imgApiConfig} alt="API configuration with long connection selected, above the Bot ID and Secret" width={640} />
+   <Image src={imgApiConfig} alt="API Configuration with Use a long connection selected, above the Bot ID and Secret" width={640} />
 
-3. Under **使用模式** (usage mode), change **使用方式** from the default **仅个人使用** (personal use only) to **多人使用** (multiple people), and choose under **可使用成员** the members who may use the bot.
+3. Under **使用模式** (usage mode), change **How to use** from the default **仅个人使用** (personal use only) to **多人使用** (multiple people), and choose under **可使用成员** (members who can use it) the members who may use the bot.
 
-   <Image src={imgUsageMode} alt="Usage mode set to multiple people, with the members who may use the bot" width={640} />
+   <Image src={imgUsageMode} alt="How to use set to multiple people, with the members who may use the bot" width={640} />
 
-4. Click **保存** (Save), then copy the **Bot ID** from **API 配置** and click **点击获取** to get the **Secret**.
+4. Click **Save**, then copy the **Bot ID** from **API Configuration** and click **Click to access** to get the **Secret**.
+
+The labels above are the console's English ones; switch language at the bottom of the page. Some labels stay in Chinese there, and they are given as shown, with a translation.
 
 A smart bot allows one long connection at a time. Give AgentConnect a bot nothing else connects to: a second program on the same bot disconnects the first.
 
