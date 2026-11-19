@@ -16,7 +16,7 @@ Use the organization switcher to move between organizations you belong to.
 
 ## Members
 
-**Settings → Members & roles** lists everyone in the organization. Owners can:
+**Settings → Members** lists everyone in the organization. Owners can:
 
 - add a member by email and choose a role;
 - generate or revoke the organization's collaborator invite link;
@@ -25,11 +25,13 @@ Use the organization switcher to move between organizations you belong to.
 
 An organization must always have at least one Owner, so its last Owner cannot be demoted or removed.
 
+An organization that has verified an email domain can also let anyone who signs in with an address on it join as a Collaborator, without an invitation. That choice, **New members**, is on the same tab; see [Single sign-on](/operate-govern/single-sign-on#new-members).
+
 ## Service accounts
 
 A service account is a member for a server your organization runs, such as the backend of an Ask AI panel. It never signs in, so its keys keep working when the person who set it up leaves.
 
-**Settings → Service accounts** is Owner-only and separate from the member list. Create one with a name and a role, Collaborator or Viewer; a service account is never an Owner. Its address, for example `docs-bot-k3x9p2@sa.agentconnect.md`, never changes. **Keys** mints its [API keys](/api#create-a-key) with the same choices as a personal key, and each acts as the service account with its role. Sessions it opens are visible to the whole organization. Deleting it revokes its keys.
+**Settings → Members → Service accounts** is Owner-only and separate from the member list. Create one with a name and a role, Collaborator or Viewer; a service account is never an Owner. Its address, for example `docs-bot-k3x9p2@sa.agentconnect.md`, never changes. **Keys** mints its [API keys](/api#create-a-key) with the same choices as a personal key, and each acts as the service account with its role. Sessions it opens are visible to the whole organization. Deleting it revokes its keys.
 
 ## Roles
 
