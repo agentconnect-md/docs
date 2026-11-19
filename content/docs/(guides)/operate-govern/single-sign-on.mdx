@@ -4,6 +4,14 @@ icon: FingerprintPattern
 description: "Connect your organization's identity provider over OIDC or SAML, bring people in by email domain, and require SSO for every member."
 ---
 
+import imgSsoSettingsTab from '@/public/images/sso-settings-tab.png'
+import imgSsoDomainPending from '@/public/images/sso-domain-pending.png'
+import imgSsoConnectionOidc from '@/public/images/sso-connection-oidc.png'
+import imgSignInSso from '@/public/images/sign-in-sso.png'
+import imgSignInSsoPage from '@/public/images/sign-in-sso-page.png'
+import imgSsoNewMembers from '@/public/images/sso-new-members.png'
+import imgSsoRequired from '@/public/images/sso-required.png'
+
 An organization can have its people sign in through its own identity provider. Three things build on each other, and you can stop after any of them:
 
 | Step | What it changes |
@@ -16,6 +24,8 @@ Who becomes a member is a separate choice, [New members](#new-members), and work
 
 Owners set all of this up under **Settings → Single sign-on**. Other members see the tab once there is a domain or a connection to read, and cannot change it.
 
+<Image src={imgSsoSettingsTab} alt="The Single sign-on tab with a verified domain and an enforced connection" width={640} />
+
 ## Verify a domain
 
 1. In **Domains**, choose **Add domain** and enter the domain, such as `acme.example`.
@@ -26,6 +36,8 @@ Owners set all of this up under **Settings → Single sign-on**. Other members s
    | TXT | `_agentconnect-challenge.acme.example` | `agentconnect-verification=…` |
 
 3. Choose **Verify**. The row changes from **Pending** to **Verified**.
+
+<Image src={imgSsoDomainPending} alt="A pending domain showing the TXT record to create" width={640} />
 
 **Record not found** right after you create the record usually means DNS has not caught up; wait and choose **Verify** again. A pending domain that is not verified within seven days is dropped, and you can add it again.
 
@@ -46,6 +58,8 @@ Once a domain is verified, **Connection** shows **Set up connection**. Choose th
 | **Client ID**, **Client secret** | The credentials the provider issues for the application |
 | **Scopes** | `openid email profile` unless the provider needs more to return an address |
 | **Callback URL** | Shown for you to copy: register it at the provider as the redirect URI |
+
+<Image src={imgSsoConnectionOidc} alt="The connection dialog for OIDC, with the callback URL to register at the provider" width={480} />
 
 **SAML**
 
@@ -88,6 +102,10 @@ Activation changes how those addresses sign in. It does not add or remove any me
 
 On the sign-in page, members choose **Continue with SSO**, enter their **Work email**, and are sent to your identity provider. The SSO page has its own address, `/login/sso` on the console, so people who always sign in this way can bookmark it and skip the first page.
 
+<Image src={imgSignInSso} alt="The sign-in page with Continue with SSO and a Last used tag" width={640} />
+
+<Image src={imgSignInSsoPage} alt="The SSO page asking for a work email" width={640} />
+
 The sign-in page marks the method a browser used last with **Last used**, and the SSO page fills in the address used last. An address whose domain has no connection gets **No single sign-on is set up for this email.**
 
 ## New members
@@ -98,6 +116,8 @@ The sign-in page marks the method a browser used last with **Last used**, and th
 | --- | --- |
 | **Invite only** (default) | Only people an Owner adds or who open an invite link |
 | **Anyone on your domains** | Also anyone who signs in with an address on a verified domain |
+
+<Image src={imgSsoNewMembers} alt="New members set to Anyone on your domains" width={640} />
 
 A person who joins by domain becomes a **Collaborator**, once:
 
@@ -120,6 +140,8 @@ While the connection reads **Enforced**:
 - a member who signed in another way sees **_Acme_ requires single sign-on** in place of the organization, with **Sign in with SSO**. Their other organizations are unaffected.
 - a member whose address is not on your verified domains cannot sign in with SSO and loses access. Give contractors an address on your domain at the identity provider, or do not enforce.
 - creating a personal API key or approving an OAuth grant for the organization also needs an SSO session. Keys, OAuth tokens and service accounts issued earlier keep working, so revoke the ones a departing person held.
+
+<Image src={imgSsoRequired} alt="What a member sees without an SSO session: the organization requires single sign-on" width={560} />
 
 **Stop enforcing** returns the organization to any sign-in; the connection stays active. Editing the connection's settings or deactivating it also ends enforcement, and it returns only when an Owner enforces again.
 

@@ -4,6 +4,9 @@ icon: LogIn
 description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录，支持社交登录提供方或单点登录（SSO）。"
 ---
 
+import imgSetupSsoNewMembers from '@/public/images/setup-sso-new-members.png'
+import imgSsoNewMembersDeployment from '@/public/images/sso-new-members-deployment.png'
+
 AgentConnect 使用 Logto 处理人类用户登录、可续期的浏览器令牌以及关联的社交身份。组织、角色、Agent 可见范围、会话可见范围和仓库权限仍由 AgentConnect 自己管理。
 
 基础 Compose 栈在本地评估时默认关闭身份验证。当你需要真实身份时，请从以下路径中选择一种：
@@ -224,9 +227,13 @@ OIDC 提供方会标明每个地址是否已验证。当它没有给出验证状
 
 **组织**（Organization）指定他们加入哪个组织。**The only organization** 适合只有一个组织的部署；部署里没有组织或有多个组织时，在你从列表里选定一个之前没有人会加入。
 
+<Image src={imgSetupSsoNewMembers} alt="Setup 单点登录表单里的 New members 和 Organization" width={480} />
+
 加入的人在登录时成为**协作者**，且只加入一次。之后被所有者移除的人不会再被加回来，已经是成员的人保留原有角色。域名是精确匹配的，如果有人用 `eu.example.com` 下的邮箱，要把它单独列出。
 
 在控制台里，这个组织会在**设置 → 成员 → 新成员**下以只读方式显示这项选择，并标有**由部署设置**。
+
+<Image src={imgSsoNewMembersDeployment} alt="只读的新成员卡片，标有“由部署设置”" width={640} />
 
 <Callout type="warn">
 在有这个选项之前配置的连接器，会被读作 **Anyone who signs in with SSO**。升级之后，只有一个组织的部署会开始把连接器域名下的账号在登录时加入这个组织。如果只想保留邀请方式，请选择 **Invite only**，保存并重启控制平面。

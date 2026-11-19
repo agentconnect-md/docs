@@ -4,6 +4,14 @@ icon: FingerprintPattern
 description: "通过 OIDC 或 SAML 接入组织自己的身份提供方，按邮箱域名接纳成员，并要求所有成员都通过 SSO 登录。"
 ---
 
+import imgSsoSettingsTab from '@/public/images/sso-settings-tab.png'
+import imgSsoDomainPending from '@/public/images/sso-domain-pending.png'
+import imgSsoConnectionOidc from '@/public/images/sso-connection-oidc.png'
+import imgSignInSso from '@/public/images/sign-in-sso.png'
+import imgSignInSsoPage from '@/public/images/sign-in-sso-page.png'
+import imgSsoNewMembers from '@/public/images/sso-new-members.png'
+import imgSsoRequired from '@/public/images/sso-required.png'
+
 组织可以让自己的人通过组织的身份提供方登录。下面三件事层层递进，做到哪一步都可以停下：
 
 | 步骤 | 带来的变化 |
@@ -16,6 +24,8 @@ description: "通过 OIDC 或 SAML 接入组织自己的身份提供方，按邮
 
 这些都由所有者在**设置 → 单点登录**里配置。其他成员在有域名或连接可看之后能看到这个标签页，但不能修改。
 
+<Image src={imgSsoSettingsTab} alt="单点登录标签页：一个已验证的域名和一条已强制的连接" width={640} />
+
 ## 验证域名 [#verify-a-domain]
 
 1. 在**域名**里选择**添加域名**，输入域名，例如 `acme.example`。
@@ -26,6 +36,8 @@ description: "通过 OIDC 或 SAML 接入组织自己的身份提供方，按邮
    | TXT | `_agentconnect-challenge.acme.example` | `agentconnect-verification=…` |
 
 3. 选择**验证**。这一行从**待验证**变为**已验证**。
+
+<Image src={imgSsoDomainPending} alt="待验证的域名，以及需要创建的 TXT 记录" width={640} />
 
 刚建好记录就看到**未找到记录**，通常是 DNS 还没生效，等一会儿再选**验证**。待验证的域名七天内没有通过验证会被清掉，之后可以重新添加。
 
@@ -46,6 +58,8 @@ description: "通过 OIDC 或 SAML 接入组织自己的身份提供方，按邮
 | **Client ID**、**Client secret** | 身份提供方为这个应用签发的凭据 |
 | **Scopes** | 默认 `openid email profile`，除非身份提供方需要更多 scope 才返回邮箱 |
 | **回调 URL** | 供你复制：在身份提供方那里登记为重定向 URI |
+
+<Image src={imgSsoConnectionOidc} alt="OIDC 的连接对话框，其中的回调 URL 需要登记到身份提供方" width={480} />
 
 **SAML**
 
@@ -88,6 +102,10 @@ description: "通过 OIDC 或 SAML 接入组织自己的身份提供方，按邮
 
 成员在登录页选择**使用 SSO 继续**，输入**工作邮箱**，然后被带到你的身份提供方。SSO 页有自己的地址，即控制台上的 `/login/sso`，一直这样登录的人可以把它收藏起来，跳过登录页。
 
+<Image src={imgSignInSso} alt="带有“使用 SSO 继续”和“上次使用”标签的登录页" width={640} />
+
+<Image src={imgSignInSsoPage} alt="要求填写工作邮箱的 SSO 页" width={640} />
+
 登录页会给这个浏览器上次用过的方式标上**上次使用**，SSO 页也会填好上次用过的邮箱。如果邮箱的域名没有连接，会提示**这个邮箱没有设置单点登录。**
 
 ## 新成员 [#new-members]
@@ -98,6 +116,8 @@ description: "通过 OIDC 或 SAML 接入组织自己的身份提供方，按邮
 | --- | --- |
 | **仅邀请**（默认） | 只有所有者添加的人，或打开邀请链接的人 |
 | **域内自动加入** | 另外，用已验证域名下的邮箱登录的任何人 |
+
+<Image src={imgSsoNewMembers} alt="新成员设为域内自动加入" width={640} />
 
 通过域名加入的人会成为**协作者**，且只加入一次：
 
@@ -120,6 +140,8 @@ description: "通过 OIDC 或 SAML 接入组织自己的身份提供方，按邮
 - 用其他方式登录的成员，在原本显示组织的地方会看到**_Acme_ 需要通过单点登录进入**和**使用 SSO 登录**。他们的其他组织不受影响。
 - 邮箱不在已验证域名下的成员无法通过 SSO 登录，会失去访问权限。请在身份提供方那里给外包人员分配你域名下的邮箱，或者不要强制。
 - 为这个组织创建个人 API 密钥或批准 OAuth 授权，同样需要 SSO 会话。之前签发的密钥、OAuth 令牌和服务账号照常可用，所以有人离开时要撤销他持有的那些。
+
+<Image src={imgSsoRequired} alt="没有 SSO 会话的成员看到的页面：组织需要通过单点登录进入" width={560} />
 
 **停止强制**之后，成员可以用任何方式登录后进入组织，连接仍保持启用。修改连接设置或停用连接也会结束强制，只有所有者再次强制才会恢复。
 
