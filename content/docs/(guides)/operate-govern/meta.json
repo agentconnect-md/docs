@@ -2,6 +2,7 @@
   "pages": [
     "sessions",
     "permissions-overview",
+    "single-sign-on",
     "billing-and-usage",
     "sandboxing"
   ],

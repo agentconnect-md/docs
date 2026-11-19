@@ -4,6 +4,9 @@ icon: LogIn
 description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录，支持社交登录提供方或单点登录（SSO）。"
 ---
 
+import imgSetupSsoNewMembers from '@/public/images/setup-sso-new-members.png'
+import imgSsoNewMembersDeployment from '@/public/images/sso-new-members-deployment.png'
+
 AgentConnect 使用 Logto 处理人类用户登录、可续期的浏览器令牌以及关联的社交身份。组织、角色、Agent 可见范围、会话可见范围和仓库权限仍由 AgentConnect 自己管理。
 
 基础 Compose 栈在本地评估时默认关闭身份验证。当你需要真实身份时，请从以下路径中选择一种：
@@ -200,9 +203,10 @@ Setup 会创建或更新对应的 Logto 连接器，并可以对其进行验证�
    - **OIDC**：issuer URL、客户端 ID 和客户端密钥。始终会请求 `openid profile email`；只有当提供方需要更多 scope 才返回邮箱地址时，才需要额外添加。
    - **SAML**：元数据 URL 或元数据 XML；如果携带邮箱地址的属性不是 `email`，再填写该属性名。
 4. 至少填写一个邮箱域名，例如 `example.com`。Logto 只为这些域名下的地址提供该连接器，因此没有域名时 Setup 会拒绝保存。
-5. 选择**保存 SSO 并配置 Logto**（Save SSO and configure Logto），然后重启控制平面和 Web。
+5. 在[**新成员**](#new-members)（New members）里选择谁会成为成员，并在**组织**（Organization）里选择他们加入哪个组织。
+6. 选择**保存 SSO 并配置 Logto**（Save SSO and configure Logto），然后重启控制平面和 Web。
 
-AgentConnect 登录页会把 SSO 按钮放在社交登录提供方之前，点击后直接跳转到身份提供方。当 SSO 是唯一的登录方式时，Setup 的**使用 Logto 登录**也会走它，因此第一位管理员也可以通过它认领。
+AgentConnect 登录页会把 SSO 按钮放在社交登录提供方之前，点击后直接跳转到身份提供方。登录页会给这个浏览器上次用过的方式标上**上次使用**。当 SSO 是唯一的登录方式时，Setup 的**使用 Logto 登录**也会走它，因此第一位管理员也可以通过它认领。
 
 使用 Microsoft Entra ID 时，注册一个单租户的 **Web** 应用并填入重定向 URI，创建客户端密钥，issuer 使用 `https://login.microsoftonline.com/<tenant-id>/v2.0`。在 ID 令牌中添加 `email` 可选声明，这样登录时才会带上邮箱地址。
 
@@ -212,11 +216,34 @@ Logto 会把 SSO 登录关联到邮箱地址相同的已有账号，因此之前
 
 OIDC 提供方会标明每个地址是否已验证。当它没有给出验证状态时，由**当身份提供方未说明邮箱是否已验证时信任该邮箱**（Trust email addresses when the identity provider does not say whether they are verified）决定，该选项默认开启。当提供方明确表示地址未验证时，无论该选项如何，Logto 都会丢弃这个地址。
 
+### 新成员 [#new-members]
+
+登录只会创建账号，不会带来成员资格。**新成员**（New members）决定通过连接器登录的人是否同时加入某个组织：
+
+| 选项 | 谁会加入 |
+| --- | --- |
+| **Anyone who signs in with SSO**（默认） | 邮箱在连接器所填域名下的每个账号 |
+| **Invite only** | 没有人自动加入；由所有者添加成员或分享邀请链接 |
+
+**组织**（Organization）指定他们加入哪个组织。**The only organization** 适合只有一个组织的部署；部署里没有组织或有多个组织时，在你从列表里选定一个之前没有人会加入。
+
+<Image src={imgSetupSsoNewMembers} alt="Setup 单点登录表单里的 New members 和 Organization" width={480} />
+
+加入的人在登录时成为**协作者**，且只加入一次。之后被所有者移除的人不会再被加回来，已经是成员的人保留原有角色。域名是精确匹配的，如果有人用 `eu.example.com` 下的邮箱，要把它单独列出。
+
+在控制台里，这个组织会在**设置 → 成员 → 新成员**下以只读方式显示这项选择，并标有**由部署设置**。
+
+<Image src={imgSsoNewMembersDeployment} alt="只读的新成员卡片，标有“由部署设置”" width={640} />
+
+<Callout type="warn">
+在有这个选项之前配置的连接器，会被读作 **Anyone who signs in with SSO**。升级之后，只有一个组织的部署会开始把连接器域名下的账号在登录时加入这个组织。如果只想保留邀请方式，请选择 **Invite only**，保存并重启控制平面。
+</Callout>
+
 ### 修改或移除连接器 [#change-or-remove-the-connector]
 
 保存新的设置会保留连接器及其 URL。更改协议会替换连接器，因此需要在身份提供方重新登记新的 URL；用户重新登录后会按邮箱地址匹配回原账号。
 
-**移除 SSO 登录**（Remove SSO sign-in）会关闭 SSO 并移除登录按钮；连接器仍保留在 Logto 中，再次配置 SSO 时会复用它。Setup 始终保留至少一种登录方式，因此当 SSO 是唯一的登录方式时，请先配置一个社交登录提供方。
+**移除 SSO 登录**（Remove SSO sign-in）会先请你确认，然后删除 Logto 里的连接器，以及用户通过它建立的登录方式。账号保留，需改用其他方式登录。Setup 始终保留至少一种登录方式，因此当 SSO 是唯一的登录方式时，请先配置一个社交登录提供方。
 
 ### 私有网络中的身份提供方 [#identity-providers-on-a-private-network]
 
@@ -227,6 +254,21 @@ LOGTO_SSRF_ALLOWED_ADDRESSES=192.0.2.10/32
 ```
 
 使用外部 Logto OSS 部署时，把 Logto 的 `SSRF_ALLOWED_ADDRESSES` 环境变量设为相同的值。
+
+### 让各组织自行配置 SSO [#let-organizations-set-up-their-own-sso]
+
+上面的连接器适用于属于单个公司的部署。由多个组织共用的部署，可以改为让每个组织验证自己的域名、接入自己的身份提供方，做法见面向所有者的[单点登录](/operate-govern/single-sign-on)。一个部署只能二选一，不能同时使用两种方式。
+
+1. 如果部署已经有连接器，先选择**移除 SSO 登录**（Remove SSO sign-in）。
+2. 在 Setup 的 **Deployment options** 下勾选 **Let organizations set up their own SSO**，然后选择 **Save options**。这需要先配置好控制台登录。保存时 Setup 会同时把 Logto 调整到位：安装访问令牌脚本，用来告诉 AgentConnect 一个会话是通过哪条连接登录的；并把 Logto 账号中心里的邮箱设为只读，因为域名规则读取的就是它。如果之后 **Logto** 卡片显示 **Update required**，选择 **Apply expected settings**。
+3. 重启控制平面和 Web。
+
+前提条件：
+
+- **比 1.46.0 更新的 Logto 版本。** 组织 SSO 依赖 Logto 只在连接的域名范围内把登录关联到已有账号，并把身份绑定到建立它的那条连接。Logto 1.46.0 及更早的版本以及 Logto Cloud 做不到这两点，在这些环境里请继续使用部署级的连接器。
+- **控制平面能解析公网 DNS**，因为每个组织的 TXT 记录由它自己查询。
+
+组织可能把自己锁在外面，例如强制 SSO 期间身份提供方出了故障。拥有 `ADMIN` 角色的用户可以用自己已登录的控制台会话来解除（API 密钥会被拒绝）：`POST /api/v1/admin/orgs/{orgId}/sso/connection/stop-enforcing`、`POST /api/v1/admin/orgs/{orgId}/sso/connection/deactivate`，以及用 `DELETE /api/v1/admin/sso/domains/{id}` 释放组织已不再控制的域名。
 
 ## Lark 和飞书身份 [#lark-and-feishu-identities]
 

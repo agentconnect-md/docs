@@ -4,6 +4,9 @@ icon: LogIn
 description: "Add Logto-backed sign-in to AgentConnect OSS with Logto Cloud, external Logto OSS, or the bundled local overlay, through social providers or single sign-on (SSO)."
 ---
 
+import imgSetupSsoNewMembers from '@/public/images/setup-sso-new-members.png'
+import imgSsoNewMembersDeployment from '@/public/images/sso-new-members-deployment.png'
+
 AgentConnect uses Logto for human sign-in, renewable browser tokens, and linked social identities. AgentConnect still owns organizations, roles, agent visibility, session visibility, and repository permissions.
 
 The base Compose stack keeps authentication off for local evaluation. Choose one of these paths when you want real identities:
@@ -200,9 +203,10 @@ People can sign in through your organization's own identity provider over OIDC o
    - **OIDC:** the issuer URL, client ID, and client secret. `openid profile email` are always requested; add scopes only when the provider needs more to return an email address.
    - **SAML:** the metadata URL or the metadata XML, and the attribute that carries the email address when it is not `email`.
 4. Enter at least one email domain, such as `example.com`. Logto offers the connector only for addresses in these domains, so Setup refuses to save the connector without one.
-5. Choose **Save SSO and configure Logto**, then restart Control Plane and Web.
+5. Choose who becomes a member under [**New members**](#new-members), and the **Organization** they join.
+6. Choose **Save SSO and configure Logto**, then restart Control Plane and Web.
 
-The AgentConnect sign-in page shows the SSO button ahead of the social providers and goes straight to the identity provider. When SSO is the only sign-in method, Setup's **Sign in with Logto** uses it too, so the first administrator can be claimed through it.
+The AgentConnect sign-in page shows the SSO button ahead of the social providers and goes straight to the identity provider. It marks the method a browser used last with **Last used**. When SSO is the only sign-in method, Setup's **Sign in with Logto** uses it too, so the first administrator can be claimed through it.
 
 For Microsoft Entra ID, register a single-tenant **Web** application with the redirect URI, create a client secret, and use `https://login.microsoftonline.com/<tenant-id>/v2.0` as the issuer. Add the `email` optional claim to the ID token so the sign-in carries an address.
 
@@ -212,11 +216,34 @@ Logto links an SSO sign-in to an existing account with the same email address, s
 
 An OIDC provider marks each address as verified or not. When it sends no verification status, **Trust email addresses when the identity provider does not say whether they are verified** decides; it is on by default. When the provider says an address is unverified, Logto drops it, whatever this option says.
 
+### New members
+
+Signing in creates an account, not a membership. **New members** decides whether a person who signs in through the connector also joins an organization:
+
+| Choice | Who joins |
+| --- | --- |
+| **Anyone who signs in with SSO** (default) | Every account whose address is on one of the connector's email domains |
+| **Invite only** | Nobody; an Owner adds members or shares an invite link |
+
+**Organization** names the organization they join. **The only organization** fits a deployment that has exactly one; with none or several, nobody joins until you pick one from the list.
+
+<Image src={imgSetupSsoNewMembers} alt="New members and Organization in Setup's single sign-on form" width={480} />
+
+A person joins as a **Collaborator**, once, at sign-in. Someone an Owner later removes is not added back, and someone who is already a member keeps their role. A domain is matched exactly, so list `eu.example.com` separately if people have addresses there.
+
+In the console, the organization shows the choice read-only under **Settings → Members → New members**, marked **Set by the deployment**.
+
+<Image src={imgSsoNewMembersDeployment} alt="The read-only New members card, marked Set by the deployment" width={640} />
+
+<Callout type="warn">
+A connector configured before this choice existed reads as **Anyone who signs in with SSO**. After you upgrade, a deployment with exactly one organization starts adding the accounts on its connector's domains to that organization as they sign in. Choose **Invite only**, save, and restart Control Plane to keep invitations only.
+</Callout>
+
 ### Change or remove the connector
 
 Saving new settings keeps the connector and its URLs. Changing the protocol replaces the connector, so register the new URLs with the identity provider; people sign in again and are matched to their accounts by email address.
 
-**Remove SSO sign-in** turns SSO off and removes the button; the connector stays in Logto and is reused if you set SSO up again. Setup keeps at least one sign-in method, so configure a social provider first when SSO is the only one.
+**Remove SSO sign-in** asks for confirmation, then deletes the connector in Logto and the sign-ins people set up through it. Their accounts stay, and they sign in with another method. Setup keeps at least one sign-in method, so configure a social provider first when SSO is the only one.
 
 ### Identity providers on a private network
 
@@ -227,6 +254,21 @@ LOGTO_SSRF_ALLOWED_ADDRESSES=192.0.2.10/32
 ```
 
 For an external Logto OSS deployment, set Logto's `SSRF_ALLOWED_ADDRESSES` environment variable to the same value.
+
+### Let organizations set up their own SSO
+
+The connector above serves a deployment that belongs to one company. A deployment shared by several can instead let each organization verify its own domains and connect its own identity provider, as [Single sign-on](/operate-govern/single-sign-on) describes for Owners. A deployment has one kind or the other, never both.
+
+1. If the deployment has a connector, choose **Remove SSO sign-in** first.
+2. In Setup, under **Deployment options**, check **Let organizations set up their own SSO** and choose **Save options**. It needs console sign-in to be configured. Saving also brings Logto in line: Setup installs the access-token script that tells AgentConnect which connection a session signed in through, and makes a person's email address read-only in Logto's account center, since the domain rules read it. If the **Logto** card later reads **Update required**, choose **Apply expected settings**.
+3. Restart Control Plane and Web.
+
+Requirements:
+
+- **A Logto release newer than 1.46.0.** Organization SSO relies on Logto linking a sign-in to an existing account only inside the connection's domains, and on binding an identity to the connection that established it. Logto 1.46.0 and earlier, and Logto Cloud, do not do both; keep the deployment's connector there.
+- **Public DNS from the Control Plane**, which looks up each organization's TXT record itself.
+
+An organization can lock itself out, for example when its identity provider breaks while SSO is enforced. A user with the `ADMIN` role can undo that from their own signed-in console session (API keys are refused): `POST /api/v1/admin/orgs/{orgId}/sso/connection/stop-enforcing`, `POST /api/v1/admin/orgs/{orgId}/sso/connection/deactivate`, and `DELETE /api/v1/admin/sso/domains/{id}` to release a domain an organization no longer controls.
 
 ## Lark and Feishu identities
 
