@@ -1,53 +1,53 @@
 ---
 title: "Linked accounts"
 icon: Link
-description: "Use several sign-in methods with one AgentConnect profile, and understand exactly which permission checks each provider identity affects."
+description: "Use multiple sign-in methods with one AgentConnect profile and see which permission checks each provider identity affects."
 ---
 
 import imgSocialSignInMethods from '@/public/images/social-sign-in-methods.png'
 
-One AgentConnect profile can use multiple social sign-in methods. AgentConnect Cloud currently offers **GitHub**, **Google**, and **Slack**. A self-hosted deployment can additionally configure **Lark** and **Feishu** identities as described in [Sign-in](/self-hosting/sign-in#lark-and-feishu-identities).
+A single AgentConnect profile can use multiple social sign-in methods. AgentConnect Cloud supports **GitHub**, **Google**, and **Slack**. Self-hosted deployments can also enable **Lark** and **Feishu** identities as described in [Sign-in](/self-hosting/sign-in#lark-and-feishu-identities).
 
-Linking another provider gives the same profile another way to sign in and, where supported, a provider-specific identity for a narrowly defined permission check. It does **not** combine the providers into one pool of permissions.
+Linking another provider gives your profile an additional way to sign in and, where supported, supplies a provider-specific identity for targeted permission checks. It does **not** combine permissions across providers.
 
-Open the avatar menu → **Your profile** and find **Sign-in methods**.
+Open the avatar menu → **Your profile** and scroll to **Sign-in methods**.
 
 <Image src={imgSocialSignInMethods} alt="Several sign-in methods linked to one AgentConnect profile" width={760} />
 
-A sign-in that came through an organization's [single sign-on](/operate-govern/single-sign-on) is listed there as **SSO**, with its address. It is not a linked social account: you cannot unlink it here, and it adds no provider identity to the checks below.
+If you signed in through an organization's [single sign-on](/operate-govern/single-sign-on), it appears in this list as **SSO** alongside its email address. SSO isn't a linked social account: you can't unlink it here, and it doesn't supply a provider identity for any of the checks below.
 
 ## Link an account
 
-Choose **Link** beside a provider and complete its authorization flow. GitHub and Google do not require an ownership code. Slack and Standard OAuth connectors can first ask for a code sent to the current profile's verified primary email; on a self-hosted deployment, ask the operator whether email verification is configured.
+Click **Link** next to a provider and complete its authorization flow. GitHub and Google don't require an ownership code. Slack and Standard OAuth connectors may first ask for a code sent to your profile's verified primary email (on a self-hosted deployment, check with your operator whether email verification is configured).
 
-After linking, you can sign in through any linked provider and reach the same AgentConnect profile, organizations, memberships, and personal settings.
+Once linked, you can sign in with any linked provider to access the same AgentConnect profile, organizations, memberships, and personal settings.
 
-A provider account that already belongs to another AgentConnect profile cannot also be linked to this one. AgentConnect refuses the link and leaves both profiles unchanged.
+A provider account already linked to another AgentConnect profile can't be linked to a second one. AgentConnect rejects the link and leaves both profiles unchanged.
 
 ## Unlink an account
 
-Choose **Unlink** beside a connected provider. You must keep at least one social sign-in method, so the final linked provider cannot be removed.
+Click **Unlink** next to a connected provider. You must keep at least one social sign-in method, so your last linked provider can't be removed.
 
-Unlinking removes only that sign-in method and its provider-specific identity:
+Unlinking only removes that sign-in method and its provider-specific identity:
 
-- Removing **GitHub** does not uninstall the GitHub App or delete existing agents and repository grants. The profile can still select public repositories read-only, but cannot verify private-repository or write access or read synchronized private-repository sessions until GitHub is linked again. Public-repository sessions are unaffected.
-- Removing **Google** removes a sign-in option and no provider-specific permission.
-- Removing **Slack** removes the workspace identity from authorization immediately. Existing Slack session records are not deleted, but private DMs and Slack-scoped shared sessions that depended on the match are no longer visible. Relinking the same workspace identity can make them visible again without rewriting the sessions.
-- Removing **Lark** or **Feishu** removes only that regional identity. Matching private DMs and membership-scoped sessions are no longer visible until the same identity is linked again.
+- **GitHub**: Doesn't uninstall the GitHub App or delete existing agents or repository grants. You can still select public repositories read-only, but you can't verify private-repository or write access, or view synced private-repository sessions, until you link GitHub again. Public-repository sessions aren't affected.
+- **Google**: Removes the sign-in option only; it doesn't affect any provider-specific permissions.
+- **Slack**: Immediately removes that workspace identity from authorization checks. Existing Slack session records aren't deleted, but private DMs and Slack-scoped shared sessions that depended on the match are no longer visible. Relinking the same workspace identity restores visibility without rewriting the sessions.
+- **Lark or Feishu**: Removes only that regional identity. Matching private DMs and membership-scoped sessions become hidden until you link the same identity again.
 
 ## What linking never changes
 
-Linking or unlinking a provider does not change:
+Linking or unlinking a provider doesn't change:
 
-- the AgentConnect profile ID;
+- your AgentConnect profile ID;
 - organization membership or role;
 - agent, daemon, schedule, tool, or skill [team visibility](/operate-govern/permissions-overview/team-visibility);
 - existing resource-sharing grants; or
-- another provider's permissions.
+- permissions from other providers.
 
-One exception is worth knowing: a restricted agent's **1:1 Slack DM** with a person who is already in that agent's shared-with audience seeds to the ordinary DM default rather than Off, once that person has linked their Slack identity in the same workspace. Both halves must hold — an unlinked member of the audience and a linked non-member each keep the conversation Off — and it applies only to 1:1 DMs on Slack, never to channels or group DMs. The rule re-evaluates when a link lands or the audience widens, it never reopens a conversation an editor turned Off deliberately, and it never closes one. Everything else about a restricted agent, including channel access, still starts Off.
+There is one exception for restricted agents. If someone is already in a restricted agent's shared-with audience and links their Slack identity in the same workspace, their **1:1 Slack DM** with that agent starts with the ordinary DM default instead of **Off**. Both conditions must be met: an unlinked audience member or a linked non-member both keep the conversation **Off**. This applies only to 1:1 Slack DMs (channels and group DMs aren't affected). The rule re-evaluates whenever someone links an account or is added to the audience, never reopens a conversation an editor manually turned **Off**, and never disables an active conversation. Everything else on a restricted agent, including channel access, still starts **Off**.
 
-Linking also does not merge two AgentConnect profiles, install a GitHub App, authorize repositories, or install a chat bot. See [Permissions](/operate-govern/permissions-overview) for the boundaries that still apply.
+Linking also doesn't merge two AgentConnect profiles, install a GitHub App, authorize repositories, or install a chat bot. See [Permissions](/operate-govern/permissions-overview) for the full set of permission boundaries.
 
 ## What each provider adds
 
@@ -59,20 +59,20 @@ Linking also does not merge two AgentConnect profiles, install a GitHub App, aut
 | **Lark** | Sign-in and a regional identity for supported session checks | Bot installation or Feishu identity |
 | **Feishu** | Sign-in and a regional identity for supported session checks | Bot installation or Lark identity |
 
-A linked Slack identity can match the owner of a private Slack direct-message session, and is used for the conversation check when the organization enables **Follow Slack access**. A linked Lark or Feishu identity works the same way for its chats when its Logto record contains the provider's cross-App `union_id`. Linking a matching account can therefore make existing sessions visible; unlinking removes that provider match. See [Session visibility](/operate-govern/permissions-overview/session-visibility#session-access).
+A linked Slack identity matches you to your private Slack DM sessions and is used for membership checks when your organization enables **Follow Slack access**. A linked Lark or Feishu identity works the same way when its Logto record includes the provider's cross-app `union_id`. Linking a matching account can therefore make existing sessions visible, while unlinking removes that match. See [Session visibility](/operate-govern/permissions-overview/session-visibility#session-access).
 
-With **Follow Slack access** on, the same linked Slack identity is how AgentConnect recognizes an Agent editor who answers an approval or changes settings from Slack, and a linked Lark or Feishu identity does the same in its chats. An editor who has not linked is refused there and told how to link. See [What people can do in chat](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
+When **Follow Slack access** is on, AgentConnect also uses your linked Slack identity to recognize you as an Agent editor when you answer approvals or change settings from Slack (and uses linked Lark or Feishu identities the same way in their chats). Unlinked editors are blocked from those actions and shown how to link their account. See [What people can do in chat](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
 
-A linked Slack account also lets an agent act for you across platforms, whatever the **Session access** setting. When you ask from Slack for something in a conversation on another platform, or through another of the agent's bots, AgentConnect recognizes you by it. When you ask about a conversation in that Slack workspace from anywhere else, such as the Playground or another of the agent's bots, the agent judges you there by it: a public channel needs you to be a full member, and a private channel or group DM needs you to be a member. Without one, an agent you ask from Slack reaches only that bot's own conversations. A linked Lark or Feishu account does the same on a self-hosted deployment. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
+Regardless of the **Session access** setting, a linked Slack account lets an agent act on your behalf across platforms. When you ask from Slack about a conversation on another platform or through another of the agent's bots, AgentConnect identifies you by your linked Slack account. When you ask about a conversation in that Slack workspace from anywhere else (such as the Playground or another bot), the agent checks your linked Slack membership: public channels require you to be a full member, and private channels or group DMs require you to be a member of that conversation. Without a linked account, requests from Slack can only reach that bot's own conversations. Linked Lark and Feishu accounts work the same way on self-hosted deployments. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
 
 ### Two GitHub policies use the identity differently
 
-- **Per-user repository authorization** checks the signed-in person during repository setup. Public repositories can be selected read-only without a linked GitHub identity. Private repositories require a linked identity with access, and **Read & write** always requires the linked GitHub user to have `write` or `admin` permission.
-- **Require GitHub access** controls who may read GitHub-triggered sessions. Public-repository sessions require no linked identity; private-repository sessions require a linked GitHub profile with current repository access.
+- **Per-user repository authorization**: Checked during repository setup for the signed-in user. Public repositories can be selected read-only without linking GitHub. Private repositories require a linked identity with repository access, and **Read & write** always requires `write` or `admin` permission on the repository.
+- **Require GitHub access**: Controls who can view GitHub-triggered sessions. Public-repository sessions don't require a linked identity; private-repository sessions require a linked GitHub profile with current access to the repository.
 
-The repository picker and GitHub event integrations still require the deployment's GitHub App to cover the repository. A public repository can also be used as an anonymous read-only workspace without the App. Neither linking nor either policy grants repository access by itself.
+The repository picker and GitHub event integrations still require the deployment's GitHub App to cover the repository (public repositories can also be used as anonymous read-only workspaces without the App). Neither linking nor either policy grants repository access by itself.
 
-GitHub webhook authorization is separate again: AgentConnect checks the current repository permission of the issue, pull-request, or comment author. The signed-in console user's linked GitHub account does not grant another GitHub author permission to trigger an agent. See [GitHub](/connect-automate/triggers-automation/github).
+GitHub webhook authorization is checked separately: AgentConnect verifies the current repository permission of the issue, pull-request, or comment author. A console user's linked GitHub account doesn't grant another GitHub user permission to trigger an agent. See [GitHub](/connect-automate/triggers-automation/github).
 
 ## Checks stay provider-specific
 
@@ -82,19 +82,19 @@ GitHub webhook authorization is separate again: AgentConnect checks the current 
 | Slack direct message or shared conversation | Linked Slack workspace profile |
 | Lark or Feishu conversation | Linked regional profile; current membership when Follow access is on |
 
-Linking several methods lets one AgentConnect profile satisfy several independent checks. It does not let one provider substitute for another. Google remains a sign-in method with no provider-specific authorization, and public GitHub sessions remain available to every organization member independently from the owning Agent's Team visibility.
+Linking multiple methods lets one AgentConnect profile satisfy multiple independent checks without letting one provider substitute for another. Google remains sign-in only (with no provider-specific authorization), and public GitHub sessions remain visible to every organization member regardless of the owning agent's team visibility.
 
-AgentConnect does not create a broader permission union across providers or provider workspaces. Do not assume that:
+AgentConnect doesn't combine permissions across providers or workspaces. Specifically:
 
-- one social account can prove ownership of another provider's session;
-- one provider can satisfy another provider's repository or conversation gate;
-- one Slack identity represents the same user in every workspace, or one app-scoped Lark or Feishu identity directly matches every bot app; or
-- linking any provider widens organization access or resource visibility.
+- One social account can't prove ownership of another provider's session.
+- One provider can't satisfy another provider's repository or conversation access check.
+- A single Slack identity doesn't represent the same user in other Slack workspaces, and an app-scoped Lark or Feishu identity doesn't automatically match every bot app.
+- Linking a provider never widens organization access or resource visibility.
 
 ## AgentConnect OSS setup
 
-AgentConnect OSS does not enable social sign-in by default. To offer linked accounts, bootstrap Logto-backed sign-in in Setup, enable the displayed sign-in methods there, and create the matching Logto connectors. The Profile card appears after OIDC sign-in is enabled.
+AgentConnect OSS doesn't enable social sign-in by default. To offer linked accounts, bootstrap Logto-backed sign-in in Setup, enable the sign-in methods you want to display, and create the matching Logto connectors. The Profile card appears once OIDC sign-in is enabled.
 
-The operator must also enable Logto account linking, configure provider identity lookup, and provide email delivery for providers that require an ownership code. Local no-auth mode does not infer a linked provider identity.
+Operators must also enable Logto account linking, configure provider identity lookup, and set up email delivery for providers that require an ownership code. Local no-auth mode doesn't infer linked provider identities.
 
 See [Sign-in](/self-hosting/sign-in#link-additional-social-accounts) for the complete setup.

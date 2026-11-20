@@ -7,79 +7,79 @@ description: "Scratch and GitHub workspaces, isolated session worktrees, and rep
 import imgWorkspace from '@/public/images/workspace.png'
 import imgWorkspaceAdditionalRepos from '@/public/images/workspace-additional-repos.png'
 
-Every agent has a **workspace** — its working directory on the daemon. Choose its source when creating the agent, or change it later from the **Workspace** tab.
+Every agent has a **workspace**, which is its working directory on the daemon. Pick a workspace source when creating the agent, or change it later from the **Workspace** tab.
 
-<Image src={imgWorkspace} alt="A GitHub-backed workspace: repository, additional repos, branch, and the working tree" width={900} />
+<Image src={imgWorkspace} alt="A GitHub-backed workspace showing repository, additional repos, branch, and the working tree" width={900} />
 
 ## From scratch
 
-A fresh directory on the daemon. Files the agent creates live only on that machine and aren't version-controlled. Good for reporting agents, chat-ops, and anything that doesn't start from existing code.
+Creates an empty working directory on the daemon. Files the agent creates stay on that machine without version control. This fits reporting agents, chat-ops, and any task that doesn't start from an existing repository.
 
 ## From GitHub
 
-The daemon clones a repository and branch (optionally scoping the agent to a subdirectory), and the agent works inside that checkout.
+The daemon clones a repository and branch (optionally scoped to a subdirectory), and the agent works inside that checkout.
 
 To pick repositories from a list, install the **AgentConnect GitHub app**:
 
 1. In **Add agent → From GitHub**, click **Install GitHub app** (or go to **Integrations → Code hosts → GitHub → Install on GitHub**).
-2. On GitHub, choose the account and which repositories to grant.
-3. Back in the dialog, pick the **repository** and **branch**, set the **agent directory** if the agent should live in a subfolder, and choose **push access**:
-   - **Read only** — the agent can pull but not push.
-   - **Read & write** — the agent can push to the repo.
+2. On GitHub, choose the account and repositories to grant access to.
+3. Back in the dialog, choose the **repository** and **branch**, set the **agent directory** if the agent should work in a subfolder, and pick **push access**:
+   - **Read only**: The agent can pull but can't push.
+   - **Read & write**: The agent can push changes to the repo.
 
-Agents share the deployment's built-in GitHub App until you [give one its own](/connect-automate/triggers-automation/github#give-an-agent-its-own-github-app), which makes it a separate actor on GitHub.
+Agents share the deployment's built-in GitHub App unless you [give an agent its own](/connect-automate/triggers-automation/github#give-an-agent-its-own-github-app), which gives it a separate actor identity on GitHub.
 
-On AgentConnect OSS, the deployment operator must [configure the GitHub App first](/self-hosting/provider-apps#github-app). Public repositories can still be cloned read-only without the App.
+On AgentConnect OSS, the deployment operator needs to [configure the GitHub App first](/self-hosting/provider-apps#github-app). Public repositories can still be cloned read-only without installing the App.
 
 ## From GitLab
 
-The same, from a GitLab project — on GitLab.com or a self-managed instance. Pick **From GitLab**, choose the project, branch, agent directory and access, and the daemon clones it.
+Works the same way for a GitLab project on GitLab.com or a self-managed instance. Choose **From GitLab**, select the project, branch, agent directory, and access level, and the daemon clones it.
 
-There is no app to install: the deployment connects GitLab once, and each agent gets its own service account on the instance when you first pick a project for it. See [GitLab](/connect-automate/triggers-automation/gitlab). On AgentConnect OSS, the operator [configures the deployment's GitLab OAuth application](/self-hosting/provider-apps#gitlab) first.
+No separate app installation is needed. The deployment connects to GitLab once, and each agent gets its own service account on the instance the first time you pick a project for it. See [GitLab](/connect-automate/triggers-automation/gitlab). On AgentConnect OSS, the operator must [configure the deployment's GitLab OAuth application](/self-hosting/provider-apps#gitlab) first.
 
 ## From Gitea
 
-The same, from a Gitea repository — on gitea.com or a self-hosted instance. Pick **From Gitea**, choose the repository, branch, agent directory and access, and the daemon clones it.
+Works the same way for a Gitea repository on gitea.com or a self-hosted instance. Choose **From Gitea**, select the repository, branch, agent directory, and access level, and the daemon clones it.
 
-There is no app to install either: the organization connects Gitea once with a bot user's token, and the picker offers the repositories that bot administers. Every agent shares that one identity. See [Gitea](/connect-automate/triggers-automation/gitea). On AgentConnect OSS, the operator [points the deployment at the instance](/self-hosting/provider-apps#gitea) first.
+No app installation is needed here either. The organization connects Gitea once using a bot user's token, and the picker lists the repositories that bot administers. Every agent shares that bot identity. See [Gitea](/connect-automate/triggers-automation/gitea). On AgentConnect OSS, the operator must [point the deployment at the instance](/self-hosting/provider-apps#gitea) first.
 
 ### Worktrees for concurrent sessions
 
-New GitHub agents enable **Worktree** by default. Each session receives its own stable checkout, so concurrent sessions do not share branch or file state. Later turns in the same session return to that worktree. Turn Worktree off when every session should deliberately use the primary checkout instead.
+New GitHub agents turn on **Worktree** by default. Each session gets its own isolated checkout, keeping branches and file changes separate across concurrent sessions, and later turns in the same session reuse that worktree. Turn Worktree off if you want every session to share the primary checkout instead.
 
-The **Workspace** tab can switch between the primary checkout and worktrees belonging to sessions you are allowed to read. Session worktrees are browse-only in the console and follow the daemon's [session retention policy](/operate-govern/sessions#retention-and-cleanup).
+In the **Workspace** tab, you can switch between the primary checkout and worktrees from sessions you have access to read. Session worktrees are read-only in the console and follow the daemon's [session retention policy](/operate-govern/sessions#retention-and-cleanup).
 
 ### Repository credentials
 
-For an app-installed repository, the agent's session never holds a GitHub token. Git and `gh` requests leave through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials), which attaches a short-lived credential scoped to that repository and the access level you chose; a push to a **Read only** repository is refused. The daemon does not save a long-lived Git credential to disk. Removing the repository grant or uninstalling the GitHub App stops future access.
+For an app-installed repository, the agent's session doesn't receive a GitHub token directly. Git and `gh` requests pass through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials), which attaches a short-lived credential scoped to that repository and its configured access level. Pushes to a **Read only** repository are rejected, and the daemon doesn't write long-lived Git credentials to disk. Revoking the repository grant or uninstalling the GitHub App cuts off future access.
 
 ## The Workspace tab
 
-The agent's **Workspace** tab reads files directly from its daemon. Authorized users can inspect the primary workspace and visible session worktrees, edit files in a scratch workspace, or pull updates for a primary GitHub workspace. The view is unavailable while that daemon is offline because the files exist only on that machine.
+The agent's **Workspace** tab reads files directly from its daemon. Authorized users can browse the primary workspace and visible session worktrees, edit files in a scratch workspace, or pull updates for a primary GitHub workspace. Because those files exist only on the daemon machine, this view is unavailable while the daemon is offline.
 
 ## Change the workspace source
 
-Use **Edit workspace** on the Workspace card to switch between Scratch and GitHub, select another repository or branch, change the working directory, or change read/write access.
+Click **Edit workspace** on the Workspace card to switch between Scratch and GitHub, pick a different repository or branch, change the working directory, or update read/write access.
 
-Changing the source type, repository, or branch **replaces all daemon-local workspace files**. Commit, push, copy, or otherwise back up anything you need before confirming. Changing only the working directory or access level preserves the checkout.
+Changing the source type, repository, or branch **replaces all daemon-local workspace files**. Commit, push, or back up anything you need before confirming. Changing only the working directory or access level keeps the existing checkout intact.
 
 ## Additional authorized repositories
 
-Sometimes one repo isn't enough — a reviewer agent may need to read a shared library or work in a sibling repo. On the agent's **Workspace** tab, the repositories button beside the workspace source opens **Additional repos**:
+When one repository isn't enough (for example, a reviewer that needs a shared library or a sibling service), click the repositories button next to the workspace source on the **Workspace** tab to open **Additional repos**:
 
-- **Authorize repository** adds either **Read only** access or **Read & write** access.
-- Grants are per-agent and revocable with one click.
-- Credentials remain limited to the repositories you list.
+- **Authorize repository** grants either **Read only** or **Read & write** access.
+- Grants apply per agent and can be revoked with one click.
+- Credentials stay scoped to the listed repositories.
 
-By default an agent's GitHub credentials stop at its own workspace repository.
+By default, an agent's GitHub credentials only cover its primary workspace repository.
 
-<Image src={imgWorkspaceAdditionalRepos} alt="Additional repos: All of acme on demand, acme/web always checked out, acme/docs on demand" width={900} />
+<Image src={imgWorkspaceAdditionalRepos} alt="Additional repos showing All of acme on demand, acme/web always checked out, and acme/docs on demand" width={900} />
 
-Each authorization also chooses its **Checkout**, beside its access when you add it and on its row in **Edit workspace** afterwards:
+Each authorization also has a **Checkout** mode, chosen next to its access level when added and editable later on its row in **Edit workspace**:
 
-- **Always** (the default): the daemon checks the repository out beside the workspace as a **secondary root** and hands it to every session's runtime, so the agent reads and edits those files locally instead of over the network. A root is cloned on the first session that needs it, and one that fails to clone is left out of that session rather than failing it.
-- **On demand**: credentials only. Nothing is checked out up front; when the agent needs the repository, it clones it into a directory the session is given. Use it for repositories a session rarely needs, so sessions don't wait on clones they won't use.
+- **Always** (default): The daemon checks out the repository beside the workspace as a **secondary root** and mounts it for every session's runtime, so the agent can read and edit those files locally instead of over the network. The clone happens on the first session that needs it; if cloning fails, that root is skipped instead of failing the session.
+- **On demand**: Provides credentials without pre-cloning. When the agent needs the repository, it clones it into a directory assigned to the session. Use this for repos that sessions rarely touch so they don't wait on unnecessary clones.
 
-An organization owner can also pick **All of `<account>`** under **Authorize repository** to authorize a whole installation. The agent then gets every repository one GitHub App installation covers, including repositories created later, at one access level. Those repositories are **On demand**: the agent clones what it needs. A repository you also authorize on its own keeps its own access and checkout. A repository watch's informational Checks still need the repository authorized on its own, while a [watch of the whole installation](/connect-automate/triggers-automation/github#watch-every-repository-of-an-installation) publishes them on the installation's authorization.
+An organization owner can also pick **All of `<account>`** under **Authorize repository** to grant access to an entire GitHub App installation, including repositories created later, at a single access level. Repositories covered by an installation-wide grant are always **On demand**, so the agent clones only what it needs. Any repository also authorized individually keeps its own access level and checkout mode. Informational Checks from a single-repository watch still require that repository to be authorized individually, while a [watch of the whole installation](/connect-automate/triggers-automation/github#watch-every-repository-of-an-installation) uses the installation grant.
 
-The **Workspace** tab's file browser moves between the checkouts, and a code-host review whose subject lives in an authorized repository runs against an exact checkout of it. A **Read only** grant still cannot push, even though its files are on disk.
+The file browser in the **Workspace** tab lets you switch between checkouts, and code-host reviews targeting an authorized repository run against an exact checkout of it. Even when files are checked out on disk, a **Read only** grant still blocks pushes.

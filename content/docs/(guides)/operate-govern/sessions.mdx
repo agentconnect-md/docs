@@ -7,89 +7,89 @@ description: "Review agent runs, inspect transcripts, and understand where sessi
 import imgSessionDetail from '@/public/images/session-detail.png'
 import imgSessionsList from '@/public/images/sessions-list.png'
 
-**Sessions** is the flight recorder for every agent run from Slack threads, GitHub events, Linear delegations, webhooks, schedules, or the Playground. The list contains the work allowed by each [session audience](/operate-govern/permissions-overview/session-visibility). An Agent's Team visibility separately controls access to that Agent and does not hide a session you are allowed to read.
+**Sessions** records every agent run across Slack threads, GitHub events, Linear delegations, webhooks, schedules, and the Playground. You see the runs allowed by each [session audience](/operate-govern/permissions-overview/session-visibility). An Agent's Team visibility controls access to that Agent separately and doesn't hide sessions you're allowed to read.
 
 <Image src={imgSessionDetail} alt="A session transcript with the agent's plan, file edits, and tool output expanded" width={900} />
 
 ## Find a session
 
-Use the session list to find work by agent or source and follow scheduled runs back to the schedule that created them. When a readable session belongs to an Agent you cannot otherwise see, its Agent name remains available as a plain filter label rather than a link. When several agents participate in the same supported conversation, the list groups their sessions into one row.
+Filter the session list by agent or source, and trace scheduled runs back to the schedule that started them. When you can read a session for an Agent you don't otherwise have access to, its Agent name still appears as a plain filter label instead of a clickable link. When multiple agents join the same supported conversation, the list groups their sessions into one row.
 
 <Image src={imgSessionsList} alt="The session list, filtered by agent, integration, channel, or trigger" width={900} />
 
 ## Review a run
 
-Each session records its source, agent, participants, daemon, runtime and model, along with duration, token usage, cost when available, and tool activity. Where the provider supplies it, the session links back to the original conversation.
+Each session records its source, agent, participants, daemon, runtime, and model, along with duration, token usage, cost (when available), and tool activity. When the platform supplies a link, the session links back to the original conversation.
 
-Sessions snapshot their execution config: the header reflects what the run _actually used_, even if you've reconfigured the agent since.
+Sessions snapshot their execution config: the header shows what the run _actually used_, even if you've changed the agent's configuration since.
 
 ### The transcript
 
-The transcript separates messages, reasoning, plans, tool calls, and file edits. Tool activity includes the available input and output, with diffs for file changes, so you can understand how the agent reached its result.
+The transcript separates messages, reasoning, plans, tool calls, and file edits. Tool activity includes available input and output, with diffs for file changes, so you can trace how the agent reached its result.
 
 ## When a run asks for permission
 
-Depending on the agent's permission mode, a runtime can stop in the middle of a turn and ask before it acts. The turn parks until someone decides, and there are three places that decision can be made:
+Depending on the agent's permission mode, a runtime can pause mid-turn and ask before taking an action. The turn waits until someone responds, which can happen in three places:
 
-- **In the console.** Anyone who can edit the agent can decide, including an organization Owner outside its Selected list. Use the agent page, or the session page when its audience allows you to open it. The notification bell raises an unread **Approval needed** item pointing at the waiting session, and marks it resolved once the wait ends. In a Playground or [agent chat API](/connect-automate/agent-chat-api) conversation, its owner can also decide among the pending requests above the composer, unless the agent is set to **Talk to the agent**.
-- **In a Slack or Teams direct message.** When the card is not posted in the conversation, or only editors may answer it there and the person who asked is not one, the agent sends the same card in a direct message to one person who may decide and has [linked their Slack or Microsoft account](/how-to-guides/linked-accounts), with a link to the session and, on Slack, to the message that started the work. Deciding there is the same decision as deciding in the console, and the console records who made it.
-- **In the conversation.** When the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) includes approving tool calls, as it does by default, Slack, Telegram, Discord, Lark / Feishu, Google Chat and Microsoft Teams post the card where the work is happening: in its thread, or in its Telegram topic or reply chain. The card offers the runtime's own choices, including always allowing the tool where the runtime offers it. On Slack with **Follow Slack access** on, or Teams with **Require Microsoft Teams access** on, only the agent's editors can answer it; where permissions are not synced this way, anyone in the conversation can. A refused click is told only to the person who made it, and the card stays as it is for everyone else.
+- **In the console**: Anyone who can edit the agent can approve or deny the request, including an organization Owner who isn't on its Selected list. Respond from the agent page, or from the session page if the session's audience lets you open it. The notification bell adds an unread **Approval needed** item pointing to the waiting session and marks it resolved once answered. In a Playground or [agent chat API](/connect-automate/agent-chat-api) conversation, the conversation owner can also respond to pending requests above the composer, unless the agent is set to **Talk to the agent**.
+- **In a Slack or Teams direct message**: When no card is posted in the conversation, or when only editors can respond there and the person who asked isn't one, the agent sends the same card in a DM to one eligible editor who has [linked their Slack or Microsoft account](/how-to-guides/linked-accounts). The DM links to the session and, on Slack, to the message that started the run. Answering there works the same as answering in the console, and the console records who decided.
+- **In the conversation**: When the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) setting includes approving tool calls (on by default), Slack, Telegram, Discord, Lark / Feishu, Google Chat, and Microsoft Teams post the approval card where the work is happening: in the thread, or in the Telegram topic or reply chain. The card presents the runtime's own options, including always allowing a tool when the runtime supports it. On Slack with **Follow Slack access** enabled, or Teams with **Require Microsoft Teams access** enabled, only the agent's editors can respond; when permissions aren't synced that way, anyone in the conversation can. If someone without permission clicks a button, only they see the refusal, and the card stays unchanged for everyone else.
 
-The first answer from any of these places decides, and the card then says who answered and how.
+Whichever response arrives first takes effect, and the card updates to show who answered and what they chose.
 
-At **Talk to the agent**, and in a conversation switched **Off** or answered **By decision**, the conversation gets a short notice instead: an approval is waiting and an agent editor has to allow it. On a platform with approval cards, the notice changes to how the approval ended once someone decides. QQ has no approval card, so a QQ conversation always gets the notice and its approvals are answered in the console. A conversation shared with another organization gets no card; the approval goes to a member of your organization in a direct message. A [Linear](/connect-automate/triggers-automation/linear) session posts the same pointer into the issue's activity feed, with a link into the console.
+With **Talk to the agent**, or in a conversation set to **Off** or **By decision**, the conversation gets a short notice instead explaining that an approval is waiting for an agent editor. On platforms that support approval cards, that notice updates with the outcome once someone decides. QQ has no approval card, so QQ conversations always get this notice and approvals happen in the console. Conversations shared with another organization don't get an inline card; the approval goes by DM to a member of your organization. A [Linear](/connect-automate/triggers-automation/linear) session posts the same notice into the issue's activity feed with a link to the console.
 
-For Slack and Teams DM notifications, AgentConnect chooses one recipient. It tries the agent's Slack workspaces before its Teams organization, and within each it checks these candidates in order:
+For Slack and Teams DM notifications, AgentConnect picks one recipient. It checks the agent's Slack workspaces before its Teams organization, evaluating these candidates in order:
 
 1. The person who sent the message that triggered the turn.
 2. The session owner.
 3. For a Selected agent, its explicitly selected members in their saved order.
 4. The agent's creator.
 
-Every candidate must be a current organization member who can edit the agent and has a linked Slack identity in that workspace, or a linked Microsoft account for Teams. Owners qualify even when they are not selected, but being an Owner alone does not add them to the recipient list. An Owner receives the DM only when this order selects them.
+Every candidate must be a current organization member who can edit the agent and has a linked Slack identity in that workspace, or a linked Microsoft account for Teams. Owners qualify even when they aren't selected, though being an Owner alone doesn't add them to the recipient list. An Owner receives the DM only when this order selects them.
 
-AgentConnect rechecks edit permission and the linked account when the recipient clicks. If no eligible recipient can be resolved, the approval stays available in the console and the conversation keeps its waiting notice.
+AgentConnect rechecks edit permission and the linked account when the recipient clicks. If no eligible recipient is found, the approval stays available in the console and the conversation keeps its waiting notice.
 
 ## When several agents share a conversation
 
-Each agent still runs in its own session with its own configuration and permissions. In a multi-agent Playground or supported IM conversation, the console presents those participant sessions as one conversation with attributed activity and combined current usage. This applies to Slack, Telegram, Discord, Lark, and Feishu conversations.
+Each agent still runs in its own session with its own configuration and permissions. In a multi-agent Playground or supported IM conversation (Slack, Telegram, Discord, Lark, and Feishu), the console groups those participant sessions into one conversation view with attributed activity and combined current usage.
 
-This grouping is a view over the sessions, not a new permission boundary. You see only the participant work allowed by each session's audience, including readable work from an Agent whose page is hidden from you. See [Multi-agent work modes](/build-your-team/agents/multi-agent-work-modes) for ways to bring agents together.
+This grouping is only a view over the sessions, not a new permission boundary. You see only the participant work allowed by each session's audience, including readable work from an Agent whose page is hidden from you. See [Multi-agent work modes](/build-your-team/agents/multi-agent-work-modes) for ways to coordinate multiple agents.
 
 ## Where transcripts live
 
-The Control Plane stores session metadata such as title, status, timestamps, and token totals. Transcript messages and tool bodies remain on the daemon that ran the session.
+The Control Plane stores session metadata such as title, status, timestamps, and token totals. Transcript messages and tool payloads stay on the daemon that ran the session.
 
-When an authorized person opens a transcript, the console reads it from the owning daemon without persisting the body in the Control Plane. Metadata can remain visible while a daemon is offline, but its transcript cannot load until the daemon returns.
+When an authorized person opens a transcript, the console fetches it from the daemon on demand without saving the body in the Control Plane. Session metadata remains visible while a daemon is offline, but its transcripts can't load until the daemon returns.
 
 ## Retention and cleanup
 
-Each daemon keeps finished session content for **7 days** by default. When adding or editing a daemon, use **Expire sessions** to choose a common window, enter a custom number of days, or keep sessions indefinitely.
+Each daemon keeps finished session content for **7 days** by default. When adding or editing a daemon, use **Expire sessions** to pick a preset window, enter a custom number of days, or keep sessions indefinitely.
 
-After the retention period, the daemon deletes the transcript, tool details and any Git worktree created for that session. Session metadata remains in the Control Plane, so the session stays in the list and clearly shows that its content was deleted by the retention policy.
+Once the retention period passes, the daemon deletes the transcript, tool details, and any Git worktree created for that session. Session metadata stays in the Control Plane, so the session still appears in the list and indicates that its content was deleted under the retention policy.
 
-Active sessions are not removed. AgentConnect also keeps a session worktree when it contains uncommitted work or commits that have not reached a remote.
+Active sessions aren't removed. AgentConnect also keeps a session worktree if it contains uncommitted changes or commits that haven't been pushed to a remote.
 
 ## Session audience
 
-For a directly managed session, the header shows **Everyone / Private** when its matched owner may change the audience. A provider-bound session can instead follow **Slack members**, **Feishu / Lark members**, or **GitHub members** after the organization enables the corresponding setting under **Settings → Session access**. Making a session private hides the transcript immediately and can also change future memory capture; review [Session visibility](/operate-govern/permissions-overview/session-visibility) before tightening it.
+For a directly managed session, the header shows **Everyone / Private** when its matched owner can change visibility. A provider-bound session can instead follow **Slack members**, **Feishu / Lark members**, or **GitHub members** after the organization enables the corresponding setting under **Settings → Session access**. Making a session private hides the transcript right away and can also change future memory capture; review [Session visibility](/operate-govern/permissions-overview/session-visibility) before tightening it.
 
 ## Cross-platform handoffs stay separate
 
-Conversation grouping does not merge different platforms or threads. A cross-platform handoff keeps one session on the source platform and starts a linked session on the destination. Replies stay where they were written unless the agent deliberately carries a result back.
+Conversation grouping doesn't merge different platforms or threads. A cross-platform handoff keeps one session on the source platform and starts a linked session on the destination. Replies stay where they were written unless the agent explicitly sends a result back.
 
 See [Hand off conversations between trusted workspaces](/how-to-guides/hand-off-conversations-across-messaging-platforms) for a Slack-to-Discord example and a reusable agent instruction.
 
 ## Agent-to-agent handoffs
 
-Delegated work runs in a linked child session and inherits the parent session's audience. If you can read that audience, you can open the child session even when you cannot open the target Agent. The Agent name is shown only as non-clickable session context, and no Agent configuration or workspace access is added.
+Delegated work runs in a linked child session and inherits the parent session's audience. If you can read that audience, you can open the child session even when you can't open the target Agent. The Agent name appears only as non-clickable session context and grants no access to the Agent's configuration or workspace.
 
 ## Live sessions
 
-Running sessions update in place, and the session page offers a composer for the ones you may continue:
+Running sessions update in real time, and the session page shows a composer for sessions you're allowed to continue:
 
-- **Playground and webchat** sessions are continued in the browser, as they always were.
-- A **chat-platform** session — a Slack thread, a Telegram or Discord chat, a Lark / Feishu conversation — takes your message from the console and mirrors it into the original thread first, so the people there see what changed the agent's context. The agent's reply follows that session's own output mode.
-- A session started by a **GitHub, GitLab, webhook or schedule** event is continued console-only. Nothing is posted to the pull request, the issue, or the event's origin.
+- **Playground and webchat**: Continue directly in the browser, as usual.
+- **Chat platforms** (Slack threads, Telegram or Discord chats, Lark / Feishu conversations): Your message from the console is mirrored into the original thread first so people there can see what changed the agent's context. The agent's reply follows that session's normal output mode.
+- **GitHub, GitLab, webhook, or schedule events**: Continued in the console only. Nothing is posted back to the pull request, issue, or original event source.
 
-Continuing is a write, so a Viewer never can, and a private session stays with the person who owns it. Beyond that it follows the session's audience, and it needs the owning agent to be visible to you and its daemon to be online. When one of those is missing, the composer explains itself instead of appearing.
+Continuing a session is a write action, so a Viewer can't do it, and only the owner can continue a private session. Beyond that, continuing follows the session's audience and requires the owning agent to be visible to you and its daemon to be online. When any of those conditions isn't met, the page explains why instead of showing the composer.

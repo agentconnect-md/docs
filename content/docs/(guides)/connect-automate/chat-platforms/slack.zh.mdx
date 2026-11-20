@@ -1,7 +1,7 @@
 ---
 title: "Slack"
 icon: Slack
-description: "在 Slack 工作区安装 AgentConnect，从频道线程或私信中开始使用 AI Agent。"
+description: "在 Slack 工作区安装 AgentConnect，在频道话题或私信中与 AI Agent 协作。"
 ---
 
 import imgAddIntegration from '@/public/images/add-integration.png'
@@ -9,89 +9,89 @@ import imgSlackIntegration from '@/public/images/slack-integration.png'
 import imgCodeChannelDiff from '@/public/images/slack-code-channel-diff.jpg'
 import imgCodeChannelPreview from '@/public/images/slack-code-channel-preview.jpg'
 
-把 AI Agent 接入 Slack，让它们在频道线程和私信中协助团队排查问题、回答疑问和完成工作。
+将 AI Agent 接入 Slack，让它在频道话题和私信中协助团队排查问题、解答疑问并推进任务。
 
-在 **AgentConnect Cloud** 上，推荐的路径是内置的**添加到 Slack** 应用。你只需批准工作区安装；AgentConnect 会完成 OAuth 流程并接入，不会要求你提供应用 manifest、令牌、签名密钥或回调 URL。
+在 **AgentConnect Cloud** 上，推荐直接使用内置的**添加到 Slack** 应用。只要在 Slack 中同意安装，AgentConnect 就会自动完成 OAuth 授权并接入，无需手动准备应用 manifest、令牌、签名密钥或回调 URL。
 
 ## 在 Cloud 上把 AgentConnect 添加到 Slack [#add-agentconnect-to-slack-on-cloud]
 
-你需要 AgentConnect 账户，以及 Slack 工作区的应用安装权限，或管理员批准。
+开始前，你需要一个 AgentConnect 账号，以及在 Slack 工作区安装应用的权限（或管理员批准）。
 
-1. 打开 [AgentConnect 控制台](https://app.agentconnect.md/)并登录。如果还没有组织，创建一个，并在设置时选择 **Cloud**。AgentConnect 会创建已配置 Runtime 和模型的内置 `agentconnect` Agent；这条路径不需要你安装 Daemon 或提供模型 API Key。
-2. 打开**开始使用**卡片并选择**添加到 Slack**。也可以打开内置 Agent，选择**集成 → 添加集成 → Slack**。
-3. 点击**添加到 Slack**，选择 Slack 工作区，核对并批准所请求的权限。
-4. 返回控制台。控制台会等待 Slack 完成，并在机器人就绪后自动关闭设置对话框。确认内置 Agent 的集成卡片上出现 Slack，然后按下方说明发送第一条消息。
+1. 打开 [AgentConnect 控制台](https://app.agentconnect.md/)并登录。如果还没有组织，先创建一个，并在初始化时选择 **Cloud**。AgentConnect 会自动创建已配好 Runtime 和模型的内置 `agentconnect` Agent，不需要你安装 Daemon 或提供模型 API Key。
+2. 在**开始使用**卡片中选择**添加到 Slack**，也可以打开内置 Agent，进入**集成 → 添加集成 → Slack**。
+3. 点击**添加到 Slack**，选择目标 Slack 工作区，确认并批准请求的权限。
+4. 返回控制台。页面会自动等待 Slack 回调，并在机器人就绪后关闭弹窗。确认内置 Agent 的集成卡片中已出现 Slack 后，即可按下方步骤发送第一条消息。
 
 <Image src={imgAddIntegration} alt="带有内置应用「添加到 Slack」按钮的添加集成对话框" width={640} />
 
-这次安装最初只服务内置 Agent。本页后面的自定义应用和自托管说明是可选的其他路径，不是这次 Cloud 安装的后续步骤。
+此次安装默认绑定到内置 Agent。本页后面的自定义应用和自托管说明属于其他可选方案，不是 Cloud 安装的后续步骤。
 
 ## 使用 [#use-it]
 
-通过 Slack 频道的应用管理入口或以下命令，将 **AgentConnect** 邀请进频道。如果机器人被重命名，请使用它的实际显示名称：
+在 Slack 频道的应用设置中或通过以下命令，将 **AgentConnect** 邀请进频道（如果重命名过机器人，请替换为实际显示名称）：
 
 ```text
 /invite @AgentConnect
 ```
 
-提及它并给一个简单任务，例如：**@AgentConnect 请把这些发布说明总结为两点：增加 CSV 导出；修复登录错误；改进搜索。** Agent 会在线程中回复。在同一线程中回复即可继续，不必再次提及。也可以在 Slack 中打开应用并发送私信。
+在频道中提及它并交代一个小任务，例如：**@AgentConnect 请把这些发布说明总结为两点：增加 CSV 导出；修复登录错误；改进搜索。** Agent 会在话题中回复。后续在同一话题内直接回复即可继续对话，无需再次提及。你也可以直接在 Slack 里打开应用发送私信。
 
-每个被发现的频道都会出现在 Agent 的集成卡片上。为入站激活选择 **@ 提及**（默认）、**所有消息**或**关闭**。关闭不会卸载应用，也不会阻止定时任务和受托的出站发消息。关于从 Slack 停止、取消、排队以及更改会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+机器人加入的每个频道都会出现在 Agent 的集成卡片上。你可以为入站触发选择 **@ 提及**（默认）、**所有消息**或**关闭**。切换为关闭不会卸载应用，也不会影响定时任务和受托的出站消息。如需在 Slack 中停止、取消、排队消息或调整会话设置，详见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
 
-当工具调用需要批准时，Agent 会在线程中发布一张审批卡片。谁能回答它、谁能在 Slack 中修改设置，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定；开启**遵循 Slack 访问权限**后，只有 Agent 的编辑者可以。
+当工具调用需要审批时，Agent 会在话题中发出审批卡片。谁能点击审批、谁能在 Slack 里修改设置，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)控制；开启**遵循 Slack 访问权限**后，只有 Agent 的编辑者可以操作。
 
 ### Slack 套餐与 AI 输出 [#slack-plans-and-ai-outputs]
 
-Slack 应用容器中的 AI Agent 体验需要付费 Slack 套餐。免费套餐仍可通过频道提及和私信与 Agent 对话；其他 Slack 功能受工作区套餐和权限限制。
+Slack 应用容器中的 AI Agent 体验需要付费 Slack 套餐。免费套餐仍支持通过频道提及和私信与 Agent 对话，其他 Slack 能力则取决于所在工作区的套餐与权限。
 
-AgentConnect 使用生成式 AI，回答和生成的文件可能不准确或不完整。在依赖输出或执行建议的操作之前，请先核查，尤其是涉及法律、医疗、财务等重要决策时。
+AgentConnect 使用生成式 AI，生成的内容和文件可能存在误差或遗漏。在采纳结果或执行建议操作前请先核对，尤其涉及法律、医疗、财务等关键决策时。
 
 ### 数据与支持 [#data-and-support]
 
-你配置的 Runtime 和模型提供商会处理任务所需的 Slack 消息、相关历史和共享文件。会话记录和工作区文件可能保留在你选择的执行环境中，记忆按其配置存储。AgentConnect 会在控制平面加密保存集成凭据。数据处理、保留和删除详情请参阅[隐私政策](https://www.agentconnect.md/zh/privacy/)。
+你配置的 Runtime 和模型提供商会处理执行任务所需的 Slack 消息、相关上下文及共享文件。会话记录和工作区文件会按所选执行环境的策略保留，记忆则按其配置存储。AgentConnect 会在控制平面加密存储集成凭据。数据处理、保留和删除政策详见[隐私政策](https://www.agentconnect.md/zh/privacy/)。
 
-如需安装帮助或咨询数据问题，请发邮件至 [contact@agentconnect.md](mailto:contact@agentconnect.md)，无需额外注册账户。AgentConnect 托管服务适用[服务条款](https://www.agentconnect.md/zh/terms/)。
+如需安装协助或咨询数据相关问题，请发送邮件至 [contact@agentconnect.md](mailto:contact@agentconnect.md)，无需额外注册账号。AgentConnect 托管服务适用[服务条款](https://www.agentconnect.md/zh/terms/)。
 
 ### 断开集成或卸载应用 [#disconnect-or-uninstall]
 
-从 Agent 上移除集成，可以停止该 Agent 使用它。如果机器人是共享的，其他 Agent 仍可能使用同一个安装。要撤销应用对 Slack 工作区的访问，请通过 Slack 的应用管理设置移除应用；这可能需要管理员批准。此前保存的会话、文件和记忆与应用安装分别管理，不会因卸载应用而自动清除。
+从 Agent 上移除集成即可停用该 Agent 的 Slack 接入。如果机器人处于共享状态，其他 Agent 仍可继续使用该安装。如需彻底撤销应用对 Slack 工作区的访问，请在 Slack 的应用管理设置中移除应用（可能需要管理员批准）。已保存的会话、文件和记忆与应用安装相互独立，卸载应用不会自动删除这些数据。
 
 ## Agent 在 Slack 中能做什么 [#what-an-agent-can-do-in-slack]
 
-在 Slack 会话中，Agent 能做的不只是回复。它还会把 Slack 自身的功能作为工具获得，并在任务需要时主动使用它们：
+在 Slack 会话中，Agent 不只是回复消息。它还内置了一组 Slack 工具，会在任务需要时自动调用：
 
-- **了解现场**——读取频道最近的消息、线程中的回复，以及搜索工作区的公开消息。
-- **表态**——给消息添加表情回应，或读取消息上已有的回应。
-- **留下痕迹**——置顶和取消置顶频道书签，创建和编辑画布，以及读取和更新 Slack 列表。
-- **走得更远**——打开私信、发起对话、分享文件，以及安排稍后发送的消息。
+- **读取上下文**：拉取频道近期消息、读取话题回复，以及搜索工作区的公开消息。
+- **表情回应**：为消息添加表情回应，或读取消息上已有的回应。
+- **管理频道内容**：置顶或取消置顶频道书签、创建和编辑画布，以及读写 Slack 列表。
+- **发起互动与分享**：发起私信、开启新对话、分享文件，以及安排定时发送的消息。
 
-这些工具只会注入到 **Slack 上**的会话。同一个 Agent 在其他平台上工作时不会带着它们；Discord 和 Lark / 飞书提供频道历史，Telegram 只能读取附件。Agent 通过这种方式做的一切都以机器人的身份完成，并像其他工具调用一样出现在会话记录中。
+这些工具仅注入到 **Slack** 会话中。同一个 Agent 在其他平台上不会携带这些工具（Discord 和 Lark / 飞书支持读取频道历史，Telegram 仅支持读取附件）。Agent 通过这些工具执行的所有操作都以机器人身份完成，并和其他工具调用一样记录在会话日志中。
 
-在它正在回答的对话之外，Agent 是替提问的人使用这些工具：只读取这个人能看到的内容，只发到这个人自己能发消息的地方。Slack Connect 频道只以草稿形式接收来自其他对话的消息，由你所在组织的一位成员批准。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
+在当前回复的对话之外，Agent 代表提问者使用这些工具：只能读取提问者有权查看的内容，也只能在提问者有权发帖的位置发送消息。从其他对话发往 Slack Connect 频道的消息会先作为草稿，需由组织内成员批准后发出。详见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
 
 ## 在 Code channel 中工作 [#work-in-a-code-channel]
 
-**候选版本：**本例使用 AgentConnect **v2.9.0-rc.63** 和 Codex 完成，并在 **v2.9.0-rc.65** 上复查、截图。Code channel 需要 Slack 应用和工作区支持，目前并非所有 Cloud 安装都可用。如果 Agent 提示无法创建，可以继续在原来的线程中工作。
+**候选版本：**本例基于 AgentConnect **v2.9.0-rc.63** 与 Codex 完成，并在 **v2.9.0-rc.65** 上复核截图。Code channel 需要 Slack 应用与工作区同时支持，目前尚未覆盖所有 Cloud 安装。如果 Agent 提示无法创建，直接在原话题中继续即可。
 
-在 Cloud 上，先按上方步骤连接 Slack，再在 [Workspace](/build-your-team/agents/configure-an-agent) 中给 Agent 配置可写的代码仓库。第一次尝试建议使用不含业务数据的小型示例仓库；这条流程不需要在本地安装 Daemon。
+在 Cloud 上，先按上述步骤接入 Slack，再在 [Workspace](/build-your-team/agents/configure-an-agent) 中为 Agent 绑定一个可写的代码仓库。初次体验建议使用不含业务数据的小型测试仓库；整个流程无需在本地安装 Daemon。
 
 ### 从编码需求开始 [#start-with-a-coding-request]
 
-直接描述你需要的结果。多步骤编码需求可以开启独立的 Code channel；简单问题仍留在当前对话中。例如：
+直接描述你想要的结果。多步骤的编码任务可以自动开启独立的 Code channel，简单问题则会留在当前对话中处理。例如：
 
 ```text
 做一个 CSV 转 JSON 的小工具，让我在 Slack 里试用，完成后开个 PR。
 ```
 
-打开 Agent 返回的频道链接，然后用自然语言继续提出要求，例如：**保留字段中的空格，但忽略记录之间的空行。**整个频道共用一个编码会话。在线程中追问会继续这个会话，并在线程中收到回复；Code 视图和 artifacts 仍属于整个频道。
+点击 Agent 返回的频道链接进入后，直接用自然语言继续提需求，例如：**保留字段中的空格，但忽略记录之间的空行。**整个频道共享同一个编码会话。在话题里追问会延续该会话并在话题中回复，而 Code 视图和产物则归整个频道共享。
 
 ### 检查改动并试用结果 [#inspect-the-work-and-try-the-result]
 
-打开 **Code** 查看 diff。对于符合条件的隔离仓库，AgentConnect 会在工作过程中更新视图，把当前工作区与任务开始时的状态比较。提交代码后，这份比较仍然保留。
+打开 **Code** 查看代码 diff。对于符合条件的隔离仓库，AgentConnect 会在执行过程中实时更新视图，将当前工作区与任务起点进行对比；即使提交了代码，这份对比仍然保留。
 
 <Image src={imgCodeChannelDiff} alt="对话中的工作步骤折叠显示，旁边是 CSV playground 的代码 diff" width={1182} />
 
-像上面的需求一样，说明你希望得到可试用的页面，然后打开 Agent 添加到频道的 HTML 预览。本例选择 **Headers** 会生成对象，选择 **Data** 会生成数组。可以尝试这份合成数据：
+像上面的示例那样提出需要可试用的结果后，打开 Agent 发到频道的 HTML 预览。在这个 CSV 示例中，选择 **Headers** 会生成对象数组，选择 **Data** 会生成二维数组。你可以用这份测试数据试一下：
 
 ```csv
 name,city,note
@@ -102,54 +102,54 @@ and waved"
 
 <Image src={imgCodeChannelPreview} alt="对话旁边显示可交互的 CSV 转 JSON 预览，包含示例输入和 JSON 输出" width={1182} />
 
-再输入两行 `name,city` 和 `Ari,Oslo,extra`：页面会提示列数不一致，清空输出，并禁用复制按钮。[示例 PR](https://github.com/agentconnect-md/agentconnect/pull/3562) 包含源代码和 6 项解析器测试。
+接着输入两行 `name,city` 和 `Ari,Oslo,extra`：页面会提示列数不一致、清空输出并禁用复制按钮。[示例 PR](https://github.com/agentconnect-md/agentconnect/pull/3562) 包含完整源码与 6 个解析器测试。
 
-固定栏把模型与 effort 放在一起，并显示 Runtime 报告的 context 用量，例如 `42k/200k`。仓库、分支和 PR 项可帮助你返回代码。PR 状态反映 Agent 最近一次检查的结果，**不是自动订阅 CI 变化**；需要最新结果时，可以说：**检查一下 PR 并更新状态。**
+顶部固定栏会并排显示当前模型和 effort，以及 Runtime 上报的上下文用量（例如 `42k/200k`），并提供仓库、分支和 PR 的快捷入口。PR 状态仅反映 Agent 最近一次检查的结果，**不会自动订阅 CI 变化**；需要刷新状态时，直接发送 **检查一下 PR 并更新状态** 即可。
 
 ## 给 Agent 一个自定义的 Slack 身份 [#give-an-agent-a-custom-slack-identity]
 
 <Image src={imgSlackIntegration} alt="连接自定义的 Slack 机器人身份" width={640} />
 
-在内置 Agent 上，当它需要专属的 Slack 应用时，选择**改用自定义 bot 身份**。其他 Agent 会直接进入自定义身份流程。当自托管部署没有发布内置应用时，这也是常规路径。
+如果内置 Agent 需要独立的 Slack 应用，选择**改用自定义 bot 身份**；其他 Agent 会直接进入自定义身份流程。当自托管部署未配置内置应用时，同样走这个流程。
 
 ### 配置令牌安装 [#configuration-token-install]
 
-这是推荐的自定义应用路径。如果你还没有保存 Slack 配置令牌，AgentConnect 会链接到 [Slack 的配置令牌页面](https://api.slack.com/authentication/config-tokens)。粘贴访问令牌（`xoxe.xoxp-…`）及其刷新令牌（`xoxe-…`），这样 AgentConnect 才能轮换它；只保存访问令牌的话，大约 12 小时后就会过期。Slack 把这对令牌限定在一个用户和一个工作区。AgentConnect 会为当前登录用户保存它，该用户可以在**个人资料 → Slack 配置令牌**中替换或清除。
+这是创建自定义应用的推荐方式。如果尚未保存 Slack 配置令牌，AgentConnect 会引导你打开 [Slack 的配置令牌页面](https://api.slack.com/authentication/config-tokens)。请同时粘贴访问令牌（`xoxe.xoxp-…`）和刷新令牌（`xoxe-…`），以便 AgentConnect 自动轮换；仅保存访问令牌会在大约 12 小时后过期。Slack 将这对令牌限定在单个用户与单个工作区内，AgentConnect 会将其保存在当前登录用户的账号下，你可随时在**个人资料 → Slack 配置令牌**中更换或清除。
 
-为应用命名，点击**创建并安装**，然后在 Slack 中批准。使用 **HTTP (Events API)** 投递时，AgentConnect 会自动获取机器人令牌和签名密钥，无需复制粘贴凭证即可完成。使用 **Socket 模式**时，Slack 仍要求你生成一个带 `connections:write` 的 App-Level 令牌，并粘贴生成的 `xapp-…` 令牌。
+为应用命名后点击**创建并安装**，并在 Slack 中确认授权。选择 **HTTP (Events API)** 模式时，AgentConnect 会自动获取机器人令牌和签名密钥，无需手动复制粘贴。选择 **Socket 模式**时，Slack 仍要求生成一个带 `connections:write` 权限的 App-Level 令牌，并将生成的 `xapp-…` 令牌粘贴回来。
 
 ### Manifest 安装 [#manifest-install]
 
-当你无法创建 Slack 配置令牌时，使用这条手动备用路径：
+如果无法创建 Slack 配置令牌，可使用手动方式：
 
-1. 选择**复制 manifest 并打开 Slack**，然后用复制的 manifest 创建并安装应用。
-2. 对于 **HTTP**，粘贴 Bot User OAuth 令牌（`xoxb-…`）和签名密钥。
-3. 对于 **Socket 模式**，粘贴 Bot User OAuth 令牌和一个带 `connections:write` 的 App-Level 令牌（`xapp-…`）。
+1. 点击**复制 manifest 并打开 Slack**，使用复制的 manifest 创建并安装应用。
+2. 选择 **HTTP** 时，粘贴 Bot User OAuth 令牌（`xoxb-…`）和签名密钥。
+3. 选择 **Socket 模式**时，粘贴 Bot User OAuth 令牌和一个具备 `connections:write` 权限的 App-Level 令牌（`xapp-…`）。
 
-如果 Slack 提示权限范围有变化，请先重新安装一次应用，再复制 Bot User OAuth 令牌。
+如果 Slack 提示权限范围有更新，请先重新安装一次应用，再复制 Bot User OAuth 令牌。
 
 ## 保持应用权限为最新 [#keep-the-apps-permissions-current]
 
-Slack 在安装应用时授予权限，因此新增功能的版本可能让已有安装缺少某个权限范围。AgentConnect 会指出缺少的权限范围，而不是静默失败：打开**集成 → 消息应用 → Slack**，在该机器人的行上使用**刷新 Slack 应用**。
+Slack 仅在安装应用时授予权限，因此产品更新引入新能力后，已有安装可能会缺少新增的权限范围。AgentConnect 会明确列出缺失的权限，不会静默失败：进入**集成 → 消息应用 → Slack**，在对应机器人行点击**刷新 Slack 应用**。
 
-- 当 AgentConnect 能替你更新应用时，它会同步 manifest，并要求你**重新安装工作区**，以便 Slack 授予新增的权限范围。
-- 当它做不到时——manifest 安装的应用，或不由 AgentConnect 管理的应用——它会把你指向 Slack 中该应用的 **OAuth & Permissions** 页面，让你添加列出的权限范围，然后重新安装。
+- 如果 AgentConnect 能够自动更新应用，它会同步 manifest，并提示你**重新安装工作区**以授予新增权限。
+- 如果无法自动更新（例如通过 manifest 手动安装，或不由 AgentConnect 管理的应用），页面会引导你前往 Slack 应用的 **OAuth & Permissions** 页面，手动添加列出的权限范围并重新安装。
 
-内置安装也从同一行修复：AgentConnect 会替你发起重新安装，并等待 Slack 确认。
+内置安装也可在同一行直接修复：AgentConnect 会发起重新安装流程并等待 Slack 确认。
 
 ## 投递模式与自托管 [#delivery-modes-and-self-hosting]
 
-- **HTTP (Events API)** 是 Cloud 上的默认值。入站回调经由 AgentConnect Relay（中继）进入，并直接送达所属的 Daemon。可共享的机器人必须使用 HTTP。
-- **Socket 模式**是由 Daemon 发起的出站连接。它不需要 Relay 或公网回调 URL，且限制为每个机器人一个 Agent。
+- **HTTP (Events API)**：Cloud 的默认模式。入站回调通过 AgentConnect Relay 转发至对应的 Daemon，可共享机器人必须使用此模式。
+- **Socket 模式**：由 Daemon 主动发起的出站连接，无需 Relay 或公网回调 URL，每个机器人仅限绑定一个 Agent。
 
-自托管部署只有在运维人员配置了[部署级 Slack 应用](/self-hosting/provider-apps#slack-deployment-app)之后才会显示内置的**添加到 Slack** 路径。否则，请使用自定义应用。HTTP 只有在部署拥有公网可达且已连接的 Relay 时才可用；没有的话，使用 Socket 模式。
+自托管部署只有在管理员配置了[部署级 Slack 应用](/self-hosting/provider-apps#slack-deployment-app)后，才会显示内置的**添加到 Slack** 入口；否则需使用自定义应用。HTTP 模式要求部署具备公网可达且已连接的 Relay，否则请使用 Socket 模式。
 
 ## 让一个 Slack 应用服务多个 Agent [#use-one-slack-app-with-multiple-agents]
 
-AgentConnect 一般建议每个 Agent 使用一个机器人身份。如果你的团队确实希望同一个 Slack 身份在不同频道中表现不同，可以把机器人设为可共享，并把每个频道分发给不同的 Agent：
+AgentConnect 默认建议为每个 Agent 配置独立的机器人身份。如果团队确实希望同一个 Slack 机器人在不同频道里分别对接不同 Agent，可以开启共享并按频道分发：
 
-1. 打开**集成 → 消息应用 → Slack**，为该机器人开启**可共享**。
-2. 在每个额外的 Agent 上，选择**集成 → 添加集成 → Slack → 使用已有机器人**并选中它。
-3. 回到**集成 → 消息应用 → Slack**，展开该机器人，为每个频道选择**默认分发** Agent。
+1. 进入**集成 → 消息应用 → Slack**，为该机器人开启**可共享**。
+2. 在其他需要复用的 Agent 上，选择**集成 → 添加集成 → Slack → 使用已有机器人**并选中它。
+3. 回到**集成 → 消息应用 → Slack**，展开机器人，为每个频道指定**默认分发** Agent。
 
-完整模式请参见[一个 Slack 应用按频道对接不同 Agent](/how-to-guides/one-slack-app-across-channels)。
+完整配置步骤请参见[一个 Slack 应用按频道对接不同 Agent](/how-to-guides/one-slack-app-across-channels)。

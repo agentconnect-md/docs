@@ -4,35 +4,35 @@ icon: QQ
 description: "Connect an official QQ bot to self-hosted AgentConnect. Configure bot credentials and IP access, test private chats and group mentions, and prepare for publishing."
 ---
 
-QQ is available on **self-hosted deployments only**. AgentConnect Cloud does not offer it. The Helm chart turns it on by default (`features.qq`); on Docker Compose, add `qq` to `FEATURE_FLAGS` in [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) and recreate `web`. Until the flag is on, QQ does not appear in the integration picker.
+QQ is available on **self-hosted deployments only** and isn't offered on AgentConnect Cloud. The Helm chart enables it by default (`features.qq`). On Docker Compose, add `qq` to `FEATURE_FLAGS` in [`compose.env`](/self-hosting/docker-compose/configuration#compose-environment) and recreate `web`. Until the flag is on, QQ won't appear in the integration picker.
 
-The daemon connects outbound to QQ's official bot API, so no public callback URL is required.
+Because the daemon connects outbound to QQ's official bot API, you don't need a public callback URL.
 
 ## Create the bot
 
 1. Open the [QQ Open Platform](https://q.qq.com/), register, and create a bot.
-2. Turn on private and group messages in the bot's development settings, and copy its **AppID** and **AppSecret**.
-3. While the bot is unpublished, add your own account and a test group to its sandbox — an unpublished bot answers nowhere else.
-4. Before you publish the bot, add the public IP of the machine running your daemon to the bot's **IP allowlist**. QQ rejects API calls from any other address once a bot is live, and a bot behind a changing home IP stops answering when that address changes.
+2. Enable private and group messages in the bot's development settings, then copy its **AppID** and **AppSecret**.
+3. While the bot is unpublished, add your own account and a test group to its sandbox. Unpublished bots only reply in sandbox chats.
+4. Before publishing the bot, add the public IP of the machine running your daemon to the bot's **IP allowlist**. Once a bot is live, QQ rejects API calls from any other address. If your daemon runs behind a dynamic home IP, the bot will stop responding whenever that IP changes.
 
 ## Connect it
 
-On your agent, open **Integrations → Add integration → QQ**, paste the AppID and AppSecret, and click **Connect**. AgentConnect verifies the pair with QQ before saving it.
+On your agent's page, open **Integrations → Add integration → QQ**, paste the AppID and AppSecret, and click **Connect**. AgentConnect validates the credentials with QQ before saving them.
 
 ## Use it
 
-- **Private chat** — message the bot directly. Replies stream in as the agent works, formatted as Markdown.
-- **Groups** — add the bot to a QQ group and **@-mention** it. Everyone in the group shares that group's conversation with the agent; ordinary group chatter the bot is not mentioned in is not part of it.
-- **Images** — send the bot a PNG, JPEG, or WEBP image, and an agent can share images from its workspace back. Other file types are not supported yet.
-- **Questions** — when the agent needs you to pick an option, such as whether a private chat may save to the agent's shared memory, it sends the options numbered. Quote that message and reply with the number; in a group, also @-mention the bot.
-- **Approvals** — QQ has no approval card. When a tool call needs approval, an Agent editor answers it in the console, and the conversation gets a notice where QQ still allows a reply.
+- **Private chat**: Message the bot directly. Replies stream in as Markdown while the agent works.
+- **Groups**: Add the bot to a QQ group and **@-mention** it. Everyone in the group shares that group's conversation with the agent. Regular group messages that don't mention the bot aren't included.
+- **Images**: Send PNG, JPEG, or WEBP images to the bot, and the agent can send images back from its workspace. Other file types aren't supported yet.
+- **Questions**: When the agent needs you to pick an option (such as whether a private chat can save to the agent's shared memory), it sends a numbered list. Quote that message and reply with the number (and @-mention the bot in a group).
+- **Approvals**: QQ doesn't support approval cards. When a tool call needs approval, an Agent editor handles it in the Console, and the conversation gets a notice if QQ still allows a reply.
 
 See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing supported session settings.
 
 ## Notes
 
-- QQ tells a bot nothing about the group it is in, so conversations are listed as `QQ group · <id>` rather than by name. People appear by name only where QQ sends one, which it never does in private chats.
-- QQ limits how many replies a bot may send for one incoming message. In a group, the agent acknowledges the request, posts bounded progress, and then the answer; if the answer does not fit, AgentConnect says so and keeps the full text in the session.
-- QQ replies must answer a message the bot received, so the console cannot send into a QQ conversation, and an agent cannot open one on its own.
-- One QQ bot binds to one agent. Deleting the integration frees the bot for reuse (**Use an existing bot** next time).
-- Rotate the AppSecret under **Integrations → Messaging apps → QQ → Update secret**. The bot's conversations are unchanged.
+- QQ doesn't share group details with bots, so conversations are listed as `QQ group · <id>` instead of by name. People appear by name only when QQ provides one, which it doesn't do in private chats.
+- QQ limits how many replies a bot can send for a single incoming message. In a group, the agent acknowledges the request, posts limited progress updates, and then sends the answer. If the answer doesn't fit, AgentConnect notes this in chat and keeps the full text in the session.
+- QQ only allows a bot to reply to a message it received. Because of this, the Console can't send messages into a QQ conversation, and an agent can't start one on its own.
+- Each QQ bot binds to one agent. Deleting the integration frees the bot for reuse (select **Use an existing bot** next time).
+- Rotate the AppSecret under **Integrations → Messaging apps → QQ → Update secret**. Existing conversations aren't affected.

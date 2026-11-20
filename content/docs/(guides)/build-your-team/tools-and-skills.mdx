@@ -8,11 +8,11 @@ import imgToolsSkills from '@/public/images/tools-skills.png'
 import imgMcpServer from '@/public/images/mcp-server.png'
 import imgAgentToolsSkills from '@/public/images/agent-tools-skills.png'
 
-**Tools & Skills** is the organization library for capabilities your agents may use. Register an MCP provider, connector, or Git skill source once, then explicitly choose which agents receive it. New agents start with an empty tool and skill allowlist.
+**Tools & Skills** is your organization's library of capabilities that agents can use. Register an MCP provider, connector, or Git skill source once, then choose explicitly which agents get access. New agents start with an empty tool and skill allowlist.
 
 <Image src={imgToolsSkills} alt="Organization connectors, MCP servers, and skills" width={900} />
 
-AgentConnect keeps organization management separate from agent enablement:
+AgentConnect separates organization-level management from per-agent enablement:
 
 | Capability | Add or manage it | Enable it for an agent |
 | --- | --- | --- |
@@ -20,99 +20,102 @@ AgentConnect keeps organization management separate from agent enablement:
 | Git skill source | **Tools & Skills → Skills library** | Agent → **Tools & Skills → Skills** |
 | Managed skill | **Knowledge → Suggestions**, then **Skills library** | Agent → **Tools & Skills → Skills** |
 
-Adding something to the organization library does not automatically give it to every agent.
+Adding an item to the organization library doesn't enable it for existing agents automatically.
 
 ## Connectors & MCP servers
 
-Open **Tools & Skills** and use **Connectors & MCP servers** to register an upstream capability:
+Open **Tools & Skills** and go to **Connectors & MCP servers** to register an upstream service:
 
-- **Add connectors** browses the available OpenConnector providers and walks through their authorization.
-- **Custom MCP provider** connects an HTTP MCP endpoint by URL, with optional upstream headers.
+- **Add connectors**: Browse available OpenConnector providers and walk through authorization.
+- **Custom MCP provider**: Connect an HTTP MCP endpoint by URL, with optional upstream headers.
 
 <Image src={imgMcpServer} alt="Register a custom MCP server" width={520} />
 
-Choose **Everyone** or **Selected** team visibility when you add the provider. Header values are write-only after saving, and agents receive access without seeing the stored credential.
+Choose **Everyone** or **Selected** team visibility when adding a provider. Header values are write-only once saved, so agents can use the tool without seeing the stored credential.
 
-A provider appears as eligible for an agent only when the agent's daemon and selected runtime support its transport. Registering the provider makes it available to choose; it does not turn it on for any agent.
+A provider appears as eligible for an agent only when that agent's daemon and selected runtime support its transport. Registering a provider makes it available to select without turning it on for any agent.
 
-Before deleting a provider, switch it off for every agent that enables it.
+Before deleting a provider, disable it on every agent that uses it.
 
 ### Add a connector
 
-1. Open **Tools & Skills → Connectors & MCP servers** and choose **Add connectors**.
-2. Search the catalog or filter by category, then select a service.
+1. Open **Tools & Skills → Connectors & MCP servers** and click **Add connectors**.
+2. Search the catalog or filter by category, then pick a service.
 3. Choose an authorization method. API key, custom credential, and no-auth connections save immediately; OAuth opens a popup to authorize with the provider.
-4. Name the connection. Use up to 32 letters, digits, `_`, or `-`, starting with a letter or digit. The name must be unique in the organization, and it cannot match an MCP server name an agent already enables.
-5. Choose its team visibility, then create it.
+4. Name the connection using up to 32 letters, digits, `_`, or `-`, starting with a letter or digit. The name must be unique in your organization and can't match an MCP server name that an agent already has enabled.
+5. Set its team visibility, then create the connection.
 
-The connection then behaves like any other entry in **Connectors & MCP servers**: it stays off until you enable it for an agent.
+Once created, the connection behaves like any other entry in **Connectors & MCP servers** and stays off until you enable it on an agent.
 
-When a token expires or an upstream key rotates, open the connection and choose **Reconnect connector** or **Edit API key**. A connector's endpoint and headers are managed for you and cannot be edited by hand, so reconnecting is how you refresh its credential.
+When a token expires or an upstream key rotates, open the connection and click **Reconnect connector** or **Edit API key**. Because a connector's endpoint and headers are managed for you and can't be edited manually, reconnecting is how you refresh its credentials.
 
-If a service you expect is missing from the catalog, it is usually one of two cases. Services AgentConnect integrates directly — GitHub, GitLab, Linear, Slack, Telegram, Discord, and Lark / Feishu — are kept out of the connector catalog by default in favor of their own integrations. Services that authorize solely through OAuth appear once an OAuth client is configured for them in the deployment — on a self-hosted stack, see [Connector gateway](/self-hosting/connector-gateway#oauth-providers).
+If a service you expect is missing from the catalog, one of two things usually applies:
 
-A service that offers OAuth alongside another method stays listed either way. Only the OAuth choice is withheld until its client is configured, so you may see a service in the catalog with fewer authorization options than the provider actually supports.
+- Services with built-in AgentConnect integrations (GitHub, GitLab, Linear, Slack, Telegram, Discord, and Lark / Feishu) are excluded from the connector catalog by default so you use their dedicated integrations instead.
+- OAuth-only services appear once an OAuth client is configured for them in your deployment. On a self-hosted stack, see [Connector gateway](/self-hosting/connector-gateway#oauth-providers).
+
+Services that support OAuth alongside another method remain listed either way. Only the OAuth option is hidden until its client is configured, so a service may show fewer authorization methods than the provider supports overall.
 
 ## Skills library
 
-The Skills library contains two source types with different lifecycles:
+The Skills library holds two source types with different lifecycles:
 
 | Source type | How it gets there | Lifecycle |
 | --- | --- | --- |
 | **Git skill source** | Search skills.sh or import a GitHub repository | Editable; updates reinstall enabled sources |
 | **Managed skill** | An Owner accepts a suggestion | Immutable revisions; archive or restore |
 
-Managed skills and Git sources remain clearly labeled even though they share one library. Adding a skill to the library never enables it automatically.
+Managed skills and Git sources share one library while staying clearly labeled. Adding a skill to the library doesn't enable it for any agent automatically.
 
 ### Install from skills.sh
 
-Use the public [skills.sh](https://skills.sh) registry when you know the capability you want but not its repository:
+Use the public [skills.sh](https://skills.sh) registry when you know the capability you want without knowing its repository:
 
-1. Open **Tools & Skills → Skills library** and choose **Install from skills.sh**.
+1. Open **Tools & Skills → Skills library** and click **Install from skills.sh**.
 2. Search by skill name and select a result.
-3. Optionally change its library name, choose its team visibility, and select **Install**.
+3. Optionally rename it in your library, pick its team visibility, and click **Install**.
 
-Each result registers exactly that skill from its `owner/repo` source. It becomes an ordinary Git skill source in the organization library and remains disabled until you enable it for an agent. If the registry cannot be reached, retry later or use **Import from GitHub** with a repository you already know.
+Each result registers only that skill from its `owner/repo` source as a regular Git skill source in your organization library, disabled until you turn it on for an agent. If the registry is unreachable, try again later or use **Import from GitHub** with a known repository.
 
 ### Import from GitHub
 
 ![Import a Git repository as a skill source](/images/skills-import.png)
 
-1. Open **Tools & Skills → Skills library** and choose **Import from GitHub**.
-2. Enter `owner/repo` or a GitHub repository URL. The repository should contain each skill in a folder with a `SKILL.md` file.
-3. Optionally set a display name, branch/tag/commit **Ref**, **Subdir**, or a list of specific **Skills**. Leave Skills blank to include all discovered skills.
-4. Choose its team visibility and select **Import**.
+1. Open **Tools & Skills → Skills library** and click **Import from GitHub**.
+2. Enter `owner/repo` or a GitHub repository URL. Each skill should live in its own folder with a `SKILL.md` file.
+3. Optionally configure a display name, branch/tag/commit **Ref**, **Subdir**, or specific **Skills** to include. Leave **Skills** blank to import every discovered skill.
+4. Set its team visibility and click **Import**.
 
-Both registry installation and direct import support only public skill repositories today. If you set **Subdir**, provide a **Ref** unless AgentConnect can resolve the repository's default branch through the organization's GitHub App.
+Both registry installation and direct GitHub import support only public skill repositories today. If you set **Subdir**, also provide a **Ref** unless AgentConnect can resolve the default branch through your organization's GitHub App.
 
-AgentConnect installs enabled skills on the owning daemon. Pin a tag or commit when you need reproducible content across daemons. Before deleting a source, disable it on every agent that uses it.
+AgentConnect installs enabled skills onto the agent's daemon. Pin a tag or commit if you need identical skill versions across daemons. Before deleting a source, turn it off on every agent that uses it.
 
 ## Enable tools and skills for an agent
 
-Open the agent and select its **Tools & Skills** tab.
+Open an agent and switch to its **Tools & Skills** tab.
 
-<Image src={imgAgentToolsSkills} alt="An agent's Tools & Skills tab: MCP servers and skill sources switched on per agent" width={820} />
+<Image src={imgAgentToolsSkills} alt="An agent's Tools & Skills tab showing MCP servers and skill sources switched on per agent" width={820} />
 
-Under **Tools**, turn on the MCP providers that agent should receive. The list combines providers registered by the organization with servers reported by the agent's daemon, then filters them by the selected runtime's capabilities.
+Under **Tools**, enable the MCP providers this agent should access. The list combines organization-registered providers with servers reported by the agent's daemon, filtered to match the selected runtime's capabilities.
 
-Under **Skills**:
+Under **Skills**, you can:
 
-- enable an approved managed skill to use its current immutable revision;
-- enable a whole Git source; or
-- expand a Git source and select individual discovered skills.
+- Enable an approved managed skill to use its current immutable revision.
+- Enable an entire Git source.
+- Expand a Git source and pick individual discovered skills.
 
-An archived managed skill cannot be enabled.
+Archived managed skills can't be enabled.
 
-Under **Decisions**, attach [Decisions](/build-your-team/decisions#let-an-agent-ask) the agent may evaluate itself during a turn.
+Under **Decisions**, attach [Decisions](/build-your-team/decisions#let-an-agent-ask) that the agent can evaluate during a turn.
 
 ### Loaded from the workspace
 
-The agent's **Tools & Skills** tab also shows the skills its prepared workspace can actually load. Each row identifies its origin as **Dream**, **Managed**, **Git source**, or **Repo**, so you can distinguish organization-managed capabilities from skills committed directly with the project. This live list appears after the workspace has been prepared and is unavailable while the owning daemon is offline.
+The agent's **Tools & Skills** tab also shows the skills its prepared workspace can actually load. Each row labels its origin as **Dream**, **Managed**, **Git source**, or **Repo**, making it easy to separate organization-managed skills from skills committed in the project repository. This live view appears once the workspace is prepared and isn't available while the daemon is offline.
 
 ## Visibility and roles
 
-MCP providers and Git skill sources have independent [team visibility](/operate-govern/permissions-overview/team-visibility): **Everyone** or **Selected**. Selected grants access to the chosen current organization members and every organization Owner. At least one member must remain explicitly selected. The current user starts selected when creating one and may replace themselves after selecting someone else; Owners retain access through their role. Collaborators can create and edit resources they are allowed to access, while Viewers are read-only.
+MCP providers and Git skill sources have independent [team visibility](/operate-govern/permissions-overview/team-visibility): **Everyone** or **Selected**. **Selected** grants access to the organization members you pick plus every organization Owner. At least one member must remain explicitly selected. You're selected initially when creating a resource and can remove yourself after picking someone else; Owners always keep access through their role. Collaborators can create and edit resources they can access, while Viewers have read-only access.
 
-Managed-skill approval, revision governance, and archive or restore actions require an organization Owner.
+Approving managed skills, governing revisions, and archiving or restoring them require an organization Owner.
 
-Team visibility controls which people can discover and manage a resource. The agent's explicit enablement controls whether that capability reaches the agent process; the two checks are separate.
+Team visibility determines who can find and manage a resource, while per-agent enablement determines whether that capability is exposed to the agent process. The two controls are independent.

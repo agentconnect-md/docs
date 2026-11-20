@@ -1,91 +1,91 @@
 ---
 title: "GitLab"
 icon: GitLab
-description: "Connect GitLab.com or your own instance, give each agent its own bot account, and trigger from issues and merge requests."
+description: "Connect GitLab.com or a self-managed instance, give each agent its own bot account, and trigger runs from issues and merge requests."
 ---
 
 import imgGitlabCodeHosts from '@/public/images/gitlab-code-hosts.png'
 import imgGitlabAddIntegration from '@/public/images/gitlab-add-integration.png'
 import imgGitlabAgentCard from '@/public/images/gitlab-agent-card.png'
 
-A GitLab integration makes an agent **watch a project**: issues, merge requests and comments become sessions, and the agent writes back as merge-request notes and reviews. It works the same on **GitLab.com** and on a **self-managed instance** — a deployment connects to one or the other, never both at once.
+A GitLab integration lets an agent **watch a project**. New issues, merge requests, and comments start sessions, and the agent replies with merge-request notes and reviews. It works the same way on **GitLab.com** and on a **self-managed instance**. A deployment connects to one or the other, not both at the same time.
 
-Where the GitHub integration acts through one App installed on an organization, GitLab gives **each agent its own user**: a group service account, created when you first set up a project for that agent. Everything the agent does on GitLab — clone, push, comment, review — is attributed to that account, and revoking it revokes exactly one agent.
+Unlike the GitHub integration, which acts through a single App installed on an organization, GitLab gives **each agent its own user**: a group service account created the first time you assign a project to that agent. Every action the agent takes on GitLab (cloning, pushing, commenting, and reviewing) is attributed to that account, so revoking it affects only that one agent.
 
 ## Connect GitLab
 
-An administrator connects the deployment once, in **Integrations → Code hosts → Connect GitLab**. The browser completes an OAuth authorization, and the connected account becomes the deployment's **administration identity**: AgentConnect uses it to discover projects, create the agents' service accounts, and manage project webhooks. It is not the identity agents act as.
+An administrator connects the deployment once under **Integrations → Code hosts → Connect GitLab**. After completing OAuth in the browser, that account becomes the deployment's **administration identity**. AgentConnect uses it to discover projects, create agent service accounts, and manage project webhooks. Agents don't run as this identity.
 
-On GitLab.com, connect an account that is an **Owner of the top-level group** holding your projects: creating each agent's service account requires it, and project-level Maintainer access is not enough. On AgentConnect OSS, the operator [configures the deployment's GitLab OAuth application](/self-hosting/provider-apps#gitlab) first — and for a self-managed instance, that page also covers what the instance must provide and the two ways to hold the creation authority there.
+On GitLab.com, connect an account that is an **Owner of the top-level group** containing your projects. Creating agent service accounts requires top-level group Owner permissions; project-level Maintainer access isn't enough. On AgentConnect OSS, an operator must first [configure the deployment's GitLab OAuth application](/self-hosting/provider-apps#gitlab). That guide also covers requirements for self-managed instances and the two ways to grant service-account creation permissions there.
 
-The connection is per organization, and one deployment addresses one instance. Once GitLab state exists, the instance address cannot be changed: connections, tokens and numeric project IDs carry no instance provenance, so retargeting would send one instance's credentials to another.
+Each organization has its own connection, and each deployment targets one GitLab instance. Once GitLab state exists, you can't change the instance address. Stored connections, tokens, and numeric project IDs aren't scoped to a hostname, so changing the address would send one instance's credentials to another.
 
 ## Give an agent a project
 
-There is no separate "install on this project" step. A project is set up the moment you first give it to an agent — as its [workspace](/build-your-team/agents/workspaces-and-repos), or as an authorized additional repository. Setting it up does three things:
+There is no separate "install on this project" step. A project is provisioned the first time you assign it to an agent, either as its [workspace](/build-your-team/agents/workspaces-and-repos) or as an authorized additional repository. Provisioning does three things:
 
-1. creates that agent's **service account** in the project's top-level group, if it does not have one yet;
-2. adds the account to the project as a **Developer**; and
-3. reconciles the project **webhook** AgentConnect delivers events through.
+1. Creates that agent's **service account** in the project's top-level group if it doesn't exist yet.
+2. Adds the service account to the project with the **Developer** role.
+3. Configures the project **webhook** that delivers events to AgentConnect.
 
-The project must live in a **group**. A project in a personal namespace cannot be set up, because service accounts are group-owned — AgentConnect reports `personal_namespace_unsupported` and nothing is created.
+The project must belong to a **group**. Projects in a personal namespace can't be set up because GitLab service accounts are group-owned. If you try, AgentConnect returns `personal_namespace_unsupported` and makes no changes.
 
-**Integrations → Code hosts** shows the GitLab card as a roster of your agents and the service accounts each one holds. Projects needing attention are collected behind a **_N_ projects need attention** badge; expand it to act on one. Each project row offers three actions:
+Under **Integrations → Code hosts**, the GitLab card lists your agents and the service accounts each one uses. Projects that need attention are grouped under a **_N_ projects need attention** badge; expand it to inspect them. Each project row offers three actions:
 
-- **Repair** re-runs the provisioning above — use it after someone deletes the bot or the webhook by hand.
-- **Remove** deletes the webhook and the project's bots and stops agents answering there. Nothing in the project's code or history changes.
-- **Take over administration** moves the project onto your own connection. Reach for it when the connection that set the project up was disconnected, or when the person who owned it has left: cleanup needs that account's own token, so without a takeover the project cannot be removed and the connection it belongs to cannot be released.
+- **Repair**: Re-runs provisioning. Use this if someone manually deleted the bot or webhook.
+- **Remove**: Deletes the webhook and removes the project's bots so agents stop responding there. Your project's code and Git history aren't affected.
+- **Take over administration**: Transfers project administration to your own connection. Use this if the connection that originally set up the project was disconnected or its owner left. Cleanup requires the managing connection's token, so without taking over, you can't remove the project or delete the old connection.
 
 <Image src={imgGitlabCodeHosts} alt="The GitLab card under Integrations → Code hosts: the administration connection, then one row per agent with the groups its service account belongs to" width={800} />
 
-A connection itself has two stages. **Disconnect** releases it but keeps the row, and deleting a released row removes it. Removal is refused while the connection still administers projects — take those over or remove them first, and the card says so.
+Removing a connection is a two-step process. **Disconnect** releases the connection while keeping its row; deleting the released row removes it permanently. You can't delete a connection while it still administers projects. Take over or remove those projects first, as noted on the card.
 
-GitLab.com Free allows **100 service accounts per top-level group**; a self-managed Free or Community Edition instance allows 100 across the **entire instance**. The population is agents-with-projects, and a refused creation is reported as a quota failure that leaves existing accounts untouched.
+GitLab.com Free allows up to **100 service accounts per top-level group**, and self-managed Free or Community Edition instances allow **100 across the entire instance**. Only agents assigned to projects count toward this limit. If creation hits the quota, AgentConnect reports a quota failure and leaves existing accounts intact.
 
 ## Watch a project
 
-On the agent: **Integrations → Add integration → GitLab**.
+On the agent page, go to **Integrations → Add integration → GitLab**.
 
-<Image src={imgGitlabAddIntegration} alt="Add integration with GitLab selected: pick a project, choose issues or merge requests, and how eagerly the agent wakes up" width={560} />
+<Image src={imgGitlabAddIntegration} alt="Add integration with GitLab selected: pick a project, choose issues or merge requests, and choose when the agent runs" width={560} />
 
-A trigger rides an existing authorization and never creates one: the project must already be the agent's workspace or one of its authorized additional repositories, or adding the watch is refused.
+A trigger uses an existing repository authorization and doesn't create one. The project must already be configured as the agent's workspace or an authorized additional repository, or adding the watch will be rejected.
 
-Choose the project, what to listen for — issues, merge requests, releases, or any mix — and how eagerly the agent wakes up:
+Pick the project, choose what to listen for (issues, merge requests, releases, or any combination), and select when the agent runs:
 
-- **opened** — when an issue or merge request is opened, plus later explicit mentions in that family.
-- **any update** — openings plus new revisions, labels and replies.
-- **@-mention** — when the agent is @-mentioned.
+- **opened**: Runs when an issue or merge request is opened, plus on later explicit mentions in that event type.
+- **any update**: Runs on openings plus new revisions, label changes, and replies.
+- **@-mention**: Runs when the agent is @-mentioned.
 
-A release offers only **published**.
+Releases only support the **published** trigger.
 
-When several agents watch the same project, **Add decision** on an issue or merge request row lets a [Decision](/build-your-team/decisions#pick-agents-for-issues-and-pull-requests) pick which of them take each one.
+When several agents watch the same project, use **Add decision** on an issue or merge request row to let a [Decision](/build-your-team/decisions#pick-agents-for-issues-and-pull-requests) choose which agents handle each item.
 
 <Image src={imgGitlabAgentCard} alt="An agent's GitLab card with three watched projects, each showing the merge-request family and its trigger" width={640} />
 
 ## Who may trigger an agent
 
-AgentConnect checks the **current project membership** of whoever wrote the content, through the GitLab API, at the moment of the event. Webhook-carried labels are never treated as authority.
+When an event arrives, AgentConnect checks the content author's **current project membership** through the GitLab API. Labels included in the webhook payload aren't used for authorization.
 
-Only a member with **Developer or higher** on the target project can start an agent. Membership that is awaiting, expired, lower, missing or simply unavailable fails closed — the agent does not run. Direct, ancestor-group and invited-group membership all count, at the highest effective level.
+Only members with **Developer or higher** access on the target project can trigger an agent. Pending, expired, lower, missing, or unverified memberships fail closed, so the agent won't run. Direct, ancestor-group, and invited-group memberships all count, using the highest effective role.
 
-> This is stricter than the GitHub integration, which accepts the triage role. GitLab's Reporter role carries no merge-request authority, so the bar sits at Developer.
+> This is stricter than the GitHub integration, which allows the triage role. Because GitLab's Reporter role doesn't include merge-request permissions, the minimum role here is Developer.
 
-A merge request from outside the project does not start an agent on its own. A current Developer-or-higher member can request the first turn by mentioning the agent explicitly. To let someone below Developer start an agent, add them under **Trusted users** in a watch's settings; the list works as on [GitHub](/connect-automate/triggers-automation/github#trusted-users) and is the only way below Developer. Trigger permission is separate from what the agent may do afterwards: comments, reviews and pushes still require the repository authorization you gave the agent.
+A merge request from outside the project doesn't start an agent automatically. A current Developer-or-higher member can trigger the first turn by explicitly mentioning the agent. To allow someone below Developer to start an agent, add them under **Trusted users** in the watch's settings. This list works the same way as on [GitHub](/connect-automate/triggers-automation/github#trusted-users) and is the only way for users below Developer to trigger runs. Trigger permission is separate from what the agent can do afterward: comments, reviews, and pushes still require the repository authorization granted to the agent.
 
 ## What the agent does
 
-Each qualifying event starts a session on the agent's daemon with the event as context, and the sessions appear in [Sessions](/operate-govern/sessions) linked back to GitLab.
+Each qualifying event starts a session on the agent's daemon with the event as context. Those sessions appear in [Sessions](/operate-govern/sessions) with links back to GitLab.
 
-- **Ordinary reply** — one note from the agent's service account.
-- **Reviews** — inline comments are drafted and published as one review. **Approve** is a published review plus an approval call fenced to the reviewed commit. **Request changes** blocks merging on Premium and above; on Free it is visible but advisory. AgentConnect never edits the reviewer list.
-- **Run state** — a single note on the merge request, updated as the run progresses, linking back to the session in the console. GitLab Free has no external status checks, so this note is the run's status surface rather than a pipeline entry.
+- **Ordinary reply**: A single note posted by the agent's service account.
+- **Reviews**: Inline comments are drafted and published together as one review. **Approve** publishes the review and submits an approval tied to the reviewed commit. **Request changes** blocks merging on GitLab Premium and above; on GitLab Free, it is visible but advisory. AgentConnect doesn't modify the reviewer list.
+- **Run state**: A single note on the merge request that updates as the run progresses and links back to the session in the console. Because GitLab Free doesn't support external status checks, this note serves as the run status indicator instead of a pipeline check.
 
 To run an agent again on a thread, re-request its service account as a reviewer, mention it, or re-run the session from the console.
 
-Git and `glab` reach GitLab through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials): **the agent's session never holds a GitLab token**, and each agent can only reach what its own account may reach. API reads work as usual; writes go through AgentConnect's tools.
+Git and `glab` authenticate to GitLab through the daemon's [credential proxy](/operate-govern/sandboxing/credential-protection#code-host-credentials). **The agent's session never gets a GitLab token**, and each agent can only access what its own service account can access. API reads work normally, while writes go through AgentConnect's tools.
 
 ## Self-managed instances
 
-Everything above works the same on your own instance. What differs is operator work, done once per deployment: pointing the deployment at the instance, registering the OAuth application, and satisfying what the instance must provide (GitLab 18.11+, one HTTPS address, a trusted certificate, ingress GitLab will deliver to). All of it lives in [GitLab on AgentConnect OSS](/self-hosting/provider-apps#gitlab).
+Everything above works the same way on a self-managed GitLab instance. The only extra step is one-time operator setup per deployment: pointing the deployment at your instance, registering the OAuth application, and meeting the instance requirements (GitLab 18.11+, a single HTTPS URL, a trusted certificate, and an ingress endpoint GitLab can reach). See [GitLab on AgentConnect OSS](/self-hosting/provider-apps#gitlab) for the full setup.
 
-Nothing about the instance has to be configured on your daemons: a daemon learns it from the agent it is serving.
+You don't need to configure instance details on your daemons. Daemons receive the instance settings automatically from the agent they serve.

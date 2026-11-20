@@ -1,87 +1,87 @@
 ---
 title: "Google Chat"
 icon: GoogleChat
-description: "在 Google Cloud 中创建 Google Chat 应用并连接到 AgentConnect，配置服务账号与 HTTPS 回调，让 Agent 回复私信和空间中的 @ 提及。"
+description: "在 Google Cloud 中创建 Google Chat 应用并接入 AgentConnect，配置服务账号与 HTTPS 回调，让 Agent 回复私信和空间中的 @ 提及。"
 ---
 
-Google Chat 集成把 Agent 连接到你在自己的 Google Cloud 项目中创建的 Chat 应用，该应用以 Google Workspace 插件（add-on）形式构建。Google 只通过 HTTPS 回调投递应用的事件，没有 socket 模式，所以部署需要一个公开的回调地址。AgentConnect Cloud 已经提供。
+Google Chat 集成可以将 Agent 连接到你在自己的 Google Cloud 项目中创建的 Chat 应用（以 Google Workspace 插件形式构建）。Google 只通过 HTTPS 回调投递事件，没有 socket 模式，因此部署需要一个公开的回调地址（AgentConnect Cloud 已默认提供）。
 
 ## 创建应用 [#create-the-app]
 
-向导的**开始之前**一步列出了需要准备的东西：
+向导的**开始之前**步骤列出了所需前提条件：
 
-- 一个能配置 Chat 应用的 Google Workspace 账号。
+- 一个能够配置 Chat 应用的 Google Workspace 账号。
 - 一个已启用 **Google Chat API** 的 Google Cloud 项目。
-- 该项目已启用 **Cloud Resource Manager API**。AgentConnect 通过它读取项目编号。
-- 同一项目中一个具有 **Browser** 角色的服务账号，以及它的 JSON 密钥。密钥必须在 Chat 应用自己的项目中创建；来自其他项目的密钥会被拒绝。
+- 同一项目已启用 **Cloud Resource Manager API**，方便 AgentConnect 查询项目编号。
+- 同一项目中拥有 **Browser** 角色的服务账号及其 JSON 密钥。密钥必须在 Chat 应用所属的项目中创建，来自其他项目的密钥会被拒绝。
 
-然后在 Google Cloud 控制台中打开 **APIs & Services → Google Chat API → Configuration**：
+接着，在 Google Cloud 控制台中打开 **APIs & Services → Google Chat API → Configuration**：
 
-1. 把应用构建为 **Google Workspace 插件**，这是新应用的默认选项。已有的 Chat 应用需要先转换，转换不可撤销。
-2. 设置应用的名称、头像和描述。
+1. 将应用构建为 **Google Workspace 插件**（新建应用的默认选项）。如果复用已有的 Chat 应用，需要先完成转换，注意该转换不可撤销。
+2. 设置应用名称、头像和描述。
 3. 在 **Functionality** 下勾选 **Receive 1:1 messages** 和 **Join spaces and group conversations**。
-4. 在 **Connection settings** 下选择 **HTTP endpoint URL**，所有触发器使用同一个 URL，填入向导显示的值，即部署的公开回调源地址加上 `/googlechat/events`，例如 `https://relay.example.test/googlechat/events`。
-5. 可选：在 **Commands** 下添加一个名为 `/help` 的斜杠命令，描述填 "Show how to use this app"，命令 ID 填 `1`。任何未占用的 ID 都可以，AgentConnect 按名称匹配。之后可以在 Chat 里用 `/help` 查看应用的命令。
-6. 在 **Visibility** 下，选择 Workspace 域中可以使用该应用的人员和群组。私有应用不需要在 Marketplace 上架。
+4. 在 **Connection settings** 下选择 **HTTP endpoint URL**，所有触发器共用同一个 URL，填入向导中显示的地址（部署的公开回调源地址加上 `/googlechat/events`，例如 `https://relay.example.test/googlechat/events`）。
+5. 可选：在 **Commands** 下添加一个名为 `/help` 的斜杠命令，描述填 "Show how to use this app"，命令 ID 填 `1`（任何未占用的 ID 都可以，AgentConnect 按命令名称匹配）。配置后，成员可以在 Chat 中通过 `/help` 查看应用命令。
+6. 在 **Visibility** 下选择 Workspace 域内可以使用该应用的人员和群组。私有应用不需要上架 Marketplace。
 7. 点击 **Save**。
 
 ## 连接 [#connect-it]
 
-在你的 Agent 上，打开**集成 → 添加集成 → Google Chat**。粘贴服务账号密钥 JSON，向导会从中填入**项目 ID**。**项目编号**可以不填：AgentConnect 会自己查出来，填了则会核对。然后点击**连接**。
+在 Agent 页面打开**集成 → 添加集成 → Google Chat**。粘贴服务账号的 JSON 密钥后，向导会自动填入**项目 ID**。**项目编号**为可选项：留空时 AgentConnect 会自动查询，手动填写则会进行核对。点击**连接**。
 
-AgentConnect 会先向 Google 验证密钥，再保存；每次尝试之后都会清空密钥输入框。被拒绝时，提示会直接说明该怎么改：项目不对、密钥来自其他项目、Cloud Resource Manager API 未启用、缺少 Browser 角色，或 Chat API 尚未配置。
+AgentConnect 会先向 Google 验证密钥再保存，并在每次提交后清空密钥输入框。如果校验失败，提示会直接指出问题原因：项目不匹配、密钥来自其他项目、Cloud Resource Manager API 未启用、缺少 Browser 角色，或 Chat API 尚未配置。
 
-连接之后，向导会显示三个状态：
+连接完成后，向导会显示三种状态：
 
-- **已保存**——Google 已接受该密钥。
-- **已连接**——回调地址已生效，Agent 已在线。
-- **已添加**——该应用已在某个空间或私聊中。
+- **已保存**：Google 已接受该密钥。
+- **已连接**：回调地址已就绪，且 Agent 在线。
+- **已添加**：应用已加入到某个空间或私聊中。
 
-然后测试一下：给应用发一条私信，或者把它添加到一个空间并 @ 提及它。
+你可以立即测试：给应用发一条私信，或将其添加到某个空间并 @ 提及它。
 
 ## 使用 [#use-it]
 
-- **私信**——直接给应用发消息，每条消息都会送达 Agent。回复以流式方式送达，最后编辑成最终内容。
-- **空间**——把应用添加到空间并 **@ 提及**它。Agent 会在该消息所在的话题中回复。Google 只把提及了应用的空间消息投递给它，话题内的回复也是如此：没有提及应用的话题回复不会送达，Agent 也就无法回答。因此空间的触发条件只有 **@ 提及**、**按决策**和**关闭**，没有**所有消息**。
-- **欢迎和帮助**——应用被添加到空间或私聊时会先自我介绍。如果应用添加了 `/help` 命令，输入 `/help` 并从 Chat 的命令列表中选中它，可以查看文字命令。
-- **处理中**——Agent 两秒内还没有任何输出时，应用会先发一条 "⏳ Working on it…"，回答出来后替换它。如果 Agent 决定不回答，这条消息会被撤回，Google Chat 会显示有一条消息已被删除。
-- **格式**——Agent 的 Markdown 按 Google Chat 支持的子集渲染：粗体、斜体、删除线、行内代码、代码块、列表和链接。标题显示为粗体行，图片显示为链接，表格显示为等宽文本块。较长的回复会拆成多条消息。
-- **提问**——Agent 需要你输入时，会在对话里发一张卡片：每个选项一个按钮，或是一个带 **Confirm** 的简短表单。能看到卡片的人都可以回答，回答后卡片会显示结果。点 **Dismiss** 即拒绝回答。
-- **审批**——当工具调用需要批准时，Agent 会在线程中发布一张卡片，提供 Runtime 自己的选项。谁能回答它，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定。
+- **私信**：直接给应用发消息，每条消息都会送达 Agent。回复会流式输出，并在原地更新直至完成。
+- **空间**：将应用添加到空间并 **@ 提及**它，Agent 会在对应消息的话题中回复。Google 只会向应用投递包含 @ 提及的空间消息，话题内回复也不例外：未 @ 应用的回复不会送达，Agent 因此无法响应。出于同样原因，空间的触发方式只提供 **@ 提及**、**按决策**和**关闭**，没有**所有消息**选项。
+- **欢迎和帮助**：应用被加入空间或私聊时会自动发送自我介绍。如果配置了 `/help` 命令，输入 `/help` 并从 Chat 命令列表中选择，即可查看文本命令列表。
+- **处理中**：如果 Agent 在两秒内尚无输出，应用会先发一条 "⏳ Working on it…"，待结果生成后原地替换。如果 Agent 决定不回复，这条占位消息会被撤回，Google Chat 会提示有一条消息已被删除。
+- **格式**：Agent 的 Markdown 按 Google Chat 支持的子集渲染，包括粗体、斜体、删除线、行内代码、代码块、列表和链接。标题会显示为粗体行，图片显示为链接，表格显示为等宽文本块。过长的回复会拆分为多条消息发送。
+- **提问**：当 Agent 需要用户输入时，会在对话中发送一张卡片，包含各选项按钮或带 **Confirm** 的简短表单。能看到卡片的成员均可作答，提交后卡片会更新显示结果。点击 **Dismiss** 可跳过提问。
+- **审批**：当工具调用需要审批时，Agent 会在线程中发布一张包含 Runtime 选项的卡片。谁有权处理审批，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)配置决定。
 
-当前版本不支持：双向的附件、对话框、群组私信、`/help` 以外的斜杠命令，以及表情回应。
+当前版本暂不支持：双向文件附件、对话框、群组私信、`/help` 以外的斜杠命令以及表情回应。
 
-关于停止、取消、排队以及更改支持的会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+关于停止、取消、排队以及调整支持的会话设置，请参考[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
 
 ## 控制台中的可见性 [#visibility-in-the-console]
 
-与应用的**私信**只对发送者本人可见。发送者用同一个 Google 账号登录控制台，或在个人资料中关联了它之后，就能在控制台中打开；其他人都不能，组织所有者也不例外。**空间**中的对话对整个组织可见，无论空间里有谁。
+与应用的**私信**仅对发送者本人可见。发送者使用同一 Google 账号登录控制台，或在个人资料中关联该账号后，即可在控制台中查看；其他成员（包括组织所有者）均不可见。**空间**中的对话对整个组织可见，与空间内的成员范围无关。
 
 ## 恢复 Workspace 连接 [#recover-a-workspace-connection]
 
-如果使用部署自带的共享 Chat 应用，一个 Google Workspace 客户只连接一个 AgentConnect 组织。如果应用提示 Workspace 已连接到其他组织，需要先解除原连接。
+如果使用部署自带的共享 Chat 应用，每个 Google Workspace 只能连接到一个 AgentConnect 组织。如果应用提示 Workspace 已连接到其他组织，需要先释放原有绑定。
 
-如果你能访问原来的 AgentConnect 组织，请让内置 **AgentConnect** Agent 的编辑者在该 Agent 的**集成**页删除 Google Chat 集成。这会释放 Workspace 绑定。然后在 Google Chat 中给应用发送一条新消息，通过它提供的连接链接选择目标组织。
+如果你有权访问原 AgentConnect 组织，请让其内置 **AgentConnect** Agent 的编辑者在**集成**页中删除 Google Chat 集成，即可解除 Workspace 绑定。随后在 Google Chat 中向应用发送一条新消息，按其返回的连接链接重新绑定到目标组织。
 
-如果无法访问原组织，**当前的 Google Workspace 超级管理员**可以恢复连接：
+如果无法访问原组织，**当前的 Google Workspace 超级管理员**可以执行恢复：
 
 1. 在与共享应用的私聊中发送 `/help`，打开 **Manage Workspace connection**。
-2. 用同一个 Google 账号登录，选择目标 AgentConnect 组织，点击**连接**。你需要是该组织的所有者或协作者。
+2. 使用同一 Google 账号登录，选择目标 AgentConnect 组织并点击**连接**（你需要是该组织的所有者或协作者）。
 3. 页面提示 Workspace 已连接到其他组织时，点击**验证 Workspace 管理员**，完成 Google 的只读管理员验证。
-4. 确认目标组织，点击**恢复连接**。仅完成验证不会改变绑定，确认前可以取消。
+4. 核对目标组织无误后，点击**恢复连接**。仅完成验证不会改动现有绑定，确认前随时可以取消。
 
-原连接将停止工作。历史会话和 Agent 保留在原组织，连接设置不会转移；请在目标组织中重新配置新连接。即使最初安装应用的管理员已经离职，也不需要其参与。首次连接不需要这次额外验证。
+恢复后，原连接会立即停止工作。原组织中的历史会话和 Agent 会保留在原处，连接设置不会迁移，需要在目标组织中重新配置。原安装者无需参与，即使已离职也不受影响。首次连接不需要执行这项额外验证。
 
-如果验证不可用，或你是委派管理员而非超级管理员，请联系 [contact@agentconnect.md](mailto:contact@agentconnect.md)，提供 Workspace 域名、应用名称和目标组织。自托管用户请联系部署运维者，由其[配置管理员恢复](/self-hosting/provider-apps#google-chat-deployment-app)。
+如果验证流程不可用，或你的身份是委派管理员而非超级管理员，请发送邮件至 [contact@agentconnect.md](mailto:contact@agentconnect.md)，附上 Workspace 域名、应用名称和目标组织。自托管用户请联系部署运维人员，由其[配置管理员恢复](/self-hosting/provider-apps#google-chat-deployment-app)。
 
-目前，在 Google Workspace 中卸载或重新安装应用都不会释放它在 AgentConnect 中的绑定。从某个空间或私聊中移除应用，也不会解除 Workspace 绑定。这些步骤适用于部署自带的共享应用；你自行注册的应用按下方说明删除集成即可。
+目前在 Google Workspace 中卸载或重新安装应用并不会解除 AgentConnect 侧的绑定，从空间或私聊中移除应用同样不会释放 Workspace 绑定。以上步骤适用于部署自带的共享应用；你自行注册的应用只需按常规方式删除集成即可。
 
 ## 说明 [#notes]
 
-- 你自己的 Chat 应用绑定一个 Agent，一个 Google Cloud 项目只容纳一个 Chat 应用。删除集成会释放该应用以供复用（下次选择**使用已有机器人**）。
-- 在**集成 → 消息应用 → Google Chat** 中粘贴新的服务账号密钥，即可轮换你自己应用的密钥。部署自带的 Chat 应用的密钥则在 [Setup Server](/self-hosting/provider-apps#google-chat-deployment-app) 中轮换。
-- 应用所在的空间会列在该集成下。私聊在收到第一条消息后出现，以对方的名字命名。
+- 你自行创建的 Chat 应用只能绑定一个 Agent，且每个 Google Cloud 项目只能创建一个 Chat 应用。删除集成后会释放该应用以供复用（下次选择**使用已有机器人**即可）。
+- 在**集成 → 消息应用 → Google Chat** 中粘贴新的服务账号密钥，即可轮换你自己应用的密钥。部署自带 Chat 应用的密钥则在 [Setup Server](/self-hosting/provider-apps#google-chat-deployment-app) 中轮换。
+- 应用已加入的空间会列在该集成下方；私聊会在收到第一条消息后出现，并以对方姓名显示。
 
 ## 自托管 [#self-hosting]
 
-自托管部署需要先配置好公开的回调地址，和 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 的要求一样。运维者还可以配置一个[部署自带的 Chat 应用](/self-hosting/provider-apps#google-chat-deployment-app)，通过各组织内置的 **AgentConnect** Agent 服务所有组织。
+自托管部署需要先配置公开回调地址，要求与 [Linear](/connect-automate/triggers-automation/linear#before-you-connect) 相同。运维人员也可以配置一个[部署自带的 Chat 应用](/self-hosting/provider-apps#google-chat-deployment-app)，通过各组织内置的 **AgentConnect** Agent 服务所有组织。

@@ -1,63 +1,63 @@
 ---
 title: "Agent 对话 API"
 icon: BotMessageSquare
-description: "用一个 API 密钥和 AI SDK，把 Agent 接到你自己的聊天界面上，比如文档站的 Ask AI 面板或客服窗口。"
+description: "通过 API 密钥和 AI SDK，将 Agent 接入你自己的聊天界面（例如文档站的 Ask AI 面板或客服窗口）。"
 ---
 
-Agent 对话 API 可以把 Agent 接到任何基于 [AI SDK](https://ai-sdk.dev) `useChat` 的聊天界面上（UI message stream 协议 v1）。每一轮对话是一次带 API 密钥的 HTTP POST，回复以 server-sent events 流返回。本站的 Ask AI 面板就是这样实现的。
+Agent 对话 API 可以把 Agent 接入任何基于 [AI SDK](https://ai-sdk.dev) `useChat` 的聊天界面（UI message stream 协议 v1）。每一轮对话都是一次携带 API 密钥的 HTTP POST 请求，响应通过 server-sent events 流式返回。本站的 Ask AI 面板就是这样实现的。
 
-一共三步：
+接入只需三步：
 
-1. 给 Agent 添加 API。
+1. 为 Agent 启用 API。
 2. 创建一个仅限 Agent 对话的密钥。
-3. 用密钥向对话接口发送每一轮对话。
+3. 使用该密钥向对话接口发送请求。
 
 ## 选择协议 [#choose-a-protocol]
 
-Agent 的 API 支持三种协议，一个 Agent 可以添加不止一种。本页讲的是 **AI SDK UI**。**AG-UI** 是面向 AG-UI 客户端的同一种对话。**AHP** 面向直接打开 Agent 的客户端，例如 [VS Code](/connect-automate/vscode)。
+Agent 的 API 支持三种协议，同一个 Agent 可以同时启用多种。本页介绍 **AI SDK UI**；**AG-UI** 面向 AG-UI 客户端，提供同样的对话流程；**AHP** 则面向直接接入 Agent 工作区的完整客户端，例如 [VS Code](/connect-automate/vscode)。
 
 | | AI SDK UI | AG-UI | AHP v1 |
 | --- | --- | --- | --- |
 | 适用于 | 基于 `useChat` 的聊天界面 | 基于 AG-UI 客户端（如 CopilotKit）的聊天界面 | Agent 客户端，例如 VS Code |
-| 传输 | 每一轮一次 HTTP POST，以事件流返回 | 相同 | 整个连接使用一条 WebSocket |
+| 传输 | 每轮一次 HTTP POST，以事件流返回 | 相同 | 整个连接共用一条 WebSocket |
 | 接口 | `<relay-url>/ai-sdk/agents/<agent-id>/chat` | `<relay-url>/ag-ui/agents/<agent-id>/chat` | `wss://<relay-url>/ahp/agents/<agent-id>` |
-| 凭证 | **Agent 对话** 或 **完全访问** 密钥 | 相同 | **完全访问** 密钥，或在客户端里登录 |
-| 回复和思考 | 有 | 有 | 有 |
-| 工具调用 | 标题和状态 | 标题和状态 | 输入和输出 |
-| 文件修改 | 不显示 | 不显示 | 修改前后的内容，以 diff 呈现 |
-| Agent 的文件 | 没有 | 没有 | 只读 |
+| 凭证 | **Agent 对话** 或 **完全访问** 密钥 | 相同 | **完全访问** 密钥，或在客户端内登录 |
+| 回复和思考 | 支持 | 支持 | 支持 |
+| 工具调用 | 仅标题和状态 | 仅标题和状态 | 完整输入和输出 |
+| 文件修改 | 不显示 | 不显示 | 以 diff 展示修改前后内容 |
+| Agent 的文件 | 不支持 | 不支持 | 只读 |
 | 提问与审批 | 由调用方回答 | 不交给调用方 | 由调用方回答 |
-| 会话 | 调用方自己保存会话 id | 调用方自己保存 thread id | 可列出，并带有之前的对话 |
-| 停止一轮对话 | 不能：关闭请求后它继续运行 | 不能：相同 | 能 |
-| 连接中断 | 这一轮剩下的内容只能在控制台里看 | 相同 | 重新连接后继续读取 |
-| 消息输入 | 最后一条消息的文本 | 相同 | 文本和一张图片 |
+| 会话 | 由调用方自行维护会话 ID | 由调用方自行维护 thread ID | 可列出，并包含历史对话 |
+| 停止一轮对话 | 不支持（关闭请求后仍在后台运行） | 不支持（相同） | 支持 |
+| 连接中断 | 剩余输出仅保存在控制台中 | 相同 | 重连后可继续读取 |
+| 消息输入 | 最后一条消息的文本 | 相同 | 文本加一张图片 |
 
-要把 Agent 放到你自己的聊天界面后面，选 AI SDK UI 或 AG-UI：一轮对话就是一次请求，而且 **Agent 对话** 密钥除了对话什么都做不了。如果客户端要看到 Agent 做了什么，而不只是它的回复，选 AHP。
+如果你想把 Agent 放在自己的聊天界面后面，选择 AI SDK UI 或 AG-UI 即可：每轮只需发一次请求，而且 **Agent 对话** 密钥只能用于聊天。如果客户端除了回复之外，还需要查看 Agent 的工具输入输出、文件改动和工作区文件，则应选择 AHP。
 
-AG-UI 的请求是一个 `RunAgentInput`，其中的 `threadId` 标识会话。工具活动、计划和通知以 `ACTIVITY_SNAPSHOT` 事件到达，会话标题以名为 `session_info` 的 `CUSTOM` 事件到达。密钥、限制和拒绝情形与本页所述相同。
+AG-UI 的请求体是 `RunAgentInput`，通过 `threadId` 标识会话。工具活动、计划和状态通知通过 `ACTIVITY_SNAPSHOT` 事件返回，会话标题通过名为 `session_info` 的 `CUSTOM` 事件返回。密钥、限制和错误返回与本页说明一致。
 
 ## 给 Agent 添加 API [#add-the-api]
 
-Agent 的所有者添加 API 之后，Agent 才接受 API 调用。打开 Agent，进入 **集成 → 添加集成**，在 **工作流** 下选 **API**，选择 **AI SDK UI**，点 **添加 API**。
+只有 Agent 的所有者为其添加 API 后，Agent 才会接受 API 调用。打开目标 Agent，进入 **集成 → 添加集成**，在 **工作流** 下选择 **API**，选中 **AI SDK UI** 后点击 **添加 API**。
 
 ![给 Agent 添加 API](/images/add-api.png)
 
-之后 Agent 的集成页会出现一张 **API** 卡片。它的 **快速开始** 里有这个 Agent 的对话接口、curl / Node / 浏览器三种示例，以及能访问这个 Agent 的密钥。移除 API 后，Agent 在一分钟内停止接受调用；覆盖它的密钥对其他 Agent 仍然有效。
+完成后，Agent 的集成页会新增一张 **API** 卡片。打开卡片里的 **快速开始**，即可查看该 Agent 的对话接口、curl / Node / 浏览器示例，以及有权访问该 Agent 的密钥列表。移除 API 后，Agent 会在一分钟内停止接受调用；同时覆盖其他 Agent 的密钥对那些 Agent 依然有效。
 
 ![API 卡片的快速开始](/images/api-quickstart.png)
 
 ## 创建密钥 [#create-a-key]
 
-在快速开始里点 **创建密钥**；也可以在 **设置 → 服务账号 → 密钥** 里为[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)创建，这样它不依赖任何一个人；或者在 **个人资料 → API 密钥** 里为自己创建。选项都一样：
+你可以直接在快速开始中点击 **创建密钥**，也可以在 **设置 → 服务账号 → 密钥** 里为[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)创建（避免绑定到某位具体成员），或在 **个人资料 → API 密钥** 中为自己创建。无论哪种方式，都需要按以下配置：
 
 - **权限**：**Agent 对话**。
-- **Agent**：**指定 Agent**，然后选中这个 Agent。
+- **Agent**：**指定 Agent**，然后选中目标 Agent。
 
-Agent 对话密钥只能用于对话接口，而且只对选中并已添加 API 的 Agent 有效；控制平面的 REST API 不接受它。和所有 [API 密钥](/api#create-a-key)一样，它只显示一次，默认 90 天后过期。吊销后一分钟内失效。
+Agent 对话密钥只能访问所选且已启用 API 的 Agent 对话接口，控制平面的 REST API 会拒绝它。与其他 [API 密钥](/api#create-a-key)一样，密钥明文仅展示一次，默认 90 天后过期，吊销后一分钟内生效。
 
 ## 发送一轮对话 [#send-a-turn]
 
-从快速开始复制对话接口，向它发送 `POST`，带上 `Authorization: Bearer <密钥>` 和 `useChat` 的请求体（`{ id, messages, trigger, … }`）：
+从快速开始复制对话接口，发送 `POST` 请求，带上 `Authorization: Bearer <密钥>` 以及 `useChat` 的请求体（`{ id, messages, trigger, … }`）：
 
 ```bash
 curl -N "$CHAT_URL" \
@@ -66,69 +66,72 @@ curl -N "$CHAT_URL" \
   -d '{"id":"chat-1","messages":[{"id":"m1","role":"user","parts":[{"type":"text","text":"How do I install the daemon?"}]}]}'
 ```
 
-对话接口是 `<relay-url>/ai-sdk/agents/<agent-id>/chat`。在 [AgentConnect OSS](/self-hosting) 上，relay URL 是你的 relay 的公开地址。
+对话接口格式为 `<relay-url>/ai-sdk/agents/<agent-id>/chat`。在 [AgentConnect OSS](/self-hosting) 部署中，`<relay-url>` 是你的 Relay 公开地址。
 
-请求体里的 `id`（1 到 128 个字符）标识会话：
+请求体里的 `id`（1 到 128 个字符）用于标识会话：
 
-- 用一个新的 `id` 发出的第一轮会开启会话，之后用同一个 `id` 继续。`useChat` 为每个对话生成一个 `id`，每一轮都会带上。
-- 会话属于密钥的所有者。用另一位成员的密钥发送同一个 `id`，是另一个会话。
-- Relay 只读取最后一条用户消息里的文本部分。Agent 的会话里已经有历史，所以更早的消息、文件部分和 `data-*` 部分都会被忽略。如果请求的最后一条消息是在回答 Agent 的提问，则会继续那一轮，见[提问与审批](#questions-and-approvals)。
+- 使用新的 `id` 发送第一轮会创建会话，后续带上相同的 `id` 即可继续对话。`useChat` 会为每个聊天自动生成 `id` 并在每轮携带。
+- 会话归属密钥的所有者。用另一位成员的密钥发送同一个 `id`，会开启一个完全独立的会话。
+- Relay 只读取最后一条用户消息中的文本部分。由于 Agent 会话内部已经保存了上下文，更早的历史消息、文件部分以及 `data-*` 部分都会被忽略。如果最后一条消息是在响应 Agent 的提问或审批，则会继续刚才那一轮，详见[提问与审批](#questions-and-approvals)。
 
-响应是 `text/event-stream`，带响应头 `x-vercel-ai-ui-message-stream: v1`。其中的各部分遵循 AI SDK 协议，流以 `[DONE]` 结束。
+响应类型为 `text/event-stream`，附带响应头 `x-vercel-ai-ui-message-stream: v1`。事件结构遵循 AI SDK 协议，流以 `[DONE]` 结束。
 
-- 一轮对话可能持续几分钟，每 15 秒会收到一条保活注释。
-- 请求体最大 4 MiB，一轮的文本最大 128 KiB。
-- 一个会话同一时间只运行一轮。
+- 单轮对话可能运行数分钟，期间每 15 秒会收到一条保活注释。
+- 请求体上限为 4 MiB，单轮文本上限为 128 KiB。
+- 同一个会话同一时间只能运行一轮。
 
-拒绝会在流开始之前以状态码返回，JSON 响应体的 `reason` 在有机器可读原因时给出原因：
+如果请求被拒绝，接口会在事件流开始前返回对应 HTTP 状态码；存在机器可读错误原因时，JSON 响应体中的 `reason` 字段会给出对应错误码：
 
 | 状态码 | 含义 |
 | --- | --- |
-| `400` | 没有 `id`，或者没有带文本的用户消息。 |
+| `400` | 缺少 `id`，或没有包含文本的用户消息。 |
 | `401` | 密钥未知、已吊销或已过期。 |
-| `403` | 密钥不是 Agent 对话密钥或完全访问密钥，或者 Agent 还没有添加 API（`api_disabled`）。 |
-| `404` | 密钥选中的 Agent 不包含这个 Agent，或者你看不到它。 |
-| `409` | 这个会话还有一轮在运行（`busy`），自上次对话以来 Agent 已迁移（`agent_moved`），或者回答对应的那一轮已经结束（`turn_ended`）。遇到 `agent_moved` 请开启新会话。 |
-| `413` | 请求体或这一轮的文本过大。 |
-| `422` | API 的决策门拒绝了这一轮（`declined`）。 |
+| `403` | 密钥不具备 Agent 对话或完全访问权限，或该 Agent 尚未启用 API（`api_disabled`）。 |
+| `404` | 密钥授权的 Agent 列表不包含该 Agent，或当前无权查看该 Agent。 |
+| `409` | 该会话仍有正在运行的轮次（`busy`）、Agent 自上次对话后已迁移（`agent_moved`），或回答对应的轮次已经结束（`turn_ended`）。遇到 `agent_moved` 时请开启新会话。 |
+| `413` | 请求体或本轮文本超出大小限制。 |
+| `422` | API 的决策规则拒绝了这一轮（`declined`）。 |
 | `503` | Agent 离线、已暂停或正在排空。 |
 
 ### 流里有什么 [#what-the-stream-carries]
 
 | 部分 | 内容 |
 | --- | --- |
-| `text-*` | Agent 的回复。 |
+| `text-*` | Agent 的回复内容。 |
 | `reasoning-*` | Agent 的思考过程。 |
-| `data-tool` | 工具活动：只有标题和状态。 |
-| `data-plan` | Agent 的计划。 |
-| `data-notice` | 状态提示，比如 “Starting sandbox…”。 |
+| `data-tool` | 工具活动（仅包含标题和状态）。 |
+| `data-plan` | Agent 的执行计划。 |
+| `data-notice` | 状态提示，例如 “Starting sandbox…”。 |
 | `message-metadata` | 会话标题。 |
-| `dynamic-tool` | Agent 的提问（`agentconnect_ask`）或工具审批（`agentconnect_approval`），见[提问与审批](#questions-and-approvals)。 |
+| `dynamic-tool` | Agent 的提问（`agentconnect_ask`）或工具审批（`agentconnect_approval`），详见[提问与审批](#questions-and-approvals)。 |
 
-只渲染文本的客户端只会显示回复。`useChat` 的 `stop()` 只会中止这次请求：这一轮仍会跑完，输出会进入控制台里这个会话的记录。中断的流暂时无法恢复。
+只渲染文本的客户端只会展示回复正文。调用 `useChat` 的 `stop()` 只会中止本次 HTTP 请求，后台轮次仍会执行完成，输出结果也会记录到控制台的会话记录中。中断后的事件流暂不支持续传。
 
 ## 提问与审批 [#questions-and-approvals]
 
-一轮对话可能会停在只有调用方能回答的地方：Agent 提了一个问题，或者它要运行的工具需要批准。流会把它作为一次工具调用（`dynamic-tool` 部分）交给你，并以结束原因 `tool-calls` 结束。这一轮会等你回答。
+当 Agent 需要只有调用方能提供的信息时（例如提出问题，或某次工具调用需要审批），当前轮次会暂停。事件流会以 `dynamic-tool` 部分将请求交给调用方，并以结束原因 `tool-calls` 结束，随后等待回复。
 
-| 工具 | 问什么 | 怎么回答 |
+| 工具 | 请求内容 | 回复方式 |
 | --- | --- | --- |
-| `agentconnect_ask` | 一个问题。`input.message` 是问题本身，`input` 里还有可选的 `options`、一个 `text` 或 `number` 输入、多个 `fields`，或者一个要打开的 `url`。 | 用 `addToolOutput` 回答：选中的值，多选时是一个列表，`fields` 时按字段各给一个值，`url` 则在打开后原样返回。`state: 'output-error'` 表示跳过这个问题。 |
-| `agentconnect_approval` | 批准一次工具调用。`input.tool` 是工具名，`input.detail` 是一行摘要，比如要执行的命令。 | `addToolApprovalResponse({ id, approved })`。 |
+| `agentconnect_ask` | 提出问题。`input.message` 为问题正文，`input` 中还会包含可选项 `options`、`text` 或 `number` 输入框、多个 `fields`，或待打开的 `url`。 | 调用 `addToolOutput` 返回答案：单选传选中值，多选传数组，`fields` 按字段传值，`url` 在打开后原样返回。传入 `state: 'output-error'` 表示跳过该问题。 |
+| `agentconnect_approval` | 请求批准一次工具调用。`input.tool` 为工具名，`input.detail` 为一行摘要（例如待执行的命令）。 | 调用 `addToolApprovalResponse({ id, approved })`。 |
 
-把回答作为下一次请求发出。把 `sendAutomaticallyWhen` 设为 `lastAssistantMessageIsCompleteWithToolCalls` 或 `lastAssistantMessageIsCompleteWithApprovalResponses`，`useChat` 就会自动发出。Relay 会继续同一轮，剩下的回复流进同一条 assistant 消息。每个工具调用的 `callProviderMetadata` 标明它属于哪一轮，所以要把流生成的 assistant 消息原样发回。
+将答案作为下一次请求发回即可。把 `useChat` 的 `sendAutomaticallyWhen` 设为 `lastAssistantMessageIsCompleteWithToolCalls` 或 `lastAssistantMessageIsCompleteWithApprovalResponses` 后，客户端会自动发送。Relay 会恢复同一轮，并将剩余内容继续流式写入同一条 assistant 消息。每个工具调用里的 `callProviderMetadata` 标明了所属轮次，因此需要将流生成的 assistant 消息原样传回。
 
-拒绝审批会立即生效，Agent 的编辑者看不到这个请求。批准是否直接生效取决于 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)：为**对话并批准工具调用**或更高级别时，批准直接生效，因为对话属于密钥的所有者；为**和 agent 对话**时，只有能编辑这个 Agent 的人持有的**完全访问**密钥批准才直接生效。用其他密钥批准时，请求会交给 Agent 的编辑者在控制台里处理，这一轮等他们决定。公开站点可以在代码里拒绝所有审批，访客就永远不会打扰到编辑者；本站的 Ask AI 面板就是这样做的。
+拒绝审批会立即生效，且不会通知 Agent 的编辑者。批准是否立即生效，取决于 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)设置：
 
-一轮对话不会一直等下去：
+- 设为**对话并批准工具调用**或更高级别时，由于会话归属密钥所有者，批准立即生效。
+- 设为**和 agent 对话**时，只有具备该 Agent 编辑权限的成员所持有的**完全访问**密钥发出的批准才会立即生效；使用其他密钥批准时，审批请求会转交控制台中该 Agent 的编辑者处理，当前轮次会等待其决定。公开站点可以直接在代码里拒绝所有审批，避免访客打扰编辑者（本站的 Ask AI 面板就是这样处理的）。
 
-- 10 分钟没有回答，这一轮会被取消。
-- 不回答而是发了新消息，这一轮会被取消，新消息开启自己的一轮。
-- 回答的那一轮已经结束时，返回 `409` 和 `turn_ended`。
+等待中的轮次有以下超时和取消规则：
+
+- 超过 10 分钟未收到回答，该轮自动取消。
+- 不直接回答而是发送新消息时，等待中的轮次会被取消，新消息会开启新的一轮。
+- 回答一个已经结束的轮次时，接口返回 `409` 和 `turn_ended`。
 
 ## 在 Node 中调用 [#from-node]
 
-AI SDK 的 `DefaultChatTransport` 负责发送每一轮并解析流，需要 AI SDK 6 或更高版本（`npm i ai`）：
+AI SDK 的 `DefaultChatTransport` 可以直接发送轮次并解析事件流，需要 AI SDK 6 或更高版本（`npm i ai`）：
 
 ```ts
 import { DefaultChatTransport } from 'ai'
@@ -149,7 +152,7 @@ for await (const chunk of stream) if (chunk.type === 'text-delta') process.stdou
 
 ## 在浏览器中调用 [#from-a-browser]
 
-浏览器不能拿到密钥，所以要在你自己的服务器上、对话接口前面放一个路由。它加上密钥，把 `useChat` 的请求原样转发。Next.js 的路由处理器 `app/api/chat/route.ts`：
+切勿在浏览器代码中暴露 API 密钥。应在你自己的服务端提供一个代理路由，由服务端附加密钥并将 `useChat` 的请求体原样转发到对话接口。以下是 Next.js 路由处理器示例（`app/api/chat/route.ts`）：
 
 ```ts
 export async function POST(req: Request) {
@@ -166,7 +169,7 @@ export async function POST(req: Request) {
 }
 ```
 
-页面上让 `useChat` 指向这个路由（`ai` 和 `@ai-sdk/react`，AI SDK 6 或更高版本）：
+前端页面将 `useChat` 指向这个代理路由即可（需要 `ai` 和 `@ai-sdk/react`，AI SDK 6 或更高版本）：
 
 ```tsx
 'use client'
@@ -179,32 +182,32 @@ export default function Chat() {
 }
 ```
 
-所有访客的会话都属于密钥的所有者，访客只能访问自己的 chat id 所对应的会话；`useChat` 生成的 id 是随机的。请在你的路由上对访客限流，AgentConnect 只按会话限制并发，不按访客限流。
+所有访客的会话都归属于密钥所有者，每位访客只能访问自己 chat ID 对应的会话（`useChat` 会生成随机 ID）。请在你的代理路由中对访客做限流，AgentConnect 只按会话限制并发，不按访客限流。
 
-本站自己的路由在 [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) 仓库里，做得更多一些：chat id 由它自己生成，按打开的标签页存进 HttpOnly cookie，面板清空后开启新会话。见 [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts)。
+本站的代理路由位于 [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) 仓库，并做了进一步封装：由服务端生成 chat ID，按浏览器标签页存入 HttpOnly cookie，并在面板清空时开启新会话。可以参考 [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts)。
 
 ## 用决策筛选对话 [#decision-gate]
 
-API 卡片上的 **添加决策** 给 API 加上和频道 **按决策** 相同的规则：只有当[决策](/build-your-team/decisions)匹配调用的消息时 Agent 才回答，否则接口返回 `422`。决策无法评估的调用按没有决策门处理。规则里的 **最近评估** 列出决策判断过的每次调用及原因，只有能编辑这个 Agent 的成员可以看到。
+点击 API 卡片上的 **添加决策**，即可应用与频道 **按决策** 相同的过滤规则：只有当[决策](/build-your-team/decisions)匹配传入消息时 Agent 才会回复，否则接口返回 `422`。如果决策无法评估，请求会按未配置决策规则放行。规则中的 **最近评估** 会列出每次被评估的请求和判断依据，仅能编辑该 Agent 的成员可见。
 
 ## 会话与安全 [#sessions-and-safety]
 
-这样开启的会话是密钥所有者的一个普通 webchat 会话，来源显示为这个密钥。服务账号的会话对整个组织可见；个人密钥的会话对该用户[私有](/operate-govern/permissions-overview/session-visibility)。用量和其他对话一样计入 Agent；见[账单与用量](/operate-govern/billing-and-usage)。
+通过 API 发起的对话会作为密钥所有者的普通 webchat 会话保存，来源标注为该密钥。服务账号产生的会话对整个组织可见，个人密钥产生的会话则对该用户[私有](/operate-govern/permissions-overview/session-visibility)。用量与其他对话一样计入该 Agent，详见[账单与用量](/operate-govern/billing-and-usage)。
 
 <Callout type="warn">
-Agent 每一轮收到的都是不可信输入。请据此配置它：
+Agent 在每一轮收到的都是不可信输入，请按以下要求做好隔离配置：
 
-- 不给它任何[密钥](/build-your-team/variables-and-secrets)，也不给仓库写权限。
-- 让它在能隔离不可信输入的[沙箱](/operate-govern/sandboxing)中运行：`microsandbox` 或 Kubernetes。
-- 把它的**聊天中可以做什么**设为**和 agent 对话**，这样访客的批准不会直接生效。
-- 把它放在一个成员可以阅读这些会话记录的组织里。
+- 不要向它分配任何[密钥](/build-your-team/variables-and-secrets)，也不要授予代码仓库的写权限。
+- 在能够隔离不可信输入的[沙箱](/operate-govern/sandboxing)中运行（`microsandbox` 或 Kubernetes）。
+- 将**聊天中可以做什么**设为**和 agent 对话**，避免访客的批准直接生效。
+- 将该 Agent 放在成员有权查阅这些会话记录的组织中。
 </Callout>
 
 ## 故障排查 [#troubleshooting]
 
-- **`403` “this agent does not accept API calls”**：给 Agent 添加 API（见上文）。
-- **`403` “this API key cannot chat with agents”**：密钥的权限是 **只读**。创建一个 Agent 对话密钥。
-- **`404` “agent not found”**：密钥选中的 Agent 不包含这个 Agent。
-- **发送一轮时 `409`**：这个会话还有一轮在运行。等它结束，或换一个新的 chat `id`。
-- **回答时 `409` `turn_ended`**：那一轮等了 10 分钟没等到回答，或者被新消息取代了。请发一条新消息重新提问。
-- **部署后立即出现 `503`**：Agent 所在的 Daemon 正在重连。重试即可。
+- **`403` “this agent does not accept API calls”**：尚未为该 Agent 添加 API，请按上文步骤启用。
+- **`403` “this API key cannot chat with agents”**：当前密钥的权限为 **只读**，请改用 **Agent 对话** 密钥。
+- **`404` “agent not found”**：密钥选中的 Agent 列表中不包含该 Agent。
+- **发送一轮时返回 `409`**：该会话仍有正在运行的轮次。等待其完成，或换一个新的 chat `id`。
+- **提交回答时返回 `409` `turn_ended`**：该轮等待超过 10 分钟已自动取消，或被新消息替换。请发一条新消息重新提问。
+- **部署后立即出现 `503`**：Agent 所在的 Daemon 正在重连，稍后重试即可。

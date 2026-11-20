@@ -4,9 +4,9 @@ icon: ShipWheel
 description: "Deploy AgentConnect OSS with the official Helm chart and run agents in isolated Kubernetes sandboxes."
 ---
 
-The official AgentConnect Helm chart is the production-shaped OSS deployment. It installs the Web console, Control Plane, Setup Server, Relay, connector gateway, and an install-wide daemon pool. Agent runtimes run in isolated `agent-sandbox` pods with persistent workspaces instead of on an operator's machine.
+The official AgentConnect Helm chart is the production OSS deployment option. It installs the Web console, Control Plane, Setup Server, Relay, connector gateway, and a cluster-wide daemon pool. Agent runtimes run in isolated `agent-sandbox` pods with persistent workspaces instead of on an operator's machine.
 
-For a local evaluation, use the [Docker Compose quick start](/self-hosting/docker-compose/quick-start). Use this guide when the cluster should own agent execution and workspaces.
+For a local evaluation, use the [Docker Compose quick start](/self-hosting/docker-compose/quick-start). Use this guide when you want the cluster to manage agent execution and workspaces.
 
 The chart is published as an OCI artifact at `oci://ghcr.io/agentconnect-md/charts/agentconnect`. Its version matches the AgentConnect release without the leading `v`, and its default image tags match that release.
 
@@ -14,17 +14,17 @@ The chart is published as an OCI artifact at `oci://ghcr.io/agentconnect-md/char
 
 You need:
 
-- Kubernetes 1.28 or newer;
-- Helm and `kubectl` access to the cluster;
-- `linux/amd64` worker nodes for the current first-party images;
-- a PostgreSQL database reachable from the AgentConnect namespace;
-- a dynamic volume provisioner and a StorageClass for agent workspaces;
-- permission to install CRDs, cluster-scoped RBAC, and the `agent-sandbox` controller; and
-- for public access, a Gateway API controller, an existing Gateway, DNS, and TLS.
+- Kubernetes 1.28 or newer
+- Helm and `kubectl` access to the cluster
+- `linux/amd64` worker nodes for the current first-party images
+- A PostgreSQL database reachable from the AgentConnect namespace
+- A dynamic volume provisioner and a StorageClass for agent workspaces
+- Permission to install CRDs, cluster-scoped RBAC, and the `agent-sandbox` controller
+- For public access: a Gateway API controller, an existing Gateway, DNS, and TLS
 
-The chart creates `HTTPRoute` resources but does not install a Gateway API controller, create the Gateway, or manage DNS and certificates. You can set `route.enabled: false` and provide your own ingress instead.
+The chart creates `HTTPRoute` resources, but it doesn't install a Gateway API controller, create the Gateway, or manage DNS and certificates. You can set `route.enabled: false` and provide your own ingress instead.
 
-Choose an AgentConnect release that includes the chart (`v1.44.0-rc.58` or newer) from [AgentConnect releases](https://github.com/agentconnect-md/agentconnect/releases), then verify the artifact. Do not include the release tag's leading `v`:
+Choose an AgentConnect release that includes the chart (`v1.44.0-rc.58` or newer) from [AgentConnect releases](https://github.com/agentconnect-md/agentconnect/releases), then verify the artifact. Omit the release tag's leading `v`:
 
 ```bash
 export AGENTCONNECT_CHART_VERSION=X.Y.Z
@@ -53,9 +53,9 @@ kubectl -n agentconnect create secret generic agentconnect-secrets \
   --from-literal=OPEN_CONNECTOR_ENCRYPTION_KEY="$(openssl rand -hex 32)"
 ```
 
-`API_KEY_PEPPER` is effectively permanent: rotating it invalidates existing daemon and personal API keys. The connector key encrypts connector OAuth credentials in its persistent volume and should exist before the first connection is created. Keep these values in your secret manager and use a URL-encoded database password.
+`API_KEY_PEPPER` is effectively permanent: rotating it invalidates existing daemon and personal API keys. The connector key encrypts connector OAuth credentials in its persistent volume and should be set before creating the first connection. Store these values in your secret manager and use a URL-encoded database password.
 
-The Kubernetes daemon pool has a separate data-plane document. It is the durable store for sessions, transcripts, queues, and other execution data shared by the pool members. Save this as `data-plane.json`:
+The Kubernetes daemon pool uses a separate data-plane configuration file for the durable store of sessions, transcripts, queues, and other execution data shared by pool members. Save this as `data-plane.json`:
 
 ```json
 {
@@ -72,11 +72,11 @@ kubectl -n agentconnect create secret generic agentconnect-data-plane \
   --from-file=config.json=./data-plane.json
 ```
 
-The Control Plane and daemon pool may use the same PostgreSQL service. Keep their credentials separate so they can be scoped and rotated independently, and back up both control and execution data.
+The Control Plane and daemon pool can share the same PostgreSQL service. Keep their credentials separate so you can scope and rotate them independently, and back up both control and execution data.
 
 ## 2. Create the values file
 
-Start with a small override file rather than copying the complete chart defaults. Save this as `agentconnect-values.yaml` and replace the example hosts, Gateway listener, and StorageClass:
+Start with a small override file instead of copying the full chart defaults. Save this as `agentconnect-values.yaml` and replace the example hosts, Gateway listener, and StorageClass:
 
 ```yaml
 publicUrl: https://app.example.test
@@ -111,15 +111,15 @@ openConnector:
 
 `publicUrl` is the final browser origin. In the default same-origin topology, the console is served at `/`, the Control Plane at `/cp`, and Relay paths on the same host. The chart also supports dedicated `apiHost`, `mcpHost`, and `relay.host` values when you need separate public origins.
 
-The daemon pool defaults to three members and three pre-warmed runtime sandboxes. Each warm sandbox holds a running pod and a workspace PVC. Set `daemonPool.runtime.warmReplicas: 0` when you prefer lower standing cost over a faster first agent launch.
+The daemon pool defaults to three members and three pre-warmed runtime sandboxes. Each warm sandbox runs a pod and keeps a workspace PVC. Set `daemonPool.runtime.warmReplicas: 0` if you prefer lower standing cost over faster first-agent startup.
 
-The default runtime image contains Claude Code, Codex, DeepSeek Harness, and OpenCode. To select the published full image with Qwen Code and other ACP runtimes, see [Runtime authentication](/self-hosting/kubernetes/runtime-authentication#choose-the-runtime-image).
+The default runtime image includes Claude Code, Codex, DeepSeek Harness, and OpenCode. To use the published full image with Qwen Code and other ACP runtimes, see [Runtime authentication](/self-hosting/kubernetes/runtime-authentication#choose-the-runtime-image).
 
 ### Run Logto in the cluster
 
-The chart does not deploy Logto. Whether you run [Logto Cloud](/self-hosting/sign-in#logto-cloud) or your own Logto in the same cluster, the two `logto` values above are the only startup topology AgentConnect needs — everything else about sign-in is Setup Server's to own.
+The chart doesn't deploy Logto. Whether you use [Logto Cloud](/self-hosting/sign-in#logto-cloud) or run Logto in the same cluster, the two `logto` values above are the only startup settings AgentConnect needs. Everything else for sign-in is configured in Setup Server.
 
-For an in-cluster Logto, `endpoint` is the browser-facing origin and `mgmtEndpoint` is the in-cluster Service origin:
+For an in-cluster Logto, set `endpoint` to the browser-facing origin and `mgmtEndpoint` to the in-cluster Service origin:
 
 ```yaml
 logto:
@@ -127,17 +127,17 @@ logto:
   mgmtEndpoint: http://logto.agentconnect.svc.cluster.local
 ```
 
-Three things decide whether that works:
+Three details are required for this setup to work:
 
-- **Front Logto's container port on a port-less Service origin.** Logto builds the URLs it advertises from the request that reached it, so an in-cluster address carrying an explicit port puts that port in what discovery returns. A Service on port 80 targeting the container keeps the management origin port-less and the advertised URLs matching your public origin.
-- **Give Logto `TRUST_PROXY_HEADER` and send it `X-Forwarded-Proto: https`.** Where TLS ends in front of your Gateway, the hop into the cluster is plain HTTP, and without that header Logto advertises an `http://` issuer and every OIDC discovery against it fails. Gateway API expresses it as a `RequestHeaderModifier` filter on the route.
-- **Do not route Logto's admin console.** Reach it the same way as Setup Server, with `kubectl port-forward`, and set its admin endpoint to that local origin.
+- **Expose Logto's container port behind a Service on port 80.** Logto constructs its advertised URLs from the incoming request, so an in-cluster address with an explicit port puts that port into OIDC discovery responses. A port 80 Service targeting the container keeps `mgmtEndpoint` port-less and keeps advertised URLs aligned with your public origin.
+- **Set `TRUST_PROXY_HEADER` on Logto and send `X-Forwarded-Proto: https`.** When TLS terminates in front of your Gateway, the in-cluster hop is plain HTTP. Without that header, Logto advertises an `http://` issuer and OIDC discovery fails. In Gateway API, add a `RequestHeaderModifier` filter on the route.
+- **Don't expose Logto's admin console on a public route.** Access it with `kubectl port-forward`, just like Setup Server, and set its admin endpoint to that local origin.
 
-Whichever deployment you use, the Management API resource is the fixed indicator `https://default.logto.app/api` — it is not a URL your deployment serves.
+Whichever deployment you use, the Management API resource identifier is always `https://default.logto.app/api`. It's a fixed identifier, not a URL your deployment serves.
 
 ### Encrypt stored application secrets
 
-By default, write-only provider and agent secrets are plaintext at rest in PostgreSQL. Before entering production credentials in Setup or the console, configure a Vault Transit key and a Kubernetes-auth role bound to the chart's `agentconnect-control-plane` ServiceAccount. Then add the cipher settings to the same values file:
+By default, write-only provider and agent secrets are stored as plaintext in PostgreSQL. Before entering production credentials in Setup or the console, configure a Vault Transit key and a Kubernetes-auth role bound to the chart's `agentconnect-control-plane` ServiceAccount. Then add the cipher settings to your values file:
 
 ```yaml
 controlPlane:
@@ -148,13 +148,13 @@ controlPlane:
     VAULT_JWT_ROLE: agentconnect
 ```
 
-Setup Server uses the same ServiceAccount and cipher configuration by default, so both processes seal and open the same values. See [Secret storage](/self-hosting/docker-compose/configuration#secret-storage) for the Transit policy and migration behavior.
+Setup Server uses the same ServiceAccount and cipher configuration by default, so both processes encrypt and decrypt the same values. See [Secret storage](/self-hosting/docker-compose/configuration#secret-storage) for the Transit policy and migration steps.
 
 ### Model credentials for every agent
 
-See [Runtime authentication](/self-hosting/kubernetes/runtime-authentication) for API-key setup, runtime-specific Secret mappings, and gateway endpoints. The same mapping feeds the independent pool probe and agent sessions.
+See [Runtime authentication](/self-hosting/kubernetes/runtime-authentication) for API-key setup, runtime-specific Secret mappings, and gateway endpoints. The same mapping feeds both the pool health probe and agent sessions.
 
-Agents in the pool need a model provider credential. Per agent or per organization, that is a [variable or secret](/build-your-team/variables-and-secrets) named for whatever the runtime reads — `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`. An install that pays for one key and wants every agent on it can set that key once, in a Secret the chart references by name:
+Agents in the pool need a model provider credential. Per agent or per organization, you provide this as a [variable or secret](/build-your-team/variables-and-secrets) matching what the runtime expects (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `DEEPSEEK_API_KEY`). If your deployment shares one provider key across all agents, configure it once in a Secret referenced by the chart:
 
 ```bash
 kubectl -n agentconnect create secret generic agentconnect-model-credentials \
@@ -168,25 +168,27 @@ daemonPool:
     existingSecret: agentconnect-model-credentials
 ```
 
-The Secret's **entries are the variables**: `<PREFIX>MODEL_TOKEN` and `<PREFIX>MODEL_BASE_URL`, where the prefix is `ANTHROPIC_` for Claude, `OPENAI_` for Codex, `DEEPSEEK_`, or empty for the shared fallback. OpenCode reuses the same three provider-specific pairs for Anthropic, OpenAI, and DeepSeek; no extra mapping is needed. The example uses [DeepSeek's documented API root](https://api-docs.deepseek.com/guides/harness/). A token with no base URL is a plain provider key on that provider's own endpoint. Agent pods get only a placeholder for it and the daemon pool makes the provider call, so the daemon pool needs outbound HTTPS to the provider; see [Runtime authentication](/self-hosting/kubernetes/runtime-authentication#keys-stay-with-the-daemon-pool). A base URL with no token aims a runtime at an endpoint that issues its own credential. For Qwen Code and other ACP runtimes, map their own API-key variables with `daemonPool.runtimeEnvironment` as shown in the runtime authentication guide.
+The Secret's **entries are the environment variables**: `<PREFIX>MODEL_TOKEN` and `<PREFIX>MODEL_BASE_URL`, where the prefix is `ANTHROPIC_` for Claude, `OPENAI_` for Codex, `DEEPSEEK_`, or empty for the shared fallback. OpenCode reuses these same three provider-specific pairs for Anthropic, OpenAI, and DeepSeek with no extra mapping. The example above uses [DeepSeek's documented API root](https://api-docs.deepseek.com/guides/harness/).
 
-Two rules make this predictable:
+A token with no base URL uses that provider's default endpoint. Agent pods receive only a placeholder value while the daemon pool makes the actual provider calls, so the daemon pool needs outbound HTTPS access to the provider (see [Runtime authentication](/self-hosting/kubernetes/runtime-authentication#keys-stay-with-the-daemon-pool)). A base URL with no token points a runtime at an endpoint that issues its own credentials. For Qwen Code and other ACP runtimes, map their API-key variables with `daemonPool.runtimeEnvironment` as shown in the runtime authentication guide.
 
-- The Secret is the install's **only** source for those variables. Setting one of them in `daemonPool.extraEnv`, or letting `modelEgress.clients` render one, is refused when you install. A credential pair has to arrive whole — a Secret holding only a token, beside a base URL left by something else, would aim a real provider key at an endpoint that never issued it.
-- What the Secret carries **outranks an agent's own variable of the same name**, for the same reason. Leave `modelCredentials` unset when agents should carry their own keys.
+Two rules apply:
+
+- This Secret is the **only** source allowed for these variables. Setting any of them in `daemonPool.extraEnv`, or letting `modelEgress.clients` render them, fails at install time. Each token and base URL pair must come from the same source so a Secret with only a token can't combine with a stray base URL and send a real provider key to the wrong endpoint.
+- Values in this Secret **take precedence over an agent's own variable of the same name**, for the same reason. Leave `modelCredentials` unset if you want agents to use their own keys.
 
 ### Object store: Source Cache and file transfer
 
-An S3-compatible object store turns on two features:
+An S3-compatible object store enables two features:
 
-- **Source Cache.** A new sandbox starts its Git clone from a bundle in the store instead of fetching the whole repository from its origin. Sandbox pods never hold bucket credentials, only short-lived links for one object each.
-- **Console file transfer.** People can attach any file to a [Playground](/build-your-team/agents/playground#attach-files) message, and the console can download large or binary workspace files. Bytes go straight between the browser, the daemon or its pod, and the store; the Control Plane only signs the links. This works for every daemon, including self-hosted ones outside the cluster.
+- **Source Cache**: New sandboxes start their Git clone from a bundle in the store instead of fetching the entire repository from its origin. Sandbox pods don't have bucket credentials, only short-lived signed links for single objects.
+- **Console file transfer**: Users can attach any file to a [Playground](/build-your-team/agents/playground#attach-files) message, and the console can download large or binary workspace files. File bytes transfer directly between the browser, the daemon or its pod, and the store. The Control Plane only signs the links. This works for every daemon, including self-hosted daemons outside the cluster.
 
-Without a store, both are off: clones fetch from the origin, only images can be attached, and workspace downloads go through the Control Plane, up to 8 MiB per file.
+Without an object store, both features stay off: clones fetch from the origin, only images can be attached, and workspace downloads pass through the Control Plane with an 8 MiB per-file limit.
 
 #### Bundled store
 
-The chart can run a single [RustFS](https://rustfs.com) pod on a PersistentVolumeClaim. Give it a public hostname:
+The chart can run a single [RustFS](https://rustfs.com) pod backed by a PersistentVolumeClaim. Give it a public hostname:
 
 ```yaml
 sourceCache:
@@ -197,11 +199,11 @@ sourceCache:
       storageClass: standard
 ```
 
-Signed links must be `https://`, so the store is reached through the Gateway on its own host. Provision that host's DNS, TLS, and Gateway listener like `publicUrl`. The edge must keep the `Host` header, which every signature covers, and accept request bodies up to the largest bundle (`sourceCache.limits.maxBundleBytes`, default `2Gi`). The chart creates the store's route only while `route.enabled` is `true`.
+Signed links must use `https://`, so the store is served through the Gateway on its own host. Provision DNS, TLS, and a Gateway listener for that host just like `publicUrl`. Your edge proxy must preserve the `Host` header (which every signature covers) and allow request bodies up to the largest bundle size (`sourceCache.limits.maxBundleBytes`, default `2Gi`). The chart creates the store's route only when `route.enabled` is `true`.
 
-The chart generates the store's key pair in the Secret `agentconnect-source-cache-store` and keeps it across upgrades. A post-install and post-upgrade Job creates the bucket, its lifecycle rules, and a CORS rule for `publicUrl`; it is safe to rerun.
+The chart generates the store's key pair in the Secret `agentconnect-source-cache-store` and preserves it across upgrades. A post-install and post-upgrade Job creates the bucket, its lifecycle rules, and a CORS rule for `publicUrl`. It's safe to rerun.
 
-After you publish the route in [step 4](#4-configure-sign-in-before-publishing-the-route), restart the daemon pool once so its members find the lifecycle rules at once rather than at their next 6-hourly check:
+After you publish the route in [step 4](#4-configure-sign-in-before-publishing-the-route), restart the daemon pool once so its members pick up the lifecycle rules right away instead of waiting for their next 6-hourly check:
 
 ```bash
 kubectl -n agentconnect rollout restart deployment/agentconnect-daemon-pool
@@ -210,7 +212,7 @@ curl https://objects.example.test/health
 
 #### External bucket
 
-To use your own bucket instead, set `sourceCache.enabled: true` with its location and credentials; it takes precedence over the bundled store:
+To use your own bucket instead, set `sourceCache.enabled: true` with its location and credentials. This takes precedence over the bundled store:
 
 ```yaml
 sourceCache:
@@ -227,15 +229,15 @@ sourceCache:
       name: agentconnect-source-cache
 ```
 
-The Secret holds `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, mounted as files. On EKS, use `credentials.source: serviceAccount` with a `roleArn` instead; the role must trust both the daemon pool's and the Control Plane's ServiceAccounts. Leave `endpoint` empty for AWS's regional endpoint.
+The Secret contains `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, mounted as files. On EKS, use `credentials.source: serviceAccount` with a `roleArn` instead. The IAM role must trust both the daemon pool's and the Control Plane's ServiceAccounts. Leave `endpoint` empty to use the AWS regional endpoint.
 
-Neither the chart nor AgentConnect writes an external bucket's configuration. Apply these yourself:
+The chart and AgentConnect don't configure external buckets automatically. Apply these settings yourself:
 
-- **Lifecycle rules** under `<prefix>/src/`: expire `ac-cache=pending` after 2 days and `ac-cache=unreferenced` after 7. Without them, members stop writing bundles and the Control Plane refuses transfers; both log the document to apply.
-- **A CORS rule** admitting `publicUrl` for `GET` and `PUT`, with the `content-type`, `x-amz-checksum-sha256`, and `x-amz-tagging` headers.
-- **Permissions:** `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, and `s3:PutObjectTagging` on `<prefix>/src/*`, and `s3:GetLifecycleConfiguration` on the bucket.
+- **Lifecycle rules** under `<prefix>/src/`: Expire `ac-cache=pending` after 2 days and `ac-cache=unreferenced` after 7 days. Without them, pool members stop writing bundles and the Control Plane refuses transfers. Both log the exact rule JSON to apply.
+- **A CORS rule**: Allow `publicUrl` for `GET` and `PUT`, with the `content-type`, `x-amz-checksum-sha256`, and `x-amz-tagging` headers.
+- **Permissions**: Grant `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, and `s3:PutObjectTagging` on `<prefix>/src/*`, plus `s3:GetLifecycleConfiguration` on the bucket.
 
-The chart's [Source Cache reference](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#source-cache) has the exact rule and CORS documents, the AWS and MinIO commands, and every limit.
+See the chart's [Source Cache reference](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#source-cache) for the exact rule and CORS documents, AWS and MinIO commands, and all limits.
 
 ## 3. Install AgentConnect
 
@@ -261,11 +263,11 @@ kubectl -n agentconnect-agents get pods,pvc
 kubectl -n agentconnect logs deployment/agentconnect-control-plane -c migrate
 ```
 
-The migration container should exit successfully, application pods should become Ready, and the agents namespace should contain the pre-warmed sandbox pods and PVCs.
+The migration container should exit cleanly, application pods should become Ready, and the agents namespace should contain the pre-warmed sandbox pods and PVCs.
 
 ## 4. Configure sign-in before publishing the route
 
-Setup Server intentionally has no Service or public route. Forward it to your workstation:
+Setup Server has no Service or public route by design. Forward it to your workstation:
 
 ```bash
 kubectl -n agentconnect port-forward deployment/agentconnect-setup-server 8091:8091
@@ -273,9 +275,9 @@ kubectl -n agentconnect port-forward deployment/agentconnect-setup-server 8091:8
 
 Open [http://localhost:8091](http://localhost:8091), connect Logto, configure the browser application and first social provider, and claim the initial administrator. Follow [Sign-in](/self-hosting/sign-in) for the application, API Resource, and provider steps.
 
-The initial values file already supplies Setup with the Logto endpoint. For Logto Cloud behind a custom login domain, keep `logto.endpoint` on that login origin and `logto.mgmtEndpoint` on the tenant's canonical Management API origin.
+The initial values file already passes the Logto endpoint to Setup. For Logto Cloud behind a custom login domain, keep `logto.endpoint` on that login origin and `logto.mgmtEndpoint` on the tenant's canonical Management API origin.
 
-After saving deployment settings in Setup, restart the services that load them at startup — the Control Plane first, and the others only once it is Ready:
+After saving deployment settings in Setup, restart the services that load them at startup. Restart the Control Plane first, and wait until it's Ready before restarting the others:
 
 ```bash
 kubectl -n agentconnect rollout restart deployment/agentconnect-control-plane
@@ -286,9 +288,9 @@ kubectl -n agentconnect rollout restart \
   statefulset/agentconnect-relay
 ```
 
-The order matters once: the console reads its sign-in configuration from the Control Plane when it starts, so a console that restarts alongside a Control Plane still serving the previous configuration caches that one and shows no sign-in button. Restarting the console again fixes it, and starting it after the Control Plane avoids it.
+The order matters because the console fetches its sign-in configuration from the Control Plane at startup. If it restarts while the Control Plane is still serving the previous configuration, the console caches the old state and shows no sign-in button. Waiting for the Control Plane rollout avoids this; if it happens, restart the console again.
 
-Wait for the rollout, change `route.enabled` to `true` in `agentconnect-values.yaml`, and apply the chart again:
+Wait for the rollout, change `route.enabled` to `true` in `agentconnect-values.yaml`, and upgrade the release:
 
 ```bash
 helm upgrade agentconnect \
@@ -300,7 +302,7 @@ helm upgrade agentconnect \
   --timeout 15m
 ```
 
-Confirm that the route attached to the intended Gateway:
+Confirm the route attached to the intended Gateway:
 
 ```bash
 kubectl -n agentconnect get httproute
@@ -311,9 +313,9 @@ If the parent Gateway is in another namespace, its listener must allow routes fr
 
 ## 5. Run the first agent
 
-Open the final Web URL and sign in. The daemon pool registers itself as **Kubernetes cluster**, so you do not need to copy an **Add daemon** command or install the host CLI.
+Open the final Web URL and sign in. The daemon pool registers itself as **Kubernetes cluster**, so you don't need to copy an **Add daemon** command or install the host CLI.
 
-Create an agent, choose **Kubernetes cluster**, and select one of the runtimes reported by the runtime-sandbox image. Give it the model credential that runtime expects — per agent or organization as a [variable or secret](/build-your-team/variables-and-secrets), or once for the whole install as described in [Model credentials for every agent](#model-credentials-for-every-agent). Then run a message in the Playground and confirm that the agent receives a sandbox and persistent workspace.
+Create an agent, choose **Kubernetes cluster**, and select one of the runtimes reported by the runtime-sandbox image. Provide the model credential that runtime expects, either per agent or organization as a [variable or secret](/build-your-team/variables-and-secrets), or once for the whole install as described in [Model credentials for every agent](#model-credentials-for-every-agent). Then send a message in the Playground and confirm the agent gets a sandbox and persistent workspace.
 
 ## Next
 

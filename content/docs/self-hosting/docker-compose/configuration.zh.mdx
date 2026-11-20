@@ -4,23 +4,23 @@ icon: Settings
 description: "通过 compose.env 配置 Compose 服务栈的镜像、端口、公开 URL、引导密钥和密钥存储。"
 ---
 
-默认的 Docker Compose 服务栈无需配置，并且只监听回环地址。`compose.env` 只用于部署拓扑和引导密钥，然后用 Setup Server 来配置[登录](/self-hosting/sign-in)、[提供方应用](/self-hosting/provider-apps)和部署选项。
+默认的 Docker Compose 服务栈无需额外配置，且只监听回环地址。`compose.env` 只负责部署拓扑和引导密钥；[登录](/self-hosting/sign-in)、[提供方应用](/self-hosting/provider-apps)和部署选项则在 Setup Server 里配置。
 
 ## Compose 环境变量 [#compose-environment]
 
-只有在需要覆盖默认值时才复制模板：
+只有在需要覆盖默认配置时再复制模板：
 
 ```bash
 cp compose.env.example compose.env
 ```
 
-在每条 Compose 命令中都带上它：
+之后的每条 Compose 命令都要带上这个文件：
 
 ```bash
 docker compose --env-file compose.env up -d
 ```
 
-`compose.env` 已被 gitignore。不要把它纳入源码管理或未经批准的备份。
+`compose.env` 已被加入 `.gitignore`，不要提交到代码仓库或未经批准的备份中。
 
 ## 镜像版本 [#image-versions]
 
@@ -31,13 +31,13 @@ docker compose --env-file compose.env up -d
 | `AGENTCONNECT_PRISMA_CLI_VERSION` | `7.8.0-node24-r1` |
 | `AGENTCONNECT_OPEN_CONNECTOR_VERSION` | `latest` |
 
-为获得可复现的部署，请固定到某个 AgentConnect 发布版本：
+为保证部署可复现，请固定具体的发布版本标签：
 
 ```dotenv
 AGENTCONNECT_VERSION=vX.Y.Z
 ```
 
-已发布的应用镜像和迁移镜像目前面向 `linux/amd64`。
+目前发布的应用镜像和迁移镜像均为 `linux/amd64` 架构。
 
 ## 本地端口 [#local-ports]
 
@@ -52,11 +52,11 @@ AGENTCONNECT_VERSION=vX.Y.Z
 | Logto 登录 | 可选叠加配置 | `3001` |
 | Logto Console | 可选叠加配置 | `3002` |
 
-`AGENTCONNECT_BIND_ADDRESS` 对 Web、控制平面和 Relay 默认为 `127.0.0.1`。在提供的 Compose 文件中，PostgreSQL、连接器网关、Setup Server 和本地 Logto 叠加配置始终只监听回环地址。
+`AGENTCONNECT_BIND_ADDRESS` 对 Web、控制平面和 Relay 默认为 `127.0.0.1`。在自带的 Compose 文件里，PostgreSQL、连接器网关、Setup Server 和本地 Logto 叠加配置始终只绑定回环地址。
 
 ## 网络与公开 URL [#network-and-public-urls]
 
-容器之间在内部使用 Docker 服务名。浏览器、Daemon、提供方回调和链接则使用下列公开源地址：
+容器之间通过 Docker 服务名通信。浏览器、Daemon、提供方回调和各类链接则使用以下公开源地址：
 
 | 变量 | 本地默认值 |
 | --- | --- |
@@ -65,60 +65,60 @@ AGENTCONNECT_VERSION=vX.Y.Z
 | `AGENTCONNECT_PUBLIC_RELAY_URL` | `http://localhost:8090` |
 | `AGENTCONNECT_RELAY_DAEMON_URL` | `ws://localhost:8090` |
 
-不要添加末尾斜杠。
+URL 末尾不要加斜杠。
 
-对于远程 Daemon 或网络部署，请把这些默认值替换为可达的源地址。浏览器和回调源地址使用 HTTPS，面向 Daemon 的 Relay URL 使用 `wss://`。反向代理必须为控制平面和 Relay 连接保留 WebSocket 升级。
+如果需要接入远程 Daemon 或对外提供服务，请把这些默认值改成实际可访问的地址。浏览器和回调地址使用 HTTPS，面向 Daemon 的 Relay URL 使用 `wss://`。反向代理必须同时支持控制平面和 Relay 的 WebSocket 升级。
 
-在创建 GitHub 或 Slack 应用之前，先设定最终的公开 URL。Setup 会根据这些值推导出它们的回调清单。如果之后 URL 发生变化，请先用同样的环境变量和 Compose 覆盖文件重新创建 Setup Server，再更新提供方应用。对于基础服务栈：
+请先确定最终的公开 URL，再去创建 GitHub 或 Slack 应用，因为 Setup 会根据这些地址生成回调清单。如果后续修改了 URL，需要先用相同的环境变量和 Compose 覆盖文件重建 Setup Server，再去更新提供方应用。基础服务栈命令如下：
 
 ```bash
 docker compose --env-file compose.env up -d --force-recreate setup-server
 ```
 
-更新提供方应用之后，用同样的环境变量和 Compose 覆盖文件重新创建各运行时服务：
+提供方应用更新完成后，再用相同的环境变量和 Compose 覆盖文件重建各运行时服务：
 
 ```bash
 docker compose --env-file compose.env up -d --force-recreate control-plane relay web
 ```
 
-> 不要把无认证的服务栈或其默认密钥发布到网络上。Compose 是单主机拓扑，不是高可用部署。
+> 不要把无认证服务栈或默认密钥直接暴露到网络上。Compose 只是单机拓扑，不提供高可用能力。
 
 ## Setup Server [#setup-server]
 
-Setup Server 在 [http://localhost:8091](http://localhost:8091) 提供基于浏览器的 AgentConnect Setup 界面。它包含在基础服务栈中，并且始终绑定到回环地址。
+Setup Server 在 [http://localhost:8091](http://localhost:8091) 提供浏览器端的 AgentConnect Setup 配置界面。它包含在基础服务栈中，并且始终只绑定回环地址。
 
-用它来：
+可以通过它完成：
 
-- 引导 Logto 登录；
-- 创建、接管、检查或清除提供方应用；
-- 存储提供方凭证，且不会返回已保存的密钥值；以及
-- 启用或禁用预设的 `agentconnect` Agent。
+- 初始化 Logto 登录配置
+- 创建、接管、检查或清除提供方应用
+- 保存提供方凭证（只写不回显密钥值）
+- 启用或禁用预设的 `agentconnect` Agent
 
-保存的更改会在服务启动时加载。用以下命令使其生效：
+保存后的配置会在服务启动时加载，执行以下命令使其生效：
 
 ```bash
 docker compose restart control-plane relay web
 ```
 
-如果 Compose 运行在另一台主机上，请转发 Setup Server，而不是把它公开暴露：
+如果 Compose 部署在远程主机上，请用 SSH 端口转发来访问 Setup Server，不要直接对外暴露：
 
 ```bash
 ssh -L 8091:127.0.0.1:8091 operator@host.example
 ```
 
-然后在本地打开 `http://localhost:8091`。
+然后在本地浏览器打开 `http://localhost:8091`。
 
-关于初始管理员以及 Logto Cloud 或外部 Logto OSS 的设置，请继续阅读[登录](/self-hosting/sign-in)。
+关于初始管理员以及 Logto Cloud 或外部 Logto OSS 的配置，请参阅[登录](/self-hosting/sign-in)。
 
 ### 预设 Agent [#preset-agent]
 
-新组织默认会获得一个内置的 `agentconnect` Agent。在 Setup 中打开**选项**，取消勾选**启用预设 Agent**，然后保存。这会阻止后续的自动创建和回填；它不会删除已经存在的 Agent。
+新建组织默认会附带一个内置的 `agentconnect` Agent。如果要关闭它，请在 Setup 中打开**选项**，取消勾选**启用预设 Agent**并保存。这样之后不会再自动创建或回填预设 Agent，但已经存在的 Agent 不会被删除。
 
 ## 数据库与引导密钥 [#database-and-bootstrap-secrets]
 
-PostgreSQL 18 把数据存储在 `agentconnect_postgres-data` 卷中。`docker compose down` 会保留它；`docker compose down --volumes` 会删除它。
+PostgreSQL 18 把数据保存在 `agentconnect_postgres-data` 数据卷中。`docker compose down` 会保留数据卷，`docker compose down --volumes` 则会将其删除。
 
-在任何网络暴露之前，请替换这些默认值：
+对外暴露服务前，请替换以下默认密钥：
 
 | 变量 | 要求 |
 | --- | --- |
@@ -126,19 +126,19 @@ PostgreSQL 18 把数据存储在 `agentconnect_postgres-data` 卷中。`docker c
 | `AGENTCONNECT_API_KEY_PEPPER` | 至少 32 个字符且保持不变 |
 | `AGENTCONNECT_RELAY_TOKEN` | 至少 32 个字符 |
 
-为每个密钥分别生成一个值：
+为每个密钥分别生成一个随机值：
 
 ```bash
 openssl rand -hex 32
 ```
 
-轮换 `AGENTCONNECT_API_KEY_PEPPER` 会使现有的 Daemon 和个人 API 密钥失效。在非临时用途之前请先备份 PostgreSQL。
+轮换 `AGENTCONNECT_API_KEY_PEPPER` 会让现有的 Daemon 密钥和个人 API 密钥全部失效。如果数据库里存有需要保留的数据，请提前做好 PostgreSQL 备份。
 
 ## 密钥存储 [#secret-storage]
 
-在 AgentConnect 或 Setup 中显示为只写的密钥仍然需要静态加密。默认的 `SECRET_CIPHER=none` 会把它们以明文存储在 PostgreSQL 中。对于生产或暴露在网络上的部署，请使用 HashiCorp Vault Transit。
+在 AgentConnect 或 Setup 中显示为只写的密钥，落盘后依然需要静态加密。默认的 `SECRET_CIPHER=none` 会以明文形式把密钥存在 PostgreSQL 里。用于生产环境或暴露在网络中的部署，请接入 HashiCorp Vault Transit。
 
-创建一个 Transit 密钥，以及一条可以用它加密和解密的策略：
+先创建一个 Transit 密钥，以及一条允许使用它加解密的策略：
 
 ```bash
 vault secrets enable transit
@@ -155,7 +155,7 @@ path "transit/decrypt/agentconnect-cp" {
 }
 ```
 
-把 Vault 设置同时传给控制平面和 Setup Server，让它们使用同一个加密根：
+把相同的 Vault 配置同时传给控制平面和 Setup Server，确保两边共用同一个加密根：
 
 ```yaml
 # compose.vault.yaml
@@ -171,31 +171,31 @@ services:
     environment: *vault
 ```
 
-使用受策略限制的令牌而不是 Vault 根令牌，然后重新创建这两个服务：
+这里应使用按策略限权的令牌，不要用 Vault 根令牌。配置好后重建这两个服务：
 
 ```bash
 docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
   up -d --force-recreate control-plane setup-server
 ```
 
-在做好数据库备份之后，加密此前以明文存储的值：
+做好数据库备份后，把之前以明文存库的值重新加密：
 
 ```bash
 docker compose --env-file compose.env -f compose.yaml -f compose.vault.yaml \
   exec control-plane node dist/secrets/rewrap-cli.js
 ```
 
-该命令可以断点续跑，也可以在轮换 Transit 密钥之后重新运行。Vault 工作负载身份可以通过 `VAULT_JWT_ROLE`、`VAULT_JWT_PATH` 和 `VAULT_AUTH_MOUNT` 来使用，以替代 `VAULT_TOKEN`。
+这条命令支持断点续跑，后续轮换 Transit 密钥后也可以重复执行。除了 `VAULT_TOKEN`，也支持通过 `VAULT_JWT_ROLE`、`VAULT_JWT_PATH` 和 `VAULT_AUTH_MOUNT` 使用 Vault 工作负载身份。
 
 ## 文件传输与对象存储 [#file-transfer-and-the-object-store]
 
-控制台的文件传输需要一个兼容 S3 的对象存储。有了它，用户可以在 [Playground](/build-your-team/agents/playground#attach-files) 消息中附加任意文件，控制台也能下载不超过存储上限的任意大小的工作区文件。文件字节通过短时有效的签名 URL 在浏览器或 Daemon 与存储之间直接传输；控制平面只负责签名，从不接触文件内容。没有对象存储时，只能附加图片，工作区文件经由控制平面下载，每个文件最大 8 MiB。
+控制台的文件传输功能需要兼容 S3 的对象存储。配置后，用户可以在 [Playground](/build-your-team/agents/playground#attach-files) 消息中附加任意文件，控制台也能下载不超过存储上限的工作区文件。文件数据通过短时有效的签名 URL 在浏览器或 Daemon 与对象存储之间直传，控制平面只负责签发 URL，不接触文件内容。未配置对象存储时，只能附加图片，工作区文件需经由控制平面中转下载，单文件上限为 8 MiB。
 
-签名 URL 必须是 `https://`，并且浏览器和 Daemon 会直接访问存储，因此存储需要一个它们信任的 HTTPS 源地址。
+签名 URL 必须使用 `https://`。由于浏览器和 Daemon 会直连对象存储，存储端点需要具备它们信任的 HTTPS 证书。
 
 ### 内置存储（HTTPS 叠加配置） [#bundled-store-https-overlay]
 
-`compose.logto.https.yaml` 叠加配置把服务栈和 Logto 登录放在 Caddy HTTPS 之后，同时还会运行一个 [RustFS](https://rustfs.com) 对象存储。Caddy 在单独的 HTTPS 端口上提供它，一次性的 `object-store-setup` 服务会在每次启动时创建 `agentconnect` 存储桶、它的生命周期规则，以及允许控制台源地址的 CORS 规则。在叠加配置的 `.env` 中加入：
+`compose.logto.https.yaml` 叠加配置会用 Caddy 为服务栈和 Logto 登录加上 HTTPS，同时附带一个 [RustFS](https://rustfs.com) 对象存储。Caddy 在独立的 HTTPS 端口上暴露该存储，一次性任务 `object-store-setup` 会在每次启动时创建 `agentconnect` 存储桶、生命周期规则，以及允许控制台源地址的 CORS 规则。请在叠加配置的 `.env` 中加入以下变量：
 
 ```dotenv
 AGENTCONNECT_OBJECT_STORE_HTTPS_PORT=1445
@@ -203,7 +203,7 @@ AGENTCONNECT_OBJECT_STORE_ACCESS_KEY=agentconnect-store
 AGENTCONNECT_OBJECT_STORE_SECRET_KEY=<random-password>
 ```
 
-缺少其中任何一项时，叠加配置会拒绝启动。每条命令都要带上全部三个 Compose 文件：
+缺少任意一项时，叠加配置都会拒绝启动。后续每条命令都需要带上全部三个 Compose 文件：
 
 ```bash
 docker compose --env-file .env \
@@ -211,17 +211,17 @@ docker compose --env-file .env \
   up -d
 ```
 
-通过 Caddy 检查存储：
+通过 Caddy 检查存储健康状态：
 
 ```bash
 curl -k https://<host>:1445/health
 ```
 
-浏览器和 Daemon 会沿着下载链接访问这个端口，因此除了控制台之外，它们也必须为这个端口信任 Caddy CA。仓库中的 [Caddy HTTPS 指南](https://github.com/agentconnect-md/agentconnect/blob/main/docs/self-host-caddy-https.md)完整介绍了这个叠加配置，包括如何导出并信任 Caddy 根证书。
+浏览器和 Daemon 会直接访问这个端口下载文件，因此除了控制台本身，也必须针对这个端口信任 Caddy CA。关于整个叠加配置的使用方式以及如何导出并信任 Caddy 根证书，请参阅仓库中的 [Caddy HTTPS 指南](https://github.com/agentconnect-md/agentconnect/blob/main/docs/self-host-caddy-https.md)。
 
 ### 外部存储桶 [#external-bucket]
 
-如果要改用你自己的存储桶，请在 `compose.env` 中把 `AC_FILE_TRANSFER` 设置为单行 JSON 文档：
+如果想使用自己的存储桶，在 `compose.env` 中将 `AC_FILE_TRANSFER` 设为一行 JSON 配置：
 
 ```dotenv
 AC_FILE_TRANSFER='{"version":1,"endpoint":"https://s3.example.com","region":"us-east-1","bucket":"agentconnect","forcePathStyle":true,"credentials":{"source":"static","dir":"/run/secrets","accessKeyIdKey":"file_transfer_access_key_id","secretAccessKeyKey":"file_transfer_secret_access_key"}}'
@@ -229,14 +229,14 @@ AC_FILE_TRANSFER='{"version":1,"endpoint":"https://s3.example.com","region":"us-
 
 | 字段 | 含义 |
 | --- | --- |
-| `endpoint` | 存储的 `https://` 源地址；省略时使用 AWS 区域端点 |
-| `publicEndpoint` | 浏览器和 Daemon 使用的源地址，仅在与控制平面访问的地址不同时设置 |
+| `endpoint` | 存储的 `https://` 源地址（省略时使用 AWS 区域端点） |
+| `publicEndpoint` | 浏览器和 Daemon 访问的源地址，仅在和控制平面访问地址不同时设置 |
 | `prefix` | 存储桶内可选的键前缀 |
 | `forcePathStyle` | MinIO、RustFS 和大多数自托管存储设为 `true` |
-| `credentials` | 存放访问密钥对的文件，从 `dir` 读取 |
-| `limits.maxBytes` | 单个文件上限，默认 `512Mi`，最大 `5Gi` |
+| `credentials` | 存放访问密钥对的文件配置，从 `dir` 读取 |
+| `limits.maxBytes` | 单文件大小上限（默认 `512Mi`，最大 `5Gi`） |
 
-用一个覆盖文件把密钥文件挂载到控制平面：
+通过覆盖文件把密钥文件挂载进控制平面容器：
 
 ```yaml
 # compose.file-transfer.yaml
@@ -257,37 +257,37 @@ docker compose --env-file compose.env -f compose.yaml -f compose.file-transfer.y
   up -d --force-recreate control-plane
 ```
 
-存储桶还需要：
+存储桶还需要满足以下条件：
 
-- **一条生命周期规则**：让 `<prefix>/src/`（没有前缀时为 `src/`）下标记为 `ac-cache=pending` 的对象在 2 天后过期。在规则存在之前，控制平面会拒绝传输，并在日志中给出需要添加的规则。规则文档以及 AWS 和 MinIO 的命令见 [Chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#bucket-lifecycle-rules)。
-- **一条 CORS 规则**：允许控制台源地址发起 `GET` 和 `PUT`，并允许 `content-type`、`x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
-- **权限**：密钥对需要在 `<prefix>/src/*/transfer/` 下拥有 `s3:PutObject`、`s3:PutObjectTagging` 和 `s3:GetObject`，并在存储桶上拥有 `s3:GetLifecycleConfiguration`。
+- **生命周期规则**：让 `<prefix>/src/`（无前缀时为 `src/`）下带 `ac-cache=pending` 标签的对象在 2 天后自动过期。未配置该规则时，控制平面会拒绝传输，并在日志中输出需要添加的规则。完整规则文档以及 AWS 和 MinIO 命令见 [Chart README](https://github.com/agentconnect-md/agentconnect/blob/main/charts/agentconnect/README.md#bucket-lifecycle-rules)。
+- **CORS 规则**：允许控制台源地址发起 `GET` 和 `PUT` 请求，并放行 `content-type`、`x-amz-checksum-sha256` 和 `x-amz-tagging` 请求头。
+- **权限**：密钥对需要对 `<prefix>/src/*/transfer/` 具备 `s3:PutObject`、`s3:PutObjectTagging` 和 `s3:GetObject` 权限，并对存储桶具备 `s3:GetLifecycleConfiguration` 权限。
 
 ## 私有证书颁发机构 [#private-certificate-authorities]
 
-如果 GitLab 或 Gitea 实例出示的是由私有证书颁发机构签发的证书，就需要让该机构的证书包**在每个进程内部都存在的文件路径**上可读，包括 Agent 沙箱。让每个 Runtime 都指向它：
+如果 GitLab 或 Gitea 实例使用的是私有 CA 签发的证书，该 CA 证书包必须在**每个进程内部都能访问到的路径**上可读，包括 Agent 沙箱内部。请为各 Runtime 配置以下环境变量：
 
-| 变量 | 由谁读取 |
+| 变量 | 使用方 |
 | --- | --- |
 | `NODE_EXTRA_CA_CERTS` | 控制平面和 Daemon（Node.js） |
 | `SSL_CERT_FILE` | 读取 OpenSSL 默认证书包的工具 |
-| `SSL_CERT_DIR` | 同上的哈希目录形式 |
-| `GIT_SSL_CAINFO` | Git 本身，用于克隆、拉取和推送 |
+| `SSL_CERT_DIR` | OpenSSL 证书包的哈希目录形式 |
+| `GIT_SSL_CAINFO` | Git 客户端本身（用于 clone、fetch 和 push） |
 
-只存在于宿主机上的路径是不够的：Agent 在拥有独立文件系统视图的沙箱中运行，因此证书包也必须挂载到沙箱里，而且这些变量必须传递到沙箱环境中。请在配置沙箱镜像及其环境的地方设置它们，而不是只在宿主机上设置。
+只在宿主机上配置路径是不够的。Agent 运行在拥有独立文件系统的沙箱中，因此证书包也要挂载进沙箱，对应的环境变量也必须传进沙箱环境。请在沙箱镜像和沙箱环境配置中一并设置，而不要只设在宿主机上。
 
-Agent 会话发出的 Git 和代码托管平台 API 请求会经过 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#trust-and-network)，代理用同样这些颁发机构校验实例，因此即使会话运行在别处，Daemon 进程本身也需要它们。
+Agent 会话发出的 Git 和代码托管平台 API 请求会经过 Daemon 的[凭证代理](/operate-govern/sandboxing/credential-protection#trust-and-network)，代理同样依赖这些 CA 证书去校验目标实例。因此即使会话运行在别处，Daemon 进程本身也需要这些配置。
 
-Relay 从不主动连接该实例——它只接收 Webhook 投递——因此它不需要证书包，也不需要出站访问。
+Relay 只接收 Webhook 投递，不会主动连接代码托管实例，所以不需要 CA 证书包，也不需要出站网络访问。
 
 ## 生产环境检查清单 [#production-checklist]
 
 - 固定发布镜像版本。
 - 配置 OIDC 登录和 API Resource。
-- 替换所有默认密钥，并启用加密的密钥存储。
-- 如果使用连接器，设置连接器加密密钥，并备份其卷。
-- 把 Web、控制平面、Relay 和 Logto 放在 HTTPS 之后。
-- 为文件传输配置带生命周期规则的 HTTPS 对象存储，或者不启用它。
-- 保留 WebSocket 升级。
-- 备份 PostgreSQL 并测试恢复。
-- 让 Setup Server、PostgreSQL 和连接器网关远离公共网络。
+- 替换全部默认密钥，并启用静态加密存储。
+- 如果使用连接器，设置连接器加密密钥并备份其数据卷。
+- 为 Web、控制平面、Relay 和 Logto 配置 HTTPS。
+- 为文件传输配置带生命周期规则的 HTTPS 对象存储，或者保持该功能关闭。
+- 在反向代理上保留 WebSocket 升级支持。
+- 定期备份 PostgreSQL 并演练恢复。
+- 不要把 Setup Server、PostgreSQL 和连接器网关暴露在公网上。

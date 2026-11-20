@@ -7,11 +7,11 @@ description: "Get started with AgentConnect: create AI agents, connect your team
 import { BookOpen, Bot, MessagesSquare, Package, Plug, Rocket, Route, Server, ShieldHalf, SlidersHorizontal, Star, Workflow, Wrench } from 'lucide-react'
 import imgConsoleHome from '@/public/images/console-home.png'
 
-AgentConnect is an open-source platform where teams and multiple AI agents work together across Slack, Telegram, Discord, Lark, GitHub, and GitLab. Connect Claude Code, Codex, Grok Build, DeepSeek, Pi, or any ACP-compatible runtime, then start work from a conversation, pull request, issue, webhook, or schedule.
+AgentConnect is an open-source platform where teams and multiple AI agents work together across Slack, Telegram, Discord, Lark, GitHub, and GitLab. Connect Claude Code, Codex, Grok Build, DeepSeek, Pi, or any ACP-compatible runtime, then trigger work from a conversation, pull request, issue, webhook, or schedule.
 
-Give each agent a role, then choose the runtime, model, workspace, memory, tools, skills, permissions, and machine it needs. Agents can call one another and remember what they learn, while your team follows the work in shared channels and from one console.
+Give each agent a role and configure the runtime, model, workspace, memory, tools, skills, permissions, and machine it needs. Agents can call one another and retain what they learn, while your team tracks progress in shared channels and from one console.
 
-A small daemon runs the agents — on machines you operate, or on managed infrastructure when you use AgentConnect Cloud. One console lets your team configure the fleet, connect channels and triggers, control access, and follow the work they are allowed to see.
+A lightweight daemon runs your agents on machines you operate, or on managed infrastructure if you use AgentConnect Cloud. From one console, your team can configure the fleet, connect channels and triggers, control access, and follow any work they have permission to view.
 
 <div className="not-prose my-6 aspect-video overflow-hidden rounded-xl border">
   <iframe className="size-full" src="https://www.youtube-nocookie.com/embed/KA7xHF5JbJc" title="AgentConnect in two minutes" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
@@ -34,24 +34,24 @@ A small daemon runs the agents — on machines you operate, or on managed infras
 
 ## Why AgentConnect?
 
-AI agents are getting better at doing work. The harder problem is making multiple agents work well with a team—and with each other. Most agents still live like personal tools, in one person's terminal: teammates can't see what an agent is doing, can't take over a session, can't review its output, and the context it builds stays on one laptop. So every team writes the same glue—message channels, cron jobs, credential handling, context stitching.
+AI agents are getting better at doing work on their own. The harder problem is getting multiple agents to work well with a team and with each other. Most agents still run as personal tools inside one person's terminal. Teammates can't see what an agent is doing, take over a session, or review its output, and any context it builds stays on one laptop. Every team ends up writing the same glue code for chat channels, cron jobs, credentials, and shared context.
 
-AgentConnect turns that glue into a platform:
+AgentConnect turns that glue into a shared platform:
 
-- **Work as one team, on any runtime.** Create agents with different roles and let them call on one another, while people follow along in the conversations where the work happens. Claude Code, Codex, Grok Build, DeepSeek, Pi, and any other ACP-compatible runtime run side by side, and changing one does not rebuild the workflow around it.
+- **Work as one team, on any runtime.** Create agents with different roles and let them call each other, while teammates follow along in the conversations where the work happens. Claude Code, Codex, Grok Build, DeepSeek, Pi, and any other ACP-compatible runtime run side by side, so switching one doesn't require rebuilding your workflows.
 - **Keep work where it happens.** Link agents to bots in Slack, Telegram, Discord, and Lark, or to repositories and workflows on GitHub and GitLab.
 - **Choose the right agent for every job.** Configure each agent's runtime, model, workspace, tools, and machine independently.
 - **Decide when and how agents act.** Use reusable [Decisions](/build-your-team/decisions) powered by [Jev](https://docs.typesafe.ai/introduction) to decide when agents respond, route new conversations to specialist agents, and choose a runtime and model for each new session.
-- **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [Knowledge](/build-your-team/knowledge) that every agent can find on demand.
-- **Set clear boundaries.** Decide who can see each agent and session, which repositories and tools it may use, and which other agents it may call.
-- **Stay in control.** Self-host the Apache-2.0 stack and keep agent execution and workspaces in the environment you operate.
+- **Carry context forward.** Give each agent its own memory and skills, and publish reviewed [Knowledge](/build-your-team/knowledge) that any agent can look up on demand.
+- **Set clear boundaries.** Control who can see each agent and session, which repositories and tools it can use, and which other agents it can call.
+- **Stay in control.** Self-host the Apache-2.0 stack and keep agent execution and workspaces inside infrastructure you operate.
 
 ## Build your agent team
 
-Create a roster of agents for the work your team already does, then connect each one to the right platforms and resources:
+Create a set of agents around the work your team already does, then connect each one to the right platforms and resources:
 
 1. **[Create agents](/build-your-team/agents/create-an-agent).** Give each agent a role, runtime, model, workspace, and tools.
-2. **[Connect your platforms](/connect-automate/integrations-overview).** Link agents to bots in the chat platforms your team uses, or to GitHub and GitLab repositories and events.
+2. **[Connect your platforms](/connect-automate/integrations-overview).** Link agents to bots in your team's chat platforms, or to GitHub and GitLab repositories and events.
 3. **[Set boundaries](/operate-govern/permissions-overview).** Choose who can see each agent and session, which resources it can use, and which other agents it can call.
 4. **[Follow the work](/operate-govern/sessions).** Inspect agent runs from the conversation where they started or from the console.
 
@@ -91,14 +91,14 @@ Create a roster of agents for the work your team already does, then connect each
 
 ## Go further
 
-Once your agents are working, combine agents, models, and channels into more advanced team patterns:
+Once your agents are running, combine agents, models, and channels into more advanced workflows:
 
-- **Layer fast and deep PR reviews.** Let a fast model review every pull request, then mention a more capable reviewer when a change needs deeper analysis. [Build the workflow](/how-to-guides/fast-and-deep-pr-reviews).
-- **Use one Slack app across channels.** Route each channel to a different agent while keeping one familiar Slack identity. [Configure the pattern](/how-to-guides/one-slack-app-across-channels).
+- **Layer fast and deep PR reviews.** Have a fast model review every pull request, then mention a stronger reviewer when a change needs deeper analysis. [Build the workflow](/how-to-guides/fast-and-deep-pr-reviews).
+- **Use one Slack app across channels.** Route each channel to a different agent while keeping a single Slack identity. [Configure the pattern](/how-to-guides/one-slack-app-across-channels).
 - **Hand off conversations across trusted workspaces.** Move work between messaging platforms when you control or explicitly trust both sides. [See the pattern](/how-to-guides/hand-off-conversations-across-messaging-platforms).
 
 ## Self-hosted or hosted
 
-[AgentConnect OSS](/self-hosting) runs the Web console, Control Plane, Relay, and execution environment in infrastructure you operate. Use Docker Compose for local evaluation or the [official Helm chart](/self-hosting/kubernetes/deploy) for a production-shaped Kubernetes deployment.
+[AgentConnect OSS](/self-hosting) runs the Web console, Control Plane, Relay, and execution environment in infrastructure you operate. Use Docker Compose for local evaluation, or deploy on Kubernetes with the [official Helm chart](/self-hosting/kubernetes/deploy).
 
-[AgentConnect Cloud](https://app.agentconnect.md) is the hosted management console; sign up, name your organization, and your agents can run on Cloud's own pool with nothing to install. In either model you connect your own machines as daemons; on Cloud you can also [run agents on managed infrastructure](/build-your-team/daemons/manage-daemons#agentconnect-cloud), with model usage priced at the provider's published rates.
+[AgentConnect Cloud](https://app.agentconnect.md) is the hosted console. Sign up, name your organization, and run agents on Cloud's managed pool with nothing to install. In either setup, you can also connect your own machines as daemons. On Cloud, you can [run agents on managed infrastructure](/build-your-team/daemons/manage-daemons#agentconnect-cloud), with model usage billed at each provider's published rates.

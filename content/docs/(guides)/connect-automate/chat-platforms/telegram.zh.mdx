@@ -1,38 +1,38 @@
 ---
 title: "Telegram"
 icon: Telegram
-description: "从 @BotFather 拿到一个令牌，你的 Agent 就能回复 Telegram 私信和群组消息。"
+description: "从 @BotFather 获取机器人令牌，即可让 Agent 回复 Telegram 私信和群组消息。"
 ---
 
 import imgTelegramIntegration from '@/public/images/telegram-integration.png'
 
-Telegram 是最快捷的聊天集成：一个令牌，无需应用审核，无需公网 URL——Daemon 主动向外连接 Telegram 的 API。
+Telegram 是接入最快的聊天平台。你只需要一个机器人令牌，无需应用审核，也不需要公网 URL，Daemon 会主动向外连接 Telegram API。
 
 <Image src={imgTelegramIntegration} alt="连接 Telegram 机器人" width={640} />
 
 ## 创建机器人 [#create-the-bot]
 
-1. 在 Telegram 中给 [@BotFather](https://t.me/botfather) 发消息，发送 `/newbot`，然后按提示操作（先是机器人名称，再是以 `bot` 结尾的用户名）。
-2. BotFather 会回复一个类似 `123456789:AAE…` 的**机器人令牌**——复制它。
-3. 在 @BotFather 中发送 `/setprivacy`，选择该机器人，然后选择 **Disable**。AgentConnect 目前要求先关闭群组隐私模式，才会连接机器人。
+1. 在 Telegram 中给 [@BotFather](https://t.me/botfather) 发消息，发送 `/newbot`，按提示输入机器人名称以及以 `bot` 结尾的用户名。
+2. 复制 BotFather 返回的**机器人令牌**（格式类似 `123456789:AAE…`）。
+3. 在 @BotFather 中发送 `/setprivacy`，选择刚才创建的机器人，然后选择 **Disable**。AgentConnect 目前要求先关闭群组隐私模式，才能连接机器人。
 
 ## 连接 [#connect-it]
 
-在你的 Agent 上，打开**集成 → 添加集成 → Telegram** 并粘贴令牌。AgentConnect 会自动验证令牌并检查群组隐私模式。如果隐私模式仍然开启，对话框会在你于 @BotFather 中修改设置的同时持续检查；当 Telegram 报告它已关闭时，**连接**按钮就会可用。
+在 Agent 页面中打开**集成 → 添加集成 → Telegram**，粘贴令牌。AgentConnect 会自动校验令牌并检查群组隐私模式状态。如果隐私模式仍处于开启状态，对话框会在你去 @BotFather 修改设置期间持续检查，一旦 Telegram 返回已关闭状态，**连接**按钮就会变为可用。
 
-AgentConnect 自动化的是检查，而不是设置本身：Telegram 的 Bot API 没有提供让 AgentConnect 关闭群组隐私模式的方法。
+由于 Telegram Bot API 不支持由外部应用关闭群组隐私模式，AgentConnect 只能自动检测状态，需要你在 @BotFather 中手动关闭。
 
 ## 使用 [#use-it]
 
-- **私信机器人**——打开 `t.me/<your_bot_username>`，直接聊天即可。
-- **群组**——把机器人加入群组。群组隐私模式关闭后，它在 AgentConnect 中的触发条件可以使用 **@ 提及**或**所有消息**。如果某个群组在你更改隐私模式之前就添加了机器人，而普通消息仍然收不到，把它移除再重新添加一次。
+- **私信机器人**：打开 `t.me/<your_bot_username>` 直接开始对话。
+- **群组**：将机器人加入群组。关闭群组隐私模式后，可以在 AgentConnect 中将其触发方式设为 **@ 提及**或**所有消息**。如果某个群组是在关闭隐私模式之前加入机器人的，且普通消息依然收不到，请将机器人移出群组后重新添加一次。
 
-关于停止、取消、排队以及更改支持的会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+关于停止、取消、排队以及修改支持的会话设置，参见[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
 
-当工具调用需要批准时，Agent 会在聊天中（话题或回复链里）发布一张审批卡片。谁能回答它，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定。
+当工具调用需要审批时，Agent 会在聊天中（对应的话题或回复链里）发出审批卡片。哪些人可以审批，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)设置决定。
 
 ## 说明 [#notes]
 
-- 一个 Telegram 机器人绑定一个 Agent。删除集成会释放机器人以供复用（下次选择**使用已有机器人**）。
-- 机器人及其令牌在**集成 → 消息应用 → Telegram** 中按组织统一管理。
-- 在 Telegram 上提问时，Agent 只能发到这个机器人上的其他群组，而且只限有公开 @用户名 的群组。AgentConnect 无法知道 Telegram 用户是谁，所以不能替他们交接到 Slack 或其他平台。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
+- 每个 Telegram 机器人只能绑定一个 Agent。删除集成后，该机器人即可供复用（下次选择**使用已有机器人**即可）。
+- 组织内所有机器人及其令牌统一在**集成 → 消息应用 → Telegram** 中管理。
+- 在 Telegram 中发起提问时，Agent 只能通过同一个机器人向其他群组发消息，且仅限设有公开 @用户名 的群组。由于 AgentConnect 无法识别 Telegram 用户的身份，因此不能替他们转交到 Slack 或其他平台。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。

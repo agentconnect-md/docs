@@ -1,16 +1,16 @@
 ---
 title: "Members & roles"
 icon: Users
-description: "Invite teammates and choose what Owners, Collaborators, and Viewers may do."
+description: "Invite teammates and control what Owners, Collaborators, and Viewers can do."
 ---
 
 import imgMembersRoles from '@/public/images/members-roles.png'
 
-Everything in AgentConnect belongs to an **organization**. Membership is the outer authorization boundary: a person must belong to the organization before any role or visibility rule can grant access.
+Everything in AgentConnect belongs to an **organization**. A person must be a member of the organization before any role or visibility rule grants them access.
 
 <Image src={imgMembersRoles} alt="Invite organization members and assign a role" width={520} />
 
-Signing in creates your profile, not an organization. A new account lands on **Create your organization**, where you choose a URL name (lowercase letters, digits, and hyphens) and an optional display name that defaults to it. If a teammate sent you a collaborator invite link, open that link instead and you join their organization rather than creating one.
+When you sign in for the first time, AgentConnect creates your profile and opens **Create your organization**. Choose a URL name (lowercase letters, digits, and hyphens) and an optional display name (defaults to the URL name). If a teammate sent you a collaborator invite link, open that link to join their organization directly.
 
 Use the organization switcher to move between organizations you belong to.
 
@@ -18,20 +18,20 @@ Use the organization switcher to move between organizations you belong to.
 
 **Settings → Members** lists everyone in the organization. Owners can:
 
-- add a member by email and choose a role;
-- generate or revoke the organization's collaborator invite link;
-- change a member's role; and
-- remove a member.
+- Add a member by email and assign a role
+- Generate or revoke the organization's collaborator invite link
+- Change a member's role
+- Remove a member
 
-An organization must always have at least one Owner, so its last Owner cannot be demoted or removed.
+An organization must always have at least one Owner, so you can't demote or remove the last Owner.
 
-An organization that has verified an email domain can also let anyone who signs in with an address on it join as a Collaborator, without an invitation. That choice, **New members**, is on the same tab; see [Single sign-on](/operate-govern/single-sign-on#new-members).
+If your organization has verified an email domain, you can let anyone who signs in with an address on that domain join as a Collaborator automatically, without an invitation. Configure **New members** on the same tab. See [Single sign-on](/operate-govern/single-sign-on#new-members).
 
 ## Service accounts
 
-A service account is a member for a server your organization runs, such as the backend of an Ask AI panel. It never signs in, so its keys keep working when the person who set it up leaves.
+A service account represents a backend service your organization runs, such as the server behind an Ask AI panel. Because it doesn't belong to a human account or sign in interactively, its keys keep working if the person who created it leaves.
 
-**Settings → Members → Service accounts** is Owner-only and separate from the member list. Create one with a name and a role, Collaborator or Viewer; a service account is never an Owner. Its address, for example `docs-bot-k3x9p2@sa.agentconnect.md`, never changes. **Keys** mints its [API keys](/api#create-a-key) with the same choices as a personal key, and each acts as the service account with its role. Sessions it opens are visible to the whole organization. Deleting it revokes its keys.
+Owners manage service accounts under **Settings → Members → Service accounts**, separately from human members. Give the account a name and choose a Collaborator or Viewer role (service accounts can't be Owners). AgentConnect assigns a permanent address such as `docs-bot-k3x9p2@sa.agentconnect.md`. Open **Keys** to create [API keys](/api#create-a-key) with the same options as personal keys. Each key authenticates as the service account with that account's role. Sessions started by a service account are visible to the entire organization, and deleting the account revokes all of its keys.
 
 ## Roles
 
@@ -49,21 +49,21 @@ A service account is a member for a server your organization runs, such as the b
 | Uninstall a GitHub App installation                                               | ✓         | —                | —          |
 | Manage members, roles, and organization settings                                  | ✓         | —                | —          |
 
-Organization Owners can view, edit, and change sharing on every team resource, including resources whose **Selected** list does not include them. Collaborators and Viewers need access through [Team visibility](/operate-govern/permissions-overview/team-visibility).
+Organization Owners can view, edit, and change sharing on every team resource, even if they aren't on the resource's **Selected** list. Collaborators and Viewers need access through [Team visibility](/operate-govern/permissions-overview/team-visibility).
 
-When a member leaves or is removed, AgentConnect removes them from every Selected audience and keeps at least one current member explicitly selected for each resource.
+When a member leaves or is removed, AgentConnect removes them from every **Selected** list while keeping at least one current member explicitly selected on each resource.
 
-[Session visibility](/operate-govern/permissions-overview/session-visibility) applies independently to every role. A Private session is visible only to its matched owner; organization Owners must also pass provider audience checks to read provider-restricted sessions.
+[Session visibility](/operate-govern/permissions-overview/session-visibility) applies to every role independently. A Private session is visible only to its matched owner, and organization Owners still have to pass provider access checks to read provider-restricted sessions.
 
-Owners can see complete [Analytics attribution](/operate-govern/billing-and-usage#who-sees-what), including usage from sessions they cannot read. Collaborators and Viewers receive attribution only for Agents and Sessions they can access, with the rest included in organization totals as unattributed usage.
+Owners can see full [Analytics attribution](/operate-govern/billing-and-usage#who-sees-what), including usage from sessions they can't read. Collaborators and Viewers see attribution only for Agents and Sessions they have access to. Everything else appears in organization totals as unattributed usage.
 
-Collaborators can change the audience of any resource they are allowed to edit. This includes sharing it with more members or switching it back to **Everyone**. Share sensitive resources only with collaborators you trust to manage that audience.
+Collaborators can change sharing settings on any resource they can edit, including adding more members or switching it back to **Everyone**. Only share sensitive resources with collaborators you trust to manage who can see them.
 
-Viewers are read-only for *configuration*: they cannot create, edit, or delete team resources. Two exceptions are intentional, and both matter when you choose who to make a Viewer:
+Viewers have read-only access to *configuration* (they can't create, edit, or delete team resources), with two intentional exceptions to keep in mind:
 
-- A Viewer may change the visibility of a session whose owner identity matches them.
-- **A Viewer can talk to any agent they can see, from the [Playground](/build-your-team/agents/playground).** That starts a real run on the daemon with the agent's full configuration behind it — its tools, MCP servers, repository access, and secrets. The Viewer cannot change how the agent is configured, but they can use it. Restrict a sensitive agent with [team visibility](/operate-govern/permissions-overview/team-visibility) rather than relying on the Viewer role to keep people away from it.
+- A Viewer can change the visibility of a session whose owner identity matches theirs.
+- **A Viewer can talk to any agent they can see in the [Playground](/build-your-team/agents/playground).** This starts a real run on the daemon with the agent's full configuration, including its tools, MCP servers, repository access, and secrets. The Viewer can't edit the agent's settings, but they can run it. Use [team visibility](/operate-govern/permissions-overview/team-visibility) to restrict sensitive agents instead of relying on the Viewer role.
 
 ## Your profile
 
-The avatar menu → **Your profile** shows your name, email, role, and membership date. You can edit your display name there. It also hosts [personal API keys](/api) and any [social sign-in methods](/how-to-guides/linked-accounts) available on your deployment.
+Open the avatar menu → **Your profile** to see your name, email, role, and join date, or to edit your display name. You can also manage your [personal API keys](/api) and any [social sign-in methods](/how-to-guides/linked-accounts) enabled on your deployment from this page.

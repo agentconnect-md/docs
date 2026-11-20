@@ -1,33 +1,33 @@
 ---
 title: "团队可见范围"
 icon: Eye
-description: "选择哪些人可以发现并使用某个 Agent、Daemon、定时任务、MCP 提供方或共享技能来源。"
+description: "指定哪些成员可以查看和使用 Agent、Daemon、定时任务、MCP 提供方或共享技能来源。"
 ---
 
 import imgTeamVisibilityOwnerAccess from '@/public/images/team-visibility-owner-access.png'
 
-团队可见范围控制哪些**人**可以触达某项资源。它与 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)是分开的，后者控制哪些 **Agent** 可以相互调用。新资源默认对整个组织可见。指定成员会限制协作者和查看者的访问，同时让资源对组织所有者保持可访问。
+团队可见范围控制哪些**人**能访问某项资源。它与 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)相互独立，后者控制哪些 **Agent** 可以相互调用。新建资源默认对全组织可见。改为**指定成员**后，协作者和查看者的访问会受到限制，而组织所有者仍可正常访问。
 
 ## 设置可见范围 [#setting-visibility]
 
-支持的创建和编辑界面都有一个**可见范围**或**团队可见性**字段：
+支持权限设置的创建和编辑页面中，都有**可见范围**或**团队可见性**选项：
 
-- **所有人**表示每位组织成员都可以看到该资源。
-- **指定成员**表示只有你选择的当前组织成员，加上每位组织所有者，可以看到它。
+- **所有人**：组织内所有成员都能看到该资源。
+- **指定成员**：只有你勾选的当前组织成员，以及所有组织所有者可以看到它。
 
-指定成员必须始终至少保留一位被明确指定的当前组织成员。所有者即使未被指定也可以查看和编辑该资源。将所有者从选择中移除并不会移除其基于角色的访问权限。成员的[角色](/operate-govern/permissions-overview/members-and-roles)仍然决定其访问是只读还是可编辑。
+**指定成员**列表必须至少包含一位当前组织成员。组织所有者即使未被勾选，也可以查看和编辑该资源；把所有者从列表中移出，不会取消其基于角色的权限。成员最终是只读还是可编辑，仍由其[角色](/operate-govern/permissions-overview/members-and-roles)决定。
 
-任何可以编辑资源的人也可以更改其可见对象。因此被指定的协作者可以把它继续共享出去；被指定的查看者仍然是只读的。
+任何有权编辑资源的人都可以修改它的可见范围。因此被勾选的协作者可以把资源继续分享给其他人，而被勾选的查看者依然只能只读。
 
 <Image src={imgTeamVisibilityOwnerAccess} alt="某个定时任务的“指定成员”可见范围包含被指定的成员和组织所有者" width={900} />
 
 ## 当成员离开时 [#when-a-member-leaves]
 
-AgentConnect 会把离开的成员从所有指定成员列表中移除。资源仍保持为指定成员，并且 AgentConnect 会至少保留一位当前成员处于明确指定状态。
+成员退出或被移除后，AgentConnect 会把他们从所有**指定成员**列表中移除。相关资源仍保持**指定成员**状态，且系统会确保至少保留一位当前成员处于选中状态。
 
 ## 拥有独立可见范围的资源 [#resources-with-their-own-visibility]
 
-以下资源拥有各自独立的可见范围：
+以下资源各自拥有独立的可见范围设置：
 
 - **Agent**
 - **Daemon**
@@ -35,29 +35,29 @@ AgentConnect 会把离开的成员从所有指定成员列表中移除。资源�
 - [**MCP 提供方和 OpenConnector 连接**](/build-your-team/tools-and-skills)
 - [**共享技能来源**](/build-your-team/tools-and-skills)
 
-Agent 和 Daemon 的可见范围相互独立。一位成员可能被允许查看某个 Agent，却不被允许查看托管它的 Daemon。他们不能把 Agent 放置或移动到自己看不到的 Daemon 上。
+Agent 和 Daemon 的可见范围相互独立。成员可能看得到某个 Agent，却看不到运行它的 Daemon，但他们无法把 Agent 部署或迁移到自己看不到的 Daemon 上。
 
-其他资源从父资源继承访问权限。集成、Webhook 和工作区操作跟随其 Agent；定时任务的配置和运行历史跟随该定时任务；Daemon 密钥跟随该 Daemon。机器人是组织范围的基础设施，没有自己的指定成员列表。
+其他资源则继承父级资源的访问权限：集成、Webhook 和工作区操作跟随对应的 Agent；定时任务配置和运行历史跟随该定时任务；Daemon 密钥跟随该 Daemon。机器人属于全组织基础设施，不单独设置**指定成员**列表。
 
-[分析](/operate-govern/billing-and-usage#who-sees-what)为所有者提供完整的组织范围用量归属。对于协作者和查看者，归属要求同时拥有对 Agent 和会话的访问权限。
+在[分析](/operate-govern/billing-and-usage#who-sees-what)页面中，所有者可以看到全组织完整的用量归属；协作者和查看者必须同时有权访问对应的 Agent 和会话，才能看到相应归属。
 
-[会话拥有自己的可见对象](/operate-govern/permissions-overview/session-visibility)：即使所属 Agent 被隐藏，元数据、会话记录、工具详情、关联关系和实时更新仍可能保持可读。对某项资源的所有者访问权限并不授予对其私密会话或受提供方限制的会话的访问权限。
+[会话有自己独立的可见范围规则](/operate-govern/permissions-overview/session-visibility)。即便对应的 Agent 被隐藏，只要你有权查看会话，它的元数据、会话记录、工具详情、关联关系和实时更新依然可读。反过来，组织所有者对资源本身的访问权，也不会让他看到其中的私密会话或受平台权限限制的会话。
 
 ## 受限 Agent 会发生什么变化 [#what-a-restricted-agent-changes]
 
-对于未被指定的协作者和查看者，受限的 Agent 会从 Agent 列表和选择器、其详情和配置界面、工作区操作、调用控件以及分析归属中消失。组织所有者保留访问权限。
+对于未被选中的协作者和查看者，受限的 Agent 会从以下位置消失：Agent 列表和选择器、详情与配置页面、工作区操作、调用控件以及分析归属。组织所有者不受影响。
 
-该 Agent 产生的会话不会仅仅因为 Agent 受限而消失。通过某个会话可见对象检查的成员仍然可以读取其元数据、会话记录、工具详情、关联关系和实时更新。控制台可能会把 Agent 名称显示为普通的会话标签或筛选项，但绝不会显示为链接；这种上下文不授予对 Agent 本身的任何访问权限。
+限制 Agent 的可见范围不会自动隐藏它生成的会话。只要成员通过了会话自身的权限检查，就能继续查看其元数据、会话记录、工具详情、关联关系和实时更新。控制台可能会把 Agent 名称显示为纯文本标签或筛选项，但不会提供链接，也不会授予对该 Agent 本身的任何访问权限。
 
-它的聊天集成也按对话逐一控制。新发现的频道和私信初始为**关闭**。编辑者必须在 Agent 的集成卡片中逐一启用每个对话，Agent 才会在那里响应。启用一个频道意味着信任该频道当前和未来的成员；它不是按人设置的允许列表。
+受限 Agent 的聊天集成也会按对话粒度控制。新发现的频道和私信默认处于**关闭**状态，需要编辑者在 Agent 的集成卡片中逐个开启后，Agent 才会在对应对话中回复。注意，开启某个频道代表信任该频道当前和未来的所有成员，而不是按个人维护的白名单。
 
-当 Agent 从所有人改为指定成员时，现有频道会保留已配置的触发条件。已知的私信会切换为关闭，因此收紧可见范围后请检查集成卡片。
+当 Agent 从**所有人**改为**指定成员**时，已有频道会保留原来的触发条件，而已知私信会自动切回**关闭**状态。收紧可见范围后，记得检查一下集成卡片。
 
 ## 团队可见范围不控制什么 [#what-team-visibility-does-not-control]
 
-团队可见范围与以下各项是分开的：
+团队可见范围不涉及以下边界：
 
-- [角色](/operate-govern/permissions-overview/members-and-roles)，它决定一个人可以做什么；
-- [会话可见范围](/operate-govern/permissions-overview/session-visibility)，它可以把单条会话记录设为私密；
-- [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)，它控制 Agent 之间的协作图；以及
-- Runtime 权限模式、仓库访问权限和提供方应用的权限范围。
+- [角色](/operate-govern/permissions-overview/members-and-roles)：决定成员能执行哪些操作
+- [会话可见范围](/operate-govern/permissions-overview/session-visibility)：决定单条会话记录是否私密或跟随平台权限
+- [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)：决定哪些 Agent 可以相互调用
+- Runtime 权限模式、仓库访问权限以及平台应用的权限范围

@@ -7,100 +7,100 @@ description: "Configure an AgentConnect agent's role, runtime, model, workspace,
 import imgAgentRuntime from '@/public/images/agent-runtime.png'
 import imgAgentConfiguration from '@/public/images/agent-configuration.png'
 
-Open an agent from **Agents** to manage its integrations, runtime, workspace, access, memory, tools, and skills.
+Open any agent from **Agents** to manage its integrations, runtime, workspace, access, memory, tools, and skills.
 
-<Image src={imgAgentRuntime} alt="Edit, with the Execution strategy picker open on Host, Sandbox and VM" width={560} />
+<Image src={imgAgentRuntime} alt="Edit dialog with the Execution strategy picker open on Host, Sandbox, and VM" width={560} />
 
 ## Configuration
 
-The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. **Edit** lets you change the display name, daemon, runtime, model, effort/reasoning, fast mode, permission mode and execution strategy. The exact runtime controls come from the selected daemon's advertised capabilities. Switch **Runtime** to **By decision** to let a [Decision](/build-your-team/decisions#choose-a-runtime-and-model) pick the runtime and model for each new session.
+The Configuration tab groups **Basics**, **Runtime**, **Description**, **Access**, **Variables**, and **Secrets**. Click **Edit** to change the display name, daemon, runtime, model, effort or reasoning level, fast mode, permission mode, and execution strategy. The available runtime controls depend on what the selected daemon reports. To let a [Decision](/build-your-team/decisions#choose-a-runtime-and-model) pick the runtime and model for each new session, switch **Runtime** to **By decision**.
 
-<Image src={imgAgentConfiguration} alt="The Configuration tab: basics, runtime behavior, description, access, variables, and secrets" width={820} />
+<Image src={imgAgentConfiguration} alt="The Configuration tab showing basics, runtime behavior, description, access, variables, and secrets" width={820} />
 
-**Output mode** controls what reaches connected chat platforms; the full transcript remains available in [Sessions](/operate-govern/sessions):
+**Output mode** controls what appears in connected chat platforms. Full transcripts remain available in [Sessions](/operate-govern/sessions):
 
-- **Minimal** — one live-updating reply that settles on the final answer; intermediate steps stay in the status.
-- **Low** — replies only.
-- **Medium** — replies plus tool activity and plans.
-- **High** — Medium plus reasoning and tool outputs.
-- **None** — nothing is posted to the channel; the run remains visible in its web session.
+- **Minimal**: One live-updating reply that settles on the final answer, with intermediate steps shown in status.
+- **Low**: Replies only.
+- **Medium**: Replies plus tool activity and plans.
+- **High**: Everything in Medium, plus reasoning and tool outputs.
+- **None**: Posts nothing to the channel; the run is still visible in its web session.
 
 Other runtime behavior settings include:
 
-- **What people can do in chat** — whether people in a conversation may also approve tool calls and change runtime settings; see [below](#what-people-can-do-in-chat).
-- **Show footer** — add the agent, runtime, model and session links to replies.
-- **Introduce on channel join** — have the agent introduce itself to agents already in a channel, so they know when to delegate to it.
-- **Execution strategy** — the boundary the agent's sessions run in: **Host** (no boundary), **Sandbox** (an SRT process sandbox) or **VM** (a microsandbox VM). The picker lists what the agent's placement offers. A strategy that can't run there stays listed as **unavailable**; hover over it to see why. If the placement no longer offers the saved strategy, it stays selected and is marked "Not offered where this agent is placed." The Runtime card shows the choice as an **Execution strategy** row. Agents on AgentConnect Cloud have neither the picker nor the row, because each session already runs in its own pod. This outer boundary is separate from the runtime's permission mode; see [Sandboxing](/operate-govern/sandboxing#pick-an-execution-strategy).
+- **What people can do in chat**: Controls whether people in a conversation can approve tool calls and change runtime settings. See [below](#what-people-can-do-in-chat).
+- **Show footer**: Appends agent, runtime, model, and session links to replies.
+- **Introduce on channel join**: Has the agent introduce itself to other agents already in a channel so they know when to delegate to it.
+- **Execution strategy**: Sets the isolation boundary for the agent's sessions: **Host** (no boundary), **Sandbox** (an SRT process sandbox), or **VM** (a microsandbox VM). The picker shows what the agent's placement supports. Strategies that can't run there remain listed as **unavailable**; hover over one to see why. If the placement stops supporting a saved strategy, it stays selected and shows "Not offered where this agent is placed." The Runtime card displays the active setting in an **Execution strategy** row. Agents on AgentConnect Cloud don't show this picker or row because every session already runs in its own pod. This boundary is separate from the runtime's permission mode. See [Sandboxing](/operate-govern/sandboxing#pick-an-execution-strategy).
 
 ### What people can do in chat
 
-**What people can do in chat** sits beside the model in **Edit**, and the Runtime card shows the current level. Each level includes the one before it:
+**What people can do in chat** appears next to the model selector in **Edit**, and the Runtime card shows the active level. Each level includes the abilities of the level before it:
 
-- **Talk to the agent** — people only talk to the agent. A tool call that needs approval goes to the agent's editors, in the console or in a direct message.
-- **Talk and approve tool calls** — the default. People can also answer a tool call that the agent's permission mode asks about: allow it once, always allow that tool, or deny it.
-- **Talk, approve and change settings** — people can also change the model, effort, permission mode and fast mode from chat, with the [in-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) or the Playground's controls.
+- **Talk to the agent**: People can only chat with the agent. Any tool call requiring approval goes to the agent's editors in the console or by direct message.
+- **Talk and approve tool calls**: The default. People can also respond to tool approval prompts from the agent's permission mode (allow once, always allow that tool, or deny).
+- **Talk, approve and change settings**: People can also change the model, effort, permission mode, and fast mode from chat using [in-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) or Playground controls.
 
-Who counts as people depends on whether AgentConnect knows who someone is:
+Who counts as "people" depends on whether AgentConnect can identify the sender:
 
-- **Slack, with [Follow Slack access](/operate-govern/permissions-overview/session-visibility#follow-slack-access) on** — only the agent's editors, recognized by the Slack account each one linked under **Your profile → Sign-in methods** (see [Linked accounts](/how-to-guides/linked-accounts)). Anyone else who tries is told privately that only an Agent editor can, and someone whose Slack account is not linked is told how to link it. When the person who asked is not an editor, an editor also gets the approval card in a direct message.
-- **Microsoft Teams, with [Require Microsoft Teams access](/connect-automate/chat-platforms/msteams#follow-teams-access) on** — only the agent's editors, recognized by the Microsoft account each one linked. Anyone else who tries is told privately that only an Agent editor can. When the person who asked is not an editor, an editor also gets the approval card in their 1:1 chat with the bot.
-- **Other chat platforms, or Slack and Teams with that setting off** — anyone who can talk to the agent in that conversation.
-- **The Playground and the [agent chat API](/connect-automate/agent-chat-api)** — the agent's editors, and at the second and third levels also the conversation's owner, even one who can only view the agent. A chat API conversation belongs to the key's owner.
+- **Slack, with [Follow Slack access](/operate-govern/permissions-overview/session-visibility#follow-slack-access) on**: Only the agent's editors, matched by the Slack account linked under **Your profile → Sign-in methods** (see [Linked accounts](/how-to-guides/linked-accounts)). Anyone else who tries gets a private notice that only an Agent editor can act, and unlinked users see instructions to link their account. When a non-editor sends the request, an editor also receives the approval card in a direct message.
+- **Microsoft Teams, with [Require Microsoft Teams access](/connect-automate/chat-platforms/msteams#follow-teams-access) on**: Only the agent's editors, matched by their linked Microsoft account. Anyone else receives a private notice that only an Agent editor can act. When a non-editor sends the request, an editor also gets the approval card in their 1:1 chat with the bot.
+- **Other chat platforms, or Slack and Teams with that setting off**: Anyone who can talk to the agent in that conversation.
+- **The Playground and the [agent chat API](/connect-automate/agent-chat-api)**: The agent's editors, plus the conversation's owner at the second and third levels even if they only have view access to the agent. Chat API conversations belong to the API key's owner.
 
-Every level keeps these rules:
+These rules apply at every level:
 
-- A conversation switched **Off**, or answered **By decision**, takes no approvals or setting changes from chat.
-- A conversation shared with another organization, such as a Slack Connect channel, gets no approval card. The approval goes to a member of your organization in a direct message.
-- The first answer decides, whether it comes from the conversation, a direct message or the console.
-- The setting never changes the permission mode: an agent with full access still never asks, and a tool someone chose to always allow stays allowed.
+- Conversations switched **Off** or answered **By decision** don't accept approvals or setting changes from chat.
+- Conversations shared with another organization (such as a Slack Connect channel) don't receive approval cards. Instead, the approval goes to a member of your organization by direct message.
+- Whichever response arrives first wins, whether it comes from the conversation, a direct message, or the console.
+- This setting doesn't alter the permission mode. An agent with full access still won't prompt for approval, and tools previously set to always allow remain allowed.
 
-For an agent in a public group, choose **Talk to the agent**, so nobody there can approve its tool calls.
+For agents in public groups, use **Talk to the agent** so group members can't approve tool calls.
 
-This setting replaced **Allow change in chat**. Existing agents moved to **Talk and approve tool calls**, or to **Talk, approve and change settings** if they allowed changes in chat. On a self-hosted deployment, Feishu / Lark with **Follow Feishu / Lark access** on works like Slack above.
+This setting replaced **Allow change in chat**. Existing agents were migrated to **Talk and approve tool calls**, or to **Talk, approve and change settings** if they previously allowed changes in chat. On self-hosted deployments, Feishu / Lark with **Follow Feishu / Lark access** enabled behaves the same way as Slack above.
 
 ## Description and persona
 
-The Description card is edited separately. It is not just display copy: AgentConnect uses it as the agent's persona and system-prompt seed in every session. Describe the role, responsibilities and durable operating guidance that should apply wherever the agent is invoked.
+The Description card is edited separately from the rest of the runtime settings. AgentConnect injects it as the agent's persona and system-prompt seed in every session, so use it for the agent's role, responsibilities, and standing guidance that should apply everywhere the agent runs.
 
 ## Move an agent
 
-Choose another daemon or [daemon group](/build-your-team/daemons/daemon-groups) in **Runs on** in **Edit** to move the agent. The target must be online and support the selected runtime, model, tools, and skills. While the move is pending, the **Execution strategy** picker is locked; save the move first, then change the strategy.
+To move an agent, select a different daemon or [daemon group](/build-your-team/daemons/daemon-groups) under **Runs on** in **Edit**. The destination must be online and support the agent's runtime, model, tools, and skills. While a move is pending, the **Execution strategy** picker is locked. Save the move first, then update the strategy.
 
-AgentConnect waits for active work to stop and reprovisions the saved definition on the target. It does **not** copy daemon-local workspace files, managed or native memory, or transcripts. Commit or back up local work first; GitHub workspaces are cloned again on the new machine.
+AgentConnect waits for active work to finish and reprovisions the saved agent definition on the destination. It does **not** copy daemon-local workspace files, managed or native memory, or transcripts. Commit or back up any local files before moving. GitHub workspaces are cloned fresh on the new machine.
 
 ## Variables and secrets
 
-The **Variables** and **Secrets** cards set environment values owned by this agent — API endpoints, feature flags, and credentials its tools need. Secrets are write-only after saving.
+The **Variables** and **Secrets** cards store environment values scoped to this agent, such as API endpoints, feature flags, and credentials used by its tools. Secrets are write-only once saved.
 
-Organization Owners can define a value once under **Settings → Variables & secrets** and assign it to all or selected agents. Assigned rows carry an **Organization** label and are read-only from the agent page. See [Variables & secrets](/build-your-team/variables-and-secrets) for precedence, rotation, and secret handling.
+Organization Owners can define shared values once under **Settings → Variables & secrets** and assign them to all or selected agents. Assigned entries display an **Organization** label and are read-only on the agent page. See [Variables & secrets](/build-your-team/variables-and-secrets) for precedence, rotation, and secret handling.
 
 ## Agent visibility (sub-agent calls)
 
-Agents can call each other as sub-agents. The **Agent visibility** card controls both sides of that relationship:
+Agents can invoke each other as sub-agents. The **Agent visibility** card sets both directions of that policy:
 
 - **Inbound: Which agents can call this agent?**
 - **Outbound: Which agents can this agent call?**
 
-Each direction can allow **All agents** or a **Selected** list. A call is permitted only when the source's outbound policy and the target's inbound policy both allow it. Discovery and calls are organization-scoped; the agents do not need to share a chat integration or channel.
+Each direction can allow **All agents** or a **Selected** list. A call is allowed only when both the caller's outbound policy and the target's inbound policy permit it. Discovery and calls are scoped to the organization; agents don't need to share a chat integration or channel.
 
-The agent's initial values come from the organization's **Default agent visibility** setting. Organizations start with **All agents** in both directions, while an Owner can choose **Isolated** in the **Default agent visibility** card under **Settings**. Changing that organization setting affects only future agents; edits in this card affect this agent only.
+New agents inherit their starting settings from the organization's **Default agent visibility** policy. Organizations default to **All agents** in both directions, and an Owner can switch the default to **Isolated** in the **Default agent visibility** card under **Settings**. Changing the organization default applies only to future agents, while changes in this card apply only to this agent.
 
-See [Multi-agent work modes](/build-your-team/agents/multi-agent-work-modes) to choose a collaboration pattern and [Agent visibility](/operate-govern/permissions-overview/agent-visibility) for the full call policy. Who on the team can see the agent is controlled separately by [Team visibility](/operate-govern/permissions-overview/team-visibility).
+See [Multi-agent work modes](/build-your-team/agents/multi-agent-work-modes) for collaboration patterns and [Agent visibility](/operate-govern/permissions-overview/agent-visibility) for the full call policy. Team access to the agent itself is controlled separately under [Team visibility](/operate-govern/permissions-overview/team-visibility).
 
 ## Memory
 
-The **Memory** tab shows the agent's persistent memory and is the one place to switch its backend: **Managed**, **Native**, **External**, or **Off**. Managed memory can be edited as files; an external backend exposes capability-driven records instead. Switching does not migrate existing memory — the old store remains in place but is no longer loaded. Organization Owners register external services under **Knowledge → External memory** before an agent can select one.
+The **Memory** tab shows the agent's persistent memory and is where you switch its backend between **Managed**, **Native**, **External**, and **Off**. Managed memory is editable as files, whereas an external backend exposes records based on the provider's capabilities. Switching backends doesn't migrate existing memory; the previous store remains in place without being loaded. Organization Owners must register external services under **Knowledge → External memory** before an agent can use them.
 
-For a complete external-backend walkthrough, including recall/capture policies and a self-hosted Mem0 example, see [the guide to using Mem0 OSS as external memory](/how-to-guides/external-memory).
+For a full walkthrough of external memory, including recall and capture policies and a self-hosted Mem0 example, see [the guide to using Mem0 OSS as external memory](/how-to-guides/external-memory).
 
 ### Dreaming
 
-With **Managed** memory, Dreaming can periodically consolidate recent memory and session history. Its default policy schedules a run every day at 04:00 in the daemon's timezone and leaves completed memory results for review. A scheduled Dream considers sessions updated since the last successful run and skips when there is nothing new. You can turn Dreaming off, remove the schedule for manual-only runs, explicitly opt in to automatic adoption, and optionally mine reusable skills. A Dream may also propose [Knowledge or managed skills](/build-your-team/knowledge), but an organization Owner must review each shared proposal before it is published.
+When an agent uses **Managed** memory, Dreaming can periodically consolidate recent memory and session history. By default, it runs daily at 04:00 in the daemon's timezone and queues the resulting memory updates for review. Scheduled runs inspect sessions updated since the last successful run and skip if nothing changed. You can disable Dreaming, remove the schedule for manual-only runs, opt in to automatic adoption, and optionally mine reusable skills. A Dream can also propose shared [Knowledge or managed skills](/build-your-team/knowledge), which require an organization Owner's review before publishing.
 
 ## Tools & Skills
 
-Shows the MCP tools available to this agent and the skills it has enabled. Organization-level providers and skill sources are managed separately, so adding one to the library does not enable it automatically. See [Tools & Skills](/build-your-team/tools-and-skills) for connectors, MCP servers, Git sources, managed skills, and per-agent enablement.
+This tab lists the MCP tools available to the agent and the skills currently enabled for it. Organization-level providers and skill sources are managed separately, so adding an item to the library doesn't enable it for existing agents automatically. See [Tools & Skills](/build-your-team/tools-and-skills) for connectors, MCP servers, Git sources, managed skills, and per-agent enablement.
 
 ## Delete
 
-**Delete** (⋯ menu) removes the agent and its triggers from the organization. Its integrations are released so their bots can be reused.
+Use **Delete** (in the ⋯ menu) to remove the agent and its triggers from the organization. Its integrations are detached so their bots can be reused elsewhere.

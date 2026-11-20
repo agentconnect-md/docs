@@ -1,18 +1,18 @@
 ---
 title: "Daemon"
 icon: Server
-description: "安装 Daemon 并连接到 AgentConnect，查看运行状态、容量和分配的 Agent，升级或回退版本，并通过 Daemon 组让 Agent 在多台机器之间持续运行。"
+description: "安装并连接 AgentConnect Daemon，查看运行状态、容量和托管的 Agent，升级或回滚版本，以及通过 Daemon 组让 Agent 在多台机器上持续运行。"
 ---
 
 import imgDaemons from '@/public/images/daemons.png'
 
-Daemon 在你掌控的环境中运行 Agent，并且只能访问你选定的工作区、工具和凭证。
+Daemon 在你掌控的环境中运行 Agent，只访问你指定的工作区、工具和凭证。
 
 <Image src={imgDaemons} alt="基础设施页面：AgentConnect Cloud、已连接的 Daemon 和一个 Daemon 组" width={900} />
 
-- [安装 Daemon](/build-your-team/daemons/install-the-daemon)，并把它连接到你的 AgentConnect 组织。
-- [管理 Daemon](/build-your-team/daemons/manage-daemons)，查看状态、容量以及分配到每个 Runtime 上的 Agent。
-- [升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)，从控制台或主机上进行，并回滚行为异常的版本。
-- [Daemon 组](/build-your-team/daemons/daemon-groups)让 Agent 在一台机器宕机时继续运行，并让它的会话可以在多台机器上运行。
-- [在 AgentConnect Cloud 上运行 Agent](/build-your-team/daemons/manage-daemons#agentconnect-cloud)，而不是在你自己运维的机器上，模型用量按提供方公布的价格计费。
-- [为 Agent Runtime 启用沙箱](/operate-govern/sandboxing)，在受支持的 Linux 机器上按 Agent 设置，或作为 Daemon 级的强制要求。
+- [安装 Daemon](/build-your-team/daemons/install-the-daemon)，并将其连接到你的 AgentConnect 组织。
+- [管理 Daemon](/build-your-team/daemons/manage-daemons)，查看运行状态、容量以及每个 Runtime 上分配的 Agent。
+- [升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)，支持在控制台或主机本地操作，遇到异常版本时可以回滚。
+- [Daemon 组](/build-your-team/daemons/daemon-groups)可在单台机器宕机时保持 Agent 在线，并让会话分布在多台机器上运行。
+- [在 AgentConnect Cloud 上运行 Agent](/build-your-team/daemons/manage-daemons#agentconnect-cloud)，无需自己维护机器，模型用量按提供方公开价格计费。
+- [为 Agent Runtime 启用沙箱](/operate-govern/sandboxing)，在受支持的 Linux 机器上按 Agent 配置，或设为 Daemon 级的强制要求。

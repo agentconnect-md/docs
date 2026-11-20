@@ -6,36 +6,36 @@ description: "Hand off work between trusted messaging workspaces with AgentConne
 
 import imgAddIntegration from '@/public/images/add-integration.png'
 
-Use this pattern only when the source and destination are **two messaging workspaces you trust**. You should control or explicitly approve both environments, know who can read the destination, and accept its security and retention rules.
+Use this pattern only when both the source and destination are **messaging workspaces you trust**. You should control or explicitly approve both environments, know who can read the destination, and accept its security and retention rules.
 
 <Image src={imgAddIntegration} alt="Connect an agent to approved messaging platforms" width={640} />
 
-> **Trust boundary:** Connecting an agent to two platforms gives it the ability to move content between them. It does not make an external customer, partner, or community workspace trusted. If either side is not approved for the information, use a one-time, reviewed, and redacted message instead.
+> **Trust boundary:** Connecting an agent to two platforms lets it move content between them, but it doesn't make an external customer, partner, or community workspace trusted. If either side isn't approved for that information, send a one-time reviewed and redacted message instead.
 
-Here, _workspace_ means a Slack workspace, Discord server, Lark / Feishu tenant, or known Telegram group or chat — not the agent's code workspace.
+Here, _workspace_ refers to a Slack workspace, Discord server, Lark / Feishu tenant, or known Telegram group or chat, not the agent's code workspace.
 
-One agent can start with a conversation on one platform, post a focused handoff to another trusted workspace, and later report the result back. This is not a live mirror: each platform keeps its own thread, session, and audience.
+One agent can start a conversation on one platform, post a focused handoff in another trusted workspace, and later report the outcome back. This isn't a live mirror: each platform keeps its own thread, session, and audience.
 
-A handoff works only for someone AgentConnect can recognize. The person who asks for it must be known as a member of your organization by a chat account linked under **Your profile → Sign-in methods**, and the agent posts only where that person could post themselves. On AgentConnect Cloud, that means asking from Slack with a linked Slack account. A handoff does not work from Telegram or Discord into Slack or Lark / Feishu, because AgentConnect cannot tell who someone on Telegram or Discord is. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
+Handoffs only work when AgentConnect can identify the requester. The person asking must be recognized as a member of your organization through a chat account linked under **Your profile → Sign-in methods**, and the agent only posts where that person could post themselves. On AgentConnect Cloud, that means asking from Slack with a linked Slack account. You can't hand off from Telegram or Discord into Slack or Lark / Feishu, because AgentConnect can't verify who someone is on Telegram or Discord. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
 
 ## Before you start
 
 You need:
 
-- one online agent connected to both messaging platforms;
-- two workspaces approved to exchange the relevant information;
-- a linked chat account to ask from: on AgentConnect Cloud, your Slack account under **Your profile → Sign-in methods**;
-- a destination you could post in yourself: on a platform where you linked an account, judged by that account; elsewhere, including Telegram and Discord, whose accounts can't be linked, a conversation where the agent already has a session you can open under **Sessions**;
-- a bot that can post in the destination conversation; and
-- a clear rule for what may leave the source.
+- One online agent connected to both messaging platforms
+- Two workspaces approved to exchange the information
+- A linked chat account to request the handoff from (on AgentConnect Cloud, your Slack account under **Your profile → Sign-in methods**)
+- A destination you could post in yourself. On platforms where you linked an account, access is checked against that account. On platforms where accounts can't be linked (such as Telegram and Discord), the agent must already have a session in that conversation that you can open under **Sessions**.
+- A bot that can post in the destination conversation
+- A clear rule for what is allowed to leave the source
 
-The same agent owns both sides. When two different agents divide the work, use [agent-to-agent delegation](/build-your-team/agents/multi-agent-work-modes#agent-to-agent-delegation) instead.
+The same agent handles both sides. When two different agents split the work, use [agent-to-agent delegation](/build-your-team/agents/multi-agent-work-modes#agent-to-agent-delegation) instead.
 
 ## 1. Connect both platforms
 
 Open the agent and add each chat integration under **Integrations**. Invite or add the destination bot only to the channels or chats it should reach.
 
-Before the first handoff, verify the destination workspace, server, or tenant under **Integrations → Messaging apps**. A familiar channel name is not enough: two workspaces can both contain `#incidents`.
+Before your first handoff, verify the destination workspace, server, or tenant under **Integrations → Messaging apps**. A familiar channel name isn't enough, since two workspaces can both have `#incidents`.
 
 ## 2. Confirm the destination
 
@@ -46,7 +46,7 @@ List the incident channels you can reach through our approved internal bots.
 Do not send a message yet.
 ```
 
-On a platform where you have no linked account, such as Telegram or Discord, the agent posts only into a conversation where it already has a session you can open, and Telegram bots list only chats the agent has already observed. Mention the bot in the destination chat first. On every platform, the bot still needs permission to view and post there.
+On platforms where you don't have a linked account (such as Telegram or Discord), the agent only posts into conversations where it already has a session you can open, and Telegram bots only list chats the agent has already seen. Mention the bot in the destination chat first. On every platform, the bot also needs permission to view and post there.
 
 ## 3. Start a focused handoff
 
@@ -62,7 +62,7 @@ Hand this incident off to #incidents on our approved Discord server.
 - When they reply, send a concise result back here.
 ```
 
-A new top-level destination message creates a linked destination session. Human replies continue there, and the agent can report the requested result back to the source. Posting into an unrelated existing thread does not create the same clear handoff boundary.
+A new top-level destination message creates a linked destination session. Teammates can reply there, and the agent can report the requested outcome back to the source. Posting into an unrelated existing thread doesn't create the same clear handoff boundary.
 
 ## 4. Make the rule reusable
 
@@ -80,12 +80,12 @@ When moving work between messaging platforms:
 
 ## What stays separate
 
-- **Trust:** the bot's reach does not make every workspace or participant approved.
+- **Trust:** the bot's reach doesn't make every workspace or participant approved.
 - **Sessions:** source and destination remain separate, linked sessions.
-- **Access:** each platform enforces its own bot and conversation permissions, and the agent reads and posts only where the person asking could.
-- **Threads:** replies remain where they were written unless the agent deliberately reports back.
-- **Identity:** an account on one platform counts as the same person on another only through the accounts linked to their AgentConnect profile.
+- **Access:** each platform enforces its own bot and conversation permissions, and the agent only reads and posts where the requester could.
+- **Threads:** replies stay where they were written unless the agent explicitly reports back.
+- **Identity:** an account on one platform counts as the same person on another only when both accounts are linked to the same AgentConnect profile.
 
-Good handoffs move an internal incident between trusted team workspaces, escalate a DM into a team channel, or publish an approved summary. Avoid routine handoffs across different trust levels and avoid automatic two-way mirroring, which creates duplicate messages, unclear ownership, and disclosure risk.
+Good handoffs move an internal incident between trusted team workspaces, escalate a DM into a team channel, or publish an approved summary. Avoid routine handoffs across different trust levels and avoid automatic two-way mirroring, which leads to duplicate messages, unclear ownership, and disclosure risk.
 
 See [Integrations overview](/connect-automate/integrations-overview) to connect platforms and [Sessions](/operate-govern/sessions) to inspect each side.

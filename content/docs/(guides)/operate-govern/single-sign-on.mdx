@@ -1,7 +1,7 @@
 ---
 title: "Single sign-on"
 icon: FingerprintPattern
-description: "Connect your organization's identity provider over OIDC or SAML, bring people in by email domain, and require SSO for every member."
+description: "Connect your organization's identity provider over OIDC or SAML, let people join by email domain, and require SSO for every member."
 ---
 
 import imgSsoSettingsTab from '@/public/images/sso-settings-tab.png'
@@ -12,24 +12,24 @@ import imgSignInSsoPage from '@/public/images/sign-in-sso-page.png'
 import imgSsoNewMembers from '@/public/images/sso-new-members.png'
 import imgSsoRequired from '@/public/images/sso-required.png'
 
-An organization can have its people sign in through its own identity provider. Three things build on each other, and you can stop after any of them:
+Your organization can let members sign in through its own identity provider. Setup happens in three steps, and you can stop after any step:
 
 | Step | What it changes |
 | --- | --- |
-| [Verify a domain](#verify-a-domain) | Proves the organization controls an email domain. Nothing else changes yet. |
+| [Verify a domain](#verify-a-domain) | Proves your organization controls an email domain without changing sign-in behavior yet. |
 | [Activate a connection](#activate) | Addresses on your verified domains can sign in only through your identity provider. |
-| [Enforce](#enforce-single-sign-on) | Every member, Owners included, reaches the organization only from an SSO session. |
+| [Enforce](#enforce-single-sign-on) | Every member, including Owners, can access the organization only from an SSO session. |
 
-Who becomes a member is a separate choice, [New members](#new-members), and works with or without a connection.
+Automatic membership is configured separately under [New members](#new-members) and works with or without an SSO connection.
 
-Owners set all of this up under **Settings → Single sign-on**. Other members see the tab once there is a domain or a connection to read, and cannot change it.
+Owners configure SSO under **Settings → Single sign-on**. Other members can view the tab once a domain or connection exists, but can't edit it.
 
 <Image src={imgSsoSettingsTab} alt="The Single sign-on tab with a verified domain and an enforced connection" width={640} />
 
 ## Verify a domain
 
 1. In **Domains**, choose **Add domain** and enter the domain, such as `acme.example`.
-2. At your DNS provider, create the TXT record the row shows:
+2. At your DNS provider, create the TXT record shown in the row:
 
    | Type | Name | Value |
    | --- | --- | --- |
@@ -39,16 +39,16 @@ Owners set all of this up under **Settings → Single sign-on**. Other members s
 
 <Image src={imgSsoDomainPending} alt="A pending domain showing the TXT record to create" width={640} />
 
-**Record not found** right after you create the record usually means DNS has not caught up; wait and choose **Verify** again. A pending domain that is not verified within seven days is dropped, and you can add it again.
+If you see **Record not found** right after creating the record, DNS likely hasn't propagated yet. Wait a bit and choose **Verify** again. Pending domains that aren't verified within seven days expire and can be added again.
 
-- A domain belongs to one organization. If another organization verifies it first, your row shows **Verified by another organization**.
-- A domain is matched exactly. Add `eu.acme.example` as its own domain if people have addresses there.
-- An organization can hold up to 20 domains.
-- Keep the TXT record in place. AgentConnect looks it up again every day and marks the row **DNS record missing** when it is gone, and activating a connection is refused until it is back.
+- A domain can belong to only one organization. If another organization verifies it first, your row shows **Verified by another organization**.
+- Domains are matched exactly. Add `eu.acme.example` as its own domain if people have addresses there.
+- An organization can have up to 20 domains.
+- Keep the TXT record in place. AgentConnect re-checks it daily. If the record disappears, the domain changes to **DNS record missing** and you won't be able to activate a connection until you restore it.
 
 ## Set up the connection
 
-Once a domain is verified, **Connection** shows **Set up connection**. Choose the protocol your identity provider uses. The dialog shows the values to register there before you save anything, so you can create the application at the provider first and come back with what it issues.
+Once a domain is verified, **Set up connection** appears under **Connection**. Pick your identity provider's protocol. The dialog displays the values you need to register before saving, so you can create the application at your provider first and come back with the credentials it generates.
 
 **OIDC**
 
@@ -57,7 +57,7 @@ Once a domain is verified, **Connection** shows **Set up connection**. Choose th
 | **Issuer** | The provider's issuer URL |
 | **Client ID**, **Client secret** | The credentials the provider issues for the application |
 | **Scopes** | `openid email profile` unless the provider needs more to return an address |
-| **Callback URL** | Shown for you to copy: register it at the provider as the redirect URI |
+| **Callback URL** | Shown for you to copy and register at the provider as the redirect URI |
 
 <Image src={imgSsoConnectionOidc} alt="The connection dialog for OIDC, with the callback URL to register at the provider" width={480} />
 
@@ -66,47 +66,47 @@ Once a domain is verified, **Connection** shows **Set up connection**. Choose th
 | Field | Enter |
 | --- | --- |
 | **Metadata** | The provider's metadata URL, or its metadata XML |
-| **Email attribute** | The attribute that carries the address; `email` by default |
-| **Name attribute** | The attribute that carries the display name; `name` by default |
-| **ACS URL**, **Entity ID** | Shown for you to copy: register them at the provider |
+| **Email attribute** | The attribute containing the email address (`email` by default) |
+| **Name attribute** | The attribute containing the display name (`name` by default) |
+| **ACS URL**, **Entity ID** | Shown for you to copy and register at the provider |
 
-The protocol is fixed once the connection exists. To switch, remove the connection and set one up again, which gives new values to register.
+The protocol is fixed once the connection exists. To switch protocols, remove the connection and set up a new one, which generates new values to register.
 
-A connection speaks only for addresses on your verified domains. A sign-in that returns no address, or one on another domain, is refused. AgentConnect takes the address as your provider sends it, so use a provider where people cannot set their own.
+A connection applies only to addresses on your verified domains. Sign-ins that return no email address or an address on another domain are rejected. AgentConnect trusts the email address your provider returns, so only use a provider where users can't freely edit their own email.
 
 ## Test the sign-in
 
-A new connection reads **Not tested**. Choose **Test sign-in**: you sign in once through your identity provider and land on a result page.
+A new connection starts in the **Not tested** state. Choose **Test sign-in** to sign in once through your identity provider and view the result page.
 
-- **Sign-in test passed** shows the address that came back. Choose **Back to Settings**; the connection now reads **Tested**.
-- **Sign-in test failed** says what was missing. When the provider returned no address on your domains, the page lists **Attributes the provider sent**, by name only, and marks the ones that hold an **Address in your domains**. Set one of those as the **Email attribute** (or fix the email claim for OIDC) and test again.
+- **Sign-in test passed** shows the email address returned by your provider. Choose **Back to Settings**, and the status changes to **Tested**.
+- **Sign-in test failed** explains what went wrong. If the provider didn't return an address on your verified domains, the page lists **Attributes the provider sent** (names only) and marks any that contain an **Address in your domains**. Set one of those as your **Email attribute** (or fix the email claim for OIDC) and run the test again.
 
-Two things to know before you start a test:
+Keep two things in mind before starting a test:
 
-- For ten minutes after it starts, addresses on your domains can sign in only through the connection, exactly as when it is active.
-- If the provider returns someone else's address, you are signed in as that account and need to sign back in as yourself.
+- For ten minutes after the test starts, addresses on your domains can sign in only through this connection, just as if it were active.
+- If the provider returns someone else's address, you'll be signed in as that account and will need to sign back in as yourself.
 
-Changing the connection's settings later sets it back to **Not tested** until a test passes again.
+Editing the connection's settings later resets its status to **Not tested** until a test passes again.
 
 ## Activate
 
-**Activate** is offered once a domain is verified and the connection is tested. From that moment:
+Once you have a verified domain and a tested connection, you can choose **Activate**. From that point on:
 
-- addresses on your verified domains can sign in only with SSO, and other sign-in methods are refused for them; each domain row shows **SSO sign-in only**;
-- a person who already has an account under such an address keeps it: their first SSO sign-in reaches the same account, memberships and settings;
-- a domain you verify afterwards is covered as soon as it is verified, after a confirmation.
+- Addresses on your verified domains can sign in only with SSO, and other sign-in methods are rejected for them. Each verified domain shows **SSO sign-in only**.
+- Anyone who already has an account with one of those addresses keeps it. Their first SSO sign-in opens the same account with their existing memberships and settings.
+- Any domain you verify later is covered as soon as it's verified, after a confirmation prompt.
 
-Activation changes how those addresses sign in. It does not add or remove any member.
+Activating a connection only changes how those addresses sign in. It doesn't add or remove members.
 
 ## How members sign in
 
-On the sign-in page, members choose **Continue with SSO**, enter their **Work email**, and are sent to your identity provider. The SSO page has its own address, `/login/sso` on the console, so people who always sign in this way can bookmark it and skip the first page.
+On the sign-in page, members choose **Continue with SSO**, enter their **Work email**, and are redirected to your identity provider. The SSO page has its own URL (`/login/sso` on the console), so members who always use SSO can bookmark it and skip the first screen.
 
 <Image src={imgSignInSso} alt="The sign-in page with Continue with SSO and a Last used tag" width={640} />
 
 <Image src={imgSignInSsoPage} alt="The SSO page asking for a work email" width={640} />
 
-The sign-in page marks the method a browser used last with **Last used**, and the SSO page fills in the address used last. An address whose domain has no connection gets **No single sign-on is set up for this email.**
+The sign-in page marks the browser's last-used method with **Last used**, and the SSO page pre-fills the last email address entered. An address whose domain has no active connection sees **No single sign-on is set up for this email.**
 
 ## New members
 
@@ -119,49 +119,49 @@ The sign-in page marks the method a browser used last with **Last used**, and th
 
 <Image src={imgSsoNewMembers} alt="New members set to Anyone on your domains" width={640} />
 
-A person who joins by domain becomes a **Collaborator**, once:
+Anyone who joins by domain is added as a **Collaborator**, once:
 
-- someone an Owner later removes is not added back at their next sign-in; invite them to bring them back;
-- someone who is already a member keeps their role;
-- someone who was signed in when you made the choice joins at their next sign-in.
+- If an Owner later removes them, they won't be re-added on their next sign-in. Invite them to add them back.
+- Existing members keep their current role.
+- People who were already signed in when you changed the setting join on their next sign-in.
 
-This choice does not need a connection. With a verified domain alone, people on it join when they sign in by any method. Removing your last verified domain returns the organization to **Invite only**.
+This setting doesn't require an SSO connection. With a verified domain alone, people on that domain join when they sign in with any method. Removing your last verified domain resets the organization to **Invite only**.
 
-The address is the one on the person's AgentConnect account. Someone who has left your company but can still sign in to that account another way still counts as on your domain. Remove them from **Members**, and [enforce single sign-on](#enforce-single-sign-on) when you want your identity provider to decide who gets in.
+Matching uses the email address on the user's AgentConnect account. Someone who left your company but can still sign in to that account another way still matches your domain. Remove them from **Members**, and [enforce single sign-on](#enforce-single-sign-on) if you want your identity provider to control access.
 
 ## Enforce single sign-on
 
-An active connection restricts how your domains' addresses sign in, but an account can hold several sign-in methods. Enforcing closes that gap: every member, Owners included, opens the organization only from a browser session that signed in through the connection.
+An active connection restricts how addresses on your domains sign in, but an account can have multiple sign-in methods. Enforcing SSO closes that gap: every member, including Owners, can open the organization only from a browser session signed in through the SSO connection.
 
-**Enforce** is on an **Active** connection. You can enforce when you are an Owner whose own address is on the verified domains and your current session signed in with SSO. If it did not, the dialog offers **Sign in with SSO** and brings you back.
+**Enforce** is available on an **Active** connection. To turn it on, you must be an Owner whose email is on one of the verified domains, and your current session must be signed in with SSO. If it isn't, the dialog offers **Sign in with SSO** and brings you back.
 
-While the connection reads **Enforced**:
+While the connection status is **Enforced**:
 
-- a member who signed in another way sees **_Acme_ requires single sign-on** in place of the organization, with **Sign in with SSO**. Their other organizations are unaffected.
-- a member whose address is not on your verified domains cannot sign in with SSO and loses access. Give contractors an address on your domain at the identity provider, or do not enforce.
-- creating a personal API key or approving an OAuth grant for the organization also needs an SSO session. Keys, OAuth tokens and service accounts issued earlier keep working, so revoke the ones a departing person held.
+- Members who signed in another way see **_Acme_ requires single sign-on** instead of the organization, along with a **Sign in with SSO** button. Their other organizations are unaffected.
+- Members whose email isn't on your verified domains can't sign in with SSO and lose access. Give contractors an address on your domain in your identity provider, or leave enforcement off.
+- Creating a personal API key or approving an OAuth grant for the organization also requires an SSO session. Existing keys, OAuth tokens, and service accounts keep working, so revoke any credentials held by departing members.
 
 <Image src={imgSsoRequired} alt="What a member sees without an SSO session: the organization requires single sign-on" width={560} />
 
-**Stop enforcing** returns the organization to any sign-in; the connection stays active. Editing the connection's settings or deactivating it also ends enforcement, and it returns only when an Owner enforces again.
+**Stop enforcing** lets members access the organization from any sign-in method again while keeping the connection active. Editing the connection's settings or deactivating it also turns off enforcement, and an Owner has to re-enable it manually.
 
-If your identity provider breaks while SSO is enforced and no Owner can sign in, a deployment administrator can turn enforcement off.
+If your identity provider goes down while SSO is enforced and no Owner can sign in, a deployment administrator can turn enforcement off.
 
 ## Change or remove
 
 | Action | What happens |
 | --- | --- |
-| **Edit** | New settings apply at once. The connection stays active, reads **Not tested** until a test passes, and is no longer enforced. For OIDC the stored client secret is kept unless you choose **Replace** or change the issuer. |
-| **Deactivate** | Addresses on your domains can sign in with any method again. People who signed in through the connection can still use it. |
-| **Remove connection** (in **Edit**) | The connection and the SSO sign-ins it set up are deleted. Accounts stay, and their owners sign in with another method. |
-| **Remove domain** | A pending domain can be removed at any time; a verified one only while the organization has no connection. |
+| **Edit** | New settings apply immediately. The connection stays active, resets to **Not tested** until a test passes, and is no longer enforced. For OIDC, the stored client secret is kept unless you choose **Replace** or change the issuer. |
+| **Deactivate** | Addresses on your domains can sign in with any method again. People who already signed in through the connection can still use it. |
+| **Remove connection** (in **Edit**) | Deletes the connection and the SSO sign-in identities it created. User accounts remain, and their owners can sign in with another method. |
+| **Remove domain** | You can remove a pending domain at any time. A verified domain can be removed only when the organization has no connection. |
 
-A connection that reads **Needs configuration** has lost its settings at the sign-in service. Choose **Reconfigure** and enter them again; the values to register may have changed.
+If a connection shows **Needs configuration**, its settings were lost at the sign-in service. Choose **Reconfigure** and enter them again; the values to register at your provider may have changed.
 
 ## On your profile
 
-**Your profile → Sign-in methods** lists the identity an organization's connection gave you as **SSO**, with its address. It cannot be unlinked there; it goes away when the organization removes its connection. See [Linked accounts](/how-to-guides/linked-accounts) for the other methods.
+**Your profile → Sign-in methods** lists the identity provided by an organization's connection as **SSO**, alongside its email address. You can't unlink it there; it's removed automatically if the organization deletes its connection. See [Linked accounts](/how-to-guides/linked-accounts) for other sign-in methods.
 
 ## Self-hosting
 
-Everything above exists on a deployment whose operator lets organizations set up their own SSO. A deployment that belongs to one company more often uses a single connector for the whole deployment, configured by the operator, with its own **New members** choice. [Sign-in](/self-hosting/sign-in#single-sign-on) covers both.
+Everything on this page applies to deployments where the operator allows organizations to configure their own SSO. Single-company self-hosted deployments more often use one deployment-wide connector managed by the operator, with its own **New members** setting. See [Sign-in](/self-hosting/sign-in#single-sign-on) for both options.

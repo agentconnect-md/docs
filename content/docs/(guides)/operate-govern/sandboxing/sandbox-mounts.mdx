@@ -1,17 +1,17 @@
 ---
 title: "Mounts"
 icon: FolderInput
-description: "Share host directories with sandboxed agents, read-only or writable."
+description: "Share host directories with sandboxed agents as read-only, writable, or per-session overlays."
 ---
 
-Use `sandbox.mounts` to give sandboxed agents access to host directories such as reference data, caches, or toolchains. The daemon supplies the workspace and runtime home automatically.
+Use `sandbox.mounts` to expose host directories such as reference data, package caches, or toolchains to sandboxed agents. The daemon mounts the workspace and runtime home automatically.
 
 ## Mount options
 
 | Field    | Meaning                                                              |
 | -------- | -------------------------------------------------------------------- |
-| `source` | Existing host path (`~` means the daemon user's home)                |
-| `target` | Path inside the sandbox (`~` means the session home in microsandbox) |
+| `source` | Existing host path (`~` expands to the daemon user's home)           |
+| `target` | Path inside the sandbox (`~` expands to the session home in microsandbox) |
 | `mode`   | `readonly` (default), `writable`, or `overlay`                       |
 
 | Mode       | Host files            | Session changes                         | Strategies                        |
@@ -20,13 +20,13 @@ Use `sandbox.mounts` to give sandboxed agents access to host directories such as
 | `writable` | Readable and writable | Shared with the host and other sessions | Both                              |
 | `overlay`  | Readable              | Private to each session                 | microsandbox; read-only under SRT |
 
-Paths must be absolute after `~` expansion. Sources must exist before the daemon starts. Writable mounts need host permissions that allow the runtime user to write (normally UID 10001 inside microsandbox).
+Paths must be absolute after `~` expansion, and source paths must exist before the daemon starts. Writable mounts require host permissions that let the runtime user write to them (usually UID 10001 inside `microsandbox`).
 
-`sandbox.mounts` applies to every sandboxing strategy the daemon offers. A mount that a strategy can't honor, such as a different `target` for SRT, makes that strategy unavailable, with the validation error as the reason; the daemon still starts. If you don't use that strategy, turn it off, for example `"srt": false`. See [Configure the daemon](/operate-govern/sandboxing#configure-the-daemon).
+`sandbox.mounts` applies to every sandboxing strategy the daemon enables. If a strategy can't support a configured mount (for example, a different `source` and `target` under SRT), that strategy becomes unavailable and reports the validation error as the reason, while the daemon still starts. If you don't plan to use that strategy, disable it (for example, `"srt": false`). See [Configure the daemon](/operate-govern/sandboxing#configure-the-daemon).
 
 ## SRT: share a writable cache
 
-SRT requires `source` and `target` to resolve to the same path:
+Under SRT, `source` and `target` must resolve to the same path:
 
 ```json
 {
@@ -45,11 +45,11 @@ SRT requires `source` and `target` to resolve to the same path:
 }
 ```
 
-SRT mounts add access. A `readonly` entry cannot remove write access already granted by a workspace or writable mount.
+SRT mounts only add access. A `readonly` entry can't revoke write access that a workspace or another writable mount already grants.
 
 ## microsandbox: map a host directory
 
-microsandbox can expose the directory at a different path:
+`microsandbox` can mount a host directory at a different path inside the VM:
 
 ```json
 {
@@ -65,11 +65,11 @@ microsandbox can expose the directory at a different path:
 }
 ```
 
-Mounts cannot replace protected runtime paths or map different sources to the same target. A nested mount applies its own read/write mode.
+Mounts can't overwrite protected runtime paths or map multiple sources to the same target. A nested mount uses its own read/write mode.
 
 ## microsandbox: share a cache with private writes
 
-Use `overlay` to reuse a populated host cache while keeping session changes private:
+Use `overlay` to reuse a warm host cache while keeping each session's writes isolated:
 
 ```json
 {
@@ -88,14 +88,18 @@ Use `overlay` to reuse a populated host cache while keeping session changes priv
 }
 ```
 
-The host directory stays read-only. Each session's additions and deletions survive VM stop/start and disappear when the VM is rebuilt or removed. New packages downloaded by one session are not added to the shared host cache.
+The host directory stays read-only. Each session's additions and deletions persist across VM stop/start cycles, then disappear when the VM is rebuilt or removed. Packages downloaded inside a session aren't written back to the shared host cache.
 
-Keep the host cache stable while sessions use it. Overlay sources must be directories, and overlay targets cannot overlap other mounts.
+Keep the host cache unchanged while sessions are using it. Overlay sources must be directories, and overlay targets can't overlap other mounts.
 
 ## Apply configuration changes
 
-`sandbox.env` supplies environment defaults to sandboxed runtimes. Agent and runtime settings can override them, except daemon-controlled HOME, XDG, and security settings. Values are literal (pnpm itself expands `${HOME}` in the example above).
+`sandbox.env` sets default environment variables for sandboxed runtimes. Agent and runtime settings can override them, except for daemon-managed `HOME`, XDG, and security variables. Values are passed literally (in the example above, `pnpm` itself expands `${HOME}`).
 
-Restart the daemon after changing its configuration. Environment-only changes apply when the runtime restarts. Changes to mounts, VM resources, credential layout, or image content rebuild the affected VM on refresh or next use. Host-mounted files are kept; VM-local files, Docker data, and overlay writes are reset.
+Restart the daemon after changing `config.json`. Environment-only changes take effect when the runtime restarts. Changes to mounts, VM resources, credential layout, or image contents rebuild affected VMs on refresh or next use. Host-mounted files are preserved, while VM-local files, Docker data, and overlay writes are reset.
 
-For older configurations, replace `security.sandboxReadRoots` with `readonly` mounts and `security.sandboxWriteRoots` with `writable` mounts. Keep `source` and `target` equal for SRT. Remove the old fields after converting them. Replace a mount's old `readOnly` field with `mode` as well. The daemon refuses to start while any of these old fields remain.
+If you're migrating an older configuration:
+
+- Replace `security.sandboxReadRoots` with `readonly` mounts and `security.sandboxWriteRoots` with `writable` mounts (keep `source` and `target` equal for SRT).
+- Replace each mount's old `readOnly` field with `mode`.
+- Remove the old fields once migrated. The daemon refuses to start if any of them are still present.

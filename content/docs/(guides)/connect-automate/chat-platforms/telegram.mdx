@@ -6,33 +6,33 @@ description: "One token from @BotFather and your agent answers Telegram DMs and 
 
 import imgTelegramIntegration from '@/public/images/telegram-integration.png'
 
-Telegram is the quickest chat integration: one token, no app review, no public URL — the daemon connects outbound to Telegram's API.
+Telegram is the fastest chat integration to set up. You only need a bot token, with no app review and no public URL, because the daemon connects outbound to Telegram's API.
 
 <Image src={imgTelegramIntegration} alt="Connect a Telegram bot" width={640} />
 
 ## Create the bot
 
-1. In Telegram, message [@BotFather](https://t.me/botfather), send `/newbot`, and follow the prompts (bot name, then a username ending in `bot`).
-2. BotFather replies with a **bot token** like `123456789:AAE…` — copy it.
-3. In @BotFather, send `/setprivacy`, choose the bot, then select **Disable**. AgentConnect currently requires Group Privacy Mode to be off before it connects the bot.
+1. In Telegram, message [@BotFather](https://t.me/botfather), send `/newbot`, and follow the prompts (first a bot name, then a username ending in `bot`).
+2. Copy the **bot token** BotFather replies with (formatted like `123456789:AAE…`).
+3. In @BotFather, send `/setprivacy`, choose the bot, and select **Disable**. AgentConnect requires Group Privacy Mode to be off before it connects the bot.
 
 ## Connect it
 
-On your agent, open **Integrations → Add integration → Telegram** and paste the token. AgentConnect automatically validates it and checks Group Privacy Mode. If privacy is still enabled, the dialog keeps checking while you change the setting in @BotFather; **Connect** becomes available when Telegram reports that it is off.
+On your agent, open **Integrations → Add integration → Telegram** and paste the token. AgentConnect validates it and checks Group Privacy Mode automatically. If privacy mode is still enabled, the dialog keeps checking while you update the setting in @BotFather. **Connect** becomes available as soon as Telegram reports that it's off.
 
-AgentConnect automates the check, not the setting itself: Telegram's Bot API does not provide a way for AgentConnect to disable Group Privacy Mode.
+AgentConnect checks this setting automatically, but you have to disable it in @BotFather yourself because Telegram's Bot API doesn't let apps turn off Group Privacy Mode.
 
 ## Use it
 
-- **DM the bot** — open `t.me/<your_bot_username>` and just talk.
-- **Groups** — add the bot to a group. With Group Privacy Mode off, its AgentConnect trigger can use **@-mention** or **any message**. If a group added the bot before you changed privacy mode and ordinary messages still do not arrive, remove and re-add it once.
+- **DM the bot**: Open `t.me/<your_bot_username>` and start chatting.
+- **Groups**: Add the bot to a group. With Group Privacy Mode off, you can set its AgentConnect trigger to **@-mention** or **any message**. If a group added the bot before you changed privacy mode and regular messages still don't arrive, remove the bot and add it back once.
 
 See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing supported session settings.
 
-When a tool call needs approval, the agent posts an approval card in the chat, in its topic or reply chain. Who may answer it is set by the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
+When a tool call needs approval, the agent posts an approval card in the chat, inside its topic or reply chain. The agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) setting controls who can respond.
 
 ## Notes
 
-- One Telegram bot binds to one agent. Deleting the integration frees the bot for reuse (**Use an existing bot** next time).
-- Bots and their tokens are managed org-wide under **Integrations → Messaging apps → Telegram**.
-- Asked from Telegram, the agent posts in other groups only on this bot, and only in groups with a public @username. AgentConnect cannot tell who a Telegram user is, so it cannot hand off into Slack or another platform for them. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
+- Each Telegram bot binds to one agent. Deleting the integration frees the bot for reuse (choose **Use an existing bot** next time).
+- Bots and their tokens are managed across your organization under **Integrations → Messaging apps → Telegram**.
+- When prompted from Telegram, the agent can post in other groups only through this bot, and only in groups with a public @username. Because AgentConnect can't identify who a Telegram user is, it can't hand off requests to Slack or another platform on their behalf. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).

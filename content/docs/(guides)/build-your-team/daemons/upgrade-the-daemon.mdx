@@ -1,21 +1,21 @@
 ---
 title: "Upgrade the daemon"
 icon: CircleArrowUp
-description: "Move a daemon to a new release from the console or the host, keep the CLI current, and roll back a bad upgrade."
+description: "Move a daemon to a new release from the console or the host, keep the CLI up to date, and roll back a failed upgrade."
 ---
 
 import imgDaemonUpgrade from '@/public/images/daemon-upgrade.png'
 
-A daemon host has two independently versioned pieces:
+A daemon host has two independently versioned parts:
 
-| Piece | What it is | How it moves |
+| Part | What it is | How you update it |
 | --- | --- | --- |
-| **CLI** — `@agentconnect.md/cli`, the `agentconnect` command | The stable entry point: service lifecycle, login, version management | An npm package you update on the host |
-| **Daemon release** | The payload that hosts agents, drives runtimes and holds platform connections | Downloaded by the CLI into the daemon root and selected by the `current` pointer |
+| **CLI** (`@agentconnect.md/cli`, the `agentconnect` command) | The stable entry point for service lifecycle, login, and version management | An npm package you update on the host |
+| **Daemon release** | The runtime payload that hosts agents, drives runtimes, and maintains platform connections | Downloaded by the CLI into the daemon root and selected by the `current` pointer |
 
-Almost every upgrade is a daemon-release upgrade. The CLI stays put for long stretches, because new daemon commands are delegated to the daemon and do not need a matching CLI release.
+Almost every upgrade updates only the daemon release. You rarely need to upgrade the CLI, because new daemon commands are forwarded to the daemon without needing a matching CLI version.
 
-Releases live side by side under the daemon root, so a switch is a pointer move and a restart, not a reinstall:
+Installed releases sit side by side under the daemon root, so switching versions just updates the `current` pointer and restarts the process:
 
 ```
 ~/.agentconnect/
@@ -26,60 +26,60 @@ Releases live side by side under the daemon root, so a switch is a pointer move 
 
 ## Upgrade from the console
 
-An outdated daemon shows an **Update to \<version\>** badge on the **Infra** page and on its own page. Click the badge, choose the target version, and confirm with **Upgrade**.
+An outdated daemon shows an **Update to \<version\>** badge on the **Infra** page and on its own detail page. Click the badge, choose the target version, and confirm with **Upgrade**.
 
 <Image src={imgDaemonUpgrade} alt="The Upgrade daemon dialog, opened from the Update to badge on a daemon's page" width={720} />
 
-This needs the ordinary daemon edit permission: any Owner or Collaborator who can see the daemon. Viewers cannot.
+This requires standard daemon edit permission: any Owner or Collaborator who can see the daemon can run it. Viewers can't.
 
-The Control Plane sends only the target version — the registry, the package and the download stay local to the CLI on the host. The daemon then installs the target, switches `current`, drains its work and exits with a planned restart code, and its supervisor launches the new release. The daemon shows **Upgrading** until it is ready again.
+The Control Plane only sends the target version. The CLI on the host still handles the registry lookup and package download. The daemon installs the target release, updates `current`, drains active work, and exits with a planned restart code so its supervisor launches the new version. The status shows **Upgrading** until the daemon is ready again.
 
-An upgrade is recorded as successful only when the daemon reconnects and reports the version that was requested, so an old release relaunching cannot be mistaken for a completed upgrade. One lifecycle operation is allowed per daemon at a time.
+An upgrade counts as complete only when the daemon reconnects and reports the requested version, so an old release restarting won't be mistaken for a completed upgrade. Only one lifecycle operation can run on a daemon at a time.
 
-Two limits worth knowing:
+Two limits to keep in mind:
 
-- **A remote upgrade has no process-level automatic rollback.** Once the old daemon has exited, recovery is a host-side job — see [Roll back](#roll-back). A local `upgrade --restart` does roll back on its own.
-- **The console offers Upgrade only while the daemon is online.** An offline or stuck daemon has to be upgraded from the host, or queued through the upgrade endpoint in the [API reference](/api) (`POST /v1/orgs/{orgId}/daemons/{id}/upgrade`). A queued upgrade is picked up at the daemon's next authenticated connection, before full startup, which is what recovers a daemon that never reaches ready. Daemons old enough to predate that path need an online connection or a host-side upgrade.
+- **No process-level automatic rollback on remote upgrades**: Once the old daemon exits, recovery has to happen on the host. See [Roll back](#roll-back). A local `upgrade --restart` rolls back automatically.
+- **The console only offers Upgrade while the daemon is online**: For an offline or stuck daemon, upgrade it from the host or queue an upgrade through the [API reference](/api) (`POST /v1/orgs/{orgId}/daemons/{id}/upgrade`). A queued upgrade runs on the daemon's next authenticated connection before full startup, which lets you recover a daemon that never reaches ready. Older daemons that predate this feature need an online connection or a host-side upgrade.
 
 ## Upgrade automatically
 
-A daemon with **Auto-upgrade** on follows the release the console offers without anyone clicking **Upgrade**. Auto-upgrade is set per daemon: open the daemon from the **Infra** page and switch **Auto-upgrade** on or off right after the version at the top of the page. The change takes effect right away. An icon beside the switch shows the last automatic upgrade; point at the switch to read it.
+A daemon with **Auto-upgrade** enabled tracks the release offered by the console without anyone clicking **Upgrade**. Configure it per daemon: open the daemon from **Infra** and toggle **Auto-upgrade** next to the version at the top of the page. Changes take effect right away. Hover over the switch to see details of the last automatic upgrade (also indicated by the icon beside it).
 
-It downloads the new release while it keeps serving, and restarts onto it only once it is idle: no turn or background task running, and none for the last five minutes. An automatic upgrade never cuts a turn short.
+The daemon downloads the new release while continuing to serve traffic, then restarts onto it once it's idle: no turn or background task running, and none in the last five minutes. Automatic upgrades never cut a turn short.
 
-- **Rollout is spread out.** On the stable channel each daemon waits a fixed delay of up to two hours after a release appears, so a bad release does not reach every daemon at once.
-- **A release that cannot start is undone.** The daemon goes back to the version it ran before and skips that release from then on.
-- **Picking an older version by hand turns it off.** Upgrading to anything older than the latest release from the console switches Auto-upgrade off for that daemon, so it does not move straight back.
+- **Staggered rollout**: On the stable channel, each daemon waits a fixed delay of up to two hours after a release is published so a faulty release doesn't reach every daemon at once.
+- **Failed launches are skipped**: If the new release fails to start, the daemon reverts to the previous version and skips the bad release going forward.
+- **Manual downgrades turn it off**: Upgrading from the console to any version older than the latest automatically disables Auto-upgrade for that daemon so it won't immediately jump back up.
 
-Auto-upgrade needs a daemon run by the CLI — [as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently) or with `agentconnect run`; for any other daemon the switch is unavailable, and pointing at it says why. The switch takes the same permission as **Upgrade**.
+Auto-upgrade requires a daemon managed by the CLI, either [installed as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently) or started with `agentconnect run`. On other daemons the switch is unavailable; hover over it to see why. Toggling it requires the same permission as **Upgrade**.
 
-To have every daemon added from now on start with Auto-upgrade on, an Owner turns on **Default daemon auto-upgrade** in **Organization settings**. Daemons that already exist keep their own setting.
+To enable Auto-upgrade by default for all newly added daemons, an Owner can turn on **Default daemon auto-upgrade** in **Organization settings**. Existing daemons keep their current settings.
 
 ## Upgrade a service-installed daemon on the host
 
-For a daemon [installed as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently), one command does the whole sequence:
+For a daemon [installed as a service](/build-your-team/daemons/install-the-daemon#run-it-permanently), one command handles the whole sequence:
 
 ```bash
 npx -y @agentconnect.md/cli upgrade --restart
 ```
 
-It resolves the newest release on the selected channel, installs it, switches `current`, restarts the service, then health-checks the result and rolls back if that check fails.
+It resolves the latest release on your selected channel, installs it, updates `current`, restarts the service, and runs a health check. If the check fails, it rolls back automatically.
 
-The health check is deliberately process-level: it samples the service over a few seconds and passes only if the daemon is running on one stable PID, which catches a crash loop. It does not prove the daemon reached the Control Plane — the console's daemon status is the stronger signal, so check there too after upgrading a connected daemon.
+The health check works at the process level: it samples the service over a few seconds and passes only if the daemon stays running on a single stable PID, catching crash loops. Because it doesn't verify Control Plane connectivity, check the daemon's status in the console too after upgrading a connected daemon.
 
-Two variations to expect:
+Two behaviors to expect:
 
-- **Without `--restart`**, `current` is switched but the running daemon is untouched; the new release takes effect at its next restart. Useful when you want to stage the switch and pick the restart window yourself.
-- **With no service installed**, `--restart` reports that there was nothing to restart and leaves the new release selected. A foreground `agentconnect run` applies it when it next relaunches.
+- **Without `--restart`**: `current` updates, but the running daemon keeps running its current release until its next restart. Use this to stage an upgrade and pick your own restart window.
+- **With no service installed**: `--restart` reports that there's nothing to restart and leaves the new release selected. A foreground `agentconnect run` applies it the next time it launches.
 
-Confirm the outcome:
+Confirm the result:
 
 ```bash
 npx -y @agentconnect.md/cli version list   # channel, installed releases, current, previous
 npx -y @agentconnect.md/cli status         # service state, PID, log path
 ```
 
-If the host runs more than one daemon service, pass `--instance <name>` to every command so it addresses that instance's service and daemon root rather than the default one.
+If the host runs more than one daemon service, pass `--instance <name>` to every command so it targets that instance's service and daemon root instead of the default.
 
 ### Choose a version or a channel
 
@@ -88,9 +88,9 @@ npx -y @agentconnect.md/cli upgrade --to <version> --restart   # a specific rele
 npx -y @agentconnect.md/cli upgrade --channel rc --restart     # switch to prereleases
 ```
 
-The channel is stored in the daemon root and becomes the default for later upgrades, so `--channel` is a change of track rather than a one-off. `stable` and `rc` are the two channels.
+The channel is saved in the daemon root and becomes the default for later upgrades, so `--channel` changes the tracking channel permanently rather than for a single run. The two available channels are `stable` and `rc`.
 
-To canary a release without committing the host to it, install it now and activate it later:
+To canary a release without committing the host to it right away, install it first and activate it later:
 
 ```bash
 npx -y @agentconnect.md/cli version install <version>   # download only; current is unchanged
@@ -98,19 +98,19 @@ npx -y @agentconnect.md/cli version use <version>       # switch current, withou
 npx -y @agentconnect.md/cli restart                     # apply it
 ```
 
-Each daemon root carries its own copy of every release it has installed, which is what lets one instance on a host canary a version while the others stay on the old one.
+Each daemon root keeps its own copies of installed releases, so one instance on a host can test a new version while other instances stay on the previous one.
 
 ### Old releases
 
-Every install and upgrade trims the store afterwards, keeping three releases in total by default. The active release and the rollback target are always protected. Pass `--keep <n>` to change the retention or `--keep 0` to keep everything.
+Every install and upgrade prunes older releases afterward, keeping three releases in total by default. The active release and the rollback target are always protected. Pass `--keep <n>` to change the retention count, or `--keep 0` to keep all releases.
 
-Cleanup is best effort and skips itself while a daemon is live, because a running daemon keeps loading files from the bundle it was launched under. Releases reported as kept are reclaimed by a later `version prune`.
+Cleanup is best-effort and skipped while a daemon is running, because a live daemon may still load files from the bundle it launched with. Releases skipped during an upgrade can be reclaimed later with `version prune`.
 
 ## Roll back
 
-A local `upgrade --restart` that fails its health check switches back to the previous release and restarts it for you, and reports the rollback as a failure.
+If a local `upgrade --restart` fails its health check, the CLI switches back to the previous release, restarts it, and reports the rollback as a failure.
 
-Otherwise, roll back by hand:
+To roll back manually:
 
 ```bash
 npx -y @agentconnect.md/cli version list          # `previous` is the rollback target
@@ -118,44 +118,44 @@ npx -y @agentconnect.md/cli version use <version>
 npx -y @agentconnect.md/cli restart
 ```
 
-A foreground `agentconnect run` in an interactive terminal handles this itself: when the daemon fails to start up, it offers to switch back to the previous release, or to re-download the channel's latest release in case the installed bundle is corrupt, and retries. A service run never prompts — its supervisor has to see the real exit code.
+In an interactive terminal, a foreground `agentconnect run` handles startup failures interactively: when the daemon fails to start, it offers to switch back to the previous release, or to re-download the channel's latest release in case the installed bundle is corrupt, and retries. A background service never prompts, since its supervisor needs to see the real exit code.
 
 ## Upgrade the CLI
 
-`npx` resolves the package each time it runs, so pin `@latest` when you want to be certain you are not reusing a cached older CLI:
+`npx` resolves the package each time it runs, so pin `@latest` when you want to be sure you aren't reusing a cached older CLI:
 
 ```bash
 npx -y @agentconnect.md/cli@latest version list
 ```
 
-On a machine that runs a service, install the CLI globally instead. It gives the CLI a stable path on disk, which matters for the service definition:
+On a machine running a background service, install the CLI globally instead. That gives the CLI a stable path on disk for the service definition:
 
 ```bash
 npm install -g @agentconnect.md/cli@latest
 agentconnect status
 ```
 
-The CLI needs **Node.js 24.12 or newer** — the same floor as the daemon.
+The CLI requires **Node.js 24.12 or newer**, the same minimum version as the daemon.
 
 ### Reinstall the service after the CLI or Node moves
 
-The service supervises the CLI, and the CLI supervises the daemon. The service definition records **the Node executable and the CLI entry path that existed when you installed it**, and it does not re-resolve either one. It does re-resolve `current` at every launch, which is why daemon upgrades need no service changes at all.
+The OS service supervises the CLI, and the CLI supervises the daemon. When you install the service, it records **the Node executable and the CLI entry path present at that time**, and it doesn't re-resolve them later. It does re-resolve `current` on every launch, which is why daemon upgrades need no service changes.
 
-So reinstall the service after anything that moves those two paths — a Node upgrade or a switch of Node version manager, or a CLI install that lands at a different path (notably moving from `npx`, whose entry sits in the npx cache, to a global install):
+Reinstall the service after anything that changes either path, such as a Node upgrade, switching Node version managers, or moving the CLI to a different install path (especially switching from `npx`, whose files live in the npx cache, to a global install).
 
-Run it with the CLI you want the service to use from then on, since that is the entry path it records:
+Run the command using the exact CLI you want the service to use from then on, since that's the entry path it records:
 
 ```bash
 agentconnect install-service   # rewrites the definition in place
 agentconnect restart           # `up` if the service is currently stopped
 ```
 
-Reinstalling the same instance is idempotent. `install-service` only writes the definition; it does not start anything.
+Reinstalling the same instance is idempotent. `install-service` only writes the service definition and doesn't start anything.
 
-A stale definition usually shows up as a service that will not start after a Node upgrade, or one that breaks after the npx cache is cleared. `agentconnect status` prints the log path to confirm.
+A stale definition usually shows up as a service failing to start after a Node upgrade, or breaking after the npx cache is cleared. Run `agentconnect status` to find the log path and confirm.
 
 ## Good to know
 
-- **Upgrades drain, within a grace period.** The daemon stops accepting new turns and gives in-flight work a bounded window to finish — 25 seconds by default for ordinary local work — then cancels whatever is left and stops its runtimes. An upgrade is not an abrupt kill, but a long-running turn can still be interrupted, so pick the window accordingly. Expect the daemon to be briefly unreachable while it relaunches.
-- **Keep runtimes current too.** Agent runtimes on the host are upgraded with their own tools, not by the daemon. Some of AgentConnect's protections depend on switches that only newer runtime releases publish — see [What a runtime sign-in brings](/build-your-team/daemons/install-the-daemon#what-a-runtime-sign-in-brings). Restart the daemon after changing a runtime installation or the service user's `PATH`.
-- **Kubernetes installs upgrade differently.** An install-wide daemon pool moves with its Helm release, not with these commands. See [Kubernetes operations](/self-hosting/kubernetes/operations#upgrade).
+- **Upgrades drain within a grace period**: The daemon stops accepting new turns and waits for in-flight work to finish (25 seconds by default for ordinary local work), then cancels anything remaining and stops its runtimes. While this avoids an abrupt kill, long-running turns can still be interrupted, so pick your upgrade window accordingly. Expect the daemon to be briefly unreachable while it relaunches.
+- **Keep runtimes current too**: Agent runtimes on the host are upgraded with their own tools, not by the daemon. Some AgentConnect safeguards rely on flags only available in newer runtime releases; see [What a runtime sign-in brings](/build-your-team/daemons/install-the-daemon#what-a-runtime-sign-in-brings). Restart the daemon after changing a runtime installation or the service user's `PATH`.
+- **Kubernetes installs upgrade differently**: An install-wide daemon pool moves with its Helm release instead of these commands. See [Kubernetes operations](/self-hosting/kubernetes/operations#upgrade).

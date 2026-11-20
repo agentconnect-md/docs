@@ -1,18 +1,18 @@
 ---
 title: "Connector gateway"
 icon: Cable
-description: "Configure the bundled connector gateway: its runtime token, credential encryption, OAuth providers, and catalog filters."
+description: "Configure the bundled connector gateway, including its runtime token, credential encryption, OAuth providers, and catalog filters."
 ---
 
-The stack includes a connector gateway that backs **Add connectors** in [Tools & Skills](/build-your-team/tools-and-skills). It needs no configuration to browse the catalog and connect any service that authorizes with an API key, a custom credential, or no credential at all. Because its own console and admin API are unauthenticated, it stays on loopback and is never published beyond the Docker host.
+The stack includes a connector gateway that powers **Add connectors** in [Tools & Skills](/build-your-team/tools-and-skills). Out of the box, you can browse the catalog and connect any service that uses an API key, a custom credential, or no authentication. Its console and admin API have no authentication, so the gateway binds to loopback only and isn't exposed outside the Docker host.
 
-On Kubernetes, the chart deploys the gateway with its own persistent volume, and its encryption key is the `OPEN_CONNECTOR_ENCRYPTION_KEY` entry of the `agentconnect-secrets` Secret. The commands below are for the Compose stack.
+On Kubernetes, the Helm chart deploys the gateway with its own persistent volume and reads its encryption key from `OPEN_CONNECTOR_ENCRYPTION_KEY` in the `agentconnect-secrets` Secret. The commands below apply to the Docker Compose stack.
 
-Do not set `OOMOL_CONNECT_ADMIN_TOKEN`. AgentConnect calls the gateway without a bearer token, so setting one stops the connector catalog from loading.
+Don't set `OOMOL_CONNECT_ADMIN_TOKEN`. AgentConnect calls the gateway without a bearer token, so setting one prevents the connector catalog from loading.
 
-To require a bearer on the gateway's action API, set `OOMOL_CONNECT_RUNTIME_TOKEN`. One value configures both the gateway and the Relay that calls it, so runtime authentication is on at both ends or off at both.
+If you want to require a bearer token on the gateway's action API, set `OOMOL_CONNECT_RUNTIME_TOKEN`. Both the gateway and the Relay read the same variable, so runtime authentication is either on at both ends or off at both.
 
-These settings are Compose environment values, and `docker compose restart` reuses a container's existing environment. Recreate both services so the new value takes effect:
+Because these are Compose environment variables and `docker compose restart` reuses the old container environment, recreate both services to apply changes:
 
 ```bash
 docker compose --env-file compose.env up -d --force-recreate open-connector relay
@@ -20,51 +20,51 @@ docker compose --env-file compose.env up -d --force-recreate open-connector rela
 
 ## Encrypt stored connector credentials
 
-The gateway keeps connector credentials and OAuth client secrets in its own SQLite volume, `agentconnect_open-connector-data`. This is a second credential store: `SECRET_CIPHER` and Vault Transit do not reach it. Give it a key of its own before connecting anything real, and set the key before you create the first connection:
+The gateway stores connector credentials and OAuth client secrets in its own SQLite volume, `agentconnect_open-connector-data`. This store is separate from PostgreSQL, so `SECRET_CIPHER` and Vault Transit don't cover it. Set a dedicated encryption key before creating your first real connection:
 
 ```dotenv
 OOMOL_CONNECT_ENCRYPTION_KEY=replace-with-a-stable-random-32-char-secret
 ```
 
-Generate it like the other stack secrets:
+Generate the key the same way as the other stack secrets:
 
 ```bash
 openssl rand -hex 32
 ```
 
-Adding the key to a stack that is already running takes effect only once the gateway is recreated:
+If the stack is already running, recreate the gateway container so it picks up the key:
 
 ```bash
 docker compose --env-file compose.env up -d --force-recreate open-connector
 ```
 
-Back up that volume alongside PostgreSQL. `docker compose down` preserves it; `docker compose down --volumes` deletes it with the database.
+Back up this volume alongside PostgreSQL. `docker compose down` keeps it, while `docker compose down --volumes` deletes it along with the database.
 
 ## OAuth providers
 
-Filtering happens per authorization method, not per service. Until a service's OAuth client is configured in the gateway, only its OAuth method is withheld: a service that also accepts an API key, a custom credential, or no authentication stays in the catalog and offers those methods instead. Services that authorize solely through OAuth are the ones absent from a default stack.
+Catalog filtering works per authorization method. Until you configure an OAuth client for a service in the gateway, only its OAuth option is hidden. If the service also supports an API key, custom credentials, or no auth, it still appears in the catalog with those options. Only OAuth-only services are hidden by default.
 
-To offer OAuth, configure its client in the gateway and make the provider's redirect reach the gateway from the browser.
+To enable OAuth for a service, configure its client in the gateway and route the provider's browser redirect to the gateway:
 
-1. Give the gateway a browser-reachable origin and point AgentConnect at it:
+1. Give the gateway a browser-reachable public origin and set it in `compose.env`:
 
    ```dotenv
    AGENTCONNECT_PUBLIC_OPEN_CONNECTOR_URL=https://connectors.example.test
    ```
 
-2. Recreate the gateway so it builds redirect URIs from the new origin. A gateway left running keeps the old one, and its authorization requests will not match the callback you register next:
+2. Recreate the gateway so it generates redirect URIs with the new origin. If you leave the old container running, its authorization requests won't match the callback URL you register next:
 
    ```bash
    docker compose --env-file compose.env up -d --force-recreate open-connector
    ```
 
-3. Route **only** `/oauth/callback` on that origin to the gateway. The provider redirects the browser there to complete authorization, and that is the only path that has to be public.
-4. Register the OAuth client with the provider using `<origin>/oauth/callback` as its redirect URI.
-5. Open the gateway console on its local port, [http://localhost:3100](http://localhost:3100), and save the client ID and secret for that service.
+3. Expose **only** `/oauth/callback` on that origin and route it to the gateway. The provider redirects the browser there to finish authorization, and no other path needs to be public.
+4. Register the OAuth client with the provider using `<origin>/oauth/callback` as the redirect URI.
+5. Open the local gateway console at [http://localhost:3100](http://localhost:3100) and save the client ID and client secret for that service.
 
-> The gateway console and its `/api` surface have no authentication. Never route them through a public origin — publishing them hands anyone your stored connector credentials.
+> The gateway console and its `/api` endpoints have no authentication. Don't expose them on a public origin, or anyone will be able to access your stored connector credentials.
 
-If the gateway runs on another host, forward the port instead of exposing it:
+If the gateway runs on a remote host, use SSH port forwarding instead of exposing port 3100:
 
 ```bash
 ssh -L 3100:127.0.0.1:3100 operator@host.example
@@ -74,12 +74,12 @@ ssh -L 3100:127.0.0.1:3100 operator@host.example
 
 | Variable                            | Default                                                   |
 | ----------------------------------- | --------------------------------------------------------- |
-| `OPEN_CONNECTOR_PROVIDER_WHITELIST` | Unset, meaning every service                              |
-| `OPEN_CONNECTOR_PROVIDER_BLOCKLIST` | The services that overlap AgentConnect's own integrations |
+| `OPEN_CONNECTOR_PROVIDER_WHITELIST` | Unset (all services allowed)                              |
+| `OPEN_CONNECTOR_PROVIDER_BLOCKLIST` | Services that overlap with AgentConnect's built-in integrations |
 
-Both accept comma-separated service ids, and the blocklist is applied after the whitelist. The default blocklist keeps GitHub, Slack, Telegram, Discord, and Lark / Feishu out of the connector catalog because AgentConnect integrates them directly. Override it only when you deliberately want both paths available.
+Both variables take comma-separated service IDs, and the blocklist is applied after the whitelist. By default, GitHub, Slack, Telegram, Discord, and Lark / Feishu are blocked because AgentConnect already integrates with them directly. Override the blocklist only if you specifically want both paths available.
 
-Only Control Plane reads these two values, and it needs to be recreated rather than restarted to pick them up:
+Only the Control Plane reads these two variables, so recreate it to apply changes:
 
 ```bash
 docker compose --env-file compose.env up -d --force-recreate control-plane

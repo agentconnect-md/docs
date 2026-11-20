@@ -6,9 +6,9 @@ description: "Choose how AgentConnect isolates agent sessions. Compare host exec
 
 import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-unavailable.png'
 
-**Kubernetes:** the official Helm deployment uses [Agent Sandbox](https://github.com/kubernetes-sigs/agent-sandbox) by default to manage agent pods and persistent workspaces. See [Kubernetes deployment](/self-hosting/kubernetes/deploy) for setup and configuration.
+If you deploy on **Kubernetes**, the official Helm chart uses [Agent Sandbox](https://github.com/kubernetes-sigs/agent-sandbox) by default to manage agent pods and persistent workspaces. See [Kubernetes deployment](/self-hosting/kubernetes/deploy) for setup and configuration.
 
-**Daemons you run:** each agent's **Execution strategy** sets the boundary its sessions run in, from none to a separate VM. `srt` and `microsandbox` run only on Linux; a macOS or Windows daemon offers only `host`, and the picker shows the other two as unavailable. Each sandbox gets a private runtime home and its assigned workspace. Share additional host directories through [mounts](/operate-govern/sandboxing/sandbox-mounts).
+For **self-hosted daemons**, each agent's **Execution strategy** sets the isolation level for its sessions, ranging from direct host execution to a separate VM. Both `srt` and `microsandbox` require Linux. On macOS or Windows daemons, only `host` is available and the picker marks the other two as unavailable. Each sandbox gets a private runtime home directory and its assigned workspace. To expose additional host directories, configure [mounts](/operate-govern/sandboxing/sandbox-mounts).
 
 ## Choose an execution environment
 
@@ -19,7 +19,7 @@ import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-
 | **VM** (`microsandbox`)    | General-purpose tasks and less-trusted code | A separate VM per session                                    |
 | Kubernetes (Agent Sandbox) | Teams running many agents across machines   | Centrally managed agent pods and persistent workspaces       |
 
-`srt` is not a security boundary: it shares the host's kernel and user, and the daemon runs some workspace operations outside it, such as Git in a workspace that sessions share. Run an agent that acts on content from outside your organization, such as outside contributors' pull requests and issues or public webhooks, in `microsandbox` or Kubernetes, even when a maintainer starts its sessions.
+`srt` isn't a full security boundary. It shares the host's kernel and user, and the daemon runs some workspace operations outside it (such as Git commands in a workspace shared across sessions). If an agent processes external input, such as pull requests and issues from outside contributors or public webhooks, run it in `microsandbox` or Kubernetes, even when a maintainer starts the session.
 
 ### Compare Linux daemon sandboxes
 
@@ -35,19 +35,19 @@ import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-
 | Saved API keys     | Host proxy (supported saved keys)                   | Same as SRT                                   |
 | Code-host tokens   | Host proxy; never in the sandbox                    | Same as SRT                                   |
 
-Both sandboxes write to the assigned workspace. Shared workspaces and writable host mounts remain shared; microsandbox keeps other VM files separate for each session.
+Both sandboxes write to the assigned workspace. Shared workspaces and writable host mounts remain shared across sessions, while `microsandbox` keeps all other VM files separate per session.
 
-Tool rules restrict credential access by the runtime's tools. The host proxy keeps code-host tokens and supported API keys outside the session. See [Credential protection](/operate-govern/sandboxing/credential-protection) for supported runtimes, login methods, and limitations.
+Tool rules restrict the runtime's built-in tools from accessing credential files, and the host proxy keeps code-host tokens and supported API keys out of the session. See [Credential protection](/operate-govern/sandboxing/credential-protection) for supported runtimes, login methods, and limitations.
 
-Technical background: [SRT isolation](https://github.com/anthropics/sandbox-runtime#how-it-works) and [microsandbox](https://github.com/superradcompany/microsandbox).
+For technical details on the underlying sandboxes, see [SRT isolation](https://github.com/anthropics/sandbox-runtime#how-it-works) and [microsandbox](https://github.com/superradcompany/microsandbox).
 
 ## Pick an execution strategy
 
-Choose the strategy in **Execution strategy** when you add or edit an agent. The picker lists the strategies available where the agent is placed:
+Select a strategy under **Execution strategy** when creating or editing an agent. The picker shows what's available where the agent runs:
 
-- **One daemon:** that daemon's strategies.
-- **A [daemon group](/build-your-team/daemons/daemon-groups):** the strategies at least one serving member offers. Sessions can't run on a member that lacks the chosen strategy, so check that every member you rely on can run it.
-- **AgentConnect Cloud or a [Kubernetes daemon pool](/self-hosting/kubernetes/deploy):** no picker. Each session already runs in its own pod.
+- **One daemon**: That daemon's available strategies.
+- **A [daemon group](/build-your-team/daemons/daemon-groups)**: Strategies supported by at least one serving member. Sessions won't run on a member that doesn't support the chosen strategy, so verify that every member you rely on supports it.
+- **AgentConnect Cloud or a [Kubernetes daemon pool](/self-hosting/kubernetes/deploy)**: No picker is shown because every session already runs in its own pod.
 
 | Option                  | Boundary                   |
 | ----------------------- | -------------------------- |
@@ -55,23 +55,23 @@ Choose the strategy in **Execution strategy** when you add or edit an agent. The
 | **Sandbox** (`srt`)     | An SRT process sandbox     |
 | **VM** (`microsandbox`) | A separate virtual machine |
 
-A strategy that can't run there stays in the list, disabled and marked **unavailable**. Hover over it to see why: the reason from the daemon's startup check, or `sandbox.<strategy> is off on this daemon` when the daemon's configuration turns the strategy off.
+Strategies that can't run on the selected daemon remain in the list, disabled and labeled **unavailable**. Hover over one to see why: either the failure reason from the daemon's startup check, or `sandbox.<strategy> is off on this daemon` if it was turned off in configuration.
 
 <Image src={imgExecutionStrategyUnavailable} alt="The Execution strategy picker on a daemon without the SRT tools: Sandbox and VM are marked unavailable, and the tooltip names the missing packages" width={560} />
 
-New agents start on `host` where it can run, otherwise on the first available sandbox. A daemon too old to report its strategies offers only `host`. [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) to offer the sandboxes.
+New agents default to `host` when it's enabled, or the first available sandbox otherwise. Daemons too old to report strategies only offer `host`; [upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) to enable sandboxes.
 
-In **Edit**, the picker is locked while a move to another daemon is pending; save the move first. If the agent's placement no longer offers its saved strategy, the strategy stays selected and is marked "Not offered where this agent is placed." The agent's **Configuration** tab shows the choice as the **Execution strategy** row of the Runtime card.
+In **Edit**, the picker is locked while a move to another daemon is pending. Save the move first. If an agent's placement no longer supports its saved strategy, that strategy stays selected with a "Not offered where this agent is placed." warning. You can view the current setting in the **Execution strategy** row of the Runtime card on the agent's **Configuration** tab.
 
-AgentConnect never falls back to a weaker boundary. A session whose strategy can't run on its machine is refused with the reason.
+AgentConnect never falls back to a weaker isolation level. If a session's configured strategy can't run on its machine, the daemon refuses to start the session and reports the reason.
 
-Agents created before the picker kept their boundary: one that had **Run in sandbox** off uses `host`, and one that had it on uses the sandbox its daemon was configured with, `srt` or `microsandbox`.
+Agents created before this picker existed kept their previous behavior: agents with **Run in sandbox** turned off use `host`, and agents with it turned on use whichever sandbox their daemon was configured with (`srt` or `microsandbox`).
 
 ## Configure the daemon
 
-Add the settings to the daemon's existing `config.json` (normally `~/.agentconnect/config.json`). Keep its existing connection and identity settings.
+Add sandbox settings to the daemon's existing `config.json` (typically `~/.agentconnect/config.json`) while keeping your existing connection and identity fields.
 
-The `sandbox` object lists the strategies the daemon offers. All three are on by default, so leaving them out is the same as:
+The `sandbox` object specifies which strategies the daemon offers. All three are enabled by default, so omitting them is equivalent to:
 
 ```json
 {
@@ -83,22 +83,22 @@ The `sandbox` object lists the strategies the daemon offers. All three are on by
 }
 ```
 
-Each value is `true` (offer the strategy with its defaults), `false` (turn it off), or, for `microsandbox`, an object of VM settings. At startup the daemon checks each strategy it offers. A strategy that fails its check is unavailable; the daemon logs the reason, and the picker shows it. The checks install and download nothing. A daemon with no available strategy refuses to start.
+Set each strategy to `true` (enabled with defaults), `false` (disabled), or, for `microsandbox`, an object with VM settings. At startup, the daemon checks each enabled strategy without installing or downloading anything. If a strategy fails its check, the daemon logs the reason and marks it unavailable in the picker. If no strategy is available, the daemon refuses to start.
 
 ### SRT
 
-On Ubuntu or Debian, install its dependencies:
+On Ubuntu or Debian, install the required packages:
 
 ```bash
 sudo apt-get update
 sudo apt-get install --yes bubblewrap ripgrep socat
 ```
 
-The host must allow unprivileged user namespaces. The daemon checks that the sandbox can start. Ubuntu 24.04 and later restrict them by default, and Ubuntu 23.10 does once the restriction is turned on: [allow them for bubblewrap](#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap) first.
+The host must also allow unprivileged user namespaces, which the daemon checks at startup. Ubuntu 24.04 and later restrict them by default (and Ubuntu 23.10 does if the restriction is enabled). Follow the steps to [allow user namespaces for bubblewrap](#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap) first.
 
 ### microsandbox
 
-To change the VM resources, give `microsandbox` an object:
+To adjust VM resources, pass an object to `microsandbox`:
 
 ```json
 {
@@ -112,13 +112,13 @@ To change the VM resources, give `microsandbox` an object:
 }
 ```
 
-These resource values are defaults. CPU and memory limits apply per VM. `diskGiB` sets the capacity of each writable disk (root, Docker data, and an additional disk when using overlays). Disk files grow as data is written.
+The snippet above shows the default values. CPU and memory limits apply per VM. `diskGiB` sets the maximum capacity for each writable disk (the root disk, Docker data disk, and an extra disk when using overlays); disk files grow on demand as data is written.
 
-microsandbox requires a Linux amd64 host. The daemon user needs access to `/dev/kvm` and `/dev/vhost-vsock`. Virtual hosts need nested virtualization. The daemon installs the microsandbox SDK and prepares the image when the first microsandbox session starts. An uncached image makes that first start slower.
+`microsandbox` requires a Linux amd64 host, and the daemon user needs access to `/dev/kvm` and `/dev/vhost-vsock`. If the daemon runs on a virtual machine, nested virtualization must be enabled. On the first `microsandbox` session, the daemon installs the microsandbox SDK and prepares the runtime image, so that first startup takes longer when the image isn't cached.
 
 ### Require a sandbox
 
-To refuse unsandboxed sessions on a daemon, turn `host` off:
+To prevent unsandboxed sessions on a daemon, disable `host`:
 
 ```json
 {
@@ -128,31 +128,31 @@ To refuse unsandboxed sessions on a daemon, turn `host` off:
 }
 ```
 
-The picker then shows `host` as unavailable for agents on this daemon, and new agents start on the first available sandbox. Agents already set to `host` can't start sessions there until you pick a sandbox for them. If no sandbox is available either, the daemon refuses to start.
+With `host` disabled, the picker marks `host` as unavailable on this daemon and new agents default to the first available sandbox. Existing agents set to `host` won't run there until you switch them to a sandbox strategy. If no sandbox is available either, the daemon refuses to start.
 
 ### Older configurations
 
-`sandbox.backend` and `security.requireSandbox` are no longer supported. A daemon whose `config.json` still contains either one refuses to start, and its error names the replacement:
+`sandbox.backend` and `security.requireSandbox` have been removed. If either field is still in `config.json`, the daemon refuses to start and prints the replacement:
 
 | Old setting | Replace with |
 | --- | --- |
-| `sandbox.backend` (any value) | Remove it. Every strategy is offered by default, and the agent's **Execution strategy** chooses the sandbox. |
+| `sandbox.backend` (any value) | Remove it. All strategies are offered by default, and the agent's **Execution strategy** picks the sandbox. |
 | `security.requireSandbox: true` | `"sandbox": { "host": false }` |
 | `security.requireSandbox: false` | Remove it. `host` is on by default. |
 
-The `--require-sandbox` flag is gone too. Set `"host": false` in `config.json` instead.
+The `--require-sandbox` CLI flag has also been removed. Set `"host": false` in `config.json` instead.
 
-Restart after editing the configuration:
+Restart the daemon after editing `config.json`:
 
 ```bash
 npx -y @agentconnect.md/cli restart
 ```
 
-For a named instance, add `--instance <name>`. For a foreground daemon, relaunch its existing command. See [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) for instance commands.
+For a named instance, append `--instance <name>`. For a foreground daemon, relaunch its original command. See [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) for instance commands.
 
 ## Runtime image
 
-microsandbox uses the `ghcr.io/agentconnect-md/runtime-sandbox-full` image selected by the installed daemon release. To use a compatible custom image:
+By default, `microsandbox` uses the `ghcr.io/agentconnect-md/runtime-sandbox-full` image matching the installed daemon release. To use a compatible custom image instead:
 
 ```json
 {
@@ -164,19 +164,19 @@ microsandbox uses the `ghcr.io/agentconnect-md/runtime-sandbox-full` image selec
 }
 ```
 
-Delete the `image` property to return to the default. Development builds require an explicit image.
+Remove the `image` property to switch back to the default. Development builds require an explicit `image` setting.
 
-Changing the image content, VM resources, mounts, or credential layout rebuilds affected VMs on refresh or next use. Host-mounted workspace, home, and memory files are kept. VM-local files, Docker data, and overlay writes are reset. Keep durable data in host mounts. A new image tag with identical contents reuses the existing VM.
+If you change the image contents, VM resources, mounts, or credential layout, affected VMs are rebuilt on refresh or next use. Host-mounted workspace, home, and memory files are preserved, while VM-local files, Docker data, and overlay writes are reset. Keep any durable data in host mounts. Updating to a new image tag with identical contents reuses existing VMs.
 
-The full image includes Claude Code, Codex, DeepSeek Harness, OpenCode, pi, Oh My Pi, Grok Build, Qwen Code, Cline, Devin, Antigravity ACP, GitHub Copilot, Qoder CLI, and Qoder CN CLI. Antigravity requires AVX support. Amp requires a custom image.
+The full image includes Claude Code, Codex, DeepSeek Harness, OpenCode, pi, Oh My Pi, Grok Build, Qwen Code, Cline, Devin, Antigravity ACP, GitHub Copilot, Qoder CLI, and Qoder CN CLI. Antigravity requires CPU AVX support, and Amp requires a custom image.
 
-Docker Engine, Buildx, and Compose are also included. Agents can start Docker inside their VM when their runtime permissions allow it. Docker data survives stop/start, but resets when the VM is rebuilt. Codex's tool restrictions currently block the image's sudo-based Docker startup.
+The image also includes Docker Engine, Buildx, and Compose. Agents can start Docker inside their VM when their runtime permissions allow it. Docker data persists across VM stop/start cycles, but resets when the VM is rebuilt. Note that Codex's tool restrictions currently block the image's sudo-based Docker startup.
 
 ## Network access
 
-microsandbox sessions can reach public APIs and package registries. Each VM has its own network environment, so sessions can use the same local port. VM ports are not published to the host.
+`microsandbox` sessions can reach public APIs and package registries. Each VM has its own network namespace, so multiple sessions can bind the same local port without conflict. VM ports aren't published to the host.
 
-The policy restricts private-network access, but does not guarantee that every public IP or DNS name leading back to the host is blocked. SRT allows outbound web access through its proxy; tools that ignore proxy settings may fail to connect.
+The network policy restricts access to private networks, though it doesn't guarantee blocking every public IP or DNS name that routes back to the host. SRT routes outbound web traffic through a proxy, so tools that ignore proxy environment variables may fail to connect.
 
 ## Troubleshooting
 
@@ -189,22 +189,22 @@ The policy restricts private-network access, but does not guarantee that every p
 | Mount rejected                | Existing source, valid target, and supported mode (see [Mounts](/operate-govern/sandboxing/sandbox-mounts)) |
 | VM replacement failed         | Check image availability and mount access, then retry                                  |
 
-The standalone `chat` command supports SRT. Use daemon-hosted sessions for microsandbox.
+The standalone `chat` command supports SRT. For `microsandbox`, use daemon-hosted sessions.
 
 ### Ubuntu 23.10 and later: allow user namespaces for bubblewrap
 
-**Symptom:** the **Sandbox** strategy (`srt`) is marked **unavailable** in the **Execution strategy** picker, and its reason contains one of:
+**Symptom:** The **Sandbox** strategy (`srt`) is marked **unavailable** in the **Execution strategy** picker, and its tooltip shows one of these errors:
 
 ```text
 bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
 bwrap: setting up uid map: Permission denied
 ```
 
-Newer daemons name the AppArmor restriction in the reason directly.
+Newer daemons report the AppArmor restriction directly in the error message.
 
-**Cause:** Ubuntu 24.04 and later set `kernel.apparmor_restrict_unprivileged_userns=1` by default, in `/usr/lib/sysctl.d/10-apparmor.conf`. Ubuntu 23.10 introduced the setting but leaves it at `0` by default. With it on, an unprivileged user namespace gets no capabilities, so bubblewrap can't set up the sandbox's isolated network. A value of `0` set at runtime, for example with `sysctl -w`, is lost on reboot.
+**Cause:** Ubuntu 24.04 and later set `kernel.apparmor_restrict_unprivileged_userns=1` by default in `/usr/lib/sysctl.d/10-apparmor.conf`. Ubuntu 23.10 added the setting, though it defaults to `0` there. When enabled, unprivileged user namespaces get no capabilities, which prevents bubblewrap from setting up the sandbox's isolated network. Setting `0` at runtime with `sysctl -w` doesn't survive a reboot.
 
-**Fix:** give bubblewrap an AppArmor profile that allows user namespaces. The profile covers only `/usr/bin/bwrap`, where the `bubblewrap` package installs it; every other program stays restricted. Create `/etc/apparmor.d/bwrap` and load it:
+**Fix:** Add an AppArmor profile that permits user namespaces for `/usr/bin/bwrap` (where the `bubblewrap` package installs it), leaving all other programs restricted. Create `/etc/apparmor.d/bwrap` and load it:
 
 ```bash
 sudo tee /etc/apparmor.d/bwrap > /dev/null <<'EOF'
@@ -219,22 +219,22 @@ EOF
 sudo apparmor_parser -r /etc/apparmor.d/bwrap
 ```
 
-AppArmor loads the profile again at every boot.
+AppArmor reloads this profile automatically on every boot.
 
-Don't use Ubuntu's `bwrap-userns-restrict` profile from the `apparmor-profiles` package instead. It strips capabilities inside the sandbox, so the daemon's check passes, but a runtime that starts its own bubblewrap sandbox inside it, such as Codex, fails with `bwrap: No permissions to create new namespace`.
+Don't use Ubuntu's `bwrap-userns-restrict` profile from the `apparmor-profiles` package. It strips capabilities inside the sandbox, so the daemon's startup check passes, but runtimes that start their own nested bubblewrap sandbox (such as Codex) fail with `bwrap: No permissions to create new namespace`.
 
-Alternatively, lift the restriction for the whole machine. This turns the protection off for every program, not only bubblewrap:
+Alternatively, disable the restriction system-wide. Note that this turns the protection off for every program on the machine, not just bubblewrap:
 
 ```bash
 echo 'kernel.apparmor_restrict_unprivileged_userns = 0' | sudo tee /etc/sysctl.d/60-userns.conf && sudo sysctl --system
 ```
 
-**Verify:** as the daemon's user, run:
+**Verify:** Run this command as the daemon user:
 
 ```bash
 bwrap --unshare-net --ro-bind / / true && echo ok
 ```
 
-It prints `ok` when bubblewrap can start with its own network.
+It prints `ok` once bubblewrap can start with an isolated network.
 
-**Then restart the daemon** so it checks its strategies again: choose **Restart** from the daemon's actions in the console, or restart it on the host with `npx -y @agentconnect.md/cli restart` or your service manager.
+**Restart the daemon** so it re-checks available strategies: click **Restart** in the daemon's actions menu in the console, run `npx -y @agentconnect.md/cli restart` on the host, or restart it through your service manager.

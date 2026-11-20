@@ -1,133 +1,138 @@
 ---
 title: "Integrations overview"
 icon: Plug
-description: "How agents meet channels — bots, integrations, shared bots, and the commands that work in any conversation."
+description: "How agents connect to chat platforms, issue trackers, and webhooks: bots, channel settings, shared bots, and conversation commands."
 ---
 
 import imgAddIntegration from '@/public/images/add-integration.png'
 
-An **integration** binds one agent to one way of reaching it. The supported kinds:
+An **integration** binds one agent to a platform or event source. Supported platforms:
 
 | Platform | The agent responds to | How to connect |
 | --- | --- | --- |
 | [Slack](/connect-automate/chat-platforms/slack) | Channels, threads, and DMs | Add to Slack, or connect your own Slack App |
 | [Microsoft Teams](/connect-automate/chat-platforms/msteams) | 1:1 chats, group chats, and team channels | Connect with Microsoft as an administrator, or register your own bot |
 | [Google Chat](/connect-automate/chat-platforms/googlechat) | Space @-mentions and DMs | Create a Chat app and connect its service-account JSON key |
-| [Discord](/connect-automate/chat-platforms/discord) | Channels, threads, and DMs | A bot token; AgentConnect builds the invite |
+| [Discord](/connect-automate/chat-platforms/discord) | Channels, threads, and DMs | A bot token (AgentConnect builds the invite link) |
 | [Telegram](/connect-automate/chat-platforms/telegram) | DMs and group messages | A bot token from @BotFather |
 | [Lark / Feishu](/connect-automate/chat-platforms/lark-feishu) | Group messages and one-to-one chats | One-click app setup, or an App ID and secret |
-| [DingTalk](/connect-automate/chat-platforms/dingtalk) | DMs and group @-mentions | An internal app's Client ID and Client Secret; choose mainland China or international |
+| [DingTalk](/connect-automate/chat-platforms/dingtalk) | DMs and group @-mentions | An internal app's Client ID and Client Secret (mainland China or international) |
 | [WeCom](/connect-automate/chat-platforms/wecom) | Direct chats and group @-mentions | A smart bot's Bot ID and Secret |
 | [WeChat](/connect-automate/chat-platforms/wechat) | Your own one-to-one chat with the agent | Scan a QR code with your personal WeChat |
-| [QQ](/connect-automate/chat-platforms/qq) | Private chats and group @-mentions | An official bot's AppID and AppSecret; self-hosted only |
+| [QQ](/connect-automate/chat-platforms/qq) | Private chats and group @-mentions | An official bot's AppID and AppSecret (self-hosted only) |
 | [GitHub](/connect-automate/triggers-automation/github) | Issues, PRs, comments, deployments, and releases | Install a GitHub App and authorize the agent's repositories |
-| [GitLab](/connect-automate/triggers-automation/gitlab) | Issues, merge requests, comments, and releases | Connect with OAuth; AgentConnect creates each agent's service account |
+| [GitLab](/connect-automate/triggers-automation/gitlab) | Issues, merge requests, comments, and releases | Connect with OAuth (AgentConnect creates a service account per agent) |
 | [Azure DevOps](/connect-automate/triggers-automation/azure-devops) | Azure Repos PRs and comments | Connect with Microsoft, or use your own application |
 | [Gitea / Forgejo](/connect-automate/triggers-automation/gitea) | Issues, PRs, comments, and reviews | A dedicated bot user's token, per organization |
 | [Linear](/connect-automate/triggers-automation/linear) | Delegated issues and @-mentions | Authorize the workspace in Linear |
 | [Webhooks](/connect-automate/triggers-automation/webhooks) | JSON events from external systems | Create a webhook and send requests to its generated endpoint |
 
-Add one from the agent page (**Integrations → Add integration**) or from the Agents list.
+Add an integration from an agent's page (**Integrations → Add integration**) or from the Agents list.
 
 <Image src={imgAddIntegration} alt="Add integration and choose a platform" width={640} />
 
 ## Bots are identities, integrations are bindings
 
-For the chat platforms, the thing that lives in your Slack workspace, Telegram group, Discord server, or Lark / Feishu tenant is a **bot** — a durable identity with its own tokens. An integration binds _that bot_ to _one agent_.
+On chat platforms, a **bot** is the identity that exists in your Slack workspace, Telegram group, Discord server, or Lark / Feishu tenant, with its own tokens. An integration binds that bot to one agent.
 
-- Deleting an integration **frees the bot** rather than destroying it — reuse it for another agent from the **Use an existing bot** picker.
-- Bots are managed org-wide under **Integrations → Messaging apps**: see [Bots](/connect-automate/chat-platforms/bots).
+- Deleting an integration **frees the bot** without deleting it. You can reuse it with another agent from the **Use an existing bot** picker.
+- Manage bots across your organization under **Integrations → Messaging apps**. See [Bots](/connect-automate/chat-platforms/bots) for details.
 
-Platform tiles depend on the agent's daemon capabilities and deployment settings. **QQ is self-hosted only.** Each platform guide covers its prerequisites and self-hosting setup.
+Which platform tiles appear depends on the agent's daemon capabilities and deployment settings. **QQ is self-hosted only.** Check each platform guide for prerequisites and self-hosting configuration.
 
 ## Binding channels
 
-There's no channel picker: **invite the bot to a channel and it appears in AgentConnect.** On the agent's Integrations card, open a channel's settings and choose its **Session mode** first.
+There's no channel picker up front. **Invite the bot to a channel, and it appears in AgentConnect.** On the agent's Integrations card, open a channel's settings and choose its **Session mode** first.
 
 ### Session mode
 
-**Session mode** decides how the agent organizes work in this conversation:
+**Session mode** determines how the agent organizes work in a conversation:
 
-- **Auto** — a coordinator reads root messages and messages in threads not owned by a task. It hands a request to a task already working on that topic, opens a new task in the message's thread, answers a quick question itself, or stays quiet. A message that @-mentions the agent must be handled; if the coordinator fails to handle it, a task opens for it. People then talk directly to the task in its thread. While the coordinator decides, platforms with reactions show 🤔.
-- **Per thread** — each admitted root message starts its own session, and replies in its thread continue it.
-- **Single session** — every admitted message in the conversation, at the root or in a thread, joins one long session. Send `!new` to start a fresh one.
+- **Auto**: A coordinator reads root messages and messages in threads that don't have a task yet. It can route a request to an existing task working on that topic, open a new task in the message's thread, answer a quick question directly, or skip replying. Any message that @-mentions the agent is always handled; if the coordinator can't handle it, a task opens for it automatically. People then talk directly to that task in its thread. While the coordinator is deciding, platforms that support reactions show 🤔.
+- **Per thread**: Each admitted root message starts its own session, and replies in that thread continue it.
+- **Single session**: Every admitted message in the conversation, whether at the root or in a thread, joins one continuous session. Send `!new` to start a fresh one.
 
-With Auto, no further response trigger is needed: the coordinator decides what needs a reply, so **Respond to** is hidden; **Off** remains available at the bottom. Auto can't be combined with **By decision** or a shared bot's **Or pick by decision**; switch the row to **Per thread** first.
+In Auto mode, the coordinator decides which messages need a reply, so **Respond to** is hidden. **Off** remains available at the bottom of the menu. Auto can't be combined with **By decision** or a shared bot's **Or pick by decision**. Switch the row to **Per thread** first if you want to use a decision.
 
-In a task's thread, `!new` restarts that task and `!stop` stops it until someone mentions the agent there. At the conversation's root, `!new` starts a new coordinator, which keeps the open tasks, and `!stop` stops the coordinator's current turn. Open the coordinator's session in [Sessions](/operate-govern/sessions) to see its tasks, each with the summary it keeps of its own progress, on the **Tasks** tab.
+In a task's thread, `!new` restarts that task, and `!stop` pauses it until someone mentions the agent there. At the conversation root, `!new` starts a new coordinator while keeping open tasks running, and `!stop` stops the coordinator's current turn. Open the coordinator's session in [Sessions](/operate-govern/sessions) and check the **Tasks** tab to view its tasks and each task's progress summary.
 
-A self-hosted daemon runs Auto unless its `config.json` sets `"features": { "autoSessionMode": false }`; such a daemon answers an Auto conversation as **Per thread**.
+Self-hosted daemons run Auto by default unless `config.json` sets `"features": { "autoSessionMode": false }`. With Auto disabled, the daemon handles Auto conversations as **Per thread**.
 
 ### Respond to: Per thread and Single session
 
-After choosing **Per thread** or **Single session**, use **Respond to** to choose which messages activate the agent. The available choices depend on the platform:
+After choosing **Per thread** or **Single session**, use **Respond to** to set which messages trigger the agent. Available options depend on the platform:
 
-- **@-mentions** — respond when mentioned; unmentioned follow-ups continue in a thread the agent already joined.
-- **All messages** — run the channel's agent for every message.
+- **@-mentions**: Respond when mentioned. Unmentioned follow-ups continue in threads the agent has already joined.
+- **All messages**: Run the channel's agent for every message.
 
-Use the row's separate **+ Decision** control to judge messages with a [Decision](/build-your-team/decisions#respond-in-a-channel) and respond only when its answer matches your rules. An existing gate is shown as **By decision**; remove it with its × control to return to ordinary channel settings.
+Use the row's **+ Decision** control to evaluate messages with a [Decision](/build-your-team/decisions#respond-in-a-channel) and respond only when the result matches your rules. An active gate shows as **By decision**. Click its × button to remove it and return to standard channel settings.
 
-[Linear](/connect-automate/triggers-automation/linear) has the same shape with a different roster: its conversations are the workspace's **teams**, listed for you the moment you connect it, and a team row takes only **@-mention**, **By decision**, or **Off** — every Linear event is addressed to the app already.
+[Linear](/connect-automate/triggers-automation/linear) works the same way for workspace **teams**, which appear automatically once you connect. Because Linear events are already addressed to the app, each team row offers only **@-mention**, **By decision**, or **Off**.
 
 ### Turn off a conversation
 
-**Off** is separate at the bottom of the menu. It stops responses in that channel, including to mentions, existing thread affinity, control commands, or shared-bot fallback. The closed button reads **Auto**, **Per thread · @-mentions**, or the other selected settings; when disabled, it reads **Off**. Picking a session mode turns an Off conversation back on.
+**Off** appears separately at the bottom of the menu. It stops responses to all inbound activity in that channel, including mentions, active thread affinity, control commands, and shared-bot fallback. When closed, the button shows the active setting (such as **Auto** or **Per thread · @-mentions**), or **Off** when disabled. Pick a session mode to turn the conversation back on.
 
-Off keeps the bot in the channel, preserves past sessions, and only mutes inbound activation. A schedule or another agent's deliberate handoff can still post there. Manage the bot's actual channel or server membership on the chat platform.
+Turning a conversation Off keeps the bot in the channel and preserves past sessions; it only mutes inbound triggers. Schedules and deliberate handoffs from another agent can still post there. To remove the bot from a channel or server, manage its membership on the chat platform.
 
 ### New channel defaults
 
-At the bottom of the agent's Integrations card, **New channels start on** sets the initial behavior for newly discovered channels and group conversations:
+At the bottom of the agent's Integrations card, **New channels start on** sets the default behavior for newly discovered channels and group conversations:
 
-- **Auto** — the default where the platform and the agent's daemon support it; otherwise the conversation starts on **Per thread** with **@-mentions**.
-- **@-mentions · Per thread** — start with a separate session per thread, activated by mentions.
-- **Off** — wait for an editor to enable the conversation.
+- **Auto**: The default where the platform and daemon support it. Otherwise, the conversation starts on **Per thread** with **@-mentions**.
+- **@-mentions · Per thread**: Start with a separate session per thread, triggered by mentions.
+- **Off**: Wait for an editor to enable the conversation.
 
-Changing this default leaves existing conversations and one-to-one DMs unchanged. Restricted agents and conversations the platform identifies as external still start Off. In assistant mode, supported places use a fixed coordinator session where Auto is available, otherwise a fixed Single session. This overrides their ordinary session-mode choice while preserving Off.
+Changing this default leaves existing conversations and one-to-one DMs unchanged. Restricted agents and conversations the platform marks as external still start Off. In assistant mode, supported conversations use a fixed coordinator session where Auto is available, or a fixed Single session otherwise. This overrides the regular session mode while preserving Off.
 
 ### Direct messages
 
-A direct message appears after someone writes to the bot, and each agent controls its own direct conversations. One-to-one DMs use **On / Off** for responding. Slack also offers **Per thread** and **Single session**; in assistant mode, a Slack DM uses its coordinator where Auto is supported. Telegram, Discord and Lark / Feishu already keep one continuous session for a one-to-one DM. Group conversations use the session modes their platform supports, including all three for Slack group DMs. Conversations for a restricted agent start Off until an allowed editor enables them.
+A direct message appears once someone writes to the bot, and each agent manages its own direct conversations. One-to-one DMs use an **On / Off** toggle. Slack also offers **Per thread** and **Single session** (in assistant mode, a Slack DM uses its coordinator where Auto is supported). Telegram, Discord, and Lark / Feishu always use one continuous session for a one-to-one DM. Group conversations support the same session modes as channels on that platform, including all three for Slack group DMs. Conversations for a restricted agent start Off until an allowed editor enables them.
 
 ### Shared bots
 
-Normally one bot ↔ one agent. A **shared Slack bot** can serve multiple agents through a single identity, and a connected **Linear workspace** always does — every agent you enable on it works through the deployment's one Linear app. Under **Integrations → Messaging apps**, expand the bot and pick the **Default dispatch** agent for each channel: one "@Assistant" in Slack, with different specialists behind it by channel. **Or pick by decision** chooses the specialist per conversation instead, with a [Decision](/build-your-team/decisions#route-a-shared-bot).
+Usually, one bot connects to one agent. A **shared Slack bot** can serve multiple agents through one identity, and a connected **Linear workspace** always works this way: every agent enabled on it shares the deployment's Linear app. Under **Integrations → Messaging apps**, expand the bot and pick a **Default dispatch** agent for each channel. That lets you expose one "@Assistant" in Slack backed by different specialists per channel. To choose the specialist per conversation instead, use **Or pick by decision** with a [Decision](/build-your-team/decisions#route-a-shared-bot).
 
-The channel trigger applies to the shared bot. Switching it **Off** stops routing through that bot in the channel.
+The channel trigger applies to the shared bot. Switching it to **Off** stops routing through that bot in that channel.
 
 ### Restricted agents
 
-When an agent's team visibility is **Selected**, its chat conversations are gated too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. Every agent can also choose Off later as an explicit mute. See [Team visibility](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes).
+When an agent's team visibility is set to **Selected**, its chat conversations are restricted too. Newly discovered channels and direct messages start **Off** until an allowed editor enables each one from the integration card. Any agent can also be switched to Off later as an explicit mute. See [Team visibility](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes).
 
 ## Reading and posting in other conversations
 
-When someone asks an agent to read or post in a conversation other than the one it is answering in, the agent does it for that person and never goes further than they could. The conversation it is answering in is always open to it.
+When someone asks an agent to read or post in a conversation other than the one it's answering in, the agent acts on that person's behalf and enforces their permissions. The conversation it's currently answering in is always open to it.
 
-It reads another conversation's messages, threads, reactions or bookmarks only where the person asking can see that conversation:
+The agent reads messages, threads, reactions, or bookmarks from another conversation only when the requester can view that conversation:
 
-- a public channel, if they are a full member of that workspace rather than a guest;
-- a private channel or group DM they are a member of;
-- their own direct message with the agent. Someone else's direct message is never readable.
+- A public channel, if they're a full member of that workspace (not a guest).
+- A private channel or group DM they're a member of.
+- Their own direct message with the agent. Another person's direct message is never readable.
 
-It posts, reacts, schedules a message, starts a conversation, or changes bookmarks, canvases or lists only where the person asking could post themselves. What it posts is their call. Three cases have their own rule:
+The agent posts, reacts, schedules messages, starts conversations, or modifies bookmarks, canvases, and lists only where the requester could post themselves. Three cases have extra rules:
 
-- **A direct message** goes only to a member of your organization: on Slack, a full member of the workspace, not a guest.
-- **A conversation shared with another organization**, such as a Slack Connect channel, takes a post from another conversation only as a draft. A member of your organization, usually the person who asked, gets it as a card in a Slack direct message and chooses **Approve** or **Discard**. A draft nobody answers expires after 24 hours.
-- **A run no person is behind**, such as a webhook, a GitHub event or another agent's request, reads only public channels and its own conversation, and posts only in its own conversation. A schedule acts for the person who last edited it, or else the person who created it.
+- **Direct messages**: Allowed only to members of your organization (on Slack, full workspace members, not guests).
+- **Conversations shared with another organization** (such as a Slack Connect channel): Posts from another conversation are sent as drafts. A member of your organization, usually the requester, receives a card in a Slack direct message to **Approve** or **Discard** it. Unanswered drafts expire after 24 hours.
+- **Runs without a human requester** (such as webhooks, GitHub events, or requests from another agent): These runs read only public channels and their own conversation, and post only in their own conversation. A schedule acts for the person who last edited it, or the person who created it if it hasn't been edited.
 
-When the agent uses something from a private conversation, it says where it came from. When a request is refused, it says it can't share that or can't post there, without saying whether the conversation exists.
+When the agent uses content from a private conversation, it states where the content came from. When a request is refused, it explains that it can't share that content or can't post there, without confirming whether the conversation exists.
 
-Slack and Lark / Feishu can tell who is in a conversation. Telegram and Discord cannot, so there only a group or channel the platform shows as public counts: a Telegram group with a public @username, or a Discord channel everyone in the server can view.
+Slack and Lark / Feishu expose conversation membership. Telegram and Discord don't, so on those platforms only groups or channels marked as public count: a Telegram group with a public @username, or a Discord channel everyone in the server can view.
 
 ### Cross-platform handoffs
 
-Connect the same agent to more than one chat platform and it can send a deliberate handoff from one conversation to another. Use this only between two messaging workspaces you trust and have approved to exchange information. The destination starts its own linked session rather than merging both platform transcripts.
+If you connect the same agent to multiple chat platforms, it can hand off work from one conversation to another. Only use this between messaging workspaces you trust and have approved to exchange information. The destination starts its own linked session instead of merging both transcripts.
 
-On another platform, or through another of the agent's bots, AgentConnect must first recognize the person asking as a member of your organization, by the chat account they linked under **Your profile → Sign-in methods**. The agent then judges them by the chat account they linked for the destination's workspace: a public channel needs them to be a full member, and a private channel or group DM needs them to be a member. Where they have linked no account for that workspace, the agent reads or posts only in conversations whose sessions they can open under **Sessions**. Telegram and Discord accounts can't be linked, so that is always the rule there. On AgentConnect Cloud the account to link is a Slack account, so a handoff works from Slack into a Telegram, Discord or Lark / Feishu conversation where the agent already has a session they can open. It does not work from Telegram or Discord into Slack or Lark / Feishu: AgentConnect cannot tell who someone there is, so they reach other channels and groups only on that same bot. A self-hosted deployment can also link Lark and Feishu accounts. See [Hand off conversations between trusted workspaces](/how-to-guides/hand-off-conversations-across-messaging-platforms).
+Before acting on another platform (or through another of the agent's bots), AgentConnect must recognize the requester as a member of your organization via a chat account linked under **Your profile → Sign-in methods**. Access at the destination then follows two rules:
+
+- **Linked destination workspace**: The agent checks the chat account linked for that workspace. Public channels require full membership; private channels and group DMs require membership in that conversation.
+- **Unlinked destination workspace**: If the requester hasn't linked an account for that workspace, the agent can read or post only in conversations whose sessions they can open under **Sessions**. Telegram and Discord accounts can't be linked, so this rule always applies to them.
+
+On AgentConnect Cloud, you can link a Slack account. That lets you hand off from Slack into a Telegram, Discord, or Lark / Feishu conversation where the agent already has a session you can open. Handoffs don't work from Telegram or Discord into Slack or Lark / Feishu because AgentConnect can't identify who sent the request; those users can reach other channels and groups only on the same bot. Self-hosted deployments can also link Lark and Feishu accounts. See [Hand off conversations between trusted workspaces](/how-to-guides/hand-off-conversations-across-messaging-platforms).
 
 ## In-conversation commands
 
-Use these commands to control the current conversation without asking the model to do it. Slack uses `!` because Slack reserves `/` commands for apps.
+Use these commands to control the current conversation directly without prompting the model. Slack uses `!` because Slack reserves `/` commands for apps.
 
 | Action                              | Other platforms                     | Slack                      |
 | ----------------------------------- | ----------------------------------- | -------------------------- |
@@ -139,12 +144,20 @@ Use these commands to control the current conversation without asking the model 
 | Change model, effort, or permission | `/models`, `/effort`, `/permission` | The same commands with `!` |
 | Toggle fast mode                    | `/fast on`, `/fast off`             | `!fast on`, `!fast off`    |
 
-In Per thread and an Auto task's thread, **Stop** also mutes that thread until someone mentions the agent again or uses **resume**. In Single session and at an Auto conversation's root, **Stop** interrupts the current turn without muting the conversation; use **Off** to silence it. **Cancel** interrupts only the current turn.
+In Per thread mode and in an Auto task's thread, **Stop** also mutes that thread until someone mentions the agent again or sends **resume**. In Single session mode and at an Auto conversation's root, **Stop** interrupts the current turn without muting the conversation (use **Off** to mute it). **Cancel** interrupts only the current turn.
 
-The runtime-setting commands (`/models`, `/effort`, `/permission`, `/fast`) work only when the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) is **Talk, approve and change settings**. On Slack with **Follow Slack access** on, they work only for the agent's editors, and anyone else is told privately who can change them. On Telegram and Discord these commands appear in the native command menu, where the registered name is `/models` rather than `/model` (both are accepted when typed).
+The runtime-setting commands (`/models`, `/effort`, `/permission`, `/fast`) work only when the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) setting is **Talk, approve and change settings**. On Slack with **Follow Slack access** on, only the agent's editors can run them; anyone else gets a private reply naming who can make changes. On Telegram and Discord, these commands appear in the native command menu, registered as `/models` instead of `/model` (both work when typed).
 
-When a tool call needs approval, Slack, Telegram, Discord, Lark / Feishu and Google Chat post an approval card in the conversation, unless the agent is set to **Talk to the agent**. The same setting decides who may answer it; see [When a run asks for permission](/operate-govern/sessions#when-a-run-asks-for-permission).
+When a tool call needs approval, Slack, Telegram, Discord, Lark / Feishu, and Google Chat post an approval card in the conversation, unless the agent is set to **Talk to the agent**. That same setting decides who can respond to it. See [When a run asks for permission](/operate-govern/sessions#when-a-run-asks-for-permission).
 
 ## How chatty should an agent be?
 
-The agent's **Output mode** controls what reaches the platform: **Minimal** keeps one live-updating reply, **Low** posts replies, **Medium** adds tools and plans, **High** also includes reasoning and tool output, and **None** keeps the run in the web session only. The complete transcript is always in [Sessions](/operate-govern/sessions).
+The agent's **Output mode** controls what gets posted to the platform:
+
+- **Minimal**: Keeps one live-updating reply.
+- **Low**: Posts replies only.
+- **Medium**: Adds tool calls and plans.
+- **High**: Also includes reasoning and tool output.
+- **None**: Keeps output in the web session only.
+
+The complete transcript is always available in [Sessions](/operate-govern/sessions).

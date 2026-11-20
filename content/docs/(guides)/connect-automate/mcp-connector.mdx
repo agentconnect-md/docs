@@ -1,29 +1,29 @@
 ---
 title: "MCP connector"
 icon: Cable
-description: "Add AgentConnect to Claude or any MCP client — inspect and manage agents, sessions, schedules and integrations in plain language."
+description: "Connect AgentConnect to Claude or any MCP client to inspect and manage agents, sessions, schedules, and integrations in plain language."
 ---
 
 import imgApiKey from '@/public/images/api-key.png'
 
-AgentConnect ships a hosted **MCP server** at:
+AgentConnect hosts an **MCP server** at:
 
 ```
 https://mcp.agentconnect.md
 ```
 
-Add it to Claude (or any client that speaks MCP over streamable HTTP) and your assistant can work with your organization for you:
+Connect it to Claude (or any client that supports MCP over streamable HTTP) so your assistant can inspect and manage your organization:
 
 > _"Which of our agents are online right now?"_
 > _"What did we spend on tokens this week, per agent?"_
-> _"Did the nightly report schedule run — and did it succeed?"_
+> _"Did the nightly report schedule run, and did it succeed?"_
 > _"Create a weekday schedule for the reviewer agent."_
 
-Inside AgentConnect you do not need to connect anything: in a single-agent [Playground](/build-your-team/agents/playground#configure-agentconnect-from-a-conversation) conversation, the agent uses the same tools, and each change waits for your approval in the console.
+Inside AgentConnect, you don't need to configure anything: in a single-agent [Playground](/build-your-team/agents/playground#configure-agentconnect-from-a-conversation) conversation, the agent already has these tools, and each change waits for your approval in the console.
 
 ## Connect from Claude
 
-**Claude (claude.ai / desktop):** Settings → **Connectors** → **Add custom connector**, paste `https://mcp.agentconnect.md`, and finish in the browser: sign in with an enabled provider, **pick the organization** to bind, review the read and write access requested by the client, and **Authorize**. No keys to copy — the flow is standard OAuth 2.1 with dynamic client registration.
+**Claude (claude.ai / desktop):** Go to Settings → **Connectors** → **Add custom connector**, paste `https://mcp.agentconnect.md`, and complete the browser flow: sign in with an enabled provider, **pick the organization** to bind, review the read and write access requested by the client, and click **Authorize**. You don't need to copy any keys; this uses standard OAuth 2.1 with dynamic client registration.
 
 **Claude Code:**
 
@@ -31,14 +31,14 @@ Inside AgentConnect you do not need to connect anything: in a single-agent [Play
 claude mcp add --transport http agentconnect https://mcp.agentconnect.md
 ```
 
-then approve the browser sign-in when prompted (`/mcp` → authenticate). For headless environments (CI, servers) skip OAuth and attach an [API key](/api) instead:
+Then approve the browser sign-in when prompted (`/mcp` → authenticate). In headless environments such as CI or servers, skip OAuth and pass an [API key](/api) instead:
 
 ```bash
 claude mcp add --transport http agentconnect https://mcp.agentconnect.md \
   --header "Authorization: Bearer $AGENTCONNECT_API_KEY"
 ```
 
-Any other MCP client works the same way: OAuth if it supports the authorization-code flow, otherwise a personal API key in the `Authorization: Bearer` header.
+Other MCP clients work the same way: use OAuth if the client supports the authorization-code flow, or pass a personal API key in the `Authorization: Bearer` header.
 
 <Image src={imgApiKey} alt="Create a personal API key for a headless MCP client" width={520} />
 
@@ -60,7 +60,7 @@ With `mcp:read`, an assistant can inspect:
 | Decisions | `listDecisions`, `getDecision`, `listDecisionProviders`, `getBotDecisionRouting`, `getCodeHostDecisionRouting`, `listDecisionEvaluations` |
 | Members | `listMembers` |
 
-`whoami` returns the current identity, organization, and role. Session tools return status, usage, and links—not transcript contents. `listBots` returns metadata, never token material; `getUsage` includes totals and per-agent breakdowns. `getDaemon` lists each runtime's models with the efforts and permission modes they accept. Workspace tools read an agent's files live from its daemon. Transcripts stay [on your daemons](/getting-started/how-it-works).
+`whoami` returns your current identity, organization, and role. Session tools return status, usage, and links, without transcript contents. `listBots` returns metadata only (no token material), and `getUsage` returns totals along with per-agent breakdowns. `getDaemon` lists each runtime's models and the effort levels and permission modes they accept. Workspace tools read an agent's files directly from its daemon. Transcripts stay [on your daemons](/getting-started/how-it-works).
 
 ## Write tools
 
@@ -74,13 +74,13 @@ When the client requests and you approve `mcp:write`, it can also make these cha
 | Integrations | `setChannelTrigger`, `createGithubTrigger`, `removeIntegration` |
 | Decisions | `createDecision`, `updateDecision`, `deleteDecision`, `saveBotDecisionRouting`, `saveCodeHostDecisionRouting`, `deleteCodeHostDecisionRouting`, `previewDecision`, `previewIntegrationChannelDecision`, `previewBotDecisionRouting` |
 
-The write catalog is deliberately narrower than the console and REST API. It does not expose credentials, members, organization settings, access-control lists, or bot secrets.
+The write surface is intentionally narrower than the console and REST API. It doesn't expose credentials, members, organization settings, access-control lists, or bot secrets.
 
-`deleteAgent`, `setAgentWorkspace`, `deleteCron`, `removeIntegration`, `deleteDecision`, and `deleteCodeHostDecisionRouting` are destructive; `setAgentWorkspace` can discard the agent's checkout on its daemon, including uncommitted work. Each requires an exact live confirmation value — the agent's name for the two agent tools, the integration or Decision name, the schedule name/ID, or the repository's `owner/repo` — in addition to the client's own approval flow. A mismatched or missing confirmation is rejected.
+`deleteAgent`, `setAgentWorkspace`, `deleteCron`, `removeIntegration`, `deleteDecision`, and `deleteCodeHostDecisionRouting` are destructive. In particular, `setAgentWorkspace` can discard the agent's checkout on its daemon, including uncommitted work. In addition to the client's own approval prompt, each destructive tool requires an exact live confirmation value (the agent name for the two agent tools, the integration or Decision name, the schedule name/ID, or the repository's `owner/repo`). Missing or mismatched confirmations are rejected.
 
 ## Console dialogs
 
-Some setup needs a credential or a choice made in the browser. These tools open the matching console dialog instead of changing anything themselves:
+Some setup tasks require credentials or interactive choices in the browser. These tools open the matching console dialog instead of applying changes directly:
 
 | Dialog | Tool |
 | --- | --- |
@@ -91,11 +91,11 @@ Some setup needs a credential or a choice made in the browser. These tools open 
 | Install a skill | `installSkill` |
 | Add an MCP server | `installMcpServer` |
 
-In a single-agent [Playground conversation](/build-your-team/agents/playground#configure-agentconnect-from-a-conversation), the dialog opens in the console, prefilled where it can, and you finish it there. Other clients show a page that points to the console instead.
+In a single-agent [Playground conversation](/build-your-team/agents/playground#configure-agentconnect-from-a-conversation), the dialog opens in the console with fields prefilled where possible so you can finish there. Other clients display a page linking you to the console.
 
 ## Permissions & trust
 
-- A connection acts **as you, in one organization** — the one you picked at consent (or the org your API key is bound to). Connect again to use another org.
-- OAuth access is scope-confined: `mcp:read` exposes only read tools, while `mcp:write` is required for write tools. A personal API key follows its permission: a [Full access](/api#create-a-key) key carries your whole role, a [Read-only](/api#create-a-key) key reaches only the read tools, and an [Agent chat](/api#create-a-key) key cannot use the connector at all.
-- Your **role and per-resource visibility apply unchanged**: the tools call the same REST surface as the console, so a Viewer's connector can't see or change more than that Viewer can in the console, and [restricted resources](/operate-govern/permissions-overview/team-visibility) stay hidden.
-- Revoke the OAuth connection or personal API key when a client should no longer act as you.
+- Each connection acts **as you, in one organization**: the one you selected during consent (or the organization your API key is bound to). Add another connection to access a different organization.
+- OAuth permissions are scoped: `mcp:read` grants access to read tools only, while `mcp:write` is required for write tools. A personal API key follows its permission level: a [Full access](/api#create-a-key) key matches your full role, a [Read-only](/api#create-a-key) key can use only read tools, and an [Agent chat](/api#create-a-key) key can't use the connector at all.
+- Your **role and per-resource visibility apply unchanged**. Because these tools call the same REST endpoints as the console, a Viewer's connector can't view or modify anything beyond what that Viewer can do in the console, and [restricted resources](/operate-govern/permissions-overview/team-visibility) stay hidden.
+- Revoke the OAuth connection or personal API key whenever a client should no longer act on your behalf.
