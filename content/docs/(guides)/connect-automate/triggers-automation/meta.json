@@ -5,6 +5,7 @@
     "azure-devops",
     "gitea",
     "linear",
+    "email",
     "webhooks",
     "schedules"
   ],
