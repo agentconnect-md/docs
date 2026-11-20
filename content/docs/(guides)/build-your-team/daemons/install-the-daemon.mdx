@@ -1,58 +1,58 @@
 ---
 title: "Install the daemon"
 icon: Download
-description: "Put the AgentConnect daemon on any machine — one command to try it, one more to make it permanent."
+description: "Install the AgentConnect daemon on any machine: one command to try it out, and one more to run it as a background service."
 ---
 
 import imgAddDaemon from '@/public/images/add-daemon.png'
 
-The daemon is the machine-side half of AgentConnect: it hosts your agents, drives their runtimes over ACP, and holds every platform connection. This page covers getting it onto a machine and keeping it there.
+The daemon runs on your machine: it hosts your agents, drives their runtimes over ACP, and maintains all chat platform connections. This guide covers installing it on a machine and keeping it running.
 
 ## Requirements
 
-- **macOS, Linux, or Windows.** Background service mode uses launchd or systemd; on Windows, run the daemon in the foreground. Sandboxing (`srt`, `microsandbox`) is Linux only; elsewhere agents run with `host`.
-- **Node.js 24.12 or newer** — use [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli), the stable entry point that installs, launches and upgrades the daemon for you.
-- At least one agent runtime installed and authenticated on the machine — e.g. Claude Code (`claude`) or Codex (`codex`). The daemon **detects runtimes automatically** (from the machine's installed launchers, via the [ACP registry](https://agentclientprotocol.com)) and reports what it finds — runtimes, versions, models — to the console.
-- **Outbound network only.** The daemon dials out to your configured Control Plane and to the chat platforms. It never listens on a public port, so it runs fine on a laptop behind NAT.
-- **Optional Linux sandboxing:** the daemon offers every execution strategy by default and makes each one available only when its requirements are met. SRT requires `bubblewrap`, `ripgrep`, `socat`, and unprivileged user namespaces; on Ubuntu 24.04 and later, [allow user namespaces for bubblewrap](/operate-govern/sandboxing#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap) first. microsandbox requires KVM and vsock access. See [Sandboxing](/operate-govern/sandboxing) for setup and [Credential protection](/operate-govern/sandboxing/credential-protection) for login support.
+- **macOS, Linux, or Windows**: Background service mode uses launchd on macOS and systemd on Linux. On Windows, run the daemon in the foreground. Sandboxing (`srt`, `microsandbox`) is Linux-only; on macOS and Windows, agents run with `host`.
+- **Node.js 24.12 or newer**: Use [`@agentconnect.md/cli`](https://www.npmjs.com/package/@agentconnect.md/cli), the stable CLI that installs, launches, and upgrades the daemon for you.
+- **At least one installed, signed-in agent runtime**: For example, Claude Code (`claude`) or Codex (`codex`). The daemon **detects runtimes automatically** from the machine's installed launchers via the [ACP registry](https://agentclientprotocol.com) and reports available runtimes, versions, and models to the console.
+- **Outbound network access only**: The daemon connects out to your Control Plane and chat platforms. It doesn't listen on a public port, so it works behind NAT on a laptop or private server.
+- **Optional Linux sandboxing**: The daemon enables all execution strategies by default, exposing each one only when the machine meets its requirements. SRT requires `bubblewrap`, `ripgrep`, `socat`, and unprivileged user namespaces. On Ubuntu 24.04 and later, [allow user namespaces for bubblewrap](/operate-govern/sandboxing#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap) first. microsandbox requires KVM and vsock access. See [Sandboxing](/operate-govern/sandboxing) for setup and [Credential protection](/operate-govern/sandboxing/credential-protection) for login details.
 
 ## Connect a machine
 
-In a new organization, onboarding shows the connection command inline. If you skipped onboarding, open **Infra → Add daemon**. Both paths mint a one-time key and show the exact command to run on the target machine:
+In a new organization, onboarding displays the connection command directly. If you skipped onboarding, open **Infra → Add daemon**. Both generate a one-time key and give you the exact command to run on the target machine:
 
 ```bash
 npx -y @agentconnect.md/cli run --api-url <your-control-plane-ws-url> --api-key <one-time-key>
 ```
 
-Copy it from the console (the key is **shown only once**) and run it. The page continues when the daemon comes online. The **Run** command starts the daemon in the foreground using the supplied credentials. The CLI downloads the appropriate daemon release on first use, then registers it and starts heartbeating.
+Copy the command from the console (the key is **shown only once**) and run it. The page moves forward as soon as the daemon comes online. The **Run** command starts the daemon in the foreground with those credentials. On first run, the CLI downloads the right daemon release, registers the machine, and starts sending heartbeats.
 
 <Image src={imgAddDaemon} alt="Connect your daemon with example values" width={640} />
 
 ## Run it permanently
 
-`agentconnect run` stays in the foreground — good for a first try, wrong for a machine that should serve your team. Switch the Add daemon modal to **Install as service** and copy its `login` command instead:
+`agentconnect run` stays in the foreground. That's handy for a quick test, but not for a machine serving your team. Switch the Add daemon dialog to **Install as service** and copy its `login` command instead:
 
 ```bash
 # Verifies the key and saves it, then offers to install and start the service.
 npx -y @agentconnect.md/cli login --api-url <your-control-plane-ws-url> --api-key <one-time-key>
 ```
 
-If you have already authenticated with `login`, you can install and start the service separately:
+If you've already authenticated with `login`, you can install and start the service separately:
 
 ```bash
 npx -y @agentconnect.md/cli install-service   # register launchd / systemd service
 npx -y @agentconnect.md/cli up                # start it
 ```
 
-Install and authenticate agent runtimes as the OS user who owns the service, then restart the daemon after changing that user's runtime installation or `PATH`.
+Install and sign in to agent runtimes as the OS user that runs the service. Whenever you change that user's runtime installation or `PATH`, restart the daemon.
 
 ### What a runtime sign-in brings
 
-Signing a runtime in gives its agents access to that provider's models. For some runtimes it would also bring the tools attached to that cloud account — mail, chat, files, issue trackers that act as the person who signed in, on any machine that authenticates as them. AgentConnect turns those off when it starts a runtime, so an agent gets the MCP servers you gave it plus the runtime's own local configuration, and nothing extra from the sign-in. Model access is untouched.
+Signing in to a runtime gives its agents access to that provider's models. For some runtimes, signing in also exposes cloud account tools (mail, chat, files, issue trackers) that act as the signed-in person on any machine using that login. AgentConnect disables those account tools when starting a runtime, so an agent only gets the MCP servers you assign it plus the runtime's local config. Model access works as usual.
 
-Each runtime is switched off with the narrow lever it publishes, and that lever exists only from a given release onwards — keep runtimes current, or an older build silently keeps its account tools. If a runtime inherits account tools with no safe switch, or AgentConnect does not recognize it, the daemon says so in its log.
+AgentConnect disables these tools using each runtime's own published switch, which only exists starting from certain runtime versions. Keep your runtimes up to date, since older builds quietly keep their account tools enabled. If a runtime inherits account tools with no safe way to disable them, or if AgentConnect doesn't recognize the runtime, the daemon logs a note.
 
-On a personal machine you can allow them. Set this in `config.json` and restart:
+On a personal machine, you can allow those account tools. Add this to `config.json` and restart:
 
 ```json
 {
@@ -62,21 +62,21 @@ On a personal machine you can allow them. Set this in `config.json` and restart:
 }
 ```
 
-It covers the whole daemon and every runtime on it, so each agent there may act with the account tools of whichever identity its runtime is signed in as. There is deliberately no per-agent version — this is the host owner's call, not something an agent's editor can switch on.
+This setting applies to the whole daemon and every runtime on it, so every agent on that machine can use the account tools of whichever account its runtime is signed in to. There's no per-agent override by design: this is a host-level call for the machine owner, not something an agent editor can turn on.
 
-Manage it with:
+Manage the service with:
 
 | Command | What it does |
 | --- | --- |
-| `npx -y @agentconnect.md/cli status` | Show service state, PID and the log file path |
-| `npx -y @agentconnect.md/cli up` / `down` / `restart` | Start / stop / restart the background service |
+| `npx -y @agentconnect.md/cli status` | Show service state, PID, and the log file path |
+| `npx -y @agentconnect.md/cli up` / `down` / `restart` | Start, stop, or restart the background service |
 | `npx -y @agentconnect.md/cli uninstall-service` | Stop and remove the service |
 | `npx -y @agentconnect.md/cli run` | Run in the foreground (ignores the service) |
-| `npx -y @agentconnect.md/cli upgrade --restart` | Upgrade, restart, health-check and roll back on failure — see [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon) |
+| `npx -y @agentconnect.md/cli upgrade --restart` | Upgrade, restart, health-check, and roll back on failure. See [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon). |
 
 ## What lands on disk
 
-Everything the daemon owns lives under one root, `~/.agentconnect` by default:
+The daemon stores all of its files under a single root directory, `~/.agentconnect` by default:
 
 ```
 ~/.agentconnect/
@@ -103,7 +103,7 @@ Useful CLI and daemon-run flags:
 
 ## Good to know
 
-- **Updates:** the CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure. See [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon).
-- **Sandboxing:** on a supported Linux daemon, each agent's **Execution strategy** chooses its boundary. The daemon can also refuse unsandboxed sessions, and refuses to start when none of its strategies can run. See [Sandboxing](/operate-govern/sandboxing) before using it as a production guarantee.
-- **A temporary Control Plane outage does not stop established work.** Existing sessions and platform connections continue until the daemon reconnects.
-- **Multiple machines:** add as many daemons as you like — a beefy workstation for heavy agents, a laptop for experiments. You can later move an agent between compatible online daemons; see [Manage daemons](/build-your-team/daemons/manage-daemons).
+- **Updates**: The CLI keeps installed daemon releases under the daemon root. Run `npx -y @agentconnect.md/cli upgrade --restart`, or use **Upgrade** in the console, to switch releases with a health check and automatic rollback on failure. See [Upgrade the daemon](/build-your-team/daemons/upgrade-the-daemon).
+- **Sandboxing**: On a supported Linux daemon, each agent's **Execution strategy** sets its isolation boundary. You can also configure the daemon to reject unsandboxed sessions, and the daemon won't start if none of its enabled strategies can run. Read [Sandboxing](/operate-govern/sandboxing) before relying on it in production.
+- **Short Control Plane outages don't stop active work**: Existing sessions and chat platform connections keep running until the daemon reconnects.
+- **Multiple machines**: Add as many daemons as you need, such as a fast workstation for heavy agents and a laptop for experiments. You can move an agent between compatible online daemons later; see [Manage daemons](/build-your-team/daemons/manage-daemons).

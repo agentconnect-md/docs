@@ -1,13 +1,13 @@
 ---
 title: "管理 Daemon"
 icon: ServerCog
-description: "监控 Daemon 健康状况、维护服务、在机器之间安全地移动 Agent，以及在 AgentConnect Cloud 上运行 Agent。"
+description: "监控 Daemon 健康状况、维护服务、在机器之间安全地迁移 Agent，以及在 AgentConnect Cloud 上运行 Agent。"
 ---
 
 import imgDaemons from '@/public/images/daemons.png'
 import imgDaemonRuntimes from '@/public/images/daemon-runtimes.png'
 
-**基础设施**页面在 **Daemon** 下列出了连接到你组织的机器。打开其中一台即可查看它的健康状况、可用 Runtime、资源、托管的 Agent、能力和可见范围。
+**基础设施**页面的 **Daemon** 列表展示了连接到你组织的所有机器。点进任意一台即可查看它的健康状况、可用 Runtime、资源、托管的 Agent、能力和可见范围。
 
 <Image src={imgDaemons} alt="基础设施页面：AgentConnect Cloud、已连接的 Daemon 和一个 Daemon 组" width={900} />
 
@@ -15,53 +15,53 @@ import imgDaemonRuntimes from '@/public/images/daemon-runtimes.png'
 
 | 状态 | 含义 |
 | --- | --- |
-| **在线** | 已连接；Agent 可达 |
-| **离线** | 已断开；Agent 不可用 |
+| **在线** | 已连接，Agent 可访问 |
+| **离线** | 已断开，Agent 不可用 |
 
-离线 Daemon 所拥有的会话记录在它重新连接之前无法获取。
+离线 Daemon 上的会话记录在重新连上线之前无法读取。
 
-重启或升级期间会显示为**重启中**或**升级中**，直到 Daemon 重新就绪。
+重启或升级期间，状态会显示为**重启中**或**升级中**，直到 Daemon 恢复就绪。
 
 ## 操作 [#actions]
 
-重启和升级使用普通的 Daemon 编辑权限：任何能看到该 Daemon 的所有者或协作者都可以执行。查看者不能。
+重启和升级只需要普通的 Daemon 编辑权限：能看到该 Daemon 的所有者或协作者都可以操作，查看者不行。
 
-- **重启**（在线 Daemon）——排空工作，并请求服务管理器以同一版本重新启动。
-- **升级**（在线 Daemon）——安装选定的版本，排空并重新启动，然后对结果做健康检查。失败的升级会在可能时回滚。入口是版本过旧的 Daemon 上的 **更新到 \<version\>** 徽标。通道、主机侧升级和回滚见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
-- **重新连接**（离线 Daemon）——签发一个新的一次性令牌，并显示要在该主机上运行的命令。它的身份和 Agent 放置关系都会保留。
-- **删除**（离线 Daemon）——移除该 Daemon 并吊销其密钥。它的 Agent 会处于未放置且不活跃的状态，停止响应，直到你把它们放置到另一个 Daemon 上。机器上的本地进程和文件会一直保留，直到你在那台机器上停止或删除它们。
+- **重启**（在线 Daemon）：排空当前任务，并让服务管理器重新启动同一版本。
+- **升级**（在线 Daemon）：安装选定版本，排空并重启 Daemon，然后执行健康检查。如果升级失败，会在可行时自动回滚。版本落后的 Daemon 上会显示 **更新到 \<version\>** 徽标，点击即可发起升级。关于发布通道、主机本地升级和回滚，详见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
+- **重新连接**（离线 Daemon）：生成新的一次性令牌，并给出要在该主机上执行的命令。Daemon 原有的身份和 Agent 分配关系都会保留。
+- **删除**（离线 Daemon）：从组织中移除该 Daemon 并吊销其密钥。上面的 Agent 会变为未分配且不活跃的状态，停止响应，直到你把它们分配到其他 Daemon。原机器上的进程和本地文件不会被删除，需要你自己在机器上停止或清理。
 
 ## 放置 [#placement]
 
-放置在你所连接的 Daemon 上的每个 Agent 都在那一台机器上运行——它拥有该 Agent 的工作区、Runtime 进程和会话记录。当两端都在线、就绪，并且与 Agent 的 Runtime、模型和 MCP 服务器兼容时，你可以在 Agent 的**配置**标签页中移动它。要让 Agent 在一台机器宕机时继续存活，请改为把它放置到 [Daemon 组](/build-your-team/daemons/daemon-groups)上。
+分配到单台 Daemon 上的 Agent 只在那台机器上运行，其工作区、Runtime 进程和会话记录也都保存在本地。只要源和目标 Daemon 都在线、就绪，并且兼容该 Agent 的 Runtime、模型和 MCP 服务器，你就可以在 Agent 的**配置**标签页中迁移它。如果希望单台机器宕机时 Agent 依然可用，请改用 [Daemon 组](/build-your-team/daemons/daemon-groups)。
 
-移动会按已保存的 Agent 定义冷重建 Agent；它不会迁移 Daemon 本地的工作区、记忆或会话记录数据。请先提交或备份本地工作，并预期 GitHub 工作区会在目标机器上重新克隆。
+迁移 Agent 会按已保存的定义在目标机器上冷重建，不会复制原 Daemon 本地的工作区文件、本地记忆或会话记录。迁移前请先提交或备份本地改动，GitHub 工作区会在目标机器上重新克隆。
 
 ## AgentConnect Cloud [#agentconnect-cloud]
 
-在 [AgentConnect Cloud](https://app.agentconnect.md) 上，Daemon 选择器会多出一项不属于你机器的条目：**AgentConnect Cloud**。把 Agent 放置在那里，它就会在由 AgentConnect 管理的基础设施上运行——不需要准备机器，不需要安装或登录 Runtime，也不需要提供方的 API 密钥。模型访问已包含在内，提供一组精选的 Runtime 和模型，每个 Agent 都在自己独立隔离的环境中运行。
+在 [AgentConnect Cloud](https://app.agentconnect.md) 上，Daemon 选择器中会提供一个托管选项：**AgentConnect Cloud**。把 Agent 放在这里后，它会直接运行在 AgentConnect 维护的基础设施上，无需自己准备机器、安装或登录 Runtime，也不用提供模型 API 密钥。平台内置了一组精选的 Runtime 和模型，每个 Agent 都运行在独立的隔离环境中。
 
-在**基础设施**页面上，它显示为单独一个 **AgentConnect Cloud** 条目；打开它可以看到放置在那里的 Agent 和最近的额度动态。与你自己连接的机器不同，云端放置不绑定到某一台机器：Agent 的工作区、记忆和会话记录位于其托管环境中，AgentConnect 可能会随时间用不同的算力来承载它。云端放置和你自己的机器可以共存于同一个组织；在两者之间移动 Agent 与其他移动一样是冷重建——Agent 会按已保存的定义重新创建，现有的工作区、记忆和会话记录内容不会随之迁移。
+在**基础设施**页面上，它显示为单独的 **AgentConnect Cloud** 条目，点开即可查看部署在云端的 Agent 和近期额度变动。与自建机器不同，云端部署不绑定某台特定主机：Agent 的工作区、记忆和会话记录都存在托管环境中，底层算力可能随时间调整。云端部署和自有 Daemon 可以在同一个组织里共存。在两者之间迁移 Agent 与普通迁移一样属于冷重建：系统会按已保存的定义重新创建 Agent，原有的工作区、记忆和会话记录不会随之转移。
 
 ### 定价 [#pricing]
 
-云端按用量计费。把 Agent 放置在那里本身不产生费用——你只为其会话的模型用量付费：
+云端按实际用量计费。把 Agent 放到云端本身不收费，你只需为会话产生的模型用量付费：
 
-- **模型用量按模型提供方公布的 API 价格计费**——与直接调用提供方的 API 相同，没有加价。[决策](/build-your-team/decisions)评估也包括在内。当提供方调整公布的价格时，云端价格也随之变化。
-- **用量从你组织的预付额度余额中扣除**。所有者可在**账单**页面添加额度。余额、账目明细及其背后的分析视图见[账单与用量](/operate-govern/billing-and-usage)。
-- **额度耗尽会暂停云端工作**。余额用完后，云端放置的 Agent 会停止接收新的模型流量，直到添加额度为止。没有超额计费。
+- **按提供方公开 API 价格计费**：与直接调用提供方 API 同价，不加价，[决策](/build-your-team/decisions)评估也包含在内。提供方调价时，云端费率同步更新。
+- **从预付额度余额扣除**：用量直接从组织的预付额度中扣减。所有者可以在**账单**页面充值。余额、账目明细和分析视图详见[账单与用量](/operate-govern/billing-and-usage)。
+- **无超额计费**：余额用尽后，云端 Agent 会暂停接收新的模型流量，充值后即可恢复。
 
-放置在你自己连接的 Daemon 上的 Agent 从不计费：它们使用那些机器上配置的提供方凭证，其模型流量直接在你的机器和提供方之间传输。
+运行在你自有 Daemon 上的 Agent 不会被 AgentConnect 计费：它们使用机器上配置的提供方凭证，模型流量直接在你的机器和提供方之间传输。
 
 ## 会话保留 [#session-retention]
 
-每个 Daemon 都有一个**过期会话**设置：选择一个常用的时间窗口、输入自定义天数，或者无限期保留会话。它控制该 Daemon 保留已完成的会话记录和会话工作树的时长。内容过期后，控制平面仍会保留会话元数据。过期后仍可见的内容见[会话保留与清理](/operate-govern/sessions#retention-and-cleanup)。
+每台 Daemon 都可以设置**过期会话**：选择常用时间窗口、输入自定义天数，或者永久保留。它控制 Daemon 保留已完成会话的记录和会话工作树的时长。本地内容过期后，控制平面依然保留会话元数据。过期后仍可查看的信息见[会话保留与清理](/operate-govern/sessions#retention-and-cleanup)。
 
 ## 故障排查 [#troubleshooting]
 
-- “**添加 Daemon”中一直显示“等待 Daemon…”**——命令很可能在你的终端里失败了。检查 Node 版本是否 ≥ 24.12（`node -v`），以及机器能否通过 HTTPS/WSS 访问你的控制平面 URL。
-- **Daemon 显示离线但进程仍在运行**——查看日志（`npx -y @agentconnect.md/cli status` 会打印日志路径，默认是 `~/.agentconnect/logs/daemon.log`）。反复出现 `connect/handshake failed` 通常意味着密钥已被吊销——对该 Daemon 使用**重新连接**；如果它已被删除，则重新接入一台新的。
-- **选择器中缺少某个 Runtime**——检查 Daemon 用户的 Runtime 安装和已保存的登录。对于 microsandbox，Runtime 还必须安装在所选镜像中。使用 Runtime 卡片中的**主机**、**沙箱**和**虚拟机**标签页检查每种策略；无法运行的策略会在其 Runtime 列表的位置显示原因。
-- **某个执行策略不可用**——在 Agent 的**执行策略**选择器中把鼠标悬停在它上面查看原因，并检查 Daemon 日志。SRT 需要其主机工具和用户命名空间；microsandbox 需要 KVM 和 vsock 访问权限。在 Daemon 的 `sandbox` 配置中设为 `false` 的策略会在此 Daemon 上显示为已关闭。见[沙箱隔离](/operate-govern/sandboxing#configure-the-daemon)。
+- **“添加 Daemon”一直停在“等待 Daemon…”**：通常是终端里的命令执行失败了。检查 Node 版本是否 ≥ 24.12（`node -v`），以及机器能否通过 HTTPS/WSS 访问控制平面 URL。
+- **Daemon 显示离线，但本地进程还在跑**：查看日志（`npx -y @agentconnect.md/cli status` 会输出路径，默认是 `~/.agentconnect/logs/daemon.log`）。反复出现 `connect/handshake failed` 一般说明密钥已被吊销，请对该 Daemon 执行**重新连接**；如果该 Daemon 已被删除，请重新接入一台新的。
+- **选择器里看不到某个 Runtime**：检查 Daemon 所属操作系统用户的 Runtime 安装和登录状态。使用 microsandbox 时，所选镜像里也必须安装了该 Runtime。在 Runtime 卡片里切换**主机**、**沙箱**和**虚拟机**标签页查看各策略状态；无法运行的策略会在列表位置直接显示原因。
+- **某个执行策略不可用**：在 Agent 的**执行策略**选择器中悬停查看原因，并结合 Daemon 日志排查。SRT 需要相应的主机工具和用户命名空间，microsandbox 需要 KVM 和 vsock 访问权限。在 Daemon 的 `sandbox` 配置中设为 `false` 的策略会显示为已关闭。详见[沙箱隔离](/operate-govern/sandboxing#configure-the-daemon)。
 
 <Image src={imgDaemonRuntimes} alt="Daemon 的 Runtime 卡片在沙箱标签页下显示该策略不可用的原因" width={820} />

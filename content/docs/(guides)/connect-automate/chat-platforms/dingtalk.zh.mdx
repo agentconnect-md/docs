@@ -17,32 +17,32 @@ import imgQuestionCard from '@/public/images/dingtalk-question-card.png'
   本页适用于中国大陆版钉钉（dingtalk.com）。国际版钉钉（dingtalk.io）请切换到[英文版](https://www.agentconnect.md/docs/connect-automate/chat-platforms/dingtalk)。
 </Callout>
 
-AgentConnect Cloud 和自托管部署都支持钉钉。每个组织用自己的企业内部应用连接机器人。Daemon 通过钉钉的 Stream 模式主动向外连接，因此不需要公网回调 URL。
+AgentConnect Cloud 和自托管部署均支持钉钉。每个组织通过自己的企业内部应用连接机器人。Daemon 使用钉钉的 Stream 模式主动向外连接，无需公网回调 URL。
 
 ## 创建应用 [#create-the-app]
 
-登录组织后，在[钉钉开发者后台](https://open-dev.dingtalk.com/)：
+登录组织后，在[钉钉开发者后台](https://open-dev.dingtalk.com/)完成以下配置：
 
-1. 在企业内部应用下点击**创建应用**。应用名称只能包含字母、汉字和数字，不能有空格。
+1. 在企业内部应用下点击**创建应用**。应用名称只能包含字母、汉字和数字，不能包含空格。
 
    <Image src={imgCreateApp} alt="创建应用面板：填好名称、描述和图标" width={360} />
 
-2. 点击**添加应用能力 → 机器人**并打开机器人配置。给机器人填上 Agent 的名称和图标，钉钉会在聊天里显示它们，AgentConnect 无法替你设置。
+2. 点击**添加应用能力 → 机器人**并开启机器人配置。给机器人填上 Agent 的名称和图标，钉钉会在聊天中展示这些信息，AgentConnect 无法代为设置。
 
    <Image src={imgRobotIdentity} alt="机器人配置：机器人名称和图标" width={640} />
 
-   填写机器人简介和描述，上传消息预览图，保留 **Stream 模式**的消息接收方式，然后点击**发布**。
+   填写机器人简介和描述，上传消息预览图，消息接收模式保持为 **Stream 模式**，然后点击**发布**。
 
    <Image src={imgRobotStream} alt="Stream 消息接收模式和发布按钮" width={560} />
 
-3. 在**权限管理**中搜索并开通 `Card.Instance.Write`、`Contact.Org.Read` 和 `qyapi_get_microapp_list`，三个权限都无需审批。
-   - `Card.Instance.Write` 让成员能点按卡片回答 Agent 的问题。不开通时，问题会以带编号的文字发出。
-   - `Contact.Org.Read` 让 Console 用组织名称命名这个集成，机器人收到第一条消息后生效。不开通时，集成以 Client ID 命名。
-   - `qyapi_get_microapp_list` 让 Console 显示机器人自己的名字。不开通时，机器人以 Client ID 显示。
+3. 在**权限管理**中搜索并开通 `Card.Instance.Write`、`Contact.Org.Read` 和 `qyapi_get_microapp_list`，这三个权限均无需审批：
+   - `Card.Instance.Write`：允许成员通过点击卡片回答 Agent 的提问。未开通时，问题会以带编号的文字发送。
+   - `Contact.Org.Read`：让 Console 在机器人收到第一条消息后使用组织名称命名该集成。未开通时，集成以 Client ID 命名。
+   - `qyapi_get_microapp_list`：让 Console 显示机器人自己的名称。未开通时，机器人以 Client ID 显示。
 
    <Image src={imgPermission} alt="已开通 Card.Instance.Write 权限" width={640} />
 
-4. 在**版本管理与发布**中创建版本，设置谁能看到机器人，然后保存。免审的版本保存后立即上线。之后对应用的每次修改，都要发布新版本才会生效。
+4. 在**版本管理与发布**中创建版本，设置谁能看到机器人并保存。免审版本保存后立即上线。后续对应用的每次修改，都需要发布新版本才会生效。
 
    <Image src={imgVersion} alt="新版本，可用范围为全部员工" width={560} />
 
@@ -52,27 +52,27 @@ AgentConnect Cloud 和自托管部署都支持钉钉。每个组织用自己的�
 
 ## 连接 [#connect-it]
 
-在你的 Agent 上打开**集成 → 添加集成 → 钉钉**，在钉钉选择块上保持「国内版」（「国际版」对应国际版钉钉），粘贴 Client ID 和 Client Secret，然后点击**连接**。AgentConnect 会先向钉钉校验这对凭证再保存；如果应用属于另一个版本，会提示你切换到哪个版本。
+在 Agent 页面中打开**集成 → 添加集成 → 钉钉**，在钉钉选项上保持「国内版」（「国际版」对应国际版钉钉），粘贴 Client ID 和 Client Secret，然后点击**连接**。AgentConnect 会先向钉钉校验这对凭证再保存。如果应用属于另一个版本，系统会提示你需要切换的版本。
 
 <Image src={imgIntegration} alt="添加钉钉集成：填写 Client ID 和 Client Secret" width={640} />
 
 ## 使用 [#use-it]
 
-- **单聊**：直接给机器人发消息。一个单聊就是与 Agent 的一个持续会话。
-- **群聊**：把机器人加进群并 **@** 它。只有提及机器人的群消息，钉钉才会发给机器人。每次新的 @ 开启一个会话；要接着聊，回复 Agent 的消息即可，回复会自动 @ 机器人。如果想让整个群共用一个会话，在 Agent 的集成卡片上把该群的**会话模式**设为**单一会话**。
-- **进度**：Agent 工作时，你的消息上会有一个「🤔思考中」表情，回合结束后消失。回答以 Markdown 发出。
-- **文件和图片**：在单聊里给机器人发文件或图片，或在群里 @ 机器人的同时引用一个文件。Agent 也能把工作区里的图片和文件发回来。
-- **提问**：Agent 需要你做选择时，会发一张卡片。是/否问题和最多四个选项显示为按钮；五到十二个选项显示为下拉框加**提交**。点选答案后，卡片会向会话里的所有人显示这个答案。
+- **单聊**：直接给机器人发消息。单聊会持续使用同一个 Agent 会话。
+- **群聊**：把机器人拉进群并 **@** 它。钉钉只会在群消息提及机器人时才投递给机器人。每次新的 @ 都会开启新会话；要继续已有会话，直接回复 Agent 的消息即可（回复会自动 @ 机器人）。如果想让整个群共用一个会话，可在 Agent 的集成卡片上将该群的**会话模式**设为**单一会话**。
+- **进度**：Agent 处理期间，你的消息上会出现「🤔思考中」表情，回合结束后自动消失。回复以 Markdown 格式发送。
+- **文件和图片**：在单聊中可直接给机器人发送文件或图片，或在群里 @ 机器人的同时引用文件。Agent 也可以把工作区中的图片和文件发回对话。
+- **提问**：Agent 需要你做选择时会发送卡片。是/否问题和最多四个选项显示为按钮，五到十二个选项显示为下拉框加**提交**。点选答案后，卡片会向会话里的所有人展示这个结果。
 
   <Image src={imgQuestionCard} alt="提问卡片：每个选项一个按钮" width={360} />
 
-- **审批**：钉钉没有审批卡片。工具调用需要审批时，由 Agent 编辑者在控制台处理，会话里会收到一条通知。
+- **审批**：钉钉不支持审批卡片。工具调用需要审批时，由 Agent 编辑者在控制台处理，同时会话中会收到一条通知。
 
-停止、取消、排队以及修改支持的会话设置，见[会话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
+关于停止、取消、排队以及修改支持的会话设置，参见[会话内命令](/connect-automate/integrations-overview#in-conversation-commands)。
 
 ## 说明 [#notes]
 
-- 钉钉标准版每个应用每月可调用 5,000 次 API、接收 3,000 条消息。达到上限后，Agent 会在会话里说明一次，而不是继续回答。更高的钉钉版本额度更高。
-- 不支持话题圈：钉钉只允许它自己的助理和 Webhook 自定义机器人加入话题圈，企业内部应用的机器人加不进去。
-- 一个钉钉机器人绑定一个 Agent。删除集成会释放该机器人以便复用（下次选择**使用已有机器人**），不会从钉钉开发者后台删除应用。
-- 在**集成 → 消息应用 → 钉钉 → 更换密钥**中更换 Client Secret。机器人的会话不受影响。
+- 钉钉标准版每个应用每月可调用 5,000 次 API、接收 3,000 条消息。达到上限后，Agent 会在会话中说明一次，不再继续回复。更高的钉钉版本额度更高。
+- 不支持话题圈：钉钉只允许官方助理和 Webhook 自定义机器人加入话题圈，企业内部应用机器人无法加入。
+- 每个钉钉机器人只能绑定一个 Agent。删除集成后会释放该机器人以便复用（下次选择**使用已有机器人**即可），不会从钉钉开发者后台删除应用。
+- 如需更换 Client Secret，前往**集成 → 消息应用 → 钉钉 → 更换密钥**。机器人的已有会话不受影响。

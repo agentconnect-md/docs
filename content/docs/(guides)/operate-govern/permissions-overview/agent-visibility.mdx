@@ -1,19 +1,19 @@
 ---
 title: "Agent visibility"
 icon: Network
-description: "Control which AgentConnect agents can call one another. Configure inbound callers, outbound delegates, and defaults for agent discovery and task delivery."
+description: "Control which agents can call one another by configuring inbound callers, outbound delegates, and organization defaults."
 ---
 
 import imgAgentVisibilityDefault from '@/public/images/agent-visibility-default.png'
 import imgAgentTopology from '@/public/images/agent-topology.png'
 
-Agents can delegate work to other agents. **Agent visibility** controls which agent-to-agent calls are allowed. It is enforced during discovery and again at delivery.
+Agents can delegate work to other agents. **Agent visibility** controls which agent-to-agent calls are allowed, and AgentConnect enforces it both during discovery and at delivery.
 
-Read it as *which agents this agent can see*: the subject of this policy is an agent, not a person. That is what separates it from the other two permission axes, which both decide what a **person** may reach.
+Think of it as *which agents this agent can see*: this policy applies to agents, not people. That sets it apart from Team visibility and Session visibility, which control what **people** can access.
 
 <Image src={imgAgentVisibilityDefault} alt="Default agent visibility in organization settings" width={760} />
 
-This is different from [Team visibility](/operate-govern/permissions-overview/team-visibility), which controls which **people** can see an agent.
+This is separate from [Team visibility](/operate-govern/permissions-overview/team-visibility), which controls which **people** can see an agent.
 
 ## Two directions
 
@@ -24,46 +24,46 @@ Every agent has two independent policies:
 | Inbound | **Which agents can call this agent?** | Allowed callers |
 | Outbound | **Which agents can this agent call?** | Allowed delegates |
 
-Each direction can be:
+Each direction can be set to:
 
-- **All agents**, the default; or
-- **Selected**, with an explicit list of peer agents.
+- **All agents** (default)
+- **Selected**, with an explicit list of agents
 
-An empty Selected list allows no peers in that direction.
+An empty **Selected** list allows no agents in that direction.
 
 ## Defaults for new agents
 
-By default, an organization creates new agents with **All agents** in both directions, so they can discover and call any otherwise-callable peer in the organization.
+By default, new agents start with **All agents** in both directions, so they can discover and call any callable agent in the organization.
 
-An organization Owner can change **Default agent visibility**, its own card on the **Settings** page:
+An organization Owner can change **Default agent visibility** on the **Settings** page:
 
-- **All agents** starts future agents open to every agent in the organization in both directions.
-- **Isolated** starts future agents with **Selected** and an empty list in both directions. They discover no peers and accept no peer calls until configured.
+- **All agents**: Future agents start open to every agent in the organization in both directions.
+- **Isolated**: Future agents start with **Selected** and an empty list in both directions. They can't discover or accept calls from other agents until someone configures them.
 
-This setting applies only to agents created after the change. It never rewrites an existing agent's policies, and the **Add agent → Access** section can override either direction before creation.
+Changes apply only to agents created afterward. Existing agents keep their current policies, and you can override either direction under **Add agent → Access** when creating a new agent.
 
 ## How a call is decided
 
-For agent A to call agent B, all of the following must be true:
+For agent A to call agent B, all three conditions must be true:
 
 1. A and B belong to the same organization.
 2. A's outbound policy allows B.
 3. B's inbound policy allows A.
 
-The two policies are an intersection. Adding B to A's outbound list does not bypass B's inbound restriction, and adding A to B's inbound list does not expand A's outbound scope.
+Both sides have to agree. Adding B to A's outbound list doesn't bypass B's inbound restriction, and adding A to B's inbound list doesn't expand A's outbound scope.
 
-For example, a planner can be allowed to call `frontend` and `backend`, while `payments` accepts calls only from a separate incident coordinator. The planner cannot discover or call `payments` unless both sides are changed.
+For example, suppose a planner agent can call `frontend` and `backend`, while `payments` only accepts calls from an incident coordinator. The planner can't discover or call `payments` unless both policies are updated.
 
 ## Organization-scoped discovery
 
-An agent can discover its policy-approved peers across the organization and delegate work to them. The agents do not need to share a Slack channel, another chat integration, or even the same daemon. An agent with no chat integration can still be discovered and called.
+An agent can discover and delegate work to allowed agents anywhere in the organization. They don't need to share a Slack channel, another chat integration, or the same daemon. Even an agent with no chat integration can be discovered and called.
 
-[Team visibility](/operate-govern/permissions-overview/team-visibility) for people is a separate boundary. Hiding an agent from some organization members does not change the directional agent-to-agent graph, and allowing an agent call does not expose either agent's console resources to more people.
+[Team visibility](/operate-govern/permissions-overview/team-visibility) for people is a separate boundary. Hiding an agent from some organization members doesn't change the agent-to-agent call graph, and letting two agents call each other doesn't expose either agent's console resources to more people.
 
 ## Configure it
 
-Set both policies under an agent's **Access → Agent visibility** section when creating or editing the agent. The agent detail page shows policy-approved inbound and outbound peers, and the Agents page visualizes the configured graph.
+Set both policies under **Access → Agent visibility** when creating or editing an agent. The agent detail page lists allowed inbound and outbound agents, and the Agents page visualizes the configured call graph.
 
 <Image src={imgAgentTopology} alt="The topology view on the Agents page, showing the configured call graph" width={900} />
 
-See [Multi-agent work modes](/build-your-team/agents/multi-agent-work-modes#agent-to-agent-delegation) for delegation in context with routing, layered specialists, and fan-out.
+See [Multi-agent work modes](/build-your-team/agents/multi-agent-work-modes#agent-to-agent-delegation) for how delegation works with routing, layered specialists, and fan-out.

@@ -1,77 +1,77 @@
 ---
 title: "沙箱隔离"
 icon: Container
-description: "为 Agent 会话选择合适的隔离方式，比较直接在主机执行、Linux 沙箱、独立虚拟机和 Kubernetes Pod，并通过工作区与挂载配置控制可访问的资源。"
+description: "为 Agent 会话选择合适的隔离方式，比较直接主机执行、Linux 沙箱、独立虚拟机和 Kubernetes Pod，并配置工作区与挂载。"
 ---
 
 import imgExecutionStrategyUnavailable from '@/public/images/execution-strategy-unavailable.png'
 
-**Kubernetes**：官方 Helm 部署默认使用 [Agent Sandbox](https://github.com/kubernetes-sigs/agent-sandbox) 来管理 Agent Pod 和持久化工作区。安装与配置见 [Kubernetes 部署](/self-hosting/kubernetes/deploy)。
+如果你部署在 **Kubernetes** 上，官方 Helm Chart 默认使用 [Agent Sandbox](https://github.com/kubernetes-sigs/agent-sandbox) 管理 Agent Pod 和持久化工作区。安装与配置方法详见 [Kubernetes 部署](/self-hosting/kubernetes/deploy)。
 
-**你自己运行的 Daemon**：每个 Agent 的**执行策略**决定其会话运行在什么边界之内，从没有任何边界到独立的虚拟机都可以选择。`srt` 和 `microsandbox` 只能在 Linux 上运行；macOS 或 Windows 上的 Daemon 只提供 `host`，选择器会把另外两项显示为不可用。每个沙箱都有一个私有的 Runtime 主目录以及分配给它的工作区。要共享更多主机目录，请使用[挂载](/operate-govern/sandboxing/sandbox-mounts)。
+对于**自托管 Daemon**，每个 Agent 的**执行策略**决定了会话的隔离级别，可以从直接主机执行一直选到独立虚拟机。`srt` 和 `microsandbox` 仅支持 Linux；在 macOS 或 Windows 的 Daemon 上，只能使用 `host`，选择器会把另外两项标记为不可用。每个沙箱都会获得独立的 Runtime 主目录和分配的工作区；如需额外共享主机目录，请配置[挂载](/operate-govern/sandboxing/sandbox-mounts)。
 
 ## 选择执行环境 [#choose-an-execution-environment]
 
 | 选项                        | 适用场景                           | 环境                                 |
 | --------------------------- | ---------------------------------- | ------------------------------------ |
 | **主机**（`host`）          | 需要完整主机访问权限的可信任务     | 直接以 Daemon 用户的权限在主机上运行 |
-| **沙箱**（`srt`）           | 可信的内部开发与自动化             | 使用主机工具，但受文件系统与网络限制 |
-| **虚拟机**（`microsandbox`）| 通用任务与可信度较低的代码         | 每个会话一台独立的虚拟机             |
+| **沙箱**（`srt`）           | 可信的内部开发与自动化             | 使用主机工具，同时限制文件系统与网络 |
+| **虚拟机**（`microsandbox`）| 通用任务与可信度较低的代码         | 每个会话一台独立虚拟机               |
 | Kubernetes（Agent Sandbox） | 跨多台机器运行大量 Agent 的团队    | 集中管理的 Agent Pod 与持久化工作区  |
 
-`srt` 不是安全边界：它与主机共用内核和用户，而且 Daemon 会在沙箱之外执行部分工作区操作，例如在多个会话共享的工作区里运行 Git。如果某个 Agent 会处理来自组织外部的内容，比如外部贡献者的 Pull Request 和 Issue，或公开的 Webhook，请让它运行在 `microsandbox` 或 Kubernetes 中，即使其会话是由维护者发起的。
+`srt` 并不是完整的安全边界：它与宿主机共享内核和用户，且 Daemon 会在沙箱之外执行部分工作区操作（例如在多会话共享的工作区里执行 Git 命令）。如果 Agent 会处理来自组织外部的输入（例如外部贡献者的 Pull Request、Issue 或公开 Webhook），即使会话由维护者发起，也应运行在 `microsandbox` 或 Kubernetes 中。
 
 ### 比较 Linux Daemon 沙箱 [#compare-linux-daemon-sandboxes]
 
-| 你使用的内容       | SRT                                        | microsandbox                       |
+| 使用内容           | SRT                                        | microsandbox                       |
 | ------------------ | ------------------------------------------ | ---------------------------------- |
-| 工具与软件包       | 主机工具；安装到可写路径                   | 镜像中的工具；安装在会话虚拟机内   |
-| 主机文件           | 受保护路径被隐藏；其他路径可能可读         | 仅限分配的主机挂载                 |
+| 工具与软件包       | 主机工具；安装到可写路径                   | 镜像内置工具；安装在会话虚拟机内   |
+| 主机文件           | 受保护路径被隐藏；其他路径可能可读         | 仅限显式分配的主机挂载             |
 | 共享缓存           | 共享的只读或可写挂载                       | 共享挂载或私有 overlay             |
-| 互联网             | 通过代理（工具必须支持代理）               | 公共互联网（私有网络受限）         |
-| 本地服务器         | 不发布到主机                               | 不发布到主机                       |
-| CPU 与内存         | 未配置按会话的限制                         | 可按虚拟机配置                     |
+| 互联网             | 通过代理访问（工具需支持代理）             | 公共互联网（限制私有网络访问）     |
+| 本地服务器         | 不暴露到主机                               | 不暴露到主机                       |
+| CPU 与内存         | 无按会话限制                               | 可按虚拟机单独配置                 |
 | OAuth 凭证         | 工具规则（Claude/Codex）；其他情况无防护   | 与 SRT 相同                        |
-| 已保存的 API 密钥  | 主机代理（支持的已保存密钥）               | 与 SRT 相同                        |
-| 代码托管平台令牌   | 主机代理；令牌从不进入沙箱                 | 与 SRT 相同                        |
+| 已保存的 API 密钥  | 主机代理（支持列表内的已保存密钥）         | 与 SRT 相同                        |
+| 代码托管平台令牌   | 主机代理；令牌不进入沙箱                   | 与 SRT 相同                        |
 
-两种沙箱都会写入分配的工作区。共享工作区和可写的主机挂载仍然是共享的；microsandbox 会为每个会话单独保存其他虚拟机文件。
+两种沙箱都会向分配的工作区写入内容。共享工作区和可写主机挂载会在多个会话之间共享，而 `microsandbox` 会把其余虚拟机文件按会话隔离开。
 
-工具规则限制 Runtime 的工具访问凭证。主机代理把代码托管平台令牌和受支持的 API 密钥留在会话之外。支持的 Runtime、登录方式和限制见[凭证保护](/operate-govern/sandboxing/credential-protection)。
+工具规则用来限制 Runtime 内置工具读取凭证文件，主机代理则把代码托管平台令牌和受支持的 API 密钥留在会话之外。支持的 Runtime、登录方式和具体限制详见[凭证保护](/operate-govern/sandboxing/credential-protection)。
 
-技术背景：[SRT 隔离](https://github.com/anthropics/sandbox-runtime#how-it-works)与 [microsandbox](https://github.com/superradcompany/microsandbox)。
+如需了解底层沙箱的技术实现，可参阅 [SRT 隔离](https://github.com/anthropics/sandbox-runtime#how-it-works) 和 [microsandbox](https://github.com/superradcompany/microsandbox)。
 
 ## 选择执行策略 [#pick-an-execution-strategy]
 
-添加或编辑 Agent 时，在**执行策略**中选择策略。选择器会列出 Agent 所在位置可用的策略：
+新建或编辑 Agent 时，在**执行策略**中选定隔离方式。选择器会列出当前部署位置可用的策略：
 
-- **单个 Daemon**：该 Daemon 提供的策略。
-- **[Daemon 组](/build-your-team/daemons/daemon-groups)**：至少有一个在役成员提供的策略。会话无法在缺少所选策略的成员上运行，因此请确认你依赖的每个成员都能运行该策略。
-- **AgentConnect Cloud 或 [Kubernetes Daemon 池](/self-hosting/kubernetes/deploy)**：没有选择器。每个会话本来就运行在自己的 Pod 中。
+- **单个 Daemon**：显示该 Daemon 支持的策略。
+- **[Daemon 组](/build-your-team/daemons/daemon-groups)**：显示组内至少有一个在线成员支持的策略。会话不会调度到不支持所选策略的成员上，因此请确认你依赖的每个成员都支持该策略。
+- **AgentConnect Cloud 或 [Kubernetes Daemon 池](/self-hosting/kubernetes/deploy)**：不显示选择器，因为每个会话默认都运行在独立的 Pod 中。
 
 | 选项                        | 边界               |
 | --------------------------- | ------------------ |
 | **主机**（`host`）          | 无                 |
-| **沙箱**（`srt`）           | 一个 SRT 进程沙箱  |
-| **虚拟机**（`microsandbox`）| 一台独立的虚拟机   |
+| **沙箱**（`srt`）           | SRT 进程沙箱       |
+| **虚拟机**（`microsandbox`）| 独立虚拟机         |
 
-无法在该位置运行的策略仍会留在列表中，但处于禁用状态并标记为**不可用**。把鼠标悬停在上面可以查看原因：来自 Daemon 启动检查的原因，或者当 Daemon 配置关闭了该策略时显示的 `sandbox.<strategy> is off on this daemon`。
+当前位置无法运行的策略仍会出现在列表中，呈禁用状态并标注为**不可用**。鼠标悬停即可查看原因：可能是 Daemon 启动自检报出的缺失项，也可能是因为 Daemon 配置关闭了该策略而显示的 `sandbox.<strategy> is off on this daemon`。
 
 <Image src={imgExecutionStrategyUnavailable} alt="没有 SRT 工具的 Daemon 上的执行策略选择器：沙箱和虚拟机被标记为不可用，提示框中列出了缺失的软件包" width={560} />
 
-新建的 Agent 在 `host` 可以运行时默认使用它，否则使用第一个可用的沙箱。版本过旧、无法上报策略的 Daemon 只提供 `host`。要提供沙箱，请[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
+新建 Agent 在 `host` 可用时默认选中 `host`，否则选中第一个可用的沙箱。如果 Daemon 版本过旧、还不支持上报可用策略，则只提供 `host`；请[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon) 以启用沙箱。
 
-在**编辑**中，如果有一次迁移到其他 Daemon 的操作尚未保存，选择器会被锁定；请先保存迁移。如果 Agent 所在的位置不再提供已保存的策略，该策略仍保持选中，并标记为“当前位置不提供此策略”。Agent 的**配置**标签页会在 Runtime 卡片的**执行策略**行中显示这一选择。
+在**编辑**页面中，如果存在尚未保存的迁移到其他 Daemon 的操作，策略选择器会暂时锁定，请先保存迁移。如果 Agent 所在的部署位置不再支持它原本保存的策略，该策略会保持选中，并提示“当前位置不提供此策略”。你可以在 Agent 的**配置**标签页的 Runtime 卡片中通过**执行策略**这一行查看当前配置。
 
-AgentConnect 绝不会回退到更弱的边界。如果某个会话的策略无法在其所在机器上运行，该会话会被拒绝并给出原因。
+AgentConnect 绝不会自动降级到更弱的隔离级别。如果会话配置的策略在目标机器上无法运行，Daemon 会直接拒绝启动会话并给出原因。
 
-在选择器推出之前创建的 Agent 保留了原有边界：之前关闭了**在沙箱中运行**的 Agent 使用 `host`，之前开启了该选项的 Agent 使用其 Daemon 所配置的沙箱，即 `srt` 或 `microsandbox`。
+在策略选择器上线前创建的 Agent 会保留原有行为：原先关闭**在沙箱中运行**的 Agent 使用 `host`，原先开启该选项的 Agent 使用其 Daemon 配置的沙箱（`srt` 或 `microsandbox`）。
 
 ## 配置 Daemon [#configure-the-daemon]
 
-把这些设置添加到 Daemon 现有的 `config.json`（通常是 `~/.agentconnect/config.json`）中。保留其中已有的连接和身份设置。
+将沙箱配置添加到 Daemon 现有的 `config.json`（通常位于 `~/.agentconnect/config.json`）中，同时保留原有的连接和身份字段。
 
-`sandbox` 对象列出 Daemon 提供的策略。三项默认都是开启的，因此省略它们等同于：
+`sandbox` 对象用于声明 Daemon 开放哪些策略。三项默认全部开启，省略配置等同于：
 
 ```json
 {
@@ -83,22 +83,22 @@ AgentConnect 绝不会回退到更弱的边界。如果某个会话的策略无�
 }
 ```
 
-每个值可以是 `true`（按默认设置提供该策略）、`false`（关闭该策略），或者对于 `microsandbox`，一个包含虚拟机设置的对象。Daemon 启动时会检查它提供的每个策略。未通过检查的策略为不可用；Daemon 会记录原因，选择器也会显示出来。这些检查不会安装或下载任何东西。没有任何可用策略的 Daemon 会拒绝启动。
+每项的值可以是 `true`（使用默认配置开启）、`false`（关闭），或者对 `microsandbox` 传入一个虚拟机配置对象。Daemon 启动时会逐一检查已开启的策略，过程中不会自动安装或下载任何组件。检查未通过的策略会被标记为不可用，原因会写入日志并在选择器中展示。如果没有任何策略可用，Daemon 会拒绝启动。
 
 ### SRT [#srt]
 
-在 Ubuntu 或 Debian 上，安装它的依赖：
+在 Ubuntu 或 Debian 上安装所需依赖：
 
 ```bash
 sudo apt-get update
 sudo apt-get install --yes bubblewrap ripgrep socat
 ```
 
-主机必须允许非特权用户命名空间。Daemon 会检查沙箱能否启动。Ubuntu 24.04 及更高版本默认限制非特权用户命名空间，Ubuntu 23.10 在开启该限制后也是如此：请先[为 bubblewrap 放行用户命名空间](#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap)。
+宿主机还必须允许非特权用户命名空间，Daemon 启动时会对此做检查。Ubuntu 24.04 及更高版本默认限制了这一能力（Ubuntu 23.10 开启限制后也是如此），请先[为 bubblewrap 放行用户命名空间](#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap)。
 
 ### microsandbox [#microsandbox]
 
-要更改虚拟机资源，把 `microsandbox` 设为一个对象：
+如需调整虚拟机资源配置，可以把 `microsandbox` 写成对象：
 
 ```json
 {
@@ -112,13 +112,13 @@ sudo apt-get install --yes bubblewrap ripgrep socat
 }
 ```
 
-这些资源值是默认值。CPU 和内存限制按虚拟机生效。`diskGiB` 设置每个可写磁盘（根磁盘、Docker 数据盘，以及使用 overlay 时的一块额外磁盘）的容量。磁盘文件会随着数据写入而增长。
+以上数值即为默认值。CPU 和内存上限按虚拟机单独生效。`diskGiB` 限制每块可写磁盘（根磁盘、Docker 数据盘，以及启用 overlay 时额外的一块磁盘）的最大容量，磁盘文件会随写入按需增长。
 
-microsandbox 需要 Linux amd64 主机。Daemon 用户需要能访问 `/dev/kvm` 和 `/dev/vhost-vsock`。虚拟主机需要支持嵌套虚拟化。第一个 microsandbox 会话启动时，Daemon 会安装 microsandbox SDK 并准备镜像。镜像未缓存时，首次启动会更慢。
+`microsandbox` 要求 Linux amd64 宿主机，且 Daemon 运行用户需具备 `/dev/kvm` 和 `/dev/vhost-vsock` 的访问权限；如果宿主机本身是虚拟机，需要开启嵌套虚拟化。首次启动 `microsandbox` 会话时，Daemon 会自动安装 microsandbox SDK 并准备运行镜像，在镜像尚未缓存的情况下首次启动会偏慢。
 
 ### 强制使用沙箱 [#require-a-sandbox]
 
-要让某个 Daemon 拒绝未沙箱化的会话，请关闭 `host`：
+如果希望某台 Daemon 禁止运行非沙箱会话，关闭 `host` 即可：
 
 ```json
 {
@@ -128,31 +128,31 @@ microsandbox 需要 Linux amd64 主机。Daemon 用户需要能访问 `/dev/kvm`
 }
 ```
 
-此后，对于该 Daemon 上的 Agent，选择器会把 `host` 显示为不可用，新建的 Agent 会使用第一个可用的沙箱。已经设置为 `host` 的 Agent 在你为它们选择沙箱之前无法在该 Daemon 上启动会话。如果也没有任何可用的沙箱，Daemon 会拒绝启动。
+关闭后，这台 Daemon 上 Agent 的选择器会把 `host` 标记为不可用，新建 Agent 默认选用第一个可用沙箱。原先设为 `host` 的 Agent 在改选沙箱策略之前无法在这台 Daemon 上启动会话。如果此时也没有可用的沙箱，Daemon 将拒绝启动。
 
 ### 旧版配置 [#older-configurations]
 
-`sandbox.backend` 和 `security.requireSandbox` 已不再支持。`config.json` 里仍有其中任一项的 Daemon 会拒绝启动，错误信息会指出替代写法：
+`sandbox.backend` 和 `security.requireSandbox` 已废弃。如果 `config.json` 中还残留其中任何一项，Daemon 会拒绝启动，并在报错中给出替代写法：
 
 | 旧配置 | 替换为 |
 | --- | --- |
-| `sandbox.backend`（任意值） | 删除。默认提供全部策略，会话使用哪个沙箱由 Agent 的**执行策略**决定。 |
+| `sandbox.backend`（任意值） | 删除。现在默认开放全部策略，改由 Agent 的**执行策略**决定使用哪种沙箱。 |
 | `security.requireSandbox: true` | `"sandbox": { "host": false }` |
 | `security.requireSandbox: false` | 删除。`host` 默认开启。 |
 
-`--require-sandbox` 参数也已移除，请改为在 `config.json` 中设置 `"host": false`。
+命令行参数 `--require-sandbox` 也已移除，请改为在 `config.json` 中设置 `"host": false`。
 
-编辑配置后重启：
+修改配置后重启 Daemon：
 
 ```bash
 npx -y @agentconnect.md/cli restart
 ```
 
-对于具名实例，加上 `--instance <name>`。对于前台运行的 Daemon，重新执行它原来的命令。实例相关命令见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
+如果是具名实例，请加上 `--instance <name>`；如果是前台运行的 Daemon，直接重新执行原启动命令即可。实例管理命令见[升级 Daemon](/build-your-team/daemons/upgrade-the-daemon)。
 
 ## Runtime 镜像 [#runtime-image]
 
-microsandbox 使用由已安装的 Daemon 版本选定的 `ghcr.io/agentconnect-md/runtime-sandbox-full` 镜像。要使用兼容的自定义镜像：
+`microsandbox` 默认使用与当前 Daemon 版本配套的 `ghcr.io/agentconnect-md/runtime-sandbox-full` 镜像。如需改用兼容的自定义镜像：
 
 ```json
 {
@@ -164,47 +164,47 @@ microsandbox 使用由已安装的 Daemon 版本选定的 `ghcr.io/agentconnect-
 }
 ```
 
-删除 `image` 属性即可恢复默认镜像。开发构建版本必须显式指定镜像。
+删掉 `image` 字段即可恢复默认镜像。开发构建版本则必须显式指定 `image`。
 
-更改镜像内容、虚拟机资源、挂载或凭证布局后，受影响的虚拟机会在刷新或下次使用时重建。挂载自主机的工作区、主目录和记忆文件会保留。虚拟机本地文件、Docker 数据和 overlay 写入会被重置。需要持久保存的数据请放在主机挂载中。内容完全相同的新镜像标签会复用现有虚拟机。
+修改镜像内容、虚拟机资源、挂载配置或凭证布局后，受影响的虚拟机会在刷新或下次使用时重建。主机挂载进来的工作区、主目录和记忆文件都会保留，但虚拟机本地文件、Docker 数据和 overlay 写入会被重置，因此需要持久化的数据应放在主机挂载目录里。如果只是更换镜像标签而实际内容完全一致，会继续复用现有虚拟机。
 
-完整镜像包含 Claude Code、Codex、DeepSeek Harness、OpenCode、pi、Oh My Pi、Grok Build、Qwen Code、Cline、Devin、Antigravity ACP、GitHub Copilot、Qoder CLI 和 Qoder CN CLI。Antigravity 需要 AVX 支持。Amp 需要自定义镜像。
+完整镜像预装了 Claude Code、Codex、DeepSeek Harness、OpenCode、pi、Oh My Pi、Grok Build、Qwen Code、Cline、Devin、Antigravity ACP、GitHub Copilot、Qoder CLI 和 Qoder CN CLI。其中 Antigravity 需要 CPU 支持 AVX，Amp 需要使用自定义镜像。
 
-镜像还包含 Docker Engine、Buildx 和 Compose。当 Runtime 权限允许时，Agent 可以在自己的虚拟机内启动 Docker。Docker 数据在虚拟机停止/启动后仍然保留，但在虚拟机重建时会被重置。Codex 的工具限制目前会阻止镜像中基于 sudo 的 Docker 启动方式。
+镜像还内置了 Docker Engine、Buildx 和 Compose。在 Runtime 权限允许的情况下，Agent 可以在虚拟机内部启动 Docker。Docker 数据在虚拟机启停后仍会保留，但在虚拟机重建时会被清空。注意，Codex 当前的工具限制会拦截镜像中基于 sudo 的 Docker 启动方式。
 
 ## 网络访问 [#network-access]
 
-microsandbox 会话可以访问公共 API 和软件包源。每个虚拟机都有自己的网络环境，因此不同会话可以使用相同的本地端口。虚拟机端口不会发布到主机。
+`microsandbox` 会话可以访问公网 API 和软件包源。每台虚拟机都拥有独立的网络命名空间，多个会话可以绑定相同的本地端口而互不冲突，且虚拟机端口不会暴露到宿主机。
 
-该策略限制对私有网络的访问，但不保证所有指回主机的公网 IP 或 DNS 名称都会被拦截。SRT 通过其代理允许出站 Web 访问；忽略代理设置的工具可能无法连接。
+网络策略会限制对私有网络的访问，但无法保证拦截所有绕回宿主机的公网 IP 或域名。SRT 的出站 Web 访问通过代理转发，忽略代理环境变量的工具可能会连接失败。
 
 ## 故障排查 [#troubleshooting]
 
 | 消息                     | 检查内容                                                                                      |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
-| 策略不可用               | 选择器提示框中的原因、该策略的要求以及 Daemon 日志                                            |
-| 会话被策略拒绝           | Agent 的策略无法在该机器上运行；修复原因或改选其他策略                                        |
-| 镜像中未安装二进制文件   | 所选镜像是否包含该 Runtime                                                                    |
-| 需要登录                 | Runtime 是否已以 Daemon 用户身份登录                                                          |
-| 挂载被拒绝               | 源路径是否存在、目标路径是否有效、模式是否受支持（见[挂载](/operate-govern/sandboxing/sandbox-mounts)） |
-| 虚拟机替换失败           | 检查镜像可用性和挂载访问权限，然后重试                                                        |
+| 策略不可用               | 查看选择器提示框中的具体原因、该策略的运行条件以及 Daemon 日志                                |
+| 会话被策略拒绝           | Agent 配置的策略无法在该机器上运行；排查报错原因或切换为其他策略                              |
+| 镜像中未安装二进制文件   | 确认所选镜像中已安装对应的 Runtime                                                            |
+| 需要登录                 | 确认已以 Daemon 运行用户身份完成该 Runtime 的登录                                             |
+| 挂载被拒绝               | 确认源路径存在、目标路径有效且挂载模式受支持（见[挂载](/operate-govern/sandboxing/sandbox-mounts)） |
+| 虚拟机替换失败           | 检查镜像是否可拉取以及挂载路径权限，然后重试                                                  |
 
-独立的 `chat` 命令支持 SRT。microsandbox 请使用由 Daemon 托管的会话。
+独立的 `chat` 命令支持 SRT；如需使用 `microsandbox`，请通过 Daemon 托管会话。
 
 ### Ubuntu 23.10 及更高版本：为 bubblewrap 放行用户命名空间 [#ubuntu-2310-and-later-allow-user-namespaces-for-bubblewrap]
 
-**症状**：在**执行策略**选择器中，**沙箱**策略（`srt`）被标记为**不可用**，且原因中包含以下之一：
+**症状**：在**执行策略**选择器中，**沙箱**策略（`srt`）被标为**不可用**，提示中包含以下报错之一：
 
 ```text
 bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
 bwrap: setting up uid map: Permission denied
 ```
 
-较新的 Daemon 会在原因中直接指出 AppArmor 限制。
+较新版本的 Daemon 会在提示里直接指出是 AppArmor 限制导致。
 
-**原因**：Ubuntu 24.04 及更高版本在 `/usr/lib/sysctl.d/10-apparmor.conf` 中默认设置 `kernel.apparmor_restrict_unprivileged_userns=1`。Ubuntu 23.10 引入了该设置，但默认保持为 `0`。开启后，非特权用户命名空间得不到任何 capability，因此 bubblewrap 无法为沙箱建立隔离网络。在运行时（例如用 `sysctl -w`）设置的 `0` 会在重启后丢失。
+**原因**：Ubuntu 24.04 及更高版本在 `/usr/lib/sysctl.d/10-apparmor.conf` 中默认启用了 `kernel.apparmor_restrict_unprivileged_userns=1`（Ubuntu 23.10 引入了该参数，但默认仍为 `0`）。开启后，非特权用户命名空间拿不到所需的 capability，导致 bubblewrap 无法创建沙箱的隔离网络。临时用 `sysctl -w` 改成 `0` 在系统重启后会失效。
 
-**修复**：给 bubblewrap 一个允许用户命名空间的 AppArmor 配置文件。该配置文件只覆盖 `/usr/bin/bwrap`，即 `bubblewrap` 软件包的安装位置；其他所有程序仍然受限。创建 `/etc/apparmor.d/bwrap` 并加载它：
+**修复**：为 `/usr/bin/bwrap`（`bubblewrap` 软件包的安装路径）单独添加一条允许用户命名空间的 AppArmor 规则，其他程序仍保持受限。创建 `/etc/apparmor.d/bwrap` 并加载：
 
 ```bash
 sudo tee /etc/apparmor.d/bwrap > /dev/null <<'EOF'
@@ -219,22 +219,22 @@ EOF
 sudo apparmor_parser -r /etc/apparmor.d/bwrap
 ```
 
-AppArmor 会在每次启动时重新加载该配置文件。
+之后每次系统启动时，AppArmor 都会自动重新加载该规则。
 
-不要改用 `apparmor-profiles` 软件包中 Ubuntu 提供的 `bwrap-userns-restrict` 配置文件。它会剥夺沙箱内的 capability，Daemon 的检查虽然能通过，但像 Codex 这样会在其中再启动自己的 bubblewrap 沙箱的 Runtime 会失败，并报错 `bwrap: No permissions to create new namespace`。
+不要改用 `apparmor-profiles` 包里 Ubuntu 自带的 `bwrap-userns-restrict` 规则。它会剥夺沙箱内部的 capability，虽然能让 Daemon 的启动检查通过，但像 Codex 这样需要在内部再嵌套一层 bubblewrap 沙箱的 Runtime 会直接报错 `bwrap: No permissions to create new namespace`。
 
-或者，为整台机器解除该限制。这会对所有程序关闭这项保护，而不仅仅是 bubblewrap：
+如果不想单独配置 AppArmor，也可以为整台机器关闭该限制（注意：这会对系统上所有程序生效，而不仅限于 bubblewrap）：
 
 ```bash
 echo 'kernel.apparmor_restrict_unprivileged_userns = 0' | sudo tee /etc/sysctl.d/60-userns.conf && sudo sysctl --system
 ```
 
-**验证**：以 Daemon 的用户身份运行：
+**验证**：切换到 Daemon 运行用户，执行：
 
 ```bash
 bwrap --unshare-net --ro-bind / / true && echo ok
 ```
 
-当 bubblewrap 能够带着自己的网络启动时，它会输出 `ok`。
+如果 bubblewrap 能正常启动隔离网络，会输出 `ok`。
 
-**然后重启 Daemon**，让它重新检查策略：在控制台中从 Daemon 的操作里选择**重启**，或者在主机上用 `npx -y @agentconnect.md/cli restart` 或你的服务管理器重启它。
+**最后重启 Daemon** 使其重新检查可用策略：可以在控制台中点击 Daemon 操作菜单里的**重启**，也可以在主机上执行 `npx -y @agentconnect.md/cli restart` 或通过你的服务管理器重启。

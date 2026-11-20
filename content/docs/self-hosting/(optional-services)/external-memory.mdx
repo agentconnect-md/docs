@@ -1,13 +1,13 @@
 ---
 title: "External memory"
 icon: Brain
-description: "Deploy Mem0 OSS and register its wrapper on each daemon that should use durable external memory."
+description: "Deploy Mem0 OSS and register its plugin wrapper on each daemon that needs external memory."
 ---
 
-Mem0 is not part of the AgentConnect Compose stack. AgentConnect works without it. Deploy Mem0 only when agents should use durable external memory that you operate.
+Mem0 isn't bundled with the AgentConnect Compose stack, and AgentConnect runs fine without it. Deploy Mem0 only if you want agents to use an external memory service that you host yourself.
 
-1. Start [Mem0 OSS](https://docs.mem0.ai/open-source/setup) and make its API reachable from each participating daemon.
-2. On each participating daemon machine, check out the matching AgentConnect release and build the first-party wrapper. This example keeps the source at `/opt/agentconnect`, matching the configuration below:
+1. Start [Mem0 OSS](https://docs.mem0.ai/open-source/setup) and make sure every daemon that will use it can reach its API.
+2. On each of those daemon machines, check out the matching AgentConnect release and build the Mem0 plugin wrapper. The example below clones the repo to `/opt/agentconnect` to match the config in step 3:
 
 ```bash
 git clone https://github.com/agentconnect-md/agentconnect.git /opt/agentconnect
@@ -18,7 +18,7 @@ pnpm install --frozen-lockfile
 pnpm --filter @agentconnect.md/memory-plugin-mem0 build
 ```
 
-3. Allowlist the wrapper in each daemon's `~/.agentconnect/config.json`:
+3. Register the wrapper in each daemon's `~/.agentconnect/config.json`:
 
 ```json
 {
@@ -38,10 +38,10 @@ pnpm --filter @agentconnect.md/memory-plugin-mem0 build
 }
 ```
 
-Adjust the wrapper path and Mem0 address for your deployment, then restart the daemon:
+Update the script path and Mem0 URL to match your setup, then restart the daemon:
 
 ```bash
 npx -y @agentconnect.md/cli restart
 ```
 
-Continue with [Use Mem0 OSS as external memory](/how-to-guides/external-memory) to create the organization connection and bind it to agents.
+Next, follow [Use Mem0 OSS as external memory](/how-to-guides/external-memory) to add the organization connection and bind it to your agents.

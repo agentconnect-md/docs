@@ -1,7 +1,7 @@
 ---
 title: "Linear"
 icon: Linear
-description: "把 Issue 委派给应用，Agent 就会接手——在 Linear 自己的 Agent 会话中确认、工作并给出答复。"
+description: "将 Issue 委派给应用，Agent 就会接手处理，并在 Linear 的 Agent 会话中实时更新进度、返回结果。"
 ---
 
 import imgLinearAddIntegration from '@/public/images/linear-add-integration.png'
@@ -9,56 +9,56 @@ import imgLinearAgentCard from '@/public/images/linear-agent-card.png'
 import imgLinearIssueResources from '@/public/images/linear-issue-resources.png'
 import imgLinearSessionPanel from '@/public/images/linear-session-panel.png'
 
-Linear 集成让你的 Agent 成为 **Linear 中可委派的队友**。把 Issue 分配给该应用，或在评论中提及它并附上指令，Agent 会在几秒内确认，在自己的工作区中工作，并把进展流式推送到 Linear 的 Agent 会话动态中——思考、工具操作和计划清单——最后把答复作为会话响应发布。在该会话线程中回复即可引导它，或使用 Linear 的 **Stop** 控件中断它。
+Linear 集成可以让你的 Agent 成为 **Linear 中可委派的队友**。把 Issue 分配给该应用，或在评论中提及它并附上指令后，Agent 会在几秒内确认接收、在自己的工作区中执行任务，并将过程（思考、工具操作和计划清单）流式推送到 Linear 的 Agent 会话动态中，最后发布答复。你可以在该会话线程中继续回复来调整方向，或使用 Linear 的 **Stop** 控件中断执行。
 
-连接一次对应一个**工作区**，你在该工作区上启用的每个 Agent 都通过同一个 Linear 应用工作。由哪个 Agent 接手某项工作则按**团队**决定。
+每次连接对应一个**工作区**，在该工作区上启用的所有 Agent 共用同一个 Linear 应用。具体由哪个 Agent 接手任务则按**团队**配置。
 
 ## 连接之前 [#before-you-connect]
 
-Linear 通过 HTTP 回调投递事件，因此部署需要一个公共回调端点，以及为整个部署注册的一个 Linear OAuth 应用。AgentConnect Cloud 已经具备这两者。在 AgentConnect OSS 上，运维人员需要先[注册部署的 Linear 应用](/self-hosting/provider-apps#linear)；在那之前，Linear 面板会显示此部署尚未配置 Linear。
+Linear 通过 HTTP 回调投递事件，因此部署需要具备公网回调端点，以及为整个部署注册的一个 Linear OAuth 应用。AgentConnect Cloud 已内置这两项。在 AgentConnect OSS 上，运维人员需先[注册部署的 Linear 应用](/self-hosting/provider-apps#linear)。在此之前，Linear 面板会提示此部署尚未配置 Linear。
 
 ## 连接工作区 [#connect-a-workspace]
 
-在 Agent 页面：**集成 → 添加集成 → Linear**。
+在 Agent 页面中打开**集成 → 添加集成 → Linear**。
 
-没有任何需要填写的内容。选择**连接 Linear**，在打开的 Linear 标签页中批准该工作区，连接就会回到控制台。你发起连接时所在的 Agent 会成为每个团队的**默认分发** Agent——即一次不带名字的委派会到达的 Agent。
+这里不需要手动填写任何字段。点击**连接 Linear**，在新打开的 Linear 页面中批准工作区授权后，页面会自动跳回控制台。你发起连接时所在的 Agent 会成为每个团队的**默认分发** Agent（即未指定具体 Agent 名称时接手委派的默认 Agent）。
 
 <Image src={imgLinearAddIntegration} alt="选择了 Linear 的添加集成对话框：选择已连接的工作区，或连接另一个" width={640} />
 
-授权会请求读写权限、作为应用被分配和被提及的权限，以及 Initiative 访问权限。如果你在支持 Initiative 之前就连接了工作区，其他一切照常工作，只有三个 Initiative 工具会要求你重新连接。
+授权会请求读写权限、作为应用被分配和被提及的权限，以及 Initiative 访问权限。如果你在支持 Initiative 之前就已连接工作区，其他功能都会正常继续工作，只有三个 Initiative 工具会提示你重新连接。
 
-要在同一个工作区上加入**第二个 Agent**，打开那个 Agent 的**添加集成 → Linear**，从列表中选择已连接的工作区。要连接**另一个**工作区，在同一面板中使用**连接另一个工作区…**。
+如需在同一个工作区上接入**第二个 Agent**，打开该 Agent 的**添加集成 → Linear**，从列表中选择已连接的工作区即可。要连接**另一个**工作区，在同一面板中点击**连接另一个工作区…**。
 
 ## 团队就是频道 [#teams-are-the-channels]
 
-已连接的工作区会在 Agent 的 Linear 卡片上列出**每个 Linear 团队一行**。每一行都带有频道在 AgentConnect 中任何地方都有的两个控件：
+已连接的工作区会在 Agent 的 Linear 卡片上**为每个 Linear 团队展示一行**。每行都提供与 AgentConnect 其他频道相同的两个配置项：
 
-- **默认分发**——该团队中不带名字的委派会启动的 Agent；以及
-- **触发条件**——**@ 提及**或**关闭**。
+- **默认分发**：该团队中未指定名称的委派会交由哪个 Agent 处理。
+- **触发条件**：**@ 提及**或**关闭**。
 
 <Image src={imgLinearAgentCard} alt="一个 Agent 的 Linear 卡片，列出两个团队行，每行都有其默认分发和 @ 提及触发条件" width={640} />
 
-没有“任意消息”设置：每个 Linear 事件本来就是发给该应用的，因此一个团队要么接受委派和提及，要么处于关闭状态。把团队设为**关闭**会对工作区上的每个 Agent 静音；让某一个 Agent 停止在工作区任何地方应答的方式，是把该 Agent 从工作区解除关联。
+这里没有“任意消息”选项：每个 Linear 事件本身就是发给应用的，因此团队要么接收委派和提及，要么处于关闭状态。把团队设为**关闭**会对该工作区上的所有 Agent 生效。如果只想让某一个 Agent 停止在该工作区响应，将该 Agent 从工作区解除关联即可。
 
-团队名称链接到 Linear 中的团队，旁边显示其 key。要更改团队的默认 Agent，使用该行的选择器；当当前默认 Agent 是[受限 Agent](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes)时，控制台会先给出警告——成为默认 Agent 正是它能在那里行事的原因。如果关联工作区的 Agent 是受限 Agent，团队会以**关闭**状态开始，直到有人启用它。
+团队名称会链接到 Linear 中对应的团队页面，旁边标注着团队的 key。使用行内的选择器即可修改团队的默认 Agent。如果当前默认 Agent 是[受限 Agent](/operate-govern/permissions-overview/team-visibility#what-a-restricted-agent-changes)，控制台会先给出提示，因为成为默认 Agent 才允许它在该团队中执行操作。如果关联工作区的 Agent 是受限 Agent，团队默认会处于**关闭**状态，需要手动启用。
 
 ## 在 Issue 上开始工作 [#start-work-on-an-issue]
 
-- **把 Issue 委派给应用**。由该 Issue 所在团队的默认分发 Agent 接手。Linear 自动化发起的委派也会到达这里。
-- **提及应用并附上指令**。在指令中的任意位置写上 `@<agent name>` 即可按名字指定一个 Agent；不写名字时，仍由团队默认 Agent 接手。指定了多个 Agent 时选取第一个——确认消息会说明是哪个 Agent 接手了这一轮。
+- **把 Issue 委派给应用**：由该 Issue 所在团队的默认分发 Agent 接手。Linear 自动化触发的委派也会走同一路由。
+- **提及应用并附上指令**：在指令任意位置写上 `@<agent name>` 即可指定某个 Agent。未写名字时，由团队默认 Agent 接手。如果同时指定了多个 Agent，会选取第一个，确认消息中会写明具体由哪个 Agent 接手本轮任务。
 
-每次委派或提及都会创建一个绑定到一个 Agent 的 Linear Agent 会话。后续回复和 Stop 都留在该 Agent 上；要找另一个 Agent，就需要一次新的提及，它会打开自己的会话。
+每次委派或提及都会创建一个绑定到单个 Agent 的 Linear Agent 会话。后续回复和 Stop 操作都作用于该 Agent。如果需要找其他 Agent，重新发起一条提及即可开启新的会话。
 
 ## Agent 在 Issue 中会做什么 [#what-the-agent-does-in-the-issue]
 
-- **在十秒内确认**，并以自己的名字开头，即使它正排在已在进行的工作之后。
-- **把 Issue 移入已开始状态**。在最初的委派时，尚未处于已开始、已完成或已取消状态的 Issue 会移到团队的第一个已开始状态。分诊状态不会被触碰，这样 Linear 侧的自动化仍由人来分诊；没有已开始状态的团队会被跳过。后续回复从不改动你留下的状态。
-- **流式推送进展**，以思考和工具操作的形式呈现，并让它的待办列表与 Linear 的计划清单保持同步。
-- **附加链接**。它创建的 Pull Request 和 Merge Request 会附加到 Agent 会话上，AgentConnect 会话从第一轮起就出现在 Issue 的 **Resources** 中。
-- **答复**最终响应；如果 Agent 的输出设置包含署名页脚，答复会带上它。
-- **按请求停止**：运行被中断，会话以一条提示你回复以继续的备注收尾。
+- **在十秒内确认**：回复以自己的名字开头，即使前方还有排队中的任务也会及时确认。
+- **把 Issue 移入已开始状态**：首次委派时，如果 Issue 尚未处于已开始、已完成或已取消状态，Agent 会将其移至团队的第一个已开始状态。分诊状态不会被修改，以保留 Linear 侧的人工分诊流程；没有配置已开始状态的团队会被跳过。后续回复不会更改 Issue 状态。
+- **流式推送进展**：实时展示思考过程和工具操作，并将待办列表同步到 Linear 的计划清单。
+- **附加链接**：Agent 创建的 Pull Request 和 Merge Request 会附加到 Agent 会话上，且从第一轮起 AgentConnect 会话就会出现在 Issue 的 **Resources** 中。
+- **答复**：发布最终响应，并在输出设置开启时附上 Agent 的署名页脚。
+- **按请求停止**：收到停止指令后立即中断执行，并在会话末尾附上一条提示，告知你回复即可继续。
 
-无论 Linear 收到了什么，完整的会话记录始终在[会话](/operate-govern/sessions)中。
+无论 Linear 中展示了多少内容，完整的会话记录都会保存在[会话](/operate-govern/sessions)中。
 
 <Image src={imgLinearIssueResources} alt="委派后的 Linear Issue：Resources 中的 AgentConnect 会话、由委派者启动的 Agent 会话，以及从 Todo 移到 In Progress 的 Issue" width={640} />
 
@@ -66,46 +66,46 @@ Linear 通过 HTTP 回调投递事件，因此部署需要一个公共回调端�
 
 ### 有多少内容会进入动态 [#how-much-reaches-the-feed]
 
-Agent 的**输出模式**决定发布什么：
+Agent 的**输出模式**决定向动态发布哪些内容：
 
-| 输出模式        | 确认 | 进展      | 工具操作  | 计划 | 答复 |
-| --------------- | ---- | --------- | --------- | ---- | ---- |
-| 无              | —    | —         | —         | —    | —    |
-| 最简            | ✓    | —         | —         | —    | ✓    |
-| 低 _（默认）_   | ✓    | ✓         | ✓         | ✓    | ✓    |
-| 中              | ✓    | ✓ + 推理  | ✓         | ✓    | ✓    |
-| 高              | ✓    | ✓ + 推理  | ✓ + 结果  | ✓    | ✓    |
+| 输出模式      | 确认 | 进展     | 工具操作 | 计划 | 答复 |
+| ------------- | ---- | -------- | -------- | ---- | ---- |
+| 无            | —    | —        | —        | —    | —    |
+| 最简          | ✓    | —        | —        | —    | ✓    |
+| 低 _（默认）_ | ✓    | ✓        | ✓        | ✓    | ✓    |
+| 中            | ✓    | ✓ + 推理 | ✓        | ✓    | ✓    |
+| 高            | ✓    | ✓ + 推理 | ✓ + 结果 | ✓    | ✓    |
 
-在这里，低模式就已经包含操作和计划，因为进展可见正是 Linear Agent 会话的用途所在。**无**是真正的静默——什么都不会到达 Linear，会话就那样无人应答地放着——因此对于带有 Linear 集成的 Agent，控制台会把它标记为错误配置。
+在这里，“低”模式就已经包含工具操作和计划，因为展示执行进展正是 Linear Agent 会话的核心用途。**无**模式完全静默，不会向 Linear 发送任何内容，导致会话一直无人应答，因此控制台会将其标记为带有 Linear 集成的 Agent 的错误配置。
 
 ## Agent 在 Linear 中能做什么 [#what-the-agent-can-do-in-linear]
 
-在 Linear 会话中工作的 Agent 会获得一组基于同一应用授权的 Linear 工具：读取和搜索 Issue、评论、状态、标签、团队、用户、项目、周期、文档和 Initiative，以及写入 Issue、评论和 Initiative 更新。`updateIssue` **按名称**接受状态、负责人或标签，并针对团队进行解析，因此“把它移到 In Progress”不需要先做查询。
+在 Linear 会话中运行的 Agent 会自动获得一组基于同一应用授权的 Linear 工具，可以读取和搜索 Issue、评论、状态、标签、团队、用户、项目、周期、文档和 Initiative，也可以写入 Issue、评论和 Initiative 更新。`updateIssue` 支持**按名称**传入状态、负责人或标签并按团队自动解析，因此诸如“把它移到 In Progress”这样的请求无需先查 ID。
 
-这些工具**只存在于 Linear 会话中**。同一个 Agent 在 Slack 或 Pull Request 上工作时不会带有它们。
+这些工具**仅在 Linear 会话中可用**。同一个 Agent 在 Slack 或 Pull Request 中工作时不会携带这些工具。
 
-Agent 还会收到 Issue 的标识符、标题、URL 和团队作为常驻上下文，外加一条简短的工作约定：按票据所写的内容工作，只在无法继续时才提问；用评论报告结果而不是计划，因为计划已经实时显示在会话中；并用 Issue 标识符命名分支和 Pull Request，这样 Linear 自己的代码托管平台集成就能把它们链接回来。工作区管理员在 Linear 中为该应用编写的指引会随每一轮一起传递。
+Agent 还会自动拿到 Issue 的标识符、标题、URL 和团队作为常驻上下文，并遵循一套简短的工作约定：按 Issue 描述开展工作，仅在受阻无法继续时提问；在评论中汇报结果而非复述计划（计划已在会话中实时展示）；用 Issue 标识符命名分支和 Pull Request，以便 Linear 自带的代码托管集成自动关联。工作区管理员在 Linear 中为应用填写的使用指引也会在每一轮一并传入。
 
-Issue 描述和先前的评论作为引用上下文而非指令交给 Agent——它们经常包含在你的工作区之外写下的文本。在 Linear 中附加的文件和图片不会被读取。
+Issue 描述和已有评论会作为引用上下文（而非执行指令）传给 Agent，因为其中常包含来自工作区外部的内容。Linear 中附加的文件和图片不会被读取。
 
 ## 审批 [#approvals]
 
-当某个步骤需要 Agent 自己无法授予的权限时，动态中会出现一张卡片，说明该操作并附带指向控制台会话的链接；你在那里批准或拒绝后，会有一条备注跟进。目前还不支持在 Linear 内部进行审批。
+当某个步骤需要 Agent 无法自行授予的权限时，动态中会出现一张卡片，列出具体操作并提供跳转到控制台会话的链接。你在控制台中批准或拒绝后，Linear 中会跟进一条结果备注。目前暂不支持直接在 Linear 内部审批。
 
 ## 管理连接 [#manage-the-connection]
 
-| 操作                | 位置                                         | 效果                                                   |
-| ------------------- | -------------------------------------------- | ------------------------------------------------------ |
-| **解除 Agent 关联** | Agent 的 Linear 卡片                         | 该 Agent 离开工作区。工作区和其他所有 Agent 保持不变。 |
-| **重新连接**        | Agent 的卡片，或**集成 → 消息应用 → Linear** | 在授权过期或被撤销后重新授权工作区。                   |
-| **断开连接**        | 仅限**集成 → 消息应用 → Linear**             | 为整个组织终止该工作区，并在 Linear 撤销授权。         |
+| 操作                | 位置                                         | 效果                                                 |
+| ------------------- | -------------------------------------------- | ---------------------------------------------------- |
+| **解除 Agent 关联** | Agent 的 Linear 卡片                         | 将该 Agent 移出工作区，工作区及其他 Agent 不受影响。 |
+| **重新连接**        | Agent 的卡片，或**集成 → 消息应用 → Linear** | 在授权过期或被撤销后重新授权工作区。                 |
+| **断开连接**        | 仅限**集成 → 消息应用 → Linear**             | 为整个组织断开该工作区连接，并在 Linear 侧撤销授权。 |
 
-断开连接刻意不放在单个 Agent 的成员身份旁边：否则一个成员就能终止其他所有人的访问。
+“断开连接”刻意不放在单个 Agent 的配置旁，避免某位成员误操作导致整个组织失去访问权限。
 
-如果有人从 **Linear Settings → Applications** 中撤销了 AgentConnect，工作区很快会显示一个已撤销标记——Linear 需要一两分钟才会报告——Agent 也会报告需要认证。**重新连接**可以修复它并恢复各成员关系。
+如果有人在 **Linear Settings → Applications** 中撤销了 AgentConnect 授权，工作区很快会显示已撤销标记（Linear 通常需要一两分钟上报状态），Agent 也会提示需要重新认证。点击**重新连接**即可恢复授权及原有成员关联。
 
 ## 限制 [#limits]
 
-- 配置按团队进行——没有按 Issue 或按项目的设置。
-- 在文档或其他非 Issue 界面上提及应用，会得到一条简短的备注，说明该界面尚不支持；不会启动任何 Agent 运行。
-- Linear 用 Issue 为它自己的 Agent 会话命名；AgentConnect 的会话标题保留在控制台中。
+- 配置仅支持按团队维度，不支持按单个 Issue 或项目配置。
+- 在文档或其他非 Issue 页面提及应用时，系统只会回复一条简短提示，说明暂不支持该界面，不会启动 Agent 运行。
+- Linear 会根据 Issue 自动命名其 Agent 会话，AgentConnect 的会话标题则保留在控制台中。

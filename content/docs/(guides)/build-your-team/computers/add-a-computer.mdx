@@ -1,34 +1,34 @@
 ---
 title: "Add a computer"
 icon: Download
-description: "Register a Linux, macOS or Windows desktop, or a desktop container, as a Computer with one command. Check its health, manage the desktop daemon, share it, and revoke or delete it."
+description: "Register a Linux, macOS, or Windows desktop, or a desktop container, as a Computer with one command. Check its health, manage the desktop daemon, share it, and revoke or delete it."
 ---
 
 import imgComputerAdd from '@/public/images/computer-add.png'
 import imgComputerChecks from '@/public/images/computer-checks.png'
 
-Adding a computer installs the **desktop daemon** on a machine and registers it with your organization. You become its owner. Owners and Collaborators can add computers; Viewers cannot.
+Adding a computer installs the **desktop daemon** on a machine and registers it with your organization, making you its owner. Owners and Collaborators can add computers, while Viewers can't.
 
 ## Before you start
 
-- **A signed-in desktop.** The daemon runs inside a graphical session, so sign in to the machine's desktop as yourself. It cannot capture a machine that only has an SSH session.
-- **Node.js 24.12 or later** on that machine.
-- **Run as yourself**, not as root or as an administrator. The daemon acts as the person signed in.
+- **A signed-in desktop**: The daemon runs inside a graphical session, so sign in to the machine's desktop as yourself. It can't capture a machine that only has an SSH session.
+- **Node.js 24.12 or later** installed on the machine.
+- **Run as your own user**: Don't run the command as root or as an administrator. The daemon acts as the signed-in user.
 
-| Platform                | What to expect                                                                                           |
-| ----------------------- | -------------------------------------------------------------------------------------------------------- |
-| Linux, X11              | Nothing to approve                                                                                       |
-| Linux, GNOME on Wayland | Approve remote interaction and screen sharing once, then log out and back in once                        |
-| macOS                   | Allow **Accessibility** and **Screen Recording** for the AgentConnect Computer app                       |
-| Windows 10 and 11       | One administrator approval, which installs the background service                                        |
-| Docker                  | A server with Docker on `amd64` or `arm64`; no desktop needed                                            |
+| Platform                | What to expect                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| Linux, X11              | No extra approvals required                                                     |
+| Linux, GNOME on Wayland | Approve remote interaction and screen sharing once, then log out and back in    |
+| macOS                   | Allow **Accessibility** and **Screen Recording** for AgentConnect Computer      |
+| Windows 10 and 11       | One administrator approval to install the background service                    |
+| Docker                  | A server with Docker on `amd64` or `arm64` (no desktop needed)                  |
 
 ## Add it from the console
 
 1. Open **Infra**, find the **Computers** section, and select **Add computer**.
-2. Optionally enter a **Name**. Without one, the computer uses its hostname.
-3. Choose who can see it. Only you see it unless you share it; see [Visibility](#visibility).
-4. Copy the command and run it in a terminal on that computer, inside its desktop session.
+2. Optionally enter a **Name**. If you leave it blank, the computer uses its hostname.
+3. Choose who can see it. By default, only you can see it unless you share it (see [Visibility](#visibility)).
+4. Copy the command and run it in a terminal inside the machine's desktop session.
 
 ```bash
 npx -y @agentconnect.md/cli@latest computer install --register "<token>" --cp-url "<exchange URL>"
@@ -36,48 +36,48 @@ npx -y @agentconnect.md/cli@latest computer install --register "<token>" --cp-ur
 
 <Image src={imgComputerAdd} alt="The Add computer dialog with example values: the one-time command, the registration progress, an optional name, and the visibility choice" width={560} />
 
-The command is the same on Linux, macOS and Windows. It is shown only once, works once, and expires after an hour; **Create new command** makes another.
+The command is the same on Linux, macOS, and Windows. It's shown only once, works once, and expires after an hour. Select **Create new command** if you need another one.
 
-The dialog follows the registration: **Waiting for the computer to register**, then **Registered, waiting for it to connect**, then **Computer connected**. Select **Open computer** to see its page.
+The dialog tracks registration progress: **Waiting for the computer to register**, then **Registered, waiting for it to connect**, and finally **Computer connected**. Select **Open computer** to view its page.
 
-The command does the following:
+Running the command performs these steps:
 
 1. Downloads the desktop daemon from npm and verifies it.
-2. Downloads the pinned screen driver and ffmpeg, and checks their checksums.
-3. Asks for the approvals the operating system requires.
+2. Downloads the pinned screen driver and ffmpeg and verifies their checksums.
+3. Prompts for any operating system approvals required.
 4. Installs a background service that starts when you sign in to the desktop.
-5. Registers the computer with your organization and runs its health checks.
+5. Registers the computer with your organization and runs health checks.
 
 ## Platform notes
 
 ### Linux
 
-Run the command in a terminal inside the desktop session. Run over SSH, it installs the service, which starts at the next desktop login.
+Run the command in a terminal inside the desktop session. If you run it over SSH, it installs the service and starts it at the next desktop login.
 
-- **X11** needs no approval.
-- **GNOME on Wayland** asks twice during setup: switch on **Allow Remote Interaction** and keep **Remember This Selection**, then approve screen sharing. Setup also installs a GNOME Shell extension, so log out and back in once. Text that needs an input method, such as Chinese, cannot be typed on a Wayland session.
-- **A desktop for each agent.** By default each agent works on its own virtual desktop instead of your screen. This needs Xvfb and Xfce; setup offers to install them when they are missing. See [Taking turns](/build-your-team/computers/give-agents-a-computer#taking-turns).
+- **X11**: Needs no approval.
+- **GNOME on Wayland**: Prompts twice during setup. Switch on **Allow Remote Interaction**, keep **Remember This Selection** checked, and approve screen sharing. Setup also installs a GNOME Shell extension, so log out and back in once afterward. Text that requires an input method (such as Chinese) can't be typed in a Wayland session.
+- **Separate desktop per agent**: By default, each agent works on its own virtual desktop instead of your main screen. This requires Xvfb and Xfce, which setup offers to install if they're missing. See [Taking turns](/build-your-team/computers/give-agents-a-computer#taking-turns).
 
-A tray icon shows the state on X11: green when ready, amber while an agent has control, red when paused, and grey when the Control Plane is unreachable.
+On X11, a tray icon indicates the current state: green when ready, amber while an agent has control, red when paused, and grey when the Control Plane is unreachable.
 
 ### macOS
 
-Run the command in Terminal on the Mac, or over SSH while someone is signed in to its desktop. It installs **AgentConnect Computer** in `~/Applications`, and macOS grants the permissions to that app:
+Run the command in Terminal on the Mac, or over SSH while someone is signed in to its desktop. It installs **AgentConnect Computer** in `~/Applications`, and macOS grants permissions to that app:
 
-- **Accessibility**, which macOS 27 names **Device Control and Data Access**. Being listed is not enough: the switch must be on, or clicks and keys are silently dropped.
+- **Accessibility** (named **Device Control and Data Access** on macOS 27): Appearing in the list isn't enough. Turn the switch on, or clicks and keystrokes will be silently dropped.
 - **Screen Recording**.
 
-Setup opens each System Settings pane and waits. The menu bar icon shows who has control and whether a permission or the Control Plane connection is missing.
+Setup opens each System Settings pane and waits for you to grant access. The menu bar icon shows who has control and flags any missing permission or Control Plane connection issue.
 
 ### Windows
 
-Run the command in a normal, non-administrator PowerShell on the desktop. Setup asks for administrator approval once, then installs a service that runs the daemon in the session of whoever is signed in. Apps an agent launches start as you.
+Run the command in a normal, non-administrator PowerShell window on the desktop. Setup prompts for administrator approval once to install a service that runs the daemon in the signed-in user's session. Apps an agent launches run as you.
 
-The taskbar icon, in the overflow area until you pin it, shows who has control. Its **Administrator Prompts** menu chooses who answers a UAC prompt that appears while an agent has control; it is the same setting as the computer's [usage policy](/build-your-team/computers/give-agents-a-computer#usage-policy).
+The taskbar icon (in the overflow area until you pin it) shows who has control. Its **Administrator Prompts** menu controls who answers UAC prompts that appear while an agent has control, matching the computer's [usage policy](/build-your-team/computers/give-agents-a-computer#usage-policy).
 
 ### Docker
 
-On the **Docker** tab, **Add computer** shows a `docker run` command instead. It starts a Linux desktop with Chromium and LibreOffice in a container, isolated from the server:
+On the **Docker** tab, **Add computer** provides a `docker run` command instead. It starts a Linux desktop with Chromium and LibreOffice inside a container, isolated from the host server:
 
 ```bash
 docker run -d --name agentconnect-computer --hostname agentconnect-computer --restart unless-stopped \
@@ -86,11 +86,11 @@ docker run -d --name agentconnect-computer --hostname agentconnect-computer --re
   -e AGENTCONNECT_REGISTER_TOKEN="<token>" ghcr.io/agentconnect-md/computer:<version>
 ```
 
-The volume keeps the computer's key, its browser profile and its files, so keep the volume and the same command can run again. For Docker Compose, direct viewer video, and upgrades, see [Computers for self-hosting](/self-hosting/computers#run-a-desktop-container).
+The volume stores the computer's key, browser profile, and files. As long as you keep the volume, you can run the same container again without re-registering. For Docker Compose, direct viewer video, and upgrades, see [Computers for self-hosting](/self-hosting/computers#run-a-desktop-container).
 
 ## Check its health
 
-A computer's page opens on **Overview**, which lists the daemon's checks: failed ones first, each with its fix, and passing ones folded behind a count. Run the same checks on the machine:
+A computer's page opens to the **Overview** tab, which lists checks from the daemon. Failing checks appear first alongside their fixes, and passing checks are folded behind a count. You can run the same checks directly on the machine:
 
 ```bash
 npx -y @agentconnect.md/cli computer doctor
@@ -101,13 +101,13 @@ npx -y @agentconnect.md/cli computer doctor
 | Status                | Meaning                                                                     |
 | --------------------- | --------------------------------------------------------------------------- |
 | **Online**            | Connected and ready for agents                                              |
-| **Agent working**     | An agent has control                                                        |
-| **Person in control** | Someone is using it or took control in the viewer; agent input is paused    |
-| **Paused**            | Stopped from the console or on the machine, until it is resumed             |
-| **Locked**            | The screen is locked; a locked screen cannot be captured or operated        |
-| **Offline**           | The daemon is not connected, for example signed out, asleep or powered off  |
+| **Agent working**     | An agent currently has control                                              |
+| **Person in control** | Someone is using it or took control in the viewer, pausing agent input      |
+| **Paused**            | Stopped from the console or on the machine until resumed                    |
+| **Locked**            | The screen is locked and can't be captured or operated                      |
+| **Offline**           | The daemon isn't connected (for example, signed out, asleep, or powered off) |
 | **Asleep**            | A cloud computer sleeping until its next use                                |
-| **Revoked**           | Its key was revoked; register it again to bring it back                     |
+| **Revoked**           | The key was revoked; register the computer again to reconnect it            |
 
 ## Manage it on the machine
 
@@ -118,28 +118,28 @@ npx -y @agentconnect.md/cli computer restart    # also: stop, start
 npx -y @agentconnect.md/cli computer uninstall  # remove the service and the installed versions
 ```
 
-An upgrade keeps the registration: the configuration and the computer's key stay in the daemon's data directory, `~/.agentconnect/computer` on Linux and macOS. `uninstall --purge` deletes them too.
+Upgrading preserves the registration. The configuration and computer key remain in the daemon's data directory (`~/.agentconnect/computer` on Linux and macOS). Run `uninstall --purge` to delete them too.
 
 ## Visibility
 
-A computer's visibility decides which members see it, and a member who can see it may give it to their agents. A computer you add starts visible to you only. To share it, open the computer, find **Visibility** under **Details**, and select **Change visibility**.
+A computer's visibility controls which organization members can see it, and any member who can see it can give it to their agents. New computers are visible only to you by default. To share one, open the computer, find **Visibility** under **Details**, and select **Change visibility**.
 
 Sharing your own desktop lets other members point their agents at it. See [Team visibility](/operate-govern/permissions-overview/team-visibility) for how **Everyone** and **Selected** work.
 
 ## Revoke or delete
 
-Both are in the actions menu on the computer's page.
+Both options are in the actions menu on the computer's page.
 
-- **Revoke** disconnects the computer at once and revokes its key. Agents lose access immediately. The desktop daemon stays installed but refuses input, screenshots and viewers until you register the desktop again with a new command.
-- **Delete** removes the computer and its keys. Its activity and stored screenshots are no longer shown. This cannot be undone.
+- **Revoke**: Immediately disconnects the computer and revokes its key, cutting off agent access right away. The desktop daemon remains installed but refuses input, screenshots, and viewers until you register the desktop again with a new command.
+- **Delete**: Removes the computer and its keys permanently. Its activity and stored screenshots are no longer shown. This can't be undone.
 
-When a member leaves the organization, the computers they own are revoked. To remove the daemon from the machine, run `computer uninstall` there.
+When a member leaves the organization, any computers they own are revoked automatically. To remove the daemon from the machine, run `computer uninstall` locally.
 
 ## Troubleshooting
 
-- **The dialog keeps waiting** — the command has not finished on the computer, or it expired. Check the terminal, or select **Create new command**.
-- **Registered but never online** — the machine cannot reach the deployment. The daemon needs outbound HTTPS and WebSocket access to the Control Plane and the relay.
-- **Offline after a restart** — nobody is signed in to the desktop. The daemon starts with the graphical session, not with the machine.
-- **Clicks do nothing on macOS** — the Accessibility switch for AgentConnect Computer is off. Turn it on, then run `computer doctor`.
-- **Chinese or other input-method text is dropped** — a GNOME on Wayland session types key codes only. Sign in to an X11 session instead.
-- **A check fails** — the **Overview** tab shows the fix beside each failed check.
+- **The dialog keeps waiting**: The command hasn't finished running on the computer, or the token expired. Check your terminal, or select **Create new command**.
+- **Registered but never online**: The machine can't reach your deployment. The daemon needs outbound HTTPS and WebSocket access to the Control Plane and relay.
+- **Offline after a restart**: Nobody is signed in to the desktop. The daemon starts with the graphical session, not on system boot.
+- **Clicks do nothing on macOS**: The Accessibility switch for AgentConnect Computer is off. Turn it on in System Settings, then run `computer doctor`.
+- **Chinese or other input-method text is dropped**: GNOME on Wayland sessions accept key codes only. Sign in to an X11 session instead.
+- **A check fails**: Open the **Overview** tab to see the suggested fix next to each failed check.

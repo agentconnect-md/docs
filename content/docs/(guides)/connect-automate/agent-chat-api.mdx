@@ -1,63 +1,63 @@
 ---
 title: "Agent chat API"
 icon: BotMessageSquare
-description: "Put an agent behind your own chat UI, such as an Ask AI panel on a docs site or a support widget, with an API key and the AI SDK."
+description: "Put an agent behind your own chat UI, such as an Ask AI panel on a docs site or a support widget, using an API key and the AI SDK."
 ---
 
-The agent chat API puts an agent behind any chat UI built on the [AI SDK](https://ai-sdk.dev)'s `useChat` (UI message stream protocol v1). Each turn is one HTTP POST with your API key, answered as a server-sent event stream. The Ask AI panel on this site works this way.
+The agent chat API connects an agent to any chat UI built on the [AI SDK](https://ai-sdk.dev)'s `useChat` hook (UI message stream protocol v1). Each turn is a single HTTP POST authenticated with your API key, returning a server-sent event stream. The Ask AI panel on this site uses this API.
 
-It takes three steps:
+Setting it up takes three steps:
 
 1. Add the API to the agent.
-2. Create a key limited to agent chat.
-3. Post turns to the chat endpoint with the key.
+2. Create an API key scoped to agent chat.
+3. Send turns to the chat endpoint with that key.
 
 ## Choose a protocol [#choose-a-protocol]
 
-An agent's API speaks three protocols, and an agent can add more than one. This page covers **AI SDK UI**. **AG-UI** is the same chat for an AG-UI client. **AHP** is for a client that opens the agent itself, such as [VS Code](/connect-automate/vscode).
+An agent's API supports three protocols, and you can enable more than one on the same agent. This page covers **AI SDK UI**. **AG-UI** provides the same chat flow for AG-UI clients, while **AHP** is built for clients that open the agent workspace directly, such as [VS Code](/connect-automate/vscode).
 
 | | AI SDK UI | AG-UI | AHP v1 |
 | --- | --- | --- | --- |
-| Made for | A chat UI built on `useChat` | A chat UI built on an AG-UI client, such as CopilotKit | An agent client, such as VS Code |
-| Transport | One HTTP POST per turn, answered as an event stream | The same | One WebSocket for the whole connection |
+| Made for | Chat UIs built on `useChat` | Chat UIs built on an AG-UI client (such as CopilotKit) | Agent clients, such as VS Code |
+| Transport | One HTTP POST per turn, returning an event stream | Same | One WebSocket for the whole connection |
 | Endpoint | `<relay-url>/ai-sdk/agents/<agent-id>/chat` | `<relay-url>/ag-ui/agents/<agent-id>/chat` | `wss://<relay-url>/ahp/agents/<agent-id>` |
-| Credential | An **Agent chat** or **Full access** key | The same | A **Full access** key, or a sign-in from the client |
+| Credential | An **Agent chat** or **Full access** key | Same | A **Full access** key, or sign-in from the client |
 | Reply and thinking | Yes | Yes | Yes |
 | Tool calls | Title and status | Title and status | Input and output |
 | File edits | Not shown | Not shown | Before and after, as a diff |
 | The agent's files | No | No | Read-only |
-| Questions and approvals | The caller answers | Not handed to the caller | The caller answers |
-| Sessions | The caller keeps the conversation id | The caller keeps the thread id | Listed, with their earlier turns |
-| Stopping a turn | No: closing the request leaves it running | No: the same | Yes |
-| A dropped connection | The rest of the turn is only in the console | The same | Reconnect and keep reading |
-| Message input | The text of the last message | The same | Text and one image |
+| Questions and approvals | Caller answers | Not forwarded to the caller | Caller answers |
+| Sessions | Caller tracks the conversation ID | Caller tracks the thread ID | Listed, including earlier turns |
+| Stopping a turn | No (closing the request leaves it running) | No (same) | Yes |
+| A dropped connection | Rest of the turn is only in the console | Same | Reconnect and keep reading |
+| Message input | Text of the last message | Same | Text and one image |
 
-Pick AI SDK UI or AG-UI to put an agent behind your own chat UI: a turn is one request, and an **Agent chat** key can do nothing but chat. Pick AHP when the client should see the agent's work and not only its replies.
+Use AI SDK UI or AG-UI when putting an agent behind your own chat UI. Each turn is a single request, and an **Agent chat** key only allows chatting. Use AHP when the client needs to inspect the agent's full work (tool inputs and outputs, file diffs, and files) in addition to its replies.
 
-An AG-UI request is a `RunAgentInput` whose `threadId` names the conversation. Tool activity, the plan and notices arrive as `ACTIVITY_SNAPSHOT` events, and the session title as a `CUSTOM` event named `session_info`. Keys, limits and refusals are the ones on this page.
+An AG-UI request uses a `RunAgentInput` payload where `threadId` identifies the conversation. Tool activity, plans, and notices arrive as `ACTIVITY_SNAPSHOT` events, and the session title arrives as a `CUSTOM` event named `session_info`. Keys, limits, and error responses are the same as described on this page.
 
 ## Add the API to the agent [#add-the-api]
 
-An agent accepts API calls only after its owner adds the API. Open the agent, then **Integrations → Add integration**, pick **API** under **Workflow**, choose **AI SDK UI** and click **Add API**.
+An agent only accepts API calls after its owner enables the API. Open the agent, go to **Integrations → Add integration**, select **API** under **Workflow**, choose **AI SDK UI**, and click **Add API**.
 
 ![Add the API to an agent](/images/add-api.png)
 
-The agent's Integrations tab now shows an **API** card. Its **Quickstart** shows the chat endpoint for this agent, examples for curl, Node and the browser, and the keys that reach the agent. Removing the API stops the agent accepting calls within a minute; keys that cover it stay valid for other agents.
+The agent's **Integrations** tab now shows an **API** card. Open **Quickstart** to view the chat endpoint for this agent, examples for curl, Node, and the browser, and the keys that can reach it. Removing the API stops incoming calls within a minute; keys that also include other agents remain valid for those agents.
 
 ![The API card's Quickstart](/images/api-quickstart.png)
 
 ## Create a key [#create-a-key]
 
-Click **Create key** in the Quickstart, or create one for a [service account](/operate-govern/permissions-overview/members-and-roles#service-accounts) under **Settings → Service accounts → Keys**, so it does not depend on any one person, or for yourself under **Profile → API keys**. Either way:
+Click **Create key** in the Quickstart. You can also create a key for a [service account](/operate-govern/permissions-overview/members-and-roles#service-accounts) under **Settings → Service accounts → Keys** (so it isn't tied to one person), or create a personal key under **Profile → API keys**. In all cases, configure:
 
 - **Permission**: **Agent chat**.
 - **Agents**: **Selected agents**, then pick the agent.
 
-An Agent chat key works only on the chat endpoint, and only for the selected agents that have added the API; the Control Plane's REST API refuses it. Like any [API key](/api#create-a-key), it is shown once and expires after 90 days by default. Revoking it stops it within a minute.
+An Agent chat key only works on the chat endpoint for selected agents that have the API enabled. The Control Plane REST API rejects it. Like any [API key](/api#create-a-key), the secret is shown once and expires after 90 days by default. Revoking it takes effect within a minute.
 
 ## Send a turn [#send-a-turn]
 
-Copy the chat endpoint from the Quickstart. Send `POST` to it with `Authorization: Bearer <key>` and the `useChat` request body (`{ id, messages, trigger, … }`):
+Copy the chat endpoint from the Quickstart. Send a `POST` request with `Authorization: Bearer <key>` and the `useChat` request body (`{ id, messages, trigger, … }`):
 
 ```bash
 curl -N "$CHAT_URL" \
@@ -66,32 +66,32 @@ curl -N "$CHAT_URL" \
   -d '{"id":"chat-1","messages":[{"id":"m1","role":"user","parts":[{"type":"text","text":"How do I install the daemon?"}]}]}'
 ```
 
-The chat endpoint is `<relay-url>/ai-sdk/agents/<agent-id>/chat`. On [AgentConnect OSS](/self-hosting), the relay URL is your relay's public URL.
+The chat endpoint is `<relay-url>/ai-sdk/agents/<agent-id>/chat`. On [AgentConnect OSS](/self-hosting), `<relay-url>` is your relay's public URL.
 
-The body's `id`, 1 to 128 characters, names the conversation:
+The request body's `id` (1 to 128 characters) identifies the conversation:
 
-- The first turn with a new `id` opens a conversation; the same `id` continues it. `useChat` generates an `id` per chat and sends it on every turn.
-- Conversations belong to the key's owner. The same `id` sent with another member's key is a different conversation.
-- The relay reads only the text parts of the last user message. The agent's session already holds the history, so earlier messages, file parts and `data-*` parts are ignored. A request whose last message answers the agent's questions continues its turn instead; see [Questions and approvals](#questions-and-approvals).
+- The first turn with a new `id` opens a conversation, and later turns with the same `id` continue it. `useChat` generates an `id` per chat and sends it on every turn.
+- Conversations belong to the key's owner. Sending the same `id` with another member's key starts a separate conversation.
+- The relay only reads the text parts of the last user message. Because the agent's session already stores the history, earlier messages, file parts, and `data-*` parts are ignored. If the last message answers an agent question or approval prompt, it continues that turn instead; see [Questions and approvals](#questions-and-approvals).
 
-The response is `text/event-stream` with the header `x-vercel-ai-ui-message-stream: v1`. Its parts follow the AI SDK protocol, and the stream ends with `[DONE]`.
+The response is a `text/event-stream` with the header `x-vercel-ai-ui-message-stream: v1`. Event parts follow the AI SDK protocol, and the stream ends with `[DONE]`.
 
-- A turn can run for minutes. A keepalive comment arrives every 15 seconds.
-- A request body may be up to 4 MiB, and a turn's text up to 128 KiB.
-- One turn runs at a time in a conversation.
+- A turn can run for several minutes. A keepalive comment arrives every 15 seconds.
+- Request bodies can be up to 4 MiB, and a turn's text up to 128 KiB.
+- Only one turn runs at a time per conversation.
 
-Refusals arrive as a status before any stream, with a JSON body whose `reason` names the machine-readable cause where there is one:
+Errors are returned as an HTTP status before any stream begins, with a JSON body whose `reason` field provides a machine-readable code when available:
 
 | Status | Meaning |
 | --- | --- |
-| `400` | No `id`, or no user message with text. |
-| `401` | The key is unknown, revoked or expired. |
-| `403` | The key is not an Agent chat or full key, or the agent has not added the API (`api_disabled`). |
-| `404` | The key's agent selection does not include this agent, or you cannot see it. |
-| `409` | A turn is still running in this conversation (`busy`), the agent moved since the conversation ran (`agent_moved`), or the turn an answer belongs to has ended (`turn_ended`). Start a new conversation after `agent_moved`. |
-| `413` | The body or the turn's text is too large. |
+| `400` | Missing `id`, or no user message with text. |
+| `401` | Key is unknown, revoked, or expired. |
+| `403` | Key doesn't have Agent chat or Full access permissions, or the agent hasn't added the API (`api_disabled`). |
+| `404` | Key's agent selection doesn't include this agent, or you don't have access to see it. |
+| `409` | A turn is still running in this conversation (`busy`), the agent moved since the last turn (`agent_moved`), or the turn an answer belongs to has already ended (`turn_ended`). Start a new conversation after `agent_moved`. |
+| `413` | Request body or turn text exceeds size limits. |
 | `422` | The API's Decision gate declined the turn (`declined`). |
-| `503` | The agent is offline, paused or draining. |
+| `503` | Agent is offline, paused, or draining. |
 
 ### What the stream carries [#what-the-stream-carries]
 
@@ -99,36 +99,36 @@ Refusals arrive as a status before any stream, with a JSON body whose `reason` n
 | --- | --- |
 | `text-*` | The agent's reply. |
 | `reasoning-*` | The agent's thinking. |
-| `data-tool` | Tool activity: title and status only. |
+| `data-tool` | Tool activity (title and status only). |
 | `data-plan` | The agent's plan. |
 | `data-notice` | Status notices, such as "Starting sandbox…". |
 | `message-metadata` | The session title. |
-| `dynamic-tool` | The agent's question (`agentconnect_ask`) or a tool approval (`agentconnect_approval`); see [Questions and approvals](#questions-and-approvals). |
+| `dynamic-tool` | An agent question (`agentconnect_ask`) or tool approval (`agentconnect_approval`); see [Questions and approvals](#questions-and-approvals). |
 
-A client that renders only text shows only the reply. `stop()` in `useChat` aborts only the fetch: the turn still finishes, and its output lands in the session's transcript in the console. An interrupted stream cannot be resumed yet.
+A client that only renders text displays only the reply. Calling `stop()` in `useChat` only aborts the HTTP request: the turn still finishes, and its output is recorded in the session transcript in the console. Interrupted streams can't be resumed yet.
 
 ## Questions and approvals [#questions-and-approvals]
 
-A turn can stop on something only the caller can answer: the agent asks a question, or a tool it wants to run needs approval. The stream hands it over as a tool call, a `dynamic-tool` part, and ends with the finish reason `tool-calls`. The turn waits for the answer.
+A turn can pause when the agent needs input that only the caller can provide: either the agent asks a question, or a tool call needs approval. The stream delivers this as a `dynamic-tool` part and ends with finish reason `tool-calls`, then waits for your answer.
 
 | Tool | What it asks | How to answer |
 | --- | --- | --- |
-| `agentconnect_ask` | A question. `input.message` asks it, and `input` holds the `options` to choose from, a `text` or `number` field, several `fields`, or a `url` to open. | `addToolOutput` with the chosen value, a list for a multi-select, a value per field for `fields`, or the `url` once opened. `state: 'output-error'` dismisses the question. |
-| `agentconnect_approval` | Approval for one tool call. `input.tool` names the tool and `input.detail` summarizes it in one line, such as the command. | `addToolApprovalResponse({ id, approved })`. |
+| `agentconnect_ask` | A question. `input.message` contains the prompt, and `input` includes `options` to choose from, a `text` or `number` field, multiple `fields`, or a `url` to open. | Call `addToolOutput` with the chosen value, an array for multi-select, one value per field for `fields`, or the `url` once opened. Pass `state: 'output-error'` to dismiss the question. |
+| `agentconnect_approval` | Approval for one tool call. `input.tool` is the tool name and `input.detail` gives a one-line summary (such as the command). | Call `addToolApprovalResponse({ id, approved })`. |
 
-Send the answer as the next request. `useChat` does that on its own with `sendAutomaticallyWhen` set to `lastAssistantMessageIsCompleteWithToolCalls` or `lastAssistantMessageIsCompleteWithApprovalResponses`. The relay continues the same turn, and the rest of the reply streams into the same assistant message. Each tool call's `callProviderMetadata` names the turn it belongs to, so send the assistant message back as the stream built it.
+Send the answer as the next request. `useChat` does this automatically when you set `sendAutomaticallyWhen` to `lastAssistantMessageIsCompleteWithToolCalls` or `lastAssistantMessageIsCompleteWithApprovalResponses`. The relay resumes the same turn and streams the rest of the reply into the same assistant message. Because each tool call's `callProviderMetadata` identifies the turn it belongs to, send the assistant message back exactly as the stream built it.
 
-A refused approval takes effect at once, and the agent's editors never see it. A granted one takes effect at once when the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) is **Talk and approve tool calls** or above, because the conversation belongs to the key's owner. At **Talk to the agent**, it takes effect only with a **Full access** key whose owner can edit the agent. Granted with any other key, it goes to the agent's editors to approve in the console, and the turn waits for them. A public site can refuse every approval in code, so its visitors never reach the editors; this site's Ask AI panel does.
+Declining an approval takes effect immediately, and the agent's editors aren't notified. Approving a tool call takes effect immediately when the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) setting is **Talk and approve tool calls** or higher, since the conversation belongs to the key's owner. At **Talk to the agent**, an approval only takes effect immediately with a **Full access** key owned by someone who can edit the agent; with any other key, the request goes to the agent's editors in the console, and the turn waits for their decision. A public site can reject every approval in code so visitors never trigger editor prompts (this site's Ask AI panel does this).
 
-A turn does not wait forever:
+Pending turns don't wait indefinitely:
 
-- Left unanswered for 10 minutes, it is cancelled.
-- A new message instead of an answer cancels it, and the message starts a turn of its own.
-- An answer to a turn that has already ended gets `409` with `turn_ended`.
+- If unanswered for 10 minutes, the turn is cancelled.
+- Sending a new user message instead of an answer cancels the waiting turn and starts a new one.
+- Answering a turn that has already ended returns `409` with `turn_ended`.
 
 ## From Node [#from-node]
 
-The AI SDK's `DefaultChatTransport` sends turns and parses the stream. It needs AI SDK 6 or later (`npm i ai`):
+The AI SDK's `DefaultChatTransport` sends turns and parses the stream. It requires AI SDK 6 or later (`npm i ai`):
 
 ```ts
 import { DefaultChatTransport } from 'ai'
@@ -149,7 +149,7 @@ for await (const chunk of stream) if (chunk.type === 'text-delta') process.stdou
 
 ## From a browser [#from-a-browser]
 
-A browser must not hold the key, so put a route on your own server in front of the chat endpoint. It adds the key and forwards `useChat`'s request unchanged. A Next.js route handler, `app/api/chat/route.ts`:
+Never expose your API key in browser code. Put a route on your own server in front of the chat endpoint to attach the key and forward `useChat`'s request body unchanged. Here's a Next.js route handler (`app/api/chat/route.ts`):
 
 ```ts
 export async function POST(req: Request) {
@@ -166,7 +166,7 @@ export async function POST(req: Request) {
 }
 ```
 
-On the page, point `useChat` at it (`ai` and `@ai-sdk/react`, AI SDK 6 or later):
+On the page, point `useChat` at your proxy route (requires `ai` and `@ai-sdk/react`, AI SDK 6 or later):
 
 ```tsx
 'use client'
@@ -179,32 +179,32 @@ export default function Chat() {
 }
 ```
 
-Every visitor's conversations belong to the key's owner, and a visitor reaches only the conversations its own chat ids name; `useChat`'s ids are random. Rate-limit visitors on your route, since AgentConnect limits turns per conversation, not per visitor.
+All visitor conversations belong to the key's owner, and each visitor can only access conversations for their own chat IDs (`useChat` generates random IDs). Rate-limit visitors on your proxy route, since AgentConnect limits concurrency per conversation, not requests per visitor.
 
-This site's own route, in the [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) repository, goes further: it chooses the chat id itself and keeps it in an HttpOnly cookie per open tab, and starts a new conversation when the panel is cleared. See [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts).
+This site's own route in the [`agentconnect-md/docs`](https://github.com/agentconnect-md/docs) repository goes further: it generates the chat ID server-side, stores it in an HttpOnly cookie per open tab, and starts a new conversation when the panel is cleared. See [`lib/ask-ai.ts`](https://github.com/agentconnect-md/docs/blob/main/lib/ask-ai.ts).
 
 ## Gate turns by a Decision [#decision-gate]
 
-The API card's **Add decision** gives the API the same rules a channel's **By decision** has: the agent answers a call only when the [Decision](/build-your-team/decisions) matches the call's message, and the endpoint answers `422` otherwise. A call whose Decision cannot be evaluated is answered as if there were no gate. **Recent evaluations** in the rules shows each call the gate judged and why; only members who can edit the agent see it.
+Clicking **Add decision** on the API card applies the same filtering rules as a channel's **By decision** trigger: the agent only answers when the [Decision](/build-your-team/decisions) matches the incoming message, and the endpoint returns `422` otherwise. If a Decision can't be evaluated, the call proceeds as if no gate were set. **Recent evaluations** in the rule settings shows each call the gate evaluated and why; only members who can edit the agent can see it.
 
 ## Sessions and safety [#sessions-and-safety]
 
-A conversation opened this way is an ordinary webchat session of the key's owner, and its source shows the key. A service account's session is visible to the whole organization; a personal key's is [private](/operate-govern/permissions-overview/session-visibility) to that user. Its usage is metered on the agent like any other turn; see [Billing & usage](/operate-govern/billing-and-usage).
+A conversation opened through the API appears as a standard webchat session owned by the key's owner, with the key listed as its source. Service account sessions are visible to the whole organization, while personal key sessions are [private](/operate-govern/permissions-overview/session-visibility) to that user. Usage is metered on the agent like any other turn; see [Billing & usage](/operate-govern/billing-and-usage).
 
 <Callout type="warn">
-The agent receives untrusted input on every turn. Configure it for that:
+The agent receives untrusted input on every turn. Configure it accordingly:
 
-- Give it no [secrets](/build-your-team/variables-and-secrets) and no write access to repositories.
-- Run it in a [sandbox](/operate-govern/sandboxing) that isolates untrusted input: `microsandbox` or Kubernetes.
-- Set its **What people can do in chat** to **Talk to the agent**, so a visitor's approval never takes effect on its own.
-- Keep it in an organization whose members may read those transcripts.
+- Don't give it [secrets](/build-your-team/variables-and-secrets) or write access to repositories.
+- Run it in a [sandbox](/operate-govern/sandboxing) that isolates untrusted input (`microsandbox` or Kubernetes).
+- Set **What people can do in chat** to **Talk to the agent** so visitor approvals don't take effect on their own.
+- Keep it in an organization whose members are permitted to read those transcripts.
 </Callout>
 
 ## Troubleshooting [#troubleshooting]
 
-- **`403` "this agent does not accept API calls"**: add the API to the agent (above).
-- **`403` "this API key cannot chat with agents"**: the key's permission is **Read-only**. Create an Agent chat key.
-- **`404` "agent not found"**: the key's agent selection does not include this agent.
-- **`409` on a turn**: a turn is still running in this conversation. Wait for it to finish, or use a new chat `id`.
-- **`409` `turn_ended` on an answer**: the turn waited 10 minutes without one, or a new message replaced it. Ask again in a new message.
-- **`503` right after a deployment**: the agent's daemon is reconnecting. Retry.
+- **`403` "this agent does not accept API calls"**: Enable the API on the agent (see [Add the API to the agent](#add-the-api)).
+- **`403` "this API key cannot chat with agents"**: The key's permission is **Read-only**. Create an **Agent chat** key instead.
+- **`404` "agent not found"**: The key's agent selection doesn't include this agent.
+- **`409` on a turn**: A turn is still running in this conversation. Wait for it to finish, or start a conversation with a new chat `id`.
+- **`409` `turn_ended` on an answer**: The turn waited 10 minutes without a response, or a new message replaced it. Send your request again in a new message.
+- **`503` right after a deployment**: The agent's daemon is reconnecting. Retry after a moment.

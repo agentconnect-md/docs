@@ -7,100 +7,100 @@ description: "配置 Agent 的角色、Runtime、模型、工作区、访问权�
 import imgAgentRuntime from '@/public/images/agent-runtime.png'
 import imgAgentConfiguration from '@/public/images/agent-configuration.png'
 
-从 **Agents** 中打开一个 Agent，即可管理它的集成、Runtime、工作区、访问权限、记忆、工具和技能。
+从 **Agents** 列表中打开任意 Agent，即可管理它的集成、Runtime、工作区、访问权限、记忆、工具和技能。
 
 <Image src={imgAgentRuntime} alt="编辑对话框，其中执行策略选择器展开显示主机、沙箱和虚拟机" width={560} />
 
 ## 配置 [#configuration]
 
-配置标签页汇集了 **基本信息**、**Runtime**、**描述**、**访问权限**、**变量** 和 **密钥**。通过 **编辑** 可以更改显示名称、Daemon、Runtime、模型、思考深度/推理强度、快速模式、权限模式和执行策略。具体的 Runtime 控制项来自所选 Daemon 声明的能力。把 **Runtime** 切换为**按决策**，即可由[决策](/build-your-team/decisions#choose-a-runtime-and-model)为每个新会话挑选 Runtime 和模型。
+配置标签页包含 **基本信息**、**Runtime**、**描述**、**访问权限**、**变量** 和 **密钥**。点击 **编辑** 可以修改显示名称、Daemon、Runtime、模型、思考深度/推理强度、快速模式、权限模式和执行策略。具体可调整的 Runtime 参数取决于所选 Daemon 上报的能力。把 **Runtime** 切换为**按决策**后，可以由[决策](/build-your-team/decisions#choose-a-runtime-and-model)为每个新会话动态选择 Runtime 和模型。
 
 <Image src={imgAgentConfiguration} alt="配置标签页：基本信息、Runtime 行为、描述、访问权限、变量和密钥" width={820} />
 
-**输出模式** 控制哪些内容会发送到已连接的聊天平台；完整的会话记录始终可以在[会话](/operate-govern/sessions)中查看：
+**输出模式**决定哪些内容会发往已连接的聊天平台，完整的会话记录始终可以在[会话](/operate-govern/sessions)中查看：
 
-- **最简**——一条实时更新、最终停留在最终答案上的回复；中间步骤只出现在状态栏中。
-- **低**——只发送回复。
-- **中**——回复，外加工具活动和计划。
-- **高**——在“中”的基础上再加上推理和工具输出。
-- **无**——不向频道发布任何内容；运行仍然可以在它的 Web 会话中查看。
+- **最简**：只发一条实时更新的回复并最终定格为最终答案，中间步骤显示在状态栏里。
+- **低**：只发送回复文本。
+- **中**：发送回复，并附带工具活动和执行计划。
+- **高**：在“中”的基础上额外包含推理过程和工具输出。
+- **无**：不向频道发送任何消息，运行过程仍可在 Web 会话中查看。
 
 其他 Runtime 行为设置包括：
 
-- **聊天中可以做什么**——对话里的人除了和 Agent 对话，是否还能批准工具调用、修改 Runtime 设置；见[下文](#what-people-can-do-in-chat)。
-- **显示页脚**——在回复中附上 Agent、Runtime、模型和会话链接。
-- **加入频道时介绍自己**——让 Agent 向频道中已有的 Agent 介绍自己，以便它们知道何时可以委派给它。
-- **执行策略**——Agent 会话运行所处的边界：**主机**（无边界）、**沙箱**（SRT 进程沙箱）或 **虚拟机**（microsandbox 虚拟机）。选择器列出 Agent 所在位置提供的策略。无法在该位置运行的策略仍会列出并标记为 **不可用**；将鼠标悬停在上面可查看原因。如果所在位置不再提供已保存的策略，该策略仍保持选中，并标记为“当前位置不提供此策略。”Runtime 卡片会以一行 **执行策略** 显示当前选择。AgentConnect Cloud 上的 Agent 既没有这个选择器也没有这一行，因为每个会话本来就运行在自己的 Pod 中。这个外层边界与 Runtime 的权限模式相互独立；参见[沙箱隔离](/operate-govern/sandboxing#pick-an-execution-strategy)。
+- **聊天中可以做什么**：控制对话参与者能否在聊天里批准工具调用或修改 Runtime 设置，详见[下文](#what-people-can-do-in-chat)。
+- **显示页脚**：在回复末尾附上 Agent、Runtime、模型和会话链接。
+- **加入频道时介绍自己**：让 Agent 在进入频道时向已在频道里的其他 Agent 介绍自己，方便它们在合适时发起委派。
+- **执行策略**：决定 Agent 会话的隔离边界，包括 **主机**（无隔离）、**沙箱**（SRT 进程沙箱）和 **虚拟机**（microsandbox 虚拟机）。选择器列出当前运行位置支持的策略；不支持的策略会保留在列表中并标记为 **不可用**，悬停可查看原因。如果运行位置不再支持已保存的策略，该策略会保持选中，并提示“当前位置不提供此策略。”。Runtime 卡片中会以 **执行策略** 一行显示当前设置。AgentConnect Cloud 上的 Agent 不显示该选择器和状态行，因为每个会话本来就运行在独立 Pod 中。这层隔离边界与 Runtime 的权限模式相互独立，参见[沙箱隔离](/operate-govern/sandboxing#pick-an-execution-strategy)。
 
 ### 聊天中可以做什么 [#what-people-can-do-in-chat]
 
-**聊天中可以做什么**位于**编辑**对话框中模型的旁边，Runtime 卡片会显示当前级别。每个级别都包含上一级的权限：
+**聊天中可以做什么**位于**编辑**对话框中模型选择器的旁边，Runtime 卡片也会展示当前级别。每个级别都包含前一级的权限：
 
-- **和 agent 对话**——对话里的人只能和 Agent 对话。需要批准的工具调用交给 Agent 的编辑者，在控制台或私信中处理。
-- **对话并批准工具调用**——默认级别。对话里的人还可以回答 Agent 权限模式询问的工具调用：允许一次、始终允许该工具，或拒绝。
-- **对话、批准并修改设置**——对话里的人还可以在聊天中修改模型、推理强度、权限模式和快速模式，方式是使用[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)或 Playground 中的控件。
+- **和 agent 对话**：参与者只能和 Agent 对话。需要确认的工具调用会转给 Agent 的编辑者，在控制台或私信中审批。
+- **对话并批准工具调用**：默认级别。参与者还可以响应 Agent 权限模式弹出的工具审批请求：允许一次、始终允许该工具，或拒绝。
+- **对话、批准并修改设置**：参与者还可以在聊天中通过[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)或 Playground 控件修改模型、推理强度、权限模式和快速模式。
 
-“对话里的人”具体指谁，取决于 AgentConnect 能否确认一个人的身份：
+“对话参与者”具体指谁，取决于 AgentConnect 能否确认对方身份：
 
-- **开启了[遵循 Slack 访问权限](/operate-govern/permissions-overview/session-visibility#follow-slack-access)的 Slack**——只有 Agent 的编辑者。AgentConnect 通过编辑者在**个人资料 → 登录方式**中关联的 Slack 账号识别他们（参见[关联账号](/how-to-guides/linked-accounts)）。其他人尝试时，会私下收到提示：只有 Agent 编辑者可以操作；Slack 账号尚未关联的人还会看到关联方法。发起请求的人不是编辑者时，还会有一位编辑者在私信中收到这张审批卡片。
-- **开启了[要求 Microsoft Teams 访问权限](/connect-automate/chat-platforms/msteams#follow-teams-access)的 Microsoft Teams**——只有 Agent 的编辑者。AgentConnect 通过编辑者关联的 Microsoft 账号识别他们。其他人尝试时，会私下收到提示：只有 Agent 编辑者可以操作。发起请求的人不是编辑者时，还会有一位编辑者在自己和机器人的一对一聊天中收到这张审批卡片。
-- **其他聊天平台，或未开启该设置的 Slack 和 Teams**——在该对话中能和 Agent 对话的任何人。
-- **Playground 和 [Agent 对话 API](/connect-automate/agent-chat-api)**——Agent 的编辑者；在第二、三级下还包括对话的所有者，即使这个人只能查看该 Agent。通过对话 API 发起的对话属于密钥的所有者。
+- **开启了[遵循 Slack 访问权限](/operate-govern/permissions-overview/session-visibility#follow-slack-access)的 Slack**：仅限 Agent 的编辑者。AgentConnect 通过编辑者在**个人资料 → 登录方式**中关联的 Slack 账号识别身份（参见[关联账号](/how-to-guides/linked-accounts)）。其他人尝试操作时会收到私密提示，告知只有 Agent 编辑者才能操作；尚未关联 Slack 账号的用户还会看到关联指引。当发起请求的人不是编辑者时，编辑者也会在私信中收到这张审批卡片。
+- **开启了[要求 Microsoft Teams 访问权限](/connect-automate/chat-platforms/msteams#follow-teams-access)的 Microsoft Teams**：仅限 Agent 的编辑者，通过已关联的 Microsoft 账号识别。其他人尝试时会收到私密提示，告知只有 Agent 编辑者才能操作。发起人不是编辑者时，编辑者也会在自己与机器人的一对一聊天中收到审批卡片。
+- **其他聊天平台，或未开启上述设置的 Slack 和 Teams**：在该对话中能与 Agent 对话的所有人。
+- **Playground 和 [Agent 对话 API](/connect-automate/agent-chat-api)**：Agent 的编辑者；在第二、三级下还包括对话的所有者，即使其对该 Agent 只有查看权限。通过对话 API 创建的对话归属于对应密钥的所有者。
 
-无论哪个级别，以下规则都不变：
+以下规则在所有级别下都适用：
 
-- 设为**关闭**或**按决策**的对话，不接受聊天中的批准或设置修改。
-- 与其他组织共享的对话（例如 Slack Connect 频道）中不会发布审批卡片，审批会通过私信发给你所在组织的成员。
-- 第一个回答生效，无论它来自对话、私信还是控制台。
-- 这项设置从不改变权限模式：允许所有工具调用的 Agent 仍然不会询问，有人选择过始终允许的工具也仍然被允许。
+- 设为**关闭**或**按决策**的对话，不接受来自聊天的审批操作或设置修改。
+- 与其他组织共享的对话（如 Slack Connect 频道）中不会弹出审批卡片，审批请求会通过私信发给你所在组织的成员。
+- 无论响应来自对话、私信还是控制台，均以最先提交的结果为准。
+- 该设置不会改变权限模式本身：允许全部工具调用的 Agent 仍不会发起询问，已被设为“始终允许”的工具也保持放行。
 
-在公开群组中使用的 Agent，请选择**和 agent 对话**，这样群里没有人能批准它的工具调用。
+对于接入公开群组的 Agent，建议选择**和 agent 对话**，避免群内成员批准工具调用。
 
-这项设置取代了**允许在聊天中更改**。现有 Agent 已改为**对话并批准工具调用**；原来允许在聊天中更改的，改为**对话、批准并修改设置**。在自托管部署中，开启了**遵循飞书 / Lark 访问权限**的飞书 / Lark 与上面的 Slack 规则相同。
+这项设置取代了原来的**允许在聊天中更改**。存量 Agent 已自动迁移为**对话并批准工具调用**；此前开启了聊天中更改的，则迁移为**对话、批准并修改设置**。在自托管部署中，开启**遵循飞书 / Lark 访问权限**后的飞书 / Lark 行为与上述 Slack 一致。
 
 ## 描述与人设 [#description-and-persona]
 
-描述卡片单独编辑。它不只是展示文案：AgentConnect 在每个会话中都把它用作 Agent 的人设和系统提示词的种子。请描述角色、职责，以及无论 Agent 在何处被调用都应适用的长期操作指引。
+描述卡片独立编辑。它不只是页面简介：AgentConnect 在每次会话中都会将其作为 Agent 的角色设定和系统提示词基础。建议在这里写明职责范围和长期有效的行为规范，确保 Agent 在任何入口被调用时都能遵循。
 
 ## 移动 Agent [#move-an-agent]
 
-在 **编辑** 的 **运行位置** 中选择另一个 Daemon 或 [Daemon 组](/build-your-team/daemons/daemon-groups)，即可移动 Agent。目标必须在线，并支持所选的 Runtime、模型、工具和技能。在移动尚未完成期间，**执行策略** 选择器会被锁定；请先保存移动，再更改策略。
+点击 **编辑**，在 **运行位置** 中选择另一个 Daemon 或 [Daemon 组](/build-your-team/daemons/daemon-groups)即可迁移 Agent。目标位置必须在线，且支持当前选定的 Runtime、模型、工具和技能。迁移未保存前，**执行策略** 选择器处于锁定状态，需先保存迁移后再调整策略。
 
-AgentConnect 会等待进行中的工作停止，然后在目标上按已保存的定义重新部署。它 **不会** 复制 Daemon 本地的工作区文件、托管或原生记忆，或会话记录。请先提交或备份本地工作；GitHub 工作区会在新机器上重新克隆。
+AgentConnect 会等待进行中的任务结束，然后按已保存的配置在目标机器上重新部署。系统 **不会** 复制原 Daemon 本地的工作区文件、托管或原生记忆以及会话记录。迁移前请先提交或备份本地改动；GitHub 工作区会在新机器上重新克隆。
 
 ## 变量与密钥 [#variables-and-secrets]
 
-**变量** 和 **密钥** 卡片设置归属于此 Agent 的环境值——API 端点、功能开关，以及它的工具所需的凭证。密钥在保存后只写不可读。
+**变量** 和 **密钥** 卡片用于配置归属于当前 Agent 的环境变量，例如 API 端点、功能开关和工具所需的凭证。密钥保存后仅支持覆写，不可再次读取。
 
-组织所有者可以在 **设置 → 变量与密钥** 下一次性定义某个值，并把它分配给所有或指定的 Agent。已分配的行会带有 **组织** 标签，且在 Agent 页面上是只读的。关于优先级、轮换和密钥处理，参见[变量与密钥](/build-your-team/variables-and-secrets)。
+组织所有者可以在 **设置 → 变量与密钥** 中统一定义环境变量，并分配给全部或指定 Agent。被分配的条目会带有 **组织** 标签，在 Agent 页面中为只读。关于优先级、轮换和密钥安全，参见[变量与密钥](/build-your-team/variables-and-secrets)。
 
 ## Agent 可见范围（子 Agent 调用） [#agent-visibility-sub-agent-calls]
 
-Agent 可以把彼此作为子 Agent 调用。**Agent 可见范围** 卡片控制这种关系的两个方向：
+Agent 之间可以互相作为子 Agent 调用。**Agent 可见范围** 卡片分别控制两个方向的权限：
 
 - **入站：哪些 Agent 可以调用此 Agent**？
 - **出站：此 Agent 可以调用哪些 Agent**？
 
-每个方向都可以允许 **所有 Agent**，或者一个 **已选择** 的列表。只有当来源方的出站策略和目标方的入站策略都允许时，调用才被许可。发现和调用都以组织为范围；两个 Agent 不需要共享聊天集成或频道。
+每个方向都可以设为 **所有 Agent** 或 **已选择** 列表。只有当调用方的出站策略和目标方的入站策略同时允许时，调用才会放行。发现与调用均在组织范围内生效，两个 Agent 不必共享同一个聊天集成或频道。
 
-Agent 的初始值来自组织的 **默认 Agent 可见性** 设置。组织在两个方向上都以 **所有 Agent** 起步，所有者可以在 **设置** 下的 **默认 Agent 可见性** 卡片中选择 **隔离**。更改该组织设置只影响未来的 Agent；在这张卡片中的编辑只影响此 Agent。
+新 Agent 的初始策略继承自组织的 **默认 Agent 可见性** 设置。组织默认在两个方向上都为 **所有 Agent**，所有者可在 **设置** 下的 **默认 Agent 可见性** 卡片中改为 **隔离**。修改组织默认设置仅影响之后新建的 Agent；在本卡片中的修改仅影响当前 Agent。
 
-参见[多 Agent 工作模式](/build-your-team/agents/multi-agent-work-modes)选择协作模式，以及 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)了解完整的调用策略。团队中谁能看到该 Agent 由[团队可见范围](/operate-govern/permissions-overview/team-visibility)单独控制。
+协作模式选择参见[多 Agent 工作模式](/build-your-team/agents/multi-agent-work-modes)，完整调用策略参见 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)。团队成员对 Agent 的访问权限由[团队可见范围](/operate-govern/permissions-overview/team-visibility)单独控制。
 
 ## 记忆 [#memory]
 
-**记忆** 标签页显示 Agent 的持久记忆，也是切换其后端的唯一入口：**托管**、**原生**、**外部** 或 **关闭**。托管记忆可以作为文件编辑；外部后端则呈现由其能力决定的记录。切换不会迁移现有记忆——旧的存储仍保留在原处，但不再被加载。组织所有者需要先在 **知识库 → 外部记忆** 下注册外部服务，Agent 才能选择它。
+**记忆** 标签页展示 Agent 的持久记忆，也是切换记忆后端的唯一入口：**托管**、**原生**、**外部** 或 **关闭**。托管记忆支持以文件形式直接编辑，外部后端则按提供方能力展示对应记录。切换后端不会迁移已有记忆，旧存储会留在原地但不再加载。使用外部记忆前，需要组织所有者先在 **知识库 → 外部记忆** 中注册对应服务。
 
-关于外部后端的完整演练，包括召回/捕获策略和一个自托管的 Mem0 示例，参见[使用 Mem0 OSS 作为外部记忆的指南](/how-to-guides/external-memory)。
+关于外部记忆的完整配置流程（含召回/捕获策略和自托管 Mem0 示例），参见[使用 Mem0 OSS 作为外部记忆](/how-to-guides/external-memory)。
 
 ### Dreaming [#dreaming]
 
-使用 **托管** 记忆时，Dreaming 可以定期整合最近的记忆和会话历史。它的默认策略是每天 04:00（按 Daemon 的时区）运行一次，并把完成的记忆结果留待审阅。定时 Dreaming 会考虑自上次成功运行以来更新过的会话，没有新内容时会跳过。你可以关闭 Dreaming、移除定时任务以便只手动运行、明确选择自动采纳，还可以选择挖掘可复用的技能。一次 Dreaming 也可能提出[知识库或托管技能](/build-your-team/knowledge)的提案，但每个共享提案都必须由组织所有者审阅后才会发布。
+使用 **托管** 记忆时，Dreaming 会定期整理近期的记忆和会话历史。默认每天按 Daemon 所在时区的 04:00 自动运行一次，并将整理结果保留待人工审阅。定时任务只处理自上次成功运行以来有更新的会话，没有新内容时自动跳过。你可以关闭 Dreaming、取消定时改为手动触发、开启自动采纳，也可以开启可复用技能的挖掘。Dreaming 还可能提交[知识库或托管技能](/build-your-team/knowledge)提案，但所有共享提案都必须经组织所有者审核后才会发布。
 
 ## 工具与技能 [#tools--skills]
 
-显示此 Agent 可用的 MCP 工具及其已启用的技能。组织级的提供方和技能来源是单独管理的，因此把某项加入库中并不会自动为 Agent 启用它。关于连接器、MCP 服务器、Git 来源、托管技能和按 Agent 启用，参见[工具与技能](/build-your-team/tools-and-skills)。
+展示当前 Agent 可用的 MCP 工具和已启用的技能。组织级的工具提供方和技能源独立管理，添加到库中后不会自动为已有 Agent 开启。关于连接器、MCP 服务器、Git 源、托管技能和按 Agent 启用方式，参见[工具与技能](/build-your-team/tools-and-skills)。
 
 ## 删除 [#delete]
 
-**删除**（⋯ 菜单）会把该 Agent 及其触发器从组织中移除。它的集成会被释放，以便其机器人可以被复用。
+在 ⋯ 菜单中选择 **删除**，可将 Agent 及其触发器从组织中移除。关联的集成会被解绑，对应的机器人可重新分配给其他 Agent。

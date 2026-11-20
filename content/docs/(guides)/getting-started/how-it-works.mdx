@@ -1,28 +1,28 @@
 ---
 title: "How it works"
 icon: Workflow
-description: "Learn how AgentConnect daemons run agents, the Relay forwards events, and the Control Plane coordinates the fleet while live messages stay on the data plane."
+description: "Learn how AgentConnect daemons run agents, how the Relay forwards events, and how the Control Plane coordinates the fleet while live messages stay on the data plane."
 ---
 
 import imgHowAgentconnectWorks from '@/public/images/how-agentconnect-works.svg'
 
-AgentConnect is built around one architectural rule: **the Control Plane is not on the live message path.** Agent execution happens inside a daemon in the environment you operate. Platform ingress reaches that daemon directly or through the optional Relay.
+AgentConnect follows one core architectural rule: **the Control Plane is not on the live message path.** Agents run inside a daemon in infrastructure you operate, and platform traffic reaches that daemon directly or through the optional Relay.
 
 <Image src={imgHowAgentconnectWorks} alt="AgentConnect channels and events reach agents running on a daemon, while the Control Plane coordinates over a separate control path" width={920} />
 
 ## The four pieces
 
-**The daemon** is a small process you run on a laptop, workstation, VM, or other machine. It:
+**The daemon** is a small process you run on a laptop, workstation, VM, or server. It:
 
-- opens outbound connections to the Control Plane, the Relay when used, and direct chat transports such as Slack Socket Mode, Telegram, Discord, and Lark / Feishu Long Connection;
-- launches and drives installed agent runtimes such as Claude Code and Codex over [ACP](https://agentclientprotocol.com);
-- owns the agents' working directories, git checkouts and transcripts.
+- Opens outbound connections to the Control Plane, the Relay (when used), and direct chat transports such as Slack Socket Mode, Telegram, Discord, and Lark / Feishu Long Connection.
+- Launches and drives installed agent runtimes such as Claude Code and Codex over [ACP](https://agentclientprotocol.com).
+- Manages the agents' working directories, git checkouts, and transcripts locally.
 
-**The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub, GitLab and generic webhooks, [Linear](/connect-automate/triggers-automation/linear) agent events, and webchat (the browser transport behind the [Playground](/build-your-team/agents/playground)), then forwards the request to the owning daemon. It does not durably store message content.
+**The Relay** is optional public ingress. It terminates callback-based Slack and Lark / Feishu traffic, GitHub, GitLab, and generic webhooks, [Linear](/connect-automate/triggers-automation/linear) agent events, and webchat (the browser transport behind the [Playground](/build-your-team/agents/playground)), then forwards each request to the owning daemon. It doesn't store message content.
 
-**The Control Plane** manages authentication, organizations, permissions, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed skills](/build-your-team/knowledge) and coordinates the daemon fleet.
+**The Control Plane** handles authentication, organizations, permissions, placement, integrations, schedules, and control metadata. It also stores explicitly approved [Knowledge and managed skills](/build-your-team/knowledge) and coordinates the daemon fleet.
 
-**The console** is the configuration and observation surface. When you open a transcript, tool result, memory view, or workspace file, it reads that content from the owning daemon without persisting the body in the Control Plane.
+**The console** is the web interface for configuration and monitoring. When you open a transcript, tool result, memory view, or workspace file, the console fetches it on demand from the owning daemon without saving the content in the Control Plane.
 
 ## What lives where
 
@@ -36,22 +36,22 @@ AgentConnect is built around one architectural rule: **the Control Plane is not 
 | Control metadata | Control Plane |
 | Approved Knowledge and skills | Control Plane |
 
-Authorized transcript, tool-result, memory, and workspace reads come from the owning daemon on demand. The Control Plane does not persist those responses. Secret protection at rest depends on the deployment's secret-storage configuration.
+Authorized transcript, tool-result, memory, and workspace reads are fetched from the owning daemon on demand, and the Control Plane doesn't persist those responses. How secrets are protected at rest depends on your deployment's secret-storage configuration.
 
 ## Built to degrade gracefully
 
-Because the daemon owns execution and local session state, established sessions and local schedules can continue during a temporary Control Plane outage. New assignments, configuration changes, and console reads resume after reconnection.
+Because the daemon runs agents and stores session state locally, active sessions and local schedules keep running during a temporary Control Plane outage. New assignments, configuration changes, and console reads resume once the connection returns.
 
-If a daemon is offline, its agents are offline. The Control Plane can still show stored session metadata, but transcripts and workspace content owned by that daemon cannot be fetched until it returns.
+If a daemon goes offline, its agents go offline too. The Control Plane can still display stored session metadata, but transcripts and workspace files on that daemon can't be fetched until it reconnects.
 
 ## Organizations and access
 
-Everything belongs to an organization. Membership and role establish the outer boundary, then AgentConnect evaluates the target resource: Team visibility protects resources such as Agents, while each Session has an independent audience for its metadata and transcript. Agent-to-agent calls use separate inbound and outbound policies. Start with the [Permissions overview](/operate-govern/permissions-overview).
+Everything belongs to an organization. Membership and role set the outer boundary, and then AgentConnect evaluates access to the target resource. Team visibility governs resources such as Agents, while each Session has an independent audience for its metadata and transcript. Agent-to-agent calls use separate inbound and outbound policies. Start with the [Permissions overview](/operate-govern/permissions-overview).
 
-A person can [link several sign-in methods](/how-to-guides/linked-accounts) to one profile when those providers are available. AgentConnect Cloud currently offers GitHub, Google, and Slack. Self-hosted deployments can also add Lark and Feishu as sign-in methods. Their linked identities can then take part in the matching session access checks.
+A user can [link multiple sign-in methods](/how-to-guides/linked-accounts) to one profile when those providers are enabled. AgentConnect Cloud currently offers GitHub, Google, and Slack, while self-hosted deployments can also add Lark and Feishu. Linked identities then count toward matching session access checks.
 
 ## Hosting choices
 
-The same architecture supports [AgentConnect OSS](/self-hosting), where you operate the full stack, and AgentConnect Cloud, where the management console is hosted. In both cases, daemons run the agents and workspaces. This page describes daemons on machines you connect and operate; on AgentConnect Cloud, an agent can instead be placed on [managed infrastructure](/build-your-team/daemons/manage-daemons#agentconnect-cloud), where AgentConnect operates the daemon environment for it.
+The same architecture powers both [AgentConnect OSS](/self-hosting), where you operate the full stack, and AgentConnect Cloud, where the management console is hosted for you. In both setups, daemons run the agents and workspaces. This page describes daemons on machines you connect and operate. On AgentConnect Cloud, you can also place an agent on [managed infrastructure](/build-your-team/daemons/manage-daemons#agentconnect-cloud), where AgentConnect operates the daemon environment.
 
-AgentConnect OSS keeps authentication optional and uses local no-auth mode by default. Before exposing it beyond localhost, configure [production sign-in with Logto](/self-hosting/sign-in).
+AgentConnect OSS makes authentication optional and runs in local no-auth mode by default. Before exposing it beyond localhost, configure [production sign-in with Logto](/self-hosting/sign-in).

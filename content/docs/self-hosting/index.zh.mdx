@@ -1,32 +1,32 @@
 ---
 title: "概览"
 icon: House
-description: "使用 Docker Compose 或官方 Helm Chart，在你自己的基础设施上运行开源的 AgentConnect 服务栈。"
+description: "使用 Docker Compose 或官方 Helm Chart，在自己的基础设施上自托管开源的 AgentConnect 服务栈。"
 ---
 
 import { Container, ShipWheel } from 'lucide-react'
 
-AgentConnect OSS 是开源、可自托管的 AgentConnect 服务栈。如果你想在本地评估、并把 Daemon 放在自己的机器上，选择 Docker Compose；如果你需要面向生产形态的部署、让 Agent 运行在隔离的 Kubernetes 沙箱中，选择官方 Helm Chart。
+AgentConnect OSS 是可自托管的开源 AgentConnect 服务栈。如果你想在本地评估、把 Daemon 运行在自己的机器上，用 Docker Compose 即可；如果要做生产部署、让 Agent 运行在隔离的 Kubernetes 沙箱里，请使用官方 Helm Chart。
 
-源码可在 [AgentConnect 仓库](https://github.com/agentconnect-md/agentconnect)获取。
+源码托管在 [AgentConnect 仓库](https://github.com/agentconnect-md/agentconnect)。
 
 <Cards>
   <Card title="Docker Compose" href="/self-hosting/docker-compose/quick-start" icon={<Container />}>
-    在一台机器上启动服务栈，并在宿主机上连接一个 Daemon
+    在一台机器上启动整套服务，并在宿主机上连接 Daemon
   </Card>
   <Card title="Kubernetes" href="/self-hosting/kubernetes/deploy" icon={<ShipWheel />}>
-    安装 Helm Chart，由集群接管 Agent 的执行与工作区
+    安装 Helm Chart，由集群负责 Agent 执行和工作区管理
   </Card>
 </Cards>
 
 ## 各项配置在哪里完成 [#what-is-configured-where]
 
-| 配置界面 | 负责的内容 |
+| 配置入口 | 负责内容 |
 | --- | --- |
-| `compose.env` 或 Helm values | 镜像、端口、公开 URL、数据库密钥、Vault、连接器以及 Logto 端点 |
+| `compose.env` 或 Helm values | 镜像、端口、公开 URL、数据库密钥、Vault、连接器和 Logto 端点 |
 | Setup Server | Logto 浏览器认证，GitHub、GitLab、Gitea、Linear、Slack、Google、Google Chat、Lark / 飞书的租户应用，以及部署选项 |
 | AgentConnect 控制台 | 组织、Agent、集成、环境、工具和技能 |
 
-Setup Server 是官方支持的配置界面，负责浏览器认证、提供方应用、展示的登录方式以及预设 Agent 的行为。它把部署设置和只写的提供方密钥保存在 PostgreSQL 中。两种拓扑都自带 Setup Server，而且它从不获得公开路由：Compose 把它绑定到回环地址，Helm Chart 不为它创建 Service，因此你要从自己的工作站访问它。[登录](/self-hosting/sign-in)和[提供方应用](/self-hosting/provider-apps)介绍了它所配置的内容。
+Setup Server 用来配置浏览器认证、提供方应用、可选登录方式以及预设 Agent 的行为，并将部署设置和只写的提供方密钥保存在 PostgreSQL 中。两种部署方式都自带 Setup Server，且不会暴露公网入口：Compose 只绑定回环地址，Helm Chart 不为它创建 Service，需要时直接从本地工作站访问。具体配置见[登录](/self-hosting/sign-in)和[提供方应用](/self-hosting/provider-apps)。
 
-Agent 执行始终在 Daemon 本地完成。控制平面存储的是协调数据，而不是消息正文、附件字节、工作区或实时的 Agent 会话流。参见[工作原理](/getting-started/how-it-works)。
+Agent 始终在 Daemon 侧执行。控制平面只保存协调元数据，不存消息正文、附件字节、工作区或实时 Agent 会话流。详见[工作原理](/getting-started/how-it-works)。

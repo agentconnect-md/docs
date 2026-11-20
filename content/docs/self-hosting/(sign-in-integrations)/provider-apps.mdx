@@ -1,22 +1,22 @@
 ---
 title: "Provider apps"
 icon: Handshake
-description: "Register the deployment's GitHub, GitLab, Gitea, Linear, Slack, Google Chat, and Lark / Feishu apps in Setup Server."
+description: "Register deployment-level GitHub, GitLab, Gitea, Linear, Slack, Google Chat, and Lark / Feishu apps in Setup Server."
 ---
 
-Setup Server owns the apps that identify your deployment to code hosts and chat platforms. Each card shows the exact callbacks to register and stores the credentials write-only. Set the final public URLs before creating an app: Setup derives its callbacks from those values.
+Setup Server manages the apps that identify your deployment to code hosts and chat platforms. Each card shows the exact callback URLs to register and stores credentials write-only. Set your final public URLs before creating an app, since Setup derives callback URLs from those values.
 
 ## GitHub App
 
-Configure the deployment GitHub App when agents need private repositories, repository-scoped Git credentials, or GitHub issue and pull-request triggers.
+Configure the deployment GitHub App when agents need access to private repositories, repository-scoped Git credentials, or GitHub issue and pull-request triggers.
 
 1. Set the final Web, Control Plane, and Relay public URLs.
-2. In Setup, open **GitHub** and choose **Create GitHub App**. The manifest flow fills the current callbacks, events, and permissions.
-3. If you use an existing App, save its identity and secrets, then choose **Check match**.
+2. In Setup, open **GitHub** and choose **Create GitHub App**. The manifest flow fills in the current callbacks, events, and permissions automatically.
+3. If you're using an existing App, save its identity and secrets, then choose **Check match**.
 4. Restart Control Plane and Relay.
 5. In AgentConnect, open **Integrations → Code hosts → GitHub**, install the App, and select its repositories.
 
-The generated App requests:
+The generated App requests these permissions:
 
 | Scope                                                           | Access         |
 | --------------------------------------------------------------- | -------------- |
@@ -24,134 +24,134 @@ The generated App requests:
 | Metadata and email addresses                                    | Read           |
 | Contents, issues, pull requests, Actions, Checks, and workflows | Read and write |
 
-AgentConnect narrows each installation token to one authorized repository and the agent's repository grant. Installation owners still choose which repositories are available.
+AgentConnect scopes each installation token down to one authorized repository and the agent's repository grant. Installation owners still decide which repositories are accessible.
 
-GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Setup can create the App for sign-in and repository installation but leaves webhook delivery disabled until you provide HTTPS ingress.
+GitHub webhooks require a reachable HTTPS Relay. On the default local HTTP stack, Setup can create the App for sign-in and repository installation, while leaving webhook delivery disabled until you configure HTTPS ingress.
 
 See [GitHub](/connect-automate/triggers-automation/github) for triggers, reviews, and repository behavior.
 
 ### Update an existing GitHub App
 
-Organization discovery reuses the deployment's GitHub App; it does not require a separate OAuth App. If Setup's **Check match** reports missing Members permission:
+Organization discovery reuses the deployment's GitHub App, so you don't need a separate OAuth App. If Setup's **Check match** reports a missing Members permission:
 
 1. On GitHub, open the existing App's **App settings → Permissions & events**.
 2. Set **Organization permissions → Members** to **Read-only** and save.
-3. Ask each GitHub organization owner to [approve the updated permissions](https://docs.github.com/en/apps/using-github-apps/approving-updated-permissions-for-a-github-app) on its existing App installation. Editing the registration alone does not update existing installations.
+3. Ask each GitHub organization owner to [approve the updated permissions](https://docs.github.com/en/apps/using-github-apps/approving-updated-permissions-for-a-github-app) on their existing App installation. Editing the App registration alone doesn't update existing installations.
 4. Run **Check match** again, then choose **Refresh GitHub accounts** in the custom-App creation dialog.
 
-Only organizations accessible to this App can appear. Users can still enter a missing organization manually; GitHub checks their permission when they create the App. Installations that have not approved Members continue with their previous permissions, so existing repository, PR/Issue and webhook functionality is not disabled solely by leaving this update unapproved.
+Only organizations accessible to this App appear in the list. Users can still enter an unlisted organization manually, and GitHub checks their permissions when they create the App. Installations that haven't approved the Members permission keep their previous permissions, so existing repository, PR/Issue, and webhook features continue working.
 
 ## GitLab
 
-Configure the deployment's GitLab OAuth application when agents need GitLab projects — on GitLab.com or on one self-managed instance; a deployment addresses one or the other, never both. The application is AgentConnect's **administration identity** on the instance: project discovery, the agents' service accounts, and webhook management. It is not the identity agents act as.
+Configure the deployment's GitLab OAuth application when agents need access to GitLab projects. A deployment targets either GitLab.com or one self-managed instance, not both. This application acts as AgentConnect's **administration identity** on the instance (for project discovery, agent service accounts, and webhook management), separate from the identity agents use when working in repositories.
 
-1. In Setup, open **GitLab**. For a self-managed instance, put its address in **Instance base URL** (empty means GitLab.com; a path prefix and a non-default port are both supported and preserved). Setup probes what you typed: only an unusable URL blocks the save — an unreachable host, an untrusted certificate, or a response that is not a GitLab API root are reported as warnings, because Setup and the Control Plane need not sit in the same network position.
-2. Setup displays the exact **Redirect URI** and **Scopes** to register. GitLab has no API for creating OAuth applications, so this part happens on GitLab: in **User settings → Applications**, a group's **Settings → Applications**, or **Admin → Applications** for an instance-wide one, add an application whose redirect URI is _exactly_ that value, keep **Confidential** selected, and grant those scopes. GitLab shows the secret once.
+1. In Setup, open **GitLab**. For a self-managed instance, enter its address in **Instance base URL** (leave it empty for GitLab.com; path prefixes and non-default ports are both supported and preserved). Setup probes the URL you enter. Only an invalid URL blocks saving. An unreachable host, untrusted certificate, or non-GitLab API root is reported as a warning, since Setup and the Control Plane may be on different networks.
+2. Setup displays the exact **Redirect URI** and **Scopes** to register. GitLab has no API for creating OAuth applications, so create it on GitLab: open **User settings → Applications**, a group's **Settings → Applications**, or **Admin → Applications** (for an instance-wide app). Add an application with that _exact_ redirect URI, keep **Confidential** selected, and grant the listed scopes. GitLab displays the secret only once.
 3. Paste the **Application ID** and **Secret** into Setup and choose **Save GitLab application**.
-4. Restart the Control Plane, then the console and Relay, which cache what it serves.
-5. In the console, **Integrations → Code hosts → Connect GitLab**, and authorize an account with the authority below.
+4. Restart the Control Plane, then restart the console and Relay so they pick up the updated configuration.
+5. In the console, open **Integrations → Code hosts → Connect GitLab** and authorize an account with the permissions listed below.
 
-Until GitLab state exists you can change all of this freely, including **Clear configuration**. Once projects, tokens, or connections exist, the instance address is fixed: they carry no instance provenance, so retargeting would send one instance's credentials to another.
+Until GitLab state exists, you can change these settings freely or use **Clear configuration**. Once any projects, tokens, or connections exist, the instance URL is locked. Stored credentials and IDs don't record which instance they came from, so changing the URL would send one instance's credentials to another.
 
 ### Self-managed instance requirements
 
 | Requirement               | Why                                                                                                                                                                              |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **GitLab 18.11 or later** | Group service accounts reached every tier, Community Edition included, at 18.11. Below that AgentConnect refuses to provision rather than guess.                                 |
-| **HTTPS, one address**    | Clone URLs, OAuth redirects, and GitLab's own `web_url` values only agree if there is a single address. Split internal/external addressing belongs in DNS.                       |
-| **A trusted certificate** | There is no skip-verify option at any layer. A private authority is supported by [installing its bundle](/self-hosting/docker-compose/configuration#private-certificate-authorities) where every process and sandbox can read it. |
-| **Reachable ingress**     | GitLab refuses to deliver webhooks to the local network by default; if your AgentConnect ingress resolves to a private address, the integration looks installed and stays quiet. |
+| **GitLab 18.11 or later** | Group service accounts became available across all tiers, including Community Edition, in 18.11. AgentConnect refuses to provision on earlier versions.                          |
+| **HTTPS, one address**    | Clone URLs, OAuth redirects, and GitLab's `web_url` values match only when there is a single address. Handle split internal and external addressing in DNS.                       |
+| **A trusted certificate** | There's no option to skip TLS verification at any layer. For a private CA, [install its bundle](/self-hosting/docker-compose/configuration#private-certificate-authorities) where every process and sandbox can read it. |
+| **Reachable ingress**     | GitLab blocks webhook delivery to local networks by default. If your AgentConnect ingress resolves to a private address, the integration will appear installed but won't receive events. |
 
-Creating each agent's service account needs authority no GitLab API reports, so it is checked the first time a project is set up, not in advance. On GitLab.com that is a top-level-group **Owner**. On a self-managed instance, either is enough:
+No GitLab API reports whether an account can create agent service accounts, so AgentConnect checks this the first time you set up a project instead of in advance. On GitLab.com, the account must be a top-level group **Owner**. On a self-managed instance, either option works:
 
-- **Any tier, including Community Edition** — connect an **instance administrator**. On an instance with **Admin Mode** enabled, administrator API actions need a token scope AgentConnect does not request, so the delegation setting below is the only path there.
-- **Premium or Ultimate** — turn on **Allow top-level group Owners to create service accounts** under **Admin → Settings → General**, and connect a top-level group Owner.
+- **Any tier, including Community Edition**: Connect an **instance administrator**. If **Admin Mode** is enabled on the instance, administrator API calls require a token scope AgentConnect doesn't request, so you must use the delegation setting below instead.
+- **Premium or Ultimate**: Turn on **Allow top-level group Owners to create service accounts** under **Admin → Settings → General**, then connect a top-level group Owner.
 
-Nothing about the instance has to be configured on your daemons: a daemon learns it from the agent it is serving, and clones from it on that basis.
+You don't need to configure the GitLab instance on your daemons. Each daemon gets the instance details from the agent it serves and clones from it automatically.
 
 ## Gitea
 
-Point the deployment at a Gitea instance when agents need Gitea repositories — gitea.com or one self-hosted Gitea or Forgejo instance; a deployment addresses one or the other, never both. There is **no application to register**. Gitea's OAuth provider would add no identity of its own — an operation made with an OAuth token is attributed to the authorizing user, exactly as with a token that user generated by hand — so the integration uses a bot user's personal access token directly.
+Point your deployment at a Gitea instance when agents need access to Gitea repositories. A deployment targets either gitea.com or one self-hosted Gitea or Forgejo instance, not both. There's **no OAuth application to register**. Because Gitea's OAuth provider attributes actions to the authorizing user just like a manual token, the integration uses a bot user's personal access token directly.
 
-That leaves the deployment exactly one value to own:
+That leaves one deployment setting to configure:
 
-1. In Setup, open **Gitea** and put the instance address in **Instance base URL**. Empty means gitea.com; a path prefix (`https://gitea.example.test/gitea`) and a non-default port are both supported and preserved everywhere.
-2. Setup probes what you typed and applies the version floor. Only an unusable URL or an instance below **Gitea 1.23** or **Forgejo 15** blocks the save — an unreachable host, an untrusted certificate chain, or a response that is not a Gitea API root are reported as warnings, because Setup and the Control Plane need not sit in the same network position.
+1. In Setup, open **Gitea** and enter the instance address in **Instance base URL**. Leave it empty for gitea.com. Path prefixes (such as `https://gitea.example.test/gitea`) and non-default ports are supported and preserved everywhere.
+2. Setup probes the URL and checks the minimum version. Only an invalid URL or an instance older than **Gitea 1.23** or **Forgejo 15** blocks saving. An unreachable host, untrusted certificate chain, or non-Gitea API root is reported as a warning, since Setup and the Control Plane may be on different networks.
 3. Restart the Control Plane.
 
-**The bot user and its token are not deployment state.** Each organization creates its own bot user, gives it Admin on the repositories its agents will work in, and pastes that user's token in the console under **Integrations → Code hosts → Gitea**; see [Gitea](/connect-automate/triggers-automation/gitea). An operator never handles the token.
+**The bot user and its token aren't deployment state.** Each organization creates its own bot user, grants it Admin access on the repositories its agents will use, and pastes that token in the console under **Integrations → Code hosts → Gitea** (see [Gitea](/connect-automate/triggers-automation/gitea)). Operators never handle the token.
 
-Until Gitea state exists the address can be changed freely. Once repositories, tokens, or connections exist it is fixed: the stored token, numeric repository IDs, and webhook IDs carry no instance provenance, so retargeting would send one instance's credentials to another. Remove every Gitea repository and disconnect the bot first.
+Until Gitea state exists, you can change the instance URL freely. Once repositories, tokens, or connections exist, the URL is locked because stored tokens, numeric repository IDs, and webhook IDs don't record which instance they came from. Remove every Gitea repository and disconnect the bot before changing it.
 
 ### Self-hosted instance requirements
 
 | Requirement                 | Why                                                                                                                                                                                                                   |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Gitea 1.23 or later, or Forgejo 15 or later** | Gitea 1.23 is the first release whose pull-request comment webhooks include the pull request itself, which mentioning an agent on a pull request and comment-requested reviews depend on; Forgejo 15 is Forgejo's oldest maintained line. Forgejo reports its own version first (`15.0.9+gitea-1.22.0`), and that is the number the floor reads. `GET /api/v1/version` answers without a token, so the floor is checked when the URL is saved and again at every connection. |
-| **HTTPS, one address**      | Clone URLs, the repository addresses agents are given, and Gitea's own `html_url` values only agree if there is a single address. Split internal/external addressing belongs in DNS.                                   |
-| **A trusted certificate**   | There is no skip-verify option at any layer. A private authority is supported by [installing its bundle](/self-hosting/docker-compose/configuration#private-certificate-authorities).                                                                            |
-| **HTTP Git enabled**        | Clone, fetch, and push all run over HTTPS with the bot's token. SSH remotes and plain HTTP are outside the contract.                                                                                                  |
-| **Reachable Relay address** | Gitea refuses webhook deliveries to private addresses by default, and the refusal happens at delivery rather than at creation — see below.                                                                            |
+| **Gitea 1.23 or later, or Forgejo 15 or later** | Gitea 1.23 is the first release whose pull-request comment webhooks include the pull request itself, which mentioning an agent on a pull request and comment-requested reviews depend on. Forgejo 15 is Forgejo's oldest maintained release line. Forgejo reports its own version first (`15.0.9+gitea-1.22.0`), which is the version checked. `GET /api/v1/version` responds without a token, so the version floor is checked when saving the URL and again on every connection. |
+| **HTTPS, one address**      | Clone URLs, the repository addresses given to agents, and Gitea's `html_url` values match only when there is a single address. Handle split internal and external addressing in DNS.                                   |
+| **A trusted certificate**   | There's no option to skip TLS verification at any layer. For a private CA, [install its bundle](/self-hosting/docker-compose/configuration#private-certificate-authorities).                                           |
+| **HTTP Git enabled**        | Clone, fetch, and push all run over HTTPS using the bot's token. SSH remotes and plain HTTP aren't supported.                                                                                                         |
+| **Reachable Relay address** | Gitea blocks webhook deliveries to private addresses by default, and the refusal happens at delivery time rather than creation time (see below).                                                                      |
 
-Forgejo, Codeberg included, needs nothing beyond this page: it serves the same API, token scopes, and webhooks as Gitea, including the `ALLOWED_HOST_LIST` setting below.
+Forgejo (including Codeberg) works with the same setup and needs no extra configuration. It uses the same API, token scopes, and webhooks as Gitea, including the `ALLOWED_HOST_LIST` setting below.
 
-An instance that drops below the floor after repositories are already set up keeps serving them — existing sessions and credentials work, and only new setup and token replacement are refused.
+If an instance is downgraded below the minimum version after repositories are already set up, existing sessions and credentials keep working, and only new setups and token replacements are blocked.
 
 ### Let Gitea reach the webhook endpoint
 
-Gitea refuses webhook deliveries to loopback and private addresses by default, through `ALLOWED_HOST_LIST` under `[webhook]` in `app.ini`, which inherits from `[security]`. The refusal happens at **delivery** time, not at creation: the webhook installs cleanly and then stays silent.
+Gitea blocks webhook deliveries to loopback and private addresses by default via `ALLOWED_HOST_LIST` under `[webhook]` in `app.ini` (inherited from `[security]`). This check happens at **delivery** time, not at creation time, so the webhook installs without error and then receives no events.
 
-So the Relay address Gitea posts to has to be reachable from the instance, or the operator names it in the allowlist:
+Make sure the Relay address Gitea posts to is reachable from the instance, or add it to the allowlist:
 
 ```ini
 [webhook]
 ALLOWED_HOST_LIST = relay.example.test
 ```
 
-The value accepts host names, CIDR ranges, and the built-in groups (`private`, `loopback`, `external`, `*`); prefer naming the one host over opening a whole group. Restart Gitea after editing `app.ini`.
+The setting accepts hostnames, CIDR ranges, and built-in groups (`private`, `loopback`, `external`, `*`). Prefer naming the specific host instead of opening an entire group. Restart Gitea after editing `app.ini`.
 
-AgentConnect fires a test delivery as the last step of adding a repository and waits for it to arrive. One that never does leaves the repository **ready with a warning** naming this setting, so a blocked address is visible at setup time rather than after the first missed pull request. Fix the allowlist, then press **Repair** on the repository row — or simply wait for the first real delivery, which clears the warning too.
+When you add a repository, AgentConnect sends a test webhook delivery and waits for it to arrive. If it doesn't arrive, the repository is marked **ready with a warning** pointing to this setting, so you see the blocked address during setup instead of after the first missed pull request. Update the allowlist and press **Repair** on the repository row, or wait for the first real delivery, which also clears the warning.
 
 ## Linear
 
-Configure the deployment's Linear OAuth application when agents should work issues delegated to them in Linear. One application serves every organization and every connected workspace; no organization or agent ever holds Linear credentials.
+Configure the deployment's Linear OAuth application when agents need to work on issues delegated to them in Linear. One application serves all organizations and connected workspaces; individual organizations and agents don't store Linear credentials.
 
-Both halves of the flow are public: the Control Plane terminates the OAuth callback and the Relay terminates Linear's webhooks, so both public URLs must be HTTPS before Setup will save the application.
+Both halves of the flow are public: the Control Plane handles the OAuth callback and the Relay handles Linear's webhooks. Both public URLs must use HTTPS before Setup will save the application.
 
 1. In Setup, open **Linear**. It shows the exact **Callback URL** and **Webhook URL** to register.
-2. Linear has no API for creating OAuth applications, so create it by hand. In Linear, open **Settings → API → OAuth applications** and add one application under your own product name and icon, with that callback URL. Enable webhooks, check **Agent session events**, and point them at the webhook URL Setup displays.
-3. Make the application **public** if workspaces other than the one that created it will connect it. Linear does not review it, and listing it in Linear's integration directory is optional.
+2. Linear has no API for creating OAuth applications, so create it manually. In Linear, open **Settings → API → OAuth applications** and create an application with your product name, icon, and that callback URL. Enable webhooks, check **Agent session events**, and point them at the webhook URL Setup displays.
+3. Make the application **public** if workspaces other than the one that created it need to connect. Linear doesn't review it, and listing it in Linear's integration directory is optional.
 4. Paste the **Client ID**, **Client secret**, and **Webhook signing secret** into Setup and choose **Save Linear application**.
 5. Restart the Control Plane and Relay.
 
-The console's Linear surface reports that Linear is not set up until those credentials exist. Once they do, a workspace is connected from an agent's **Integrations → Add integration → Linear**; see [Linear](/connect-automate/triggers-automation/linear).
+The console shows Linear as unconfigured until these credentials are saved. Once configured, connect a workspace from an agent's **Integrations → Add integration → Linear**. See [Linear](/connect-automate/triggers-automation/linear).
 
-Rotating the signing secret is a deployment action: save the new value in Setup, and every connected workspace is re-stamped with it. Deliveries can fail for a few seconds during the change, and Linear retries them.
+Rotating the signing secret is a deployment-level change: save the new value in Setup, and AgentConnect updates every connected workspace with it. Webhook deliveries may fail for a few seconds during the update, and Linear retries them automatically.
 
 ## Slack deployment App
 
-Setup can create one deployment Slack App for the built-in `agentconnect` agent and optional Slack sign-in. This does not replace the recommended per-agent bot integrations described in [Slack](/connect-automate/chat-platforms/slack).
+Setup can create one deployment Slack App for the built-in `agentconnect` agent and optional Slack sign-in. This doesn't replace the recommended per-agent bot integrations described in [Slack](/connect-automate/chat-platforms/slack).
 
-1. Configure reachable HTTPS Logto, Web, Control Plane, and Relay origins.
+1. Configure reachable HTTPS origins for Logto, Web, Control Plane, and Relay.
 2. Create a temporary Slack App configuration token when Setup prompts for one.
 3. Open **Slack** in Setup and choose **Create Slack App**.
 4. Restart Control Plane and Relay.
 
-Setup builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in is unavailable on the default HTTP localhost topology; use Google for the local bootstrap.
+Setup builds and checks the current Slack manifest, including OAuth, Events API, and interactivity callbacks. Slack sign-in isn't available on the default HTTP localhost topology; use Google for the local bootstrap.
 
 ## Google Chat deployment app
 
-The **Google Chat** card, below the **Google** card, configures one Chat app for the whole deployment. It answers each connected Google Workspace through that organization's built-in **AgentConnect** agent; any agent can still connect its own Chat app.
+The **Google Chat** card, below the **Google** card, configures one Chat app for the entire deployment. It serves each connected Google Workspace through that organization's built-in **AgentConnect** agent, while individual agents can still connect their own Chat apps.
 
-1. Configure the deployment's public callback endpoint, and serve the console over HTTPS. Google delivers Chat events over HTTPS callbacks only, and the page where an organization connects itself needs an HTTPS console.
+1. Configure the deployment's public callback endpoint and serve the console over HTTPS. Google delivers Chat events only over HTTPS callbacks, and the organization connection page requires an HTTPS console.
 2. Turn on [Google sign-in](/self-hosting/sign-in#google-sign-in). People connect their Workspace by signing in with the Google account they use in Google Chat.
-3. Create the Chat app as described in [Create the app](/connect-automate/chat-platforms/googlechat#create-the-app), with the **HTTP endpoint URL** the card shows. Add the `/help` command too if you will publish the app on the Marketplace, whose review expects the app to offer help.
+3. Create the Chat app as described in [Create the app](/connect-automate/chat-platforms/googlechat#create-the-app), using the **HTTP endpoint URL** shown on the card. Add the `/help` command if you plan to publish the app on the Marketplace, since Marketplace review expects the app to offer help.
 4. In Setup, open **Google Chat**, enter the **Project ID**, the optional **Project number**, and the **Service-account key JSON**, then choose **Save Google Chat app**.
 5. Restart AgentConnect.
 
-Setup validates the project and key with Google the same way the agent wizard does, and stores the key write-only. To rotate it, save a new key here and restart; revoke the old key only after the restart.
+Setup validates the project and key with Google the same way the agent wizard does, and stores the key write-only. To rotate it, save a new key here and restart, then revoke the old key after the restart completes.
 
-A Workspace connects itself from Google Chat. Until it does, the app answers a message with a private **Configure** prompt, and being added to a space with a **Connect** card. Either leads to the console, where an Owner or Collaborator signs in with the Google account they use in Google Chat, chooses the organization, and clicks **Connect**. A Workspace connects to one organization at a time. Removing the Google Chat integration from the **AgentConnect** agent disconnects it.
+A Workspace connects itself from Google Chat. Before it's connected, the app replies to messages with a private **Configure** prompt and posts a **Connect** card when added to a space. Both open the console, where an Owner or Collaborator signs in with the Google account they use in Google Chat, picks the organization, and clicks **Connect**. A Workspace can connect to only one organization at a time. To disconnect it, remove the Google Chat integration from the **AgentConnect** agent.
 
 To enable administrator recovery of a conflicting Workspace binding:
 
@@ -159,42 +159,42 @@ To enable administrator recovery of a conflicting Workspace binding:
 - Add the console's `/googlechat/recover` URL to that client's authorized redirect URIs. Setup lists the full URL under **Google**.
 - Configure `openid` and `https://www.googleapis.com/auth/admin.directory.user.readonly` in Google Auth Platform, and complete any Google OAuth verification or Workspace app approval required for that scope.
 
-These permissions are requested only when a current Workspace super administrator chooses recovery. AgentConnect reads that administrator's Directory entry and customer ID, then asks them to confirm the destination organization. It does not request offline access or domain-wide delegation. See [Recover a Workspace connection](/connect-automate/chat-platforms/googlechat#recover-a-workspace-connection) for the user flow and manual fallback.
+AgentConnect requests these permissions only when a current Workspace super administrator initiates recovery. It reads that administrator's Directory entry and customer ID, then asks them to confirm the target organization. It doesn't request offline access or domain-wide delegation. See [Recover a Workspace connection](/connect-automate/chat-platforms/googlechat#recover-a-workspace-connection) for the user flow and manual fallback.
 
 Until the app is published publicly on the Google Workspace Marketplace, only your own Workspace can use it.
 
 ## Microsoft Teams deployment app
 
-The **Microsoft** card configures the deployment's Microsoft sign-in application. Entering the application's home tenant there makes the same application the deployment's Teams app, which each Microsoft 365 organization connects to one of its agents with an administrator's sign-in; any agent can still [register its own bot](/connect-automate/chat-platforms/msteams#register-your-own-bot).
+The **Microsoft** card configures the deployment's Microsoft sign-in application. Entering the application's home tenant there also makes it the deployment's Teams app, which each Microsoft 365 organization connects to one of its agents using an administrator sign-in. Individual agents can still [register their own bot](/connect-automate/chat-platforms/msteams#register-your-own-bot).
 
-1. Configure the deployment's public callback endpoint, and serve the console over HTTPS.
+1. Configure the deployment's public callback endpoint and serve the console over HTTPS.
 2. In [Microsoft Entra](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade), register a multi-tenant application (accounts in any organizational directory). Add the card's **Redirect URIs** and its **Connect page** as Web redirect URIs, and create a client secret.
-3. Register a bot for that application in the [Teams Developer Portal](https://dev.teams.microsoft.com/tools/bots), or as an Azure Bot, with the **Messaging endpoint** the card shows.
-4. In Setup, open **Microsoft**, enter the **Client ID**, the **Client secret**, and the application's **Directory (tenant) ID for Teams**, and save. Setup checks the secret against that tenant before saving it.
+3. Register a bot for that application in the [Teams Developer Portal](https://dev.teams.microsoft.com/tools/bots) or as an Azure Bot, using the **Messaging endpoint** shown on the card.
+4. In Setup, open **Microsoft**, enter the **Client ID**, the **Client secret**, and the application's **Directory (tenant) ID for Teams**, then save. Setup validates the secret against that tenant before saving.
 5. Restart AgentConnect.
 
-One application and one secret serve Microsoft sign-in and Teams, so a rotation reaches both. Clearing the tenant ID turns Teams off and keeps sign-in.
+One application and one secret serve both Microsoft sign-in and Teams, so rotating the secret updates both. Clearing the tenant ID disables Teams while keeping Microsoft sign-in active.
 
-An organization connects from an agent's **Add integration → Microsoft Teams → Connect with Microsoft**: a Teams or Global administrator signs in, and the app is published to that Microsoft 365 organization's app catalog with no Store listing. Microsoft Entra labels the application unverified until publisher verification, which organizations that allow only verified publishers require.
+An organization connects from an agent's **Add integration → Microsoft Teams → Connect with Microsoft**: a Teams or Global administrator signs in, and the app is published directly to that Microsoft 365 organization's app catalog without a Store listing. Microsoft Entra marks the application as unverified until you complete publisher verification, which is required by organizations that allow only verified publishers.
 
 ### Agent bots
 
-The Teams app's bot serves one agent in each Microsoft 365 organization. With agent bots, every further agent gets a bot of its own: a Microsoft Entra agent identity that the deployment creates in the customer's tenant from a blueprint in your home tenant, with an Azure Bot registration in your subscription. The **Agent bots** group appears under **Microsoft** once the Teams app is configured. Do these once:
+The Teams app's bot serves one agent per Microsoft 365 organization. With agent bots enabled, each additional agent gets its own bot: a Microsoft Entra agent identity created in the customer's tenant from a blueprint in your home tenant, paired with an Azure Bot registration in your subscription. The **Agent bots** section appears under **Microsoft** once the Teams app is configured. Complete these steps once:
 
-1. To create the blueprint from Setup, grant the application three Microsoft Graph application permissions in its home tenant, with administrator consent: `AgentIdentityBlueprint.Create`, `AgentIdentityBlueprint.AddRemoveCreds.All` and `AgentIdentityBlueprintPrincipal.Create`. Only **Create blueprint** uses them, so you may remove them afterwards.
-2. Assign the application's service principal the **Contributor** role on the Azure resource group for the bot registrations.
+1. To create the blueprint from Setup, grant the application three Microsoft Graph application permissions in its home tenant with administrator consent: `AgentIdentityBlueprint.Create`, `AgentIdentityBlueprint.AddRemoveCreds.All`, and `AgentIdentityBlueprintPrincipal.Create`. Only **Create blueprint** uses them, so you can remove them afterward.
+2. Assign the application's service principal the **Contributor** role on the Azure resource group used for bot registrations.
 3. Register the `Microsoft.BotService` resource provider on the subscription.
 
-Enter the **Azure subscription ID**, the **Resource group** and your own Microsoft Entra user as the blueprint's owner and sponsor, and click **Create blueprint**; its secret goes straight into the deployment secret store and is never shown. A blueprint made by hand in the Microsoft Entra admin center works too: open it to accounts in any organizational directory, add a client secret, and enter both with **Save blueprint**. Restart AgentConnect to apply the settings.
+Enter the **Azure subscription ID**, the **Resource group**, and your Microsoft Entra user as the blueprint's owner and sponsor, then click **Create blueprint**. Its secret goes straight into the deployment secret store and is never displayed. You can also use a blueprint created manually in the Microsoft Entra admin center: allow accounts in any organizational directory, add a client secret, and enter both with **Save blueprint**. Restart AgentConnect to apply the settings.
 
-Each customer tenant's administrators see these agents in the Microsoft Entra admin center under your blueprint, with the person who connected each one as its sponsor, and can disable them there.
+Administrators in each customer tenant can view these agents under your blueprint in the Microsoft Entra admin center (showing the person who connected each one as its sponsor) and disable them there.
 
-The same application connects [Azure DevOps](/connect-automate/triggers-automation/azure-devops) organizations. Add the **Azure DevOps** connect page that the card shows as one more Web redirect URI; an administrator then connects from the console's Azure DevOps card. Microsoft's consent page shows the application's Entra display name, so choose one that does not name a single Microsoft product.
+The same application also connects [Azure DevOps](/connect-automate/triggers-automation/azure-devops) organizations. Add the **Azure DevOps** connect page shown on the card as an additional Web redirect URI, and administrators can then connect from the console's Azure DevOps card. Microsoft's consent screen displays the application's Entra display name, so choose a name that doesn't refer to just one Microsoft product.
 
 ## Lark and Feishu tenant Apps
 
-The **Lark** and **Feishu** cards configure one regional Login App as the deployment's tenant anchor. AgentConnect uses it to accept multiple bot Apps only when they belong to the same trusted workspace; the Login App is not an AgentConnect chat bot.
+The **Lark** and **Feishu** cards configure one regional Login App as the deployment's tenant anchor. AgentConnect uses it to verify that multiple bot Apps belong to the same trusted workspace; the Login App itself isn't an AgentConnect chat bot.
 
-Choose **Create Lark App** / **Create Feishu App**, or save existing credentials. For an existing App, enable and publish the provider permission named **Obtain tenant information** (`tenant:tenant:readonly`). Restart Control Plane after saving.
+Choose **Create Lark App** / **Create Feishu App**, or save existing credentials. For an existing App, enable and publish the **Obtain tenant information** (`tenant:tenant:readonly`) permission. Restart Control Plane after saving.
 
 Bot setup and delivery modes are documented in [Lark / Feishu](/connect-automate/chat-platforms/lark-feishu).

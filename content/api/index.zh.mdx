@@ -1,35 +1,35 @@
 ---
 title: "API 概览"
 icon: CodeXml
-description: "使用个人 API 密钥调用 AgentConnect REST API——列出 Agent、读取会话、在脚本和 CI 中驱动定时任务。"
+description: "使用个人 API 密钥调用 AgentConnect REST API，在脚本和 CI 中列出 Agent、读取会话并触发定时任务。"
 ---
 
 import imgApiKey from '@/public/images/api-key.png'
 
 <ApiFacts />
 
-控制台所做的一切都建立在 `https://api.agentconnect.md` 的 REST API 之上——你也可以自己调用它。在 [AgentConnect OSS](/self-hosting) 上，内置栈在 `<your-control-plane-url>/api/v1` 提供同一套 API。**个人 API 密钥**以*你*的身份、带着*你的角色*、在**一个组织**中进行认证。
+控制台的所有操作都基于 `https://api.agentconnect.md` 的 REST API，你也可以直接调用这些接口。在 [AgentConnect OSS](/self-hosting) 上，同一套 API 位于 `<your-control-plane-url>/api/v1`。**个人 API 密钥**代表*你本人*的身份和角色，作用域限定在**单个组织**内。
 
 ## 创建密钥 [#create-a-key]
 
 <Image src={imgApiKey} alt="创建个人 API 密钥" width={520} />
 
-**个人资料 → API 密钥 → 新建密钥**：
+前往 **个人资料 → API 密钥 → 新建密钥**，填写以下选项：
 
-- **组织**——此密钥绑定的组织。
-- **名称**——可选的标签（“ci-runner”）。
-- **权限**——密钥可以调用什么：
-  - **完全访问**——你的角色允许的一切。
-  - **只读**——`GET` 接口，以及 [MCP 连接器](/connect-automate/mcp-connector)的读取工具。
-  - **Agent 对话**——只能调用 relay 上的 Agent 对话接口，且只对选中的 Agent 有效；见 [Agent 对话 API](/connect-automate/agent-chat-api)。
-- **Agent**——**全部 Agent** 或 **指定 Agent**。只有 Agent 对话权限会用到这个选择。
-- **过期时间**——30 / 60 / 90 天、1 年或永不过期（默认 90 天）。
+- **组织**：密钥所属的组织。
+- **名称**：可选备注（例如 `ci-runner`）。
+- **权限**：密钥可调用的范围：
+  - **完全访问**：你的角色允许的所有操作。
+  - **只读**：`GET` 接口，以及 [MCP 连接器](/connect-automate/mcp-connector)的只读工具。
+  - **Agent 对话**：仅限调用 relay 上的 Agent 对话接口，且只对选中的 Agent 生效。详见 [Agent 对话 API](/connect-automate/agent-chat-api)。
+- **Agent**：**全部 Agent** 或 **指定 Agent**。仅在选择 **Agent 对话** 权限时生效。
+- **过期时间**：30 / 60 / 90 天、1 年或永不过期（默认 90 天）。
 
-密钥**只显示一次**——请当场复制。之后列表中只会显示密钥尾部、过期时间和最近使用时间。
+密钥**仅显示一次**，请当场复制保存。之后列表里只会显示末尾几位字符、过期时间和最近使用时间。
 
-密钥只能在控制台中管理。API 密钥不能列出、创建或撤销密钥，也不能创建或删除组织；这些请求会返回 `403`。
+密钥只能在控制台中管理。API 密钥无法列出、创建或撤销密钥，也无法创建或删除组织，调用这些接口会返回 `403`。
 
-给组织自己运行的服务端用的密钥，签给[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)而不是你自己：**设置 → 服务账号 → 密钥**，选项相同，只是不用选组织。
+如果是组织内部的服务需要调用 API，建议为[服务账号](/operate-govern/permissions-overview/members-and-roles#service-accounts)签发密钥，而不是绑定到个人名下。前往 **设置 → 服务账号 → 密钥**，选项与个人密钥相同，只是不需要选择组织。
 
 ## 使用密钥 [#use-it]
 
@@ -38,17 +38,17 @@ curl https://api.agentconnect.md/v1/orgs \
   -H "Authorization: Bearer $AGENTCONNECT_API_KEY"
 ```
 
-所有资源都以组织为范围，位于 `/v1/orgs/{orgId}/…` 之下——列出 Agent、读取会话元数据和消息、管理定时任务、触发运行。每个操作都列在侧边栏中，并各自带有一个可以直接发送请求的调试面板；原始的 OpenAPI 文档链接在上方的表格里。
+所有资源都按组织隔离，路径位于 `/v1/orgs/{orgId}/…` 下，可用于列出 Agent、读取会话元数据和消息、管理定时任务或触发运行。侧边栏列出了每个接口并附带在线调试面板，原始 OpenAPI 文档链接见上方表格。
 
-由于密钥携带你的角色，[查看者](/operate-govern/permissions-overview/members-and-roles)的密钥只能读取而不能修改——很适合用于仪表盘。
+由于密钥继承你的角色权限，[查看者](/operate-govern/permissions-overview/members-and-roles)创建的密钥只能读取、不能修改，适合接入监控仪表盘。
 
-同一个密钥也可以在无头客户端中为 [MCP 连接器](/connect-automate/mcp-connector)认证——把它作为 `Authorization: Bearer` 头传入，而不必走浏览器 OAuth 流程。
+在无头客户端中，也可以用同一个密钥为 [MCP 连接器](/connect-automate/mcp-connector)认证：直接将其放入 `Authorization: Bearer` 请求头即可，无需走浏览器 OAuth 流程。
 
 ## 撤销 [#revoke]
 
-**撤销**会让密钥立即失效——仍在使用它的任何程序都会开始收到 `401`。轮换时请先创建新密钥，迁移你的脚本，然后再撤销旧密钥。
+点击 **撤销** 后密钥立即失效，继续使用该密钥的请求都会收到 `401`。轮换密钥时，请先创建新密钥、更新脚本配置，再撤销旧密钥。
 
 ## 其他凭证（补充说明） [#other-credentials-for-completeness]
 
-- **Daemon 密钥**——由**添加 Daemon** 生成，用于认证一台*机器*而不是一个人。只在安装命令中显示一次；删除 Daemon 时随之撤销。
-- **机器人令牌**——属于聊天平台；参见[机器人](/connect-automate/chat-platforms/bots)。
+- **Daemon 密钥**：通过 **添加 Daemon** 生成，用于认证*机器*而非个人。仅在安装命令中显示一次，删除对应 Daemon 时随之失效。
+- **机器人令牌**：由各聊天平台签发，详见[机器人](/connect-automate/chat-platforms/bots)。

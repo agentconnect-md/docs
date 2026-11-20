@@ -6,55 +6,55 @@ description: "无需连接频道，即可在浏览器中与一个或多个 Agent
 
 import imgPlayground from '@/public/images/playground.png'
 
-Playground（控制台中显示为“试用”）是在浏览器中与运行在你的 Daemon 上的 Agent 进行的私密对话。从 Agent 页面打开它可开始单 Agent 会话，或者使用首页输入框把多个 Agent 带进同一个对话。
+Playground（控制台中显示为“试用”）是浏览器里的私密对话入口，直接连接运行在你 Daemon 上的 Agent。在 Agent 页面中点击即可开启单 Agent 会话，也可以在首页输入框里一次选择多个 Agent 共同对话。
 
 <Image src={imgPlayground} alt="首页输入框中选择了多个 Agent，用于同一个 Playground 对话" width={780} />
 
 ## 你会得到什么 [#what-you-get]
 
-Playground 会在 Agent 的 Daemon 上创建一个真实的会话，使用与频道对话相同的 Runtime、工作区和工具。它的输出会流式写入同一种[会话记录](/operate-govern/sessions)。
+Playground 会在 Agent 所在的 Daemon 上创建真实会话，复用与频道对话一致的 Runtime、工作区和工具，输出同样会实时写入[会话记录](/operate-govern/sessions)。
 
-你可以在需要时中断某一轮。当 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)为**对话、批准并修改设置**时，你还可以为下一轮更改受支持的 Runtime 设置，而不改动 Agent 已保存的配置。需要批准的工具调用会显示在输入框上方的待处理请求中。Agent 的编辑者在任何级别下都能回答；从**对话并批准工具调用**起，作为对话所有者的你也能回答，即使你只能查看该 Agent。
+你可以随时中断正在运行的轮次。当 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)设为**对话、批准并修改设置**时，还可以在不改动已保存配置的前提下，为下一轮临时切换受支持的 Runtime 参数。需要人工确认的工具调用会显示在输入框上方的待处理栏中。Agent 的编辑者在任何级别下都可以审批；在**对话并批准工具调用**及以上级别，对话所有者本人也可以审批，即使你对该 Agent 只有查看权限。
 
-当你让 Agent 在某个聊天对话中读取或发消息时，它是替你去做，规则与聊天中相同，参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。在你已在**个人资料 → 登录方式**中关联聊天账号（例如 Slack 账号）的工作区里，它按这个账号判断你：公开频道要求你是正式成员，私密频道或群组私信要求你是其中的成员。在其他地方（包括账号无法关联的 Telegram 和 Discord），你只能触达你能在**会话**中打开其会话的对话。
+如果你让 Agent 读取或向某个聊天对话发送消息，它会以你的身份执行，权限规则与聊天平台一致（参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)）。在已在**个人资料 → 登录方式**中关联聊天账号的工作区（如 Slack），系统会按已关联账号校验权限：公开频道要求你是正式成员，私密频道或群组私信要求你在其中。其他平台（包括不支持账号关联的 Telegram 和 Discord）中，你只能访问自己可以在**会话**里打开记录的对话。
 
 ## 你与 Agent 的专属对话 [#your-own-conversation-with-an-agent]
 
-当 Agent 的 Daemon 运行[自动模式](/connect-automate/integrations-overview#session-mode)时，Agent 页面的**试用**按钮，以及从首页输入框发给单个 Agent 的消息，都会打开你与该 Agent 的专属对话。只有你能打开它，每次打开的都是同一个对话。对话中由协调会话回应每条消息：简单的问题它直接回答，需要动手的事情则开启一个任务。每个任务在自己的会话页面上继续，对话中会附上该页面的链接，你也可以在那里继续给任务发消息。会话面板中的**新建会话**则会打开普通的 Playground 对话；下文的配置工作请使用它。
+当 Agent 的 Daemon 运行在[自动模式](/connect-automate/integrations-overview#session-mode)时，点击 Agent 页的**试用**按钮，或从首页输入框向单个 Agent 发消息，都会进入你与该 Agent 的专属对话。这个对话仅对你可见，且每次打开都会回到同一条上下文。协调会话负责响应每条消息：简单问题直接答复，需要实际执行的事项会拆成独立任务。每个任务都有自己的会话页面，对话中会提供直达链接，你可以在对应页面继续追问。如果你需要普通的 Playground 会话（例如完成下面的配置操作），请点击会话面板里的**新建会话**。
 
 ## 在对话中配置 AgentConnect [#configure-agentconnect-from-a-conversation]
 
-在只有一个 Agent 的 Playground 对话中，这个 Agent 可以读取当前设置，并用与 [MCP 连接器](/connect-automate/mcp-connector)相同的工具替你做出更改。它以你的身份行事，因此你的角色和[可见范围](/operate-govern/permissions-overview)同样适用。每项更改都会以审批卡片的形式出现在输入框上方，列出确切的参数；在你点击 **Approve and run** 之前，任何更改都不会生效。之后 Agent 会收到结果并继续。
+在单 Agent 的 Playground 对话中，Agent 可以读取当前配置，并调用与 [MCP 连接器](/connect-automate/mcp-connector)相同的工具帮你执行修改。它会以你的身份操作，遵循你的角色和[可见范围](/operate-govern/permissions-overview)。每次写操作都会先在输入框上方生成审批卡片并展示完整参数，只有点击 **Approve and run** 后才会执行，随后 Agent 拿到结果继续处理。
 
-做配置时，建议从内置的 **AgentConnect** Agent 开始，它自带介绍平台和创建 Agent 的技能。任何 Agent 也都可以用这种方式更改自己的配置和工作区，但不能删除自己。
+做平台配置时，推荐直接使用内置的 **AgentConnect** Agent，它自带平台说明和创建 Agent 的技能。任意 Agent 也可以用这种方式修改自身的配置和工作区，但不能删除自己。
 
-有多个 Agent 的对话中不能使用这些工具。向对话中加入 Agent 后，该对话在余下的时间里都无法再使用它们；做配置时请新开一个只有一个 Agent 的对话。
+多 Agent 对话不支持这些配置工具。一旦向对话中添加了其他 Agent，该对话在后续轮次中都将无法再使用配置工具；需要配置时请新建单 Agent 对话。
 
-Agent 绝不会在对话中索要凭证。创建 Agent、连接集成或代码托管、添加密钥、MCP 服务器或技能时，它会打开对应的控制台对话框，并尽量预先填好，由你来完成。在这里不能用示例消息试运行[决策](/build-your-team/decisions)；请在决策编辑器中使用**用示例试运行**。
+Agent 不会在对话中索要任何凭证。遇到创建 Agent、连接集成或代码托管平台、添加密钥、MCP 服务器或技能等操作时，它会打开对应的控制台表单（并尽可能预填字段），由你确认提交。此外，这里不支持用示例消息测试[决策](/build-your-team/decisions)，请前往决策编辑器使用**用示例试运行**。
 
 ## 附加文件 [#attach-files]
 
-使用输入框的附件按钮为消息添加文件。图片会随消息本身一起发给 Agent。其他文件会先上传到你所部署环境的对象存储，并以标签的形式显示在输入框上方；所有上传完成后消息才会发出。Agent 收到的是文件名和一个短时有效的下载链接，需要时再把文件取到自己的工作区。
+点击输入框里的附件按钮即可上传文件。图片会随消息直接发送给 Agent；其他类型的文件会先上传至部署环境的对象存储，在输入框上方显示为标签，待全部上传完成后再发出消息。Agent 收到的是文件名和一个短时有效的下载链接，需要时会自行拉取到工作区。
 
-- 一条消息最多附带 4 个文件，每个文件都不能超过部署环境的上传上限；超过时输入框会提示你。
-- 如果部署环境没有配置对象存储，则只能附加图片。
-- 带文件的消息不会并入正在运行的一轮，而是等待当前一轮结束后，作为单独的一轮运行。
+- 每条消息最多附加 4 个文件，单个文件大小受部署环境的上传限制，超限时输入框会提示。
+- 如果部署环境未配置对象存储，则仅支持附加图片。
+- 带附件的消息不会并入当前正在执行的轮次，而是排队等待当前轮次结束后单独执行。
 
 ## 与多个 Agent 协作 [#work-with-several-agents]
 
-可以在首页输入框发送第一条消息之前添加 Agent，也可以把它们加入已有的 Playground 对话。
+你可以在首页输入框发第一条消息前选择多个 Agent，也可以随时把新 Agent 加入已有的 Playground 对话。
 
-- 不带 `@AgentName` 的消息会发送给每个参与者。每个 Agent 可以回答，也可以保持沉默。
-- 明确的 `@AgentName` 会把该轮次限定到被点名的一个或多个参与者。
-- 文件只发给消息所指向的 Agent。其他参与者能看到附带了哪些文件（按文件名），但无法打开。
-- 每个 Agent 都保留自己的配置，而浏览器把它们的活动合并为一个对话。
+- 未带 `@AgentName` 的消息会发给所有参与对话的 Agent，各 Agent 可自行决定回复或不发言。
+- 使用 `@AgentName` 可以把当前轮次限定给指定的一个或多个 Agent。
+- 附件只发给本条消息指向的 Agent；其他参与者只能看到附件的文件名，无法打开内容。
+- 浏览器会把各 Agent 的输出汇总在同一个对话中，但每个 Agent 仍保持各自独立的配置。
 
 ## 会话何时被保存 [#when-the-session-is-saved]
 
-打开 Playground 时首先是一个空的临时视图。你的第一条消息会把这次私密对话保存到 **会话** 下，之后可以在那里重新打开。
+刚打开 Playground 时是一个未保存的空白视图。发送第一条消息后，这段私密对话会自动保存到 **会话** 中，方便随时回看。
 
 ## 小贴士 [#tips]
 
-- 在共享频道中使用 Agent 之前，先在这里测试 **权限模式**——先试试 *规划* 或 *请求审批*，观察它想做什么，然后再放宽。在输入框中切换模式需要**对话、批准并修改设置**；否则请在 Agent 的**编辑**中修改。Agent 加入公开群组之前，把它设为**和 agent 对话**，这样群里没有人能批准它的工具调用。
-- Playground 遵循 Agent 的工作区。对于基于 GitHub 的新单 Agent 对话，可以选择它的第一轮是否使用独立的工作树，而不改变 Agent 已保存的默认值。
-- 如果输入框提示某个 Agent 无法访问，请检查它的 Daemon 是否在线——Playground 会话运行在参与的 Daemon 上，而不是云端。
+- 把 Agent 接入共享频道前，建议先在这里测试 **权限模式**：可以先用 *规划* 或 *请求审批* 观察它会触发哪些操作，再逐步放宽。要在输入框里直接切换模式，需将权限设为**对话、批准并修改设置**，否则请在 Agent 的**编辑**页修改。接入公开群组前，记得设为**和 agent 对话**，避免群成员批准工具调用。
+- Playground 会沿用 Agent 配置好的工作区。对于绑定 GitHub 的新单 Agent 对话，你可以在第一轮单独决定是否使用独立工作树，而不会改动 Agent 的默认配置。
+- 如果输入框提示 Agent 不可达，请先确认其 Daemon 是否在线。Playground 会话运行在参与对话的 Daemon 机器上，而不是云端。

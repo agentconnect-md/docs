@@ -1,13 +1,13 @@
 ---
 title: "权限"
 icon: ShieldHalf
-description: "成员资格和角色划定外层边界。然后由三条相互独立的轴决定谁能看到资源、谁能读取会话，以及哪些 Agent 可以相互调用。"
+description: "成员资格和角色构成第一道权限边界，再通过三项独立的可见范围设置，分别控制谁能访问资源、谁能查看会话，以及哪些 Agent 可以相互调用。"
 ---
 
 import imgAgentVisibilityDefault from '@/public/images/agent-visibility-default.png'
 import imgSessionAccess from '@/public/images/session-access.png'
 
-AgentConnect 中的一切都属于某个**组织**。成员资格是外层边界，成员的[角色](/operate-govern/permissions-overview/members-and-roles)决定他们可以执行哪一类操作。在这个边界之内，三条相互独立的轴决定谁能触达什么：
+AgentConnect 中的所有内容都归属于**组织**。成员资格是第一道边界，成员的[角色](/operate-govern/permissions-overview/members-and-roles)决定他们能执行哪些操作。在组织内部，访问权限由三项独立的可见范围控制：
 
 ```mermaid
 flowchart LR
@@ -16,68 +16,72 @@ flowchart LR
   AgentA["Agent"] -->|"Agent visibility"| AgentB["Another agent"]
 ```
 
-三者都叫作*可见范围*，所以请按其主语来理解。团队可见范围和会话可见范围决定**人**可以触达什么；Agent 可见范围决定哪些 **Agent** 可以相互调用，任何人的访问权限都不由它推导而来。
+这三项配置都带有“可见范围”字样，但生效对象不同。团队可见范围和会话可见范围控制**人**能访问什么；Agent 可见范围控制哪些 **Agent** 可以相互调用，不会影响任何人的访问权限。
 
-各轴之间没有继承关系。被允许查看某个 Agent 的人不能自动读取其会话。被允许读取某个会话的人不会因此获得该 Agent 的页面、配置、工作区或调用控件——控制台可能会把 Agent 名称显示为普通的会话上下文，但绝不会显示为链接。允许一个 Agent 调用另一个 Agent，不会让任何一方获得某个人已限制的资源。
+这三项控制彼此独立，没有继承关系：
 
-## 三条轴 [#the-three-axes]
+- 能查看某个 Agent，不代表能自动读取它的会话。
+- 能读取某个会话，不代表能访问对应 Agent 的详情页、配置、工作区或调用控件。控制台可能会以纯文本展示 Agent 名称作为上下文，但不会提供跳转链接。
+- 允许一个 Agent 调用另一个 Agent，不会让任何一方访问被人员限制的团队资源。
 
-每条轴的形式相同：一个组织范围的默认值，以及一个覆盖它的按资源选择。
+## 三项可见范围 [#the-three-axes]
 
-| 轴 | 谁触达什么 | 组织默认值 | 按资源选择 |
+这三项控制的机制一致：都有一个组织级默认值，也支持针对单个资源进行覆盖。
+
+| 维度 | 控制范围 | 组织默认值 | 单资源配置 |
 | --- | --- | --- | --- |
 | [团队可见范围](/operate-govern/permissions-overview/team-visibility) | 人 → Agent、Daemon、定时任务、MCP 提供方或技能来源 | 所有人 | **所有人**或**指定成员** |
-| [会话可见范围](/operate-govern/permissions-overview/session-visibility) | 人 → 单个会话及其会话记录 | **会话访问权限**，默认关闭 | **所有人**或**私密**；提供方可见对象为只读 |
-| [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility) | Agent → 另一个 Agent | **默认 Agent 可见性**，默认为所有 Agent | 入站和出站对等 Agent 列表 |
+| [会话可见范围](/operate-govern/permissions-overview/session-visibility) | 人 → 单个会话及其会话记录 | **会话访问权限**（默认关闭） | **所有人**或**私密**（平台同步的权限为只读） |
+| [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility) | Agent → 另一个 Agent | **默认 Agent 可见性**（默认为所有 Agent） | 入站和出站 Agent 列表 |
 
-组织所有者可以查看和编辑每一项团队资源，包括其**指定成员**列表中不包含他们的资源。这不会覆盖[会话可见范围](/operate-govern/permissions-overview/session-visibility)：私密会话和受提供方限制的会话对每种角色都保持各自的可见对象。
+组织所有者可以查看和编辑所有团队资源，即使自己不在某项资源的**指定成员**列表中也是如此。但这一权限不会覆盖[会话可见范围](/operate-govern/permissions-overview/session-visibility)：私密会话和受平台权限限制的会话对所有角色一视同仁。
 
-所有者还会获得整个组织的完整[用量归属](/operate-govern/billing-and-usage#who-sees-what)。看到汇总支出并不授予对其背后会话的访问权限。
+所有者还可以查看全组织完整的[用量归属](/operate-govern/billing-and-usage#who-sees-what)。看到汇总费用并不意味着能访问背后的具体会话。
 
 ## 组织默认值 [#organization-defaults]
 
-**设置**页面上的两张卡片决定新建 Agent 和新会话的初始状态。只有组织所有者可以更改它们，它们也是让整个组织默认开放或默认封闭的最快方式。
+**设置**页面上的两张卡片决定了新建 Agent 和新会话的默认权限。只有组织所有者可以修改这两项配置，它们也是为整个组织快速设定开放或封闭基线的最直接方式。
 
 ### 默认 Agent 可见性 [#default-agent-visibility]
 
 <Image src={imgAgentVisibilityDefault} alt="组织设置中的“默认 Agent 可见性”卡片，提供“所有 Agent”或“隔离”两个选项" width={760} />
 
-这张卡片决定新建 Agent 创建时所采用的 Agent 间调用策略：
+这张卡片决定新建 Agent 默认使用的相互调用策略：
 
-- **所有 Agent**——新建的 Agent 可以发现并调用每一个本来可被调用的对等 Agent，并接受它们所有的调用。当你的 Agent 作为一个协作团队工作时选择此项。
-- **隔离**——新建的 Agent 在两个方向上都以**已选择**且列表为空的状态开始。在有人配置它之前，它不会发现任何对等 Agent，也不接受任何对等 Agent 的调用。当每一条委派边都应当是刻意设置的时选择此项。
+- **所有 Agent**：新建 Agent 可以发现并调用其他可被调用的 Agent，也接受它们的调用。适合多个 Agent 作为一个团队协同工作的场景。
+- **隔离**：新建 Agent 在入站和出站两个方向上默认都是**已选择**且列表为空。在有人手动添加之前，它既不会发现其他 Agent，也不会接受任何调用。适合需要逐条明确配置调用关系的场景。
 
-该设置只适用于更改之后创建的 Agent。它绝不会改写现有 Agent 的策略，而且**添加 Agent → 访问权限**仍可以在创建前覆盖任一方向。请参阅 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)。
+修改此设置只对之后新建的 Agent 生效，不会改动已有 Agent 的策略。创建时仍然可以在**添加 Agent → 访问权限**中单独覆盖任一方向。详见 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)。
 
 ### 会话访问权限 [#session-access]
 
 <Image src={imgSessionAccess} alt="组织设置中的“会话访问权限”卡片，每个平台各有一个“遵循平台访问权限”开关" width={760} />
 
-这张卡片决定来自某个平台的会话是否遵循该平台自身的访问规则，而不是按来源的常规默认值：
+这张卡片决定来自某个平台的会话是否直接遵循该平台的访问权限，而不是使用常规的按来源默认规则：
 
-- **关闭**，即默认值——每个新会话根据其启动位置设为**所有人**或**私密**。请参阅[默认可见对象表](/operate-govern/permissions-overview/session-visibility#default-audience)。
-- **遵循 Slack 访问权限**——Slack 频道或群组私信会话要求来自同一工作区的已关联 Slack 身份，且当前对源对话具有访问权限。
-- **要求 GitHub 访问权限**——私有仓库会话要求已关联的 GitHub 个人资料当前对该仓库具有访问权限。公开仓库会话对每位成员保持可用。
-- **遵循飞书 / Lark 访问权限**——可见对象遵循源聊天的当前成员资格，包括一对一聊天。目前这需要自托管部署。
+- **关闭**（默认）：每个新会话根据其发起位置默认设为**所有人**或**私密**。详见[默认可见范围表](/operate-govern/permissions-overview/session-visibility#default-audience)。
+- **遵循 Slack 访问权限**：Slack 频道或群组私信产生的会话，要求用户关联同一工作区的 Slack 账号，且当前有权访问原对话。
+- **要求 GitHub 访问权限**：私有仓库产生的会话，要求用户关联 GitHub 账号且当前对该仓库有访问权限。公开仓库的会话仍对组织内所有成员开放。
+- **遵循飞书 / Lark 访问权限**：会话访问权限跟随原聊天的当前成员名单，包括单聊。此功能目前需要自托管部署。
 
-提供方可见对象在会话本身上是只读的：请更改这项组织设置，而不是重新归类某一位参与者的副本。每项提供方检查都需要匹配的[关联账号](/how-to-guides/linked-accounts)；组织成员资格、所有者角色和个人 API 密钥都不能替代它。请参阅[会话可见范围](/operate-govern/permissions-overview/session-visibility)。
+由平台同步而来的访问权限在单个会话上是只读的，如需调整请修改这里的组织设置，而不是去改动单个会话。所有平台权限校验都需要匹配的[关联账号](/how-to-guides/linked-accounts)；组织成员资格、所有者角色和个人 API 密钥都不能替代它。详见[会话可见范围](/operate-govern/permissions-overview/session-visibility)。
 
-遵循 Slack 或飞书 / Lark 访问权限后，在这些对话中能回答审批、修改 Runtime 设置的人也随之改变：只有 Agent 的编辑者，通过其关联账号识别。请参阅[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
+开启 Slack 或飞书 / Lark 访问权限后，在这些对话中能够响应审批、修改 Runtime 设置的人员范围也会随之收紧，仅限通过关联账号识别出的 Agent 编辑者。详见[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
 
 ## 相互独立的权限 [#permissions-that-are-separate]
 
-有几项控制使用了相似的词语，但保护的是不同的边界：
+还有几项配置名称相近，但控制的是不同的边界：
 
-- Agent 的**权限模式**控制其 Runtime 在一次运行中无需询问即可做什么。
-- Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定对话里的人是否还能回答这些询问、修改 Runtime 设置。它从不改变权限模式。
-- Agent 在它正在回答的对话之外读取或发到其他对话时，以提问的人为准：只限这个人自己能读、能发消息的地方。见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
-- [沙箱隔离](/operate-govern/sandboxing)把 Runtime 放进一个外层的 Linux 操作系统边界中，并限制其文件系统访问。
-- 工作区的**仓库访问权限**控制 Agent 通过 GitHub App 拥有的是只读还是读写访问权限。
-- 平台应用的权限范围控制 Slack、Discord、Telegram、Lark 或 GitHub 应用在该提供方处可以做什么。
-- 工具、技能、密钥和 Daemon 的配置控制哪些能力会到达 Agent 进程。
+- Agent 的**权限模式**控制其 Runtime 在执行过程中无需询问就能执行哪些操作。
+- Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)控制对话中的人是否可以响应这些审批请求或修改 Runtime 设置，不会改变权限模式本身。
+- Agent 在当前回复的对话之外读取消息或发送消息时，权限跟随提问者：只能访问提问者本人有权读取或发言的对话。详见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
+- [沙箱隔离](/operate-govern/sandboxing)将 Runtime 隔离在 Linux 操作系统边界内，并限制其文件系统访问。
+- 工作区的**仓库访问权限**控制 Agent 通过 GitHub App 获得的是只读权限还是读写权限。
+- 平台应用的权限范围控制 Slack、Discord、Telegram、Lark 或 GitHub 应用在对应平台上的能力边界。
+- 工具、技能、密钥和 Daemon 配置决定哪些能力会注入到 Agent 进程中。
 
-这些控制与上面的各轴叠加组合。在控制台中看到某个 Agent 并不授予对其仓库的写权限，允许一个 Agent 调用另一个 Agent 也不会让任何一方获得受限团队资源的访问权限。
+这些配置会与上面的可见范围叠加生效。在控制台里能看到某个 Agent，并不等于拥有其代码仓库的写权限；允许两个 Agent 相互调用，也不会把受限的团队资源暴露给对方。
 
 ## 一条实用的经验法则 [#a-useful-rule-of-thumb]
 
-用角色划分宽泛的职责，用团队可见范围控制对团队资源的直接访问，用会话可见范围保护会话记录的隐私，用 Agent 可见范围管理 Agent 之间的协作图。把一个 Agent 和它的会话视为两个独立的授权目标。
+用角色划分整体职责，用团队可见范围管理资源的直接访问，用会话可见范围保护会话记录隐私，用 Agent 可见范围控制 Agent 之间的调用关系。记住把 Agent 和它产生的会话当作两个独立的授权对象来看待。

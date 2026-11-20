@@ -6,9 +6,9 @@ description: "创建一个职责明确的 Agent，选择 Runtime、模型、工�
 
 import imgAddAgent from '@/public/images/add-agent.png'
 
-一个 **Agent** 把一个专注的角色与 Runtime、模型、工作区、记忆、工具、权限和机器组合在一起。之后你可以把它连接到对话、仓库、定时任务和 Webhook。
+一个 **Agent** 由明确的角色职责加上 Runtime、模型、工作区、记忆、工具、权限和运行机器组成。创建完成后，你可以把它接入团队对话、代码仓库、定时任务或 Webhook。
 
-也可以在 [Playground](/build-your-team/agents/playground#configure-agentconnect-from-a-conversation) 中让内置的 **AgentConnect** Agent 替你创建，它会打开这个对话框并预先填好，由你检查。
+你也可以直接在 [Playground](/build-your-team/agents/playground#configure-agentconnect-from-a-conversation) 中让内置的 **AgentConnect** Agent 帮你创建。它会打开这个对话框并预填表单，方便你核对后提交。
 
 打开 **Agents → 添加 Agent**：
 
@@ -16,52 +16,52 @@ import imgAddAgent from '@/public/images/add-agent.png'
 
 ## 角色与基本信息 [#role-and-basics]
 
-- **描述**——Agent 的人设和长期职责。AgentConnect 会在每个会话中把它纳入 Agent 的系统上下文，也会在 Agent 页面上展示它。
-- **名称**——一个 slug（`deploy-bot`）；由小写字母、数字和连字符组成。它是稳定的标识符。
-- **显示名称**——可选的易读名称（“Deploy Bot”），显示在整个控制台中。
+- **描述**：Agent 的角色定位和常规职责。AgentConnect 会在每次会话中把它注入系统上下文，同时展示在 Agent 页面上。
+- **名称**：稳定的 slug 标识符（例如 `deploy-bot`），仅支持小写字母、数字和连字符。
+- **显示名称**：可选的易读名称（例如“Deploy Bot”），用于在控制台中展示。
 
 ## 放置位置与 Runtime [#placement--runtime]
 
-- **运行位置**——此 Agent 在哪里运行：一台你已接入的机器（在线的 Daemon 排在最前）、一个 [Daemon 组](/build-your-team/daemons/daemon-groups)，或者在 AgentConnect Cloud 上选择 **AgentConnect Cloud**——自带模型访问的托管基础设施，[按用量计费](/build-your-team/daemons/manage-daemons#agentconnect-cloud)。之后可以移动 Agent，但现有的工作区、记忆和会话记录内容不会随之迁移到新的运行位置。
-- **Runtime**——由哪个 AI 编码工具驱动 Agent：**Claude Code**、**Codex**，或你的 Daemon 检测到的其他任何工具（opencode、Gemini……）。列表与 Daemon 上报的完全一致——如果缺少某个 Runtime，请先在那台机器上安装它。
-- **模型**——该 Runtime 上报的模型。AgentConnect 会预选 Runtime 声明的默认模型，或其声明的第一个模型；它不会另外虚构一个单独的“默认”模型。
+- **运行位置**：指定 Agent 在哪里运行。可以选择已接入的机器（在线 Daemon 会排在前面）、[Daemon 组](/build-your-team/daemons/daemon-groups)，或者在 AgentConnect Cloud 上选择 **AgentConnect Cloud**（自带模型访问的托管环境，[按用量计费](/build-your-team/daemons/manage-daemons#agentconnect-cloud)）。之后可以迁移 Agent 的运行位置，但原有的工作区、记忆和会话记录不会随迁移带走。
+- **Runtime**：驱动 Agent 的 AI 编码工具，例如 **Claude Code**、**Codex**，或 Daemon 检测到的其他工具（opencode、Gemini 等）。列表内容完全来自 Daemon 上报；如果缺少某个 Runtime，请先在对应机器上安装。
+- **模型**：由所选 Runtime 上报的模型列表。AgentConnect 会预选该 Runtime 声明的默认模型，或列表中的第一个模型，不会额外虚构一个单独的“默认”选项。
 
 ## 行为（取决于 Runtime） [#behavior-runtime-dependent]
 
-这些选项只在所选的 Daemon 和 Runtime 声明支持时出现。具体选项和说明可能随 Runtime 版本变化：
+仅当所选 Daemon 和 Runtime 声明支持时，才会显示以下选项。具体选项和说明会随 Runtime 版本变化：
 
-- **思考深度**（Claude Code）或 **推理强度**（Codex）——Agent 投入多少思考。各个级别来自 Runtime 本身，因此请以选择器中的内容为准，而不是这里的列表；它们会随 Runtime 一起变化。
-- **快速模式**——**开 / 关**；在可用的情况下启用 Runtime 的更快输出模式。
-- **权限模式**——Runtime 在不询问的情况下可以做多少事。可用的模式（包括 **自动**）由 Runtime 定义，可能因 Runtime 和版本而异。请以选择器中的说明为准；对于在共享频道中使用的 Agent，先从保守的模式开始，之后可以按 Agent 或按 Playground（控制台中显示为“试用”）会话更改模式。
-- **执行策略**——Agent 会话运行所处的边界。选择器列出 Agent 所在位置可用的策略：Daemon 自身提供的策略，或者对于 Daemon 组，至少有一个服务中成员提供的策略。可选项包括 **主机**（无边界）、**沙箱**（SRT 进程沙箱）和 **虚拟机**（microsandbox 虚拟机）。无法在该位置运行的策略仍会留在列表中，但被禁用并标记为 **不可用**；将鼠标悬停在上面可查看原因。新 Agent 默认使用 `host`（在它能运行的地方），否则使用第一个可用的沙箱。AgentConnect Cloud 不显示此选择器，因为每个会话本来就运行在自己的 Pod 中。这个外层边界与 Runtime 的权限模式相互独立。参见[沙箱隔离](/operate-govern/sandboxing#pick-an-execution-strategy)。
-- **记忆**——**托管**（由 AgentConnect 管理的目录）、**原生**（Runtime 自身的独立记忆）、**外部**（已配置的提供方，例如 Mem0）或 **关闭**。设置方法参见[使用 Mem0 OSS 作为外部记忆的指南](/how-to-guides/external-memory)。
+- **思考深度**（Claude Code）或 **推理强度**（Codex）：控制 Agent 的思考投入。具体档位由 Runtime 直接提供，请以选择器中的当前选项为准。
+- **快速模式**：**开 / 关**。在 Runtime 支持时开启更快的输出模式。
+- **权限模式**：控制 Runtime 在无需人工确认的情况下可以执行哪些操作。可用模式（包括 **自动**）由 Runtime 定义，不同工具和版本会有所差异。请以选择器里的说明为准；接入共享频道的 Agent 建议先选保守模式，之后可按 Agent 或按 Playground（控制台中显示为“试用”）会话随时调整。
+- **执行策略**：决定 Agent 会话的隔离边界。选择器会列出当前运行位置支持的策略：单个 Daemon 自身提供的策略，或 Daemon 组中至少有一个可用成员支持的策略。可选项包括 **主机**（无隔离）、**沙箱**（SRT 进程沙箱）和 **虚拟机**（microsandbox 虚拟机）。当前环境不支持的策略仍会保留在列表中，但呈禁用状态并标记为 **不可用**，将鼠标悬停其上即可查看原因。新 Agent 在支持 `host` 时默认使用 `host`，否则使用第一个可用的沙箱。AgentConnect Cloud 不显示此选择器，因为每个会话本来就运行在独立 Pod 中。这层隔离边界与 Runtime 自身的权限模式相互独立。详见[沙箱隔离](/operate-govern/sandboxing#pick-an-execution-strategy)。
+- **记忆**：可选 **托管**（由 AgentConnect 管理的目录）、**原生**（Runtime 自身的独立记忆）、**外部**（已配置的外部提供方，例如 Mem0）或 **关闭**。配置方式参见[使用 Mem0 OSS 作为外部记忆](/how-to-guides/external-memory)。
 
-模型旁边的**聊天中可以做什么**决定聊天对话里的人是否还能批准工具调用、修改这些设置。新 Agent 默认为**对话并批准工具调用**。参见[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
+模型选择器旁边的**聊天中可以做什么**用于决定对话参与者是否能批准工具调用或修改这些设置。新 Agent 默认为**对话并批准工具调用**。详见[聊天中可以做什么](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)。
 
-MCP 服务器不在此对话框中配置。请先创建 Agent，然后从它的 **工具与技能** 标签页启用——那是授予 MCP 访问权限的唯一入口。参见[工具与技能](/build-your-team/tools-and-skills)。
+MCP 服务器不在此对话框中配置。请先创建 Agent，再到其 **工具与技能** 标签页中启用。那是授予 MCP 访问权限的唯一入口，详见[工具与技能](/build-your-team/tools-and-skills)。
 
 ## 工作区 [#workspace]
 
-Agent 的文件在 Daemon 上的存放位置：
+决定 Agent 的文件在 Daemon 上的来源和存放方式：
 
-- **从空白开始**——一个全新的工作目录。Agent 创建的文件只存在于那台机器上。
-- **从 GitHub**——克隆一个仓库和分支，可选择限定到某个子目录，并使用只读或读写凭证。新建的 GitHub Agent 默认为每个会话使用独立的工作树。详情见[工作区与仓库](/build-your-team/agents/workspaces-and-repos)。
+- **从空白开始**：创建一个全新的空工作目录，Agent 生成的文件仅保存在该机器上。
+- **从 GitHub**：克隆指定仓库和分支（可限定到某个子目录），并配置只读或读写凭证。新建的 GitHub Agent 默认为每个会话使用独立的工作树。详见[工作区与仓库](/build-your-team/agents/workspaces-and-repos)。
 
-之后可以从 Agent 的 **工作区** 标签页更改工作区来源。更改来源、仓库或分支会替换 Daemon 本地的工作区文件，因此请先提交或备份你需要的内容。参见[工作区与仓库](/build-your-team/agents/workspaces-and-repos)。
+之后可以在 Agent 的 **工作区** 标签页更换工作区来源。切换来源、仓库或分支会替换 Daemon 本地的现有工作区文件，操作前请先提交或备份重要改动。详见[工作区与仓库](/build-your-team/agents/workspaces-and-repos)。
 
 ## 访问权限 [#access]
 
-- **团队可见范围**——**所有人** 允许组织中的所有成员看到该 Agent。**指定成员** 只向你选择的当前组织成员以及每一位组织所有者授予访问权限。为方便起见，你自己一开始就在已选之列，但在选择了其他人之后你可以把自己替换掉。至少必须保留一名被明确选中的成员；将某位所有者从选择中移除并不会取消其基于角色的访问权限。参见[团队可见范围](/operate-govern/permissions-overview/team-visibility)。
-- **Agent 可见范围**——分别选择哪些 Agent 可以调用此 Agent，以及此 Agent 可以调用哪些 Agent。新 Agent 在两个方向上都继承组织的创建默认值。该设置初始为 **所有 Agent**，所有者可以为未来的 Agent 选择 **隔离**。你可以在创建此 Agent 之前在这里覆盖任一方向。参见 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)。
+- **团队可见范围**：选择 **所有人** 时，组织内所有成员都能看到该 Agent。选择 **指定成员** 时，仅你勾选的当前成员以及所有组织所有者有权访问。为方便操作，默认会先勾选你自己，选定其他成员后可以把自己移除。列表中至少需要保留一名明确选中的成员；将所有者移出勾选列表不会取消其基于角色的访问权限。详见[团队可见范围](/operate-govern/permissions-overview/team-visibility)。
+- **Agent 可见范围**：分别设置哪些 Agent 可以调用当前 Agent，以及当前 Agent 可以调用哪些 Agent。新 Agent 在两个方向上都会继承组织的默认策略（初始为 **所有 Agent**，所有者可将其改为 **隔离** 以应用于后续新建的 Agent）。你可以在创建前在此单独覆盖任一方向。详见 [Agent 可见范围](/operate-govern/permissions-overview/agent-visibility)。
 
 ## 变量与密钥 [#variables-and-secrets]
 
-最后一步 **变量和密钥** 用于添加归属于此 Agent 的环境值。为 **所有 Agent** 配置的组织级条目在创建 Agent 时同样生效，并且通常优先于同名的本地值。关于组织级共享、优先级和密钥处理，参见[变量与密钥](/build-your-team/variables-and-secrets)。
+最后的 **变量和密钥** 步骤用于添加归属于当前 Agent 的环境变量。作用范围为 **所有 Agent** 的组织级条目在创建时同样会自动生效，且通常优先于同名的本地变量。关于共享范围、优先级和密钥处理方式，参见[变量与密钥](/build-your-team/variables-and-secrets)。
 
 ---
 
-点击 **创建**。你会进入 Agent 页面——接下来可以：
+点击 **创建** 后会进入该 Agent 的详情页。接下来你可以：
 
 - [在 Playground 中试用](/build-your-team/agents/playground)
-- [添加集成](/connect-automate/integrations-overview)，让它在频道中应答
+- [添加集成](/connect-automate/integrations-overview)，让它在频道中响应消息
 - [微调它的配置](/build-your-team/agents/configure-an-agent)

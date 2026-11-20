@@ -1,37 +1,37 @@
 ---
 title: "Discord"
 icon: Discord
-description: "创建一个 Discord 应用，粘贴它的机器人令牌，然后使用 AgentConnect 现成的服务器邀请。"
+description: "创建 Discord 应用，粘贴机器人令牌，通过 AgentConnect 生成的服务器邀请链接完成接入。"
 ---
 
 import imgDiscordIntegration from '@/public/images/discord-integration.png'
 
-Daemon 主动向外连接 Discord 的网关——不需要公网端点。
+Daemon 会主动向外连接 Discord 网关，不需要公网端点。
 
 <Image src={imgDiscordIntegration} alt="连接 Discord 机器人" width={640} />
 
 ## 创建机器人 [#create-the-bot]
 
-1. 打开 [Discord 开发者门户](https://discord.com/developers/applications) → **New Application**，为它命名。
-2. 在 **Bot** 下复制**令牌**（如果没有显示，点击 Reset Token）。
+1. 打开 [Discord 开发者门户](https://discord.com/developers/applications)，点击 **New Application** 并填写应用名称。
+2. 进入 **Bot** 页面，复制**令牌**（如果未显示，点击 Reset Token 生成）。
 
 ## 连接 [#connect-it]
 
-在你的 Agent 上，打开**集成 → 添加集成 → Discord** 并粘贴令牌。AgentConnect 会从中解析出公开的应用 ID，并显示**添加到 Discord**，其中已包含所需的 `bot` 和 `applications.commands` 作用域及权限，包括创建公开线程的权限。
+在 Agent 页面中打开**集成 → 添加集成 → Discord**，粘贴令牌。AgentConnect 会从中解析出公开的应用 ID，并显示**添加到 Discord** 按钮，其中已包含所需的 `bot` 和 `applications.commands` 作用域及权限（包括创建公开线程）。
 
-点击**添加到 Discord**，选择服务器，批准邀请，然后点击**连接**。
+点击**添加到 Discord**，选择目标服务器并批准邀请，然后点击**连接**。
 
-连接时，AgentConnect 会验证令牌，并自动在 Discord 应用上启用受限的 **Message Content Intent**。你不再需要在设置前手动勾选该选项。如果 Discord 拒绝自动更新，AgentConnect 会在保存集成之前停下来，并提示你手动启用 **Bot → Privileged Gateway Intents → Message Content Intent**。
+连接时，AgentConnect 会校验令牌，并自动在 Discord 应用上开启受限的 **Message Content Intent**，无需提前手动勾选。如果 Discord 拒绝自动更新，AgentConnect 会在保存集成前中止，并提示你手动开启 **Bot → Privileged Gateway Intents → Message Content Intent**。
 
 ## 使用 [#use-it]
 
-在机器人可见的服务器频道中提及它，它就会回答；较长的对话会在线程（thread）中继续。你也可以给它发私信。AgentConnect 会把[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)注册为原生的 Discord 斜杠命令。
+在机器人可见的服务器频道中提及它即可开始对话，较长的对话会在线程（thread）中继续。你也可以直接给它发私信。AgentConnect 会将[对话内命令](/connect-automate/integrations-overview#in-conversation-commands)注册为原生的 Discord 斜杠命令。
 
-当工具调用需要批准时，Agent 会在频道或线程中发布一张审批卡片。谁能回答它，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)决定。
+当工具调用需要审批时，Agent 会在频道或线程中发出审批卡片。哪些人可以审批，由 Agent 的[**聊天中可以做什么**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat)设置决定。
 
 ## 说明 [#notes]
 
-- 如果自动的 Message Content 设置被拒绝，请在开发者门户中手动启用该 intent，然后重新连接。
-- 如果机器人无法回复或无法创建线程，使用**集成 → 消息应用 → Discord → 添加到 Discord** 以当前的作用域和权限重新安装它。
-- 一个 Discord 机器人绑定一个 Agent；删除集成会释放机器人以供复用。
-- 在 Discord 上提问时，Agent 只能在这个机器人上的其他频道中读取和发消息，而且只限服务器里所有人都能查看的频道。AgentConnect 无法知道 Discord 用户是谁，所以不能替他们交接到 Slack 或其他平台。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。
+- 如果自动开启 Message Content 被拒绝，请在开发者门户中手动开启该 intent，然后重新连接。
+- 如果机器人无法回复消息或创建线程，可通过**集成 → 消息应用 → Discord → 添加到 Discord** 按当前的作用域和权限重新安装。
+- 每个 Discord 机器人只能绑定一个 Agent。删除集成后，该机器人即可供其他 Agent 复用。
+- 在 Discord 中发起提问时，Agent 只能通过同一个机器人读写其他频道，且仅限服务器里所有人都能查看的频道。由于 AgentConnect 无法识别 Discord 用户的身份，因此不能替他们转交到 Slack 或其他平台。参见[在其他对话中读取和发消息](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)。

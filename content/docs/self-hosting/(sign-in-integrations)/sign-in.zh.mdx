@@ -1,15 +1,15 @@
 ---
 title: "登录"
 icon: LogIn
-description: "通过 Logto Cloud、外部 Logto OSS 或内置的本地叠加配置，为 AgentConnect OSS 添加基于 Logto 的登录，支持社交登录提供方或单点登录（SSO）。"
+description: "通过 Logto Cloud、外部 Logto OSS 或内置本地叠加配置，为 AgentConnect OSS 配置基于 Logto 的社交登录或单点登录（SSO）。"
 ---
 
 import imgSetupSsoNewMembers from '@/public/images/setup-sso-new-members.png'
 import imgSsoNewMembersDeployment from '@/public/images/sso-new-members-deployment.png'
 
-AgentConnect 使用 Logto 处理人类用户登录、可续期的浏览器令牌以及关联的社交身份。组织、角色、Agent 可见范围、会话可见范围和仓库权限仍由 AgentConnect 自己管理。
+AgentConnect 使用 Logto 处理用户登录、可续期的浏览器令牌以及关联的社交身份。组织、角色、Agent 可见范围、会话可见范围和仓库权限仍由 AgentConnect 自身管理。
 
-基础 Compose 栈在本地评估时默认关闭身份验证。当你需要真实身份时，请从以下路径中选择一种：
+基础 Compose 栈在本地评估时默认关闭鉴权。需要启用真实用户账号时，可以按以下方式之一配置：
 
 | 路径 | 适用场景 |
 | --- | --- |
@@ -21,67 +21,67 @@ AgentConnect 使用 Logto 处理人类用户登录、可续期的浏览器令牌
 
 ### 1. 启动 AgentConnect 和 Logto [#1-start-agentconnect-and-logto]
 
-在 AgentConnect 仓库中执行：
+在 AgentConnect 仓库目录下执行：
 
 ```bash
 docker compose -f compose.yaml -f compose.logto.yaml up -d
 ```
 
-打开：
+打开以下地址：
 
 - Logto Console：[http://localhost:3002](http://localhost:3002)
 - Setup：[http://localhost:8091](http://localhost:8091)
 - AgentConnect：[http://localhost:3000](http://localhost:3000)
 
-如果这是一个全新的数据库，请先完成 Logto Console 的初始引导。
+如果是全新的数据库，先完成 Logto Console 的初始引导。
 
 ### 2. 创建 Management API 应用 [#2-create-the-management-api-application]
 
-在 **Logto Console → Applications** 中创建一个 **Machine-to-machine** 应用。为它分配内置的 **Logto Management API access** 角色，然后复制它的 App ID 和 App Secret。
+在 **Logto Console → Applications** 中创建一个 **Machine-to-machine** 应用，为其分配内置的 **Logto Management API access** 角色，然后复制 App ID 和 App Secret。
 
-打开 Setup，选择**继续设置**，在**连接 Logto** 下输入这些凭证。AgentConnect 会把该密钥存储为只写的部署密钥。
+打开 Setup，选择**继续设置**，在**连接 Logto** 中填入这些凭证。AgentConnect 会以只写方式将其保存为部署密钥。
 
-预期的 Management API 资源为：
+所需的 Management API 资源地址为：
 
 ```text
 https://default.logto.app/api
 ```
 
-应用和角色的创建方法参见 Logto 的 [Management API 指南](https://docs.logto.io/integrate-logto/interact-with-management-api)。
+创建应用和角色的详细步骤见 Logto 的 [Management API 指南](https://docs.logto.io/integrate-logto/interact-with-management-api)。
 
 ### 3. 选择第一个登录提供方 [#3-choose-the-first-sign-in-provider]
 
-Setup 会创建或更新 AgentConnect SPA、它的重定向地址、所选的社交连接器、登录体验以及 `ADMIN` 角色。
+Setup 会创建或更新 AgentConnect SPA、重定向地址、所选社交连接器、登录体验以及 `ADMIN` 角色。
 
 | 提供方 | 本地初始引导 |
 | --- | --- |
-| Google | 本地推荐；使用页面显示的精确裸 localhost 值创建 Web OAuth 客户端 |
-| GitHub | Setup 会创建一个同时用于仓库集成和登录的 App |
-| Slack | 需要 Logto、Web、控制平面和 Relay 的源地址都使用 HTTPS |
-| 单点登录（SSO） | 你的组织自己的 OIDC 或 SAML 身份提供方；参见[单点登录](#single-sign-on) |
+| Google | 本地推荐。按页面显示的精确裸 localhost 值创建 Web OAuth 客户端。 |
+| GitHub | Setup 会创建一个同时用于仓库集成和登录的 App。 |
+| Slack | 需要 Logto、Web、控制平面和 Relay 的地址全部使用 HTTPS。 |
+| 单点登录（SSO） | 组织自己的 OIDC 或 SAML 身份提供方。参见[单点登录](#single-sign-on)。 |
 
-Google 是最简短的本地路径。把它的客户端 ID 和密钥粘贴到 Setup 中，然后选择**保存 Google OAuth 并配置 Logto**。在所有必需的公开源地址都使用 HTTPS 之前，初始提供方选择器会禁用 Slack。
+Google 是本地配置最快的方式。将它的客户端 ID 和密钥粘贴到 Setup 中，点击**保存 Google OAuth 并配置 Logto**。在所有必需的公开地址都切换到 HTTPS 之前，初始提供方选择器会禁用 Slack。
 
 ### 4. 认领第一位管理员 [#4-claim-the-first-administrator]
 
 Setup 完成提供方配置后：
 
 1. 选择**使用 Logto 登录**。
-2. 使用已配置的提供方完成登录。
-3. Setup 会把 `ADMIN` 角色分配给这第一位用户。
-4. 再登录一次，让刷新后的令牌包含该角色。
+2. 使用刚配置的提供方完成登录。
+3. Setup 会将 `ADMIN` 角色分配给这位首位登录的用户。
+4. 再登录一次，让刷新后的令牌带上该角色。
 
-随后 Setup 会打开完整的部署设置。更改之后请重启使用这些设置的服务：
+随后 Setup 会展示完整的部署设置。修改配置后需要重启相关服务：
 
 ```bash
 docker compose restart control-plane relay web
 ```
 
-内置叠加配置仅用于本地评估。在你添加 API 资源之前，它使用 SPA 的 ID 令牌；在把 AgentConnect 暴露到网络之前，请先按下面的生产环境登录进行配置。
+内置叠加配置仅用于本地评估。在配置自定义 API 资源之前，它使用的是 SPA 的 ID 令牌；在将 AgentConnect 暴露到网络之前，请先按下面的生产环境登录步骤完成配置。
 
 ## 生产环境登录 [#production-sign-in]
 
-生产环境的浏览器会话需要最终的 HTTPS 源地址和一个自定义 API 资源。在配置提供方应用之前，先在 `compose.env` 中设置 AgentConnect 的源地址：
+生产环境的浏览器会话需要最终的 HTTPS 地址和一个自定义 API 资源。在配置提供方应用之前，先在 `compose.env` 中设置 AgentConnect 的公开地址：
 
 ```dotenv
 AGENTCONNECT_PUBLIC_WEB_URL=https://app.agentconnect.example
@@ -90,16 +90,16 @@ AGENTCONNECT_PUBLIC_RELAY_URL=https://relay.agentconnect.example
 AGENTCONNECT_RELAY_DAEMON_URL=wss://relay.agentconnect.example
 ```
 
-然后选择 Logto Cloud 或外部 Logto OSS 部署。
+接着选择 Logto Cloud 或外部 Logto OSS 部署。
 
 ### Logto Cloud [#logto-cloud]
 
-Logto Cloud 是最简短的托管路径：
+Logto Cloud 是最省事的托管方案：
 
 1. 在 [Logto Cloud](https://cloud.logto.io/) 中创建或选择一个租户。
-2. 使用至少包含一个自定义 API 资源的套餐。Free 套餐目前不包含自定义 API 资源，因此生产环境的 AgentConnect 登录需要 Pro 或更高套餐。参见 [Logto 定价](https://logto.io/pricing)。
-3. 复制该租户的规范端点 `https://<tenant-id>.logto.app`。
-4. 将 Logto 的服务地址添加到 `compose.env`：
+2. 选择至少包含一个自定义 API 资源的套餐。Free 套餐目前不包含自定义 API 资源，因此生产环境的 AgentConnect 登录需要 Pro 或更高套餐。参见 [Logto 定价](https://logto.io/pricing)。
+3. 复制租户的规范端点 `https://<tenant-id>.logto.app`。
+4. 将 Logto 的服务地址写入 `compose.env`：
 
 ```dotenv
 LOGTO_ENDPOINT=https://tenant-id.logto.app
@@ -108,9 +108,9 @@ OIDC_ISSUER=https://tenant-id.logto.app/oidc
 LOGTO_MGMT_ENDPOINT=https://tenant-id.logto.app
 ```
 
-如果登录使用自定义域名，请将它用于 `LOGTO_ENDPOINT` 和 `OIDC_ISSUER`。`LOGTO_MGMT_ENDPOINT` 则保持为规范的 `logto.app` 租户地址，因为 Logto Cloud 不接受通过自定义域名发起的 Management API 令牌请求。
+如果登录使用自定义域名，将其填入 `LOGTO_ENDPOINT` 和 `OIDC_ISSUER`。`LOGTO_MGMT_ENDPOINT` 仍需保持为规范的 `logto.app` 租户地址，因为 Logto Cloud 不接受通过自定义域名发起的 Management API 令牌请求。
 
-在 Logto Console 中创建一个 **Machine-to-machine** 应用，并为它分配内置的 **Logto Management API access** 角色。在 Setup 初始引导时输入的 Management API 资源必须是：
+在 Logto Console 中创建一个 **Machine-to-machine** 应用，并分配内置的 **Logto Management API access** 角色。在 Setup 初始引导时，Management API 资源必须填写：
 
 ```text
 https://tenant-id.logto.app/api
@@ -118,7 +118,7 @@ https://tenant-id.logto.app/api
 
 ### 外部 Logto OSS [#external-logto-oss]
 
-让 Logto OSS 运行在其最终的 HTTPS 源地址之后，然后把这些地址添加到 `compose.env`：
+先让 Logto OSS 在最终的 HTTPS 地址后运行，再将这些地址写入 `compose.env`：
 
 ```dotenv
 LOGTO_ENDPOINT=https://login.agentconnect.example
@@ -141,155 +141,155 @@ https://default.logto.app/api
 docker compose --env-file compose.env up -d
 ```
 
-打开 Setup，选择**继续设置**，输入所选 Logto 部署对应的 M2M App ID、App Secret 和 Management API 资源。Setup 会验证这些凭证，创建或接管浏览器 SPA，并配置受支持的社交连接器。
+打开 Setup，选择**继续设置**，填入所选 Logto 部署对应的 M2M App ID、App Secret 和 Management API 资源。Setup 会校验这些凭证，创建或接管浏览器 SPA，并配置受支持的社交连接器。
 
-选择第一个登录提供方并登录；在 Setup 分配 `ADMIN` 角色之后再登录一次。然后在 Setup 中配置浏览器 API 资源、要显示的登录方式、提供方应用及其凭证。
+选择第一个登录提供方完成登录，待 Setup 分配 `ADMIN` 角色后再登录一次。之后即可在 Setup 中继续配置浏览器 API 资源、启用的登录方式、提供方应用及其凭证。
 
 ## 创建控制平面 API 资源 [#create-the-control-plane-api-resource]
 
-生产环境的浏览器会话需要一个可续期的访问令牌，其 audience 标识 AgentConnect 控制平面。在 **Logto Console → API resources** 中创建一个自定义 API 资源：
+生产环境的浏览器会话需要可续期的访问令牌，且其 audience 需标识 AgentConnect 控制平面。在 **Logto Console → API resources** 中创建一个自定义 API 资源：
 
 | 设置 | 示例 |
 | --- | --- |
 | 名称 | `AgentConnect Control Plane` |
 | API 标识符 | `https://api.agentconnect.example` |
 
-该标识符必须是绝对 URI，但不必真正解析到控制平面。AgentConnect 自行执行授权，因此这个资源不需要 Logto 权限或用户角色。
+该标识符必须是绝对 URI，但不必能实际解析到控制平面。AgentConnect 自行完成鉴权，因此无需为该资源配置 Logto 权限或用户角色。
 
 在 Setup 中：
 
 1. 打开 **Logto → 编辑**。
 2. 将该标识符填入**浏览器 API 资源**。
-3. 保存，选择**应用预期设置**，然后重启控制平面和 Web。
+3. 保存后点击**应用预期设置**，然后重启控制平面和 Web。
 
-保存的值会同时作为浏览器令牌的 resource 和控制平面的 audience。Logto 要求请求的 resource 与其注册的 API 标识符完全一致；参见 [保护全局 API 资源](https://docs.logto.io/authorization/global-api-resources)。
+保存后的值会同时作为浏览器令牌的 resource 和控制平面的 audience。Logto 要求请求的 resource 与注册的 API 标识符完全一致，详情见 [保护全局 API 资源](https://docs.logto.io/authorization/global-api-resources)。
 
-没有 API 资源时，AgentConnect 会回退到 SPA 的 ID 令牌。这对本地叠加配置来说足够了，但它不是正常的生产会话，因为当前的浏览器流程不会续期这个回退令牌。
+如果没有配置 API 资源，AgentConnect 会回退使用 SPA 的 ID 令牌。这对本地叠加配置够用，但无法用于生产环境，因为当前的浏览器登录流程不会续期该回退令牌。
 
 ## 社交登录提供方 [#social-providers]
 
 Setup 通过对应的提供方卡片管理 GitHub、Google、Slack 和 Microsoft 的 Logto 连接器：
 
-- **GitHub**：一个 AgentConnect GitHub App 即可同时处理仓库集成和登录。
-- **Google**：按照 Setup 显示的精确源地址和回调值手动创建 OAuth 客户端；内置的本地值使用裸 `localhost`。
-- **Slack**：一个部署级应用即可同时处理工作区安装和独立的 Slack OIDC 登录流程；所有公开源地址都必须使用 HTTPS。
-- **Microsoft**：一个多租户的 Microsoft Entra 应用让用户用工作或学校账号登录；填入主租户后，它也是 [Microsoft Teams 部署应用](/self-hosting/provider-apps#microsoft-teams-deployment-app)。
+- **GitHub**：一个 AgentConnect GitHub App 可以同时用于仓库集成和用户登录。
+- **Google**：按 Setup 页面显示的精确源地址和回调地址手动创建 OAuth 客户端（内置本地配置使用裸 `localhost`）。
+- **Slack**：一个部署级应用可同时用于工作区安装和独立的 Slack OIDC 登录流程。所有公开地址都必须使用 HTTPS。
+- **Microsoft**：多租户的 Microsoft Entra 应用可供用户使用工作或学校账号登录。填入主租户后，它也会同时作为 [Microsoft Teams 部署应用](/self-hosting/provider-apps#microsoft-teams-deployment-app)。
 
-Lark 和飞书卡片配置的是用于可信工作区机器人准入的区域租户应用。它们不会自动把 Lark 或飞书添加为 Logto 登录方式。参见 [Lark 和飞书租户应用](/self-hosting/provider-apps#lark-and-feishu-tenant-apps)。
+Lark 和飞书卡片用于配置可信工作区机器人准入的区域租户应用，不会自动将 Lark 或飞书添加为 Logto 登录方式。参见 [Lark 和飞书租户应用](/self-hosting/provider-apps#lark-and-feishu-tenant-apps)。
 
 ### Google 登录 [#google-sign-in]
 
-Google 是本地登录最简单的提供方。内置拓扑使用裸 `localhost`，Google 允许本地 Web OAuth 客户端使用它。
+Google 是本地登录最简单的提供方。内置拓扑使用裸 `localhost`，Google 允许本地 Web OAuth 客户端直接使用该地址。
 
-1. 在 Setup 初始引导时选择 Google，或稍后打开它的 **Google** 卡片。
-2. 在 Google Auth Platform 中创建一个 Web OAuth 客户端，使用 Setup 显示的精确源地址和重定向 URI。
+1. 在 Setup 初始引导时选择 Google，或稍后打开 **Google** 卡片。
+2. 在 Google Auth Platform 中创建 Web OAuth 客户端，严格按照 Setup 显示的源地址和重定向 URI 填写。
 3. 保存客户端 ID 和密钥，然后重启控制平面和 Web。
 
-Setup 会创建或更新对应的 Logto 连接器，并可以对其进行验证。请手动核对显示的 Google 源地址和重定向 URI。
+Setup 会创建或更新对应的 Logto 连接器，并支持进行校验。页面显示的 Google 源地址和重定向 URI 仍需手动核对。
 
 ## 单点登录（SSO） [#single-sign-on]
 
-用户可以通过组织自己的身份提供方（OIDC 或 SAML）登录，与社交登录提供方并存，也可以完全取代它们。在 Setup 初始引导时选择 **Single sign-on (OIDC or SAML)** 作为第一个登录提供方，或稍后打开 **Single sign-on** 卡片。
+用户可以通过组织自己的身份提供方（OIDC 或 SAML）登录，既可以与社交登录并存，也可以完全替代社交登录。在 Setup 初始引导时选择 **Single sign-on (OIDC or SAML)** 作为第一个登录提供方，或稍后打开 **Single sign-on** 卡片。
 
-1. 选择协议，并填写**登录按钮上的名称**（Name on the sign-in button）。控制台会把它显示为**使用 _名称_ 继续**；默认名称是 `SSO`。
-2. 选择**创建 SSO 连接器**（Create SSO connector）。Logto 会创建该连接器，Setup 随后显示需要在身份提供方登记的值：
+1. 选择协议并填写**登录按钮上的名称**（Name on the sign-in button）。控制台会显示为**使用 _名称_ 继续**，默认名称为 `SSO`。
+2. 点击**创建 SSO 连接器**（Create SSO connector）。Logto 会创建该连接器，Setup 随即展示需要登记到身份提供方的参数：
 
    | 协议 | 在身份提供方登记 |
    | --- | --- |
    | OIDC | 重定向 URI `https://login.agentconnect.example/callback/<connector-id>` |
    | SAML | ACS URL `https://login.agentconnect.example/api/authn/single-sign-on/saml/<connector-id>` 和 SP entity ID `https://login.agentconnect.example/enterprise-sso/<connector-id>` |
 
-3. 填写身份提供方的设置：
-   - **OIDC**：issuer URL、客户端 ID 和客户端密钥。始终会请求 `openid profile email`；只有当提供方需要更多 scope 才返回邮箱地址时，才需要额外添加。
-   - **SAML**：元数据 URL 或元数据 XML；如果携带邮箱地址的属性不是 `email`，再填写该属性名。
-4. 至少填写一个邮箱域名，例如 `example.com`。Logto 只为这些域名下的地址提供该连接器，因此没有域名时 Setup 会拒绝保存。
-5. 在[**新成员**](#new-members)（New members）里选择谁会成为成员，并在**组织**（Organization）里选择他们加入哪个组织。
-6. 选择**保存 SSO 并配置 Logto**（Save SSO and configure Logto），然后重启控制平面和 Web。
+3. 填写身份提供方的配置：
+   - **OIDC**：issuer URL、客户端 ID 和客户端密钥。系统始终会请求 `openid profile email`，只有当提供方需要更多 scope 才能返回邮箱时才需额外添加。
+   - **SAML**：元数据 URL 或元数据 XML；如果存放邮箱的属性名不是 `email`，请填写对应的属性名。
+4. 至少填写一个邮箱域名（例如 `example.com`）。Logto 只会对这些域名下的邮箱提供该连接器，未填写域名时 Setup 不会允许保存。
+5. 在[**新成员**](#new-members)（New members）中选择自动加入策略，并在**组织**（Organization）中选择目标组织。
+6. 点击**保存 SSO 并配置 Logto**（Save SSO and configure Logto），然后重启控制平面和 Web。
 
-AgentConnect 登录页会把 SSO 按钮放在社交登录提供方之前，点击后直接跳转到身份提供方。登录页会给这个浏览器上次用过的方式标上**上次使用**。当 SSO 是唯一的登录方式时，Setup 的**使用 Logto 登录**也会走它，因此第一位管理员也可以通过它认领。
+AgentConnect 登录页会将 SSO 按钮排在社交登录提供方之前，点击后直接跳转到身份提供方，并用**上次使用**标记浏览器最近使用的登录方式。当 SSO 是唯一的登录方式时，Setup 中的**使用 Logto 登录**也会走该连接器，因此第一位管理员同样可以通过 SSO 完成认领。
 
-使用 Microsoft Entra ID 时，注册一个单租户的 **Web** 应用并填入重定向 URI，创建客户端密钥，issuer 使用 `https://login.microsoftonline.com/<tenant-id>/v2.0`。在 ID 令牌中添加 `email` 可选声明，这样登录时才会带上邮箱地址。
+如果使用 Microsoft Entra ID，请注册一个单租户 **Web** 应用并填入重定向 URI，创建客户端密钥，将 issuer 设为 `https://login.microsoftonline.com/<tenant-id>/v2.0`。同时在 ID 令牌中添加 `email` 可选声明，以确保登录时返回邮箱地址。
 
 ### 邮箱地址 [#email-addresses]
 
-Logto 会把 SSO 登录关联到邮箱地址相同的已有账号，因此之前用社交登录提供方登录过的人仍是同一个 AgentConnect 用户。只填写身份提供方真正掌控其地址的域名。
+Logto 会将 SSO 登录自动关联到同邮箱的已有账号，因此之前使用社交登录的用户依然会保留同一个 AgentConnect 账号。请只填写由你的身份提供方实际管控的域名。
 
-OIDC 提供方会标明每个地址是否已验证。当它没有给出验证状态时，由**当身份提供方未说明邮箱是否已验证时信任该邮箱**（Trust email addresses when the identity provider does not say whether they are verified）决定，该选项默认开启。当提供方明确表示地址未验证时，无论该选项如何，Logto 都会丢弃这个地址。
+OIDC 提供方通常会标记邮箱是否已验证。如果提供方未返回验证状态，则由**当身份提供方未说明邮箱是否已验证时信任该邮箱**（Trust email addresses when the identity provider does not say whether they are verified）决定是否接受（默认开启）。如果提供方明确标明邮箱未验证，无论该选项是否开启，Logto 都会拒绝该地址。
 
 ### 新成员 [#new-members]
 
-登录只会创建账号，不会带来成员资格。**新成员**（New members）决定通过连接器登录的人是否同时加入某个组织：
+登录只会创建用户账号，不会自动将其加入组织。**新成员**（New members）控制通过该连接器登录的用户是否自动加入某个组织：
 
 | 选项 | 谁会加入 |
 | --- | --- |
-| **Anyone who signs in with SSO**（默认） | 邮箱在连接器所填域名下的每个账号 |
-| **Invite only** | 没有人自动加入；由所有者添加成员或分享邀请链接 |
+| **Anyone who signs in with SSO**（默认） | 邮箱属于连接器所填域名的所有账号 |
+| **Invite only** | 不自动加入，需由所有者手动添加成员或分享邀请链接 |
 
-**组织**（Organization）指定他们加入哪个组织。**The only organization** 适合只有一个组织的部署；部署里没有组织或有多个组织时，在你从列表里选定一个之前没有人会加入。
+**组织**（Organization）决定他们加入哪个组织。**The only organization** 适用于整个部署只有一个组织的情况；如果部署中还没有组织或存在多个组织，在你从列表中明确选定目标组织之前，不会有人自动加入。
 
 <Image src={imgSetupSsoNewMembers} alt="Setup 单点登录表单里的 New members 和 Organization" width={480} />
 
-加入的人在登录时成为**协作者**，且只加入一次。之后被所有者移除的人不会再被加回来，已经是成员的人保留原有角色。域名是精确匹配的，如果有人用 `eu.example.com` 下的邮箱，要把它单独列出。
+自动加入的成员会成为**协作者**，且仅在登录时触发一次。事后被所有者移除的成员不会再被自动加回，已经是成员的用户则保留原有角色。域名采用精确匹配，如果成员使用 `eu.example.com` 邮箱，需要单独列出该域名。
 
-在控制台里，这个组织会在**设置 → 成员 → 新成员**下以只读方式显示这项选择，并标有**由部署设置**。
+在控制台中，目标组织会在**设置 → 成员 → 新成员**下以只读方式展示该选项，并标注**由部署设置**。
 
 <Image src={imgSsoNewMembersDeployment} alt="只读的新成员卡片，标有“由部署设置”" width={640} />
 
 <Callout type="warn">
-在有这个选项之前配置的连接器，会被读作 **Anyone who signs in with SSO**。升级之后，只有一个组织的部署会开始把连接器域名下的账号在登录时加入这个组织。如果只想保留邀请方式，请选择 **Invite only**，保存并重启控制平面。
+在该选项推出前配置好的连接器，默认等效于 **Anyone who signs in with SSO**。升级后，仅有一个组织的部署会在连接器域名下的账号登录时自动将其加入该组织。如果希望继续保持仅限邀请，请选择 **Invite only**，保存并重启控制平面。
 </Callout>
 
 ### 修改或移除连接器 [#change-or-remove-the-connector]
 
-保存新的设置会保留连接器及其 URL。更改协议会替换连接器，因此需要在身份提供方重新登记新的 URL；用户重新登录后会按邮箱地址匹配回原账号。
+修改并保存配置会沿用现有连接器及其 URL。但如果更换了协议，系统会重建连接器，你需要在身份提供方重新登记新的 URL；用户重新登录后会按邮箱自动匹配回原账号。
 
-**移除 SSO 登录**（Remove SSO sign-in）会先请你确认，然后删除 Logto 里的连接器，以及用户通过它建立的登录方式。账号保留，需改用其他方式登录。Setup 始终保留至少一种登录方式，因此当 SSO 是唯一的登录方式时，请先配置一个社交登录提供方。
+点击**移除 SSO 登录**（Remove SSO sign-in）并确认后，系统会删除 Logto 中的连接器以及用户通过它建立的 SSO 登录方式。用户账号本身不受影响，改用其他登录方式即可进入。Setup 要求至少保留一种可用登录方式，如果 SSO 是当前唯一的登录方式，请先配置一个社交登录提供方。
 
 ### 私有网络中的身份提供方 [#identity-providers-on-a-private-network]
 
-Logto 默认不会访问私有网络中的地址。如果 issuer、它的令牌端点或 SAML 元数据 URL 解析到私有地址，需要在 Logto 中放行该地址或 CIDR 网段。使用内置叠加配置时，在 `compose.env` 中设置它，然后重新创建 Logto 容器：
+Logto 默认拦截对私有网络地址的请求。如果 issuer、令牌端点或 SAML 元数据 URL 解析到内网地址，需要在 Logto 中放行对应 IP 或 CIDR 网段。使用内置叠加配置时，在 `compose.env` 中添加以下变量并重建 Logto 容器：
 
 ```dotenv
 LOGTO_SSRF_ALLOWED_ADDRESSES=192.0.2.10/32
 ```
 
-使用外部 Logto OSS 部署时，把 Logto 的 `SSRF_ALLOWED_ADDRESSES` 环境变量设为相同的值。
+如果使用外部 Logto OSS 部署，将 Logto 的 `SSRF_ALLOWED_ADDRESSES` 环境变量设为相同的值即可。
 
 ### 让各组织自行配置 SSO [#let-organizations-set-up-their-own-sso]
 
-上面的连接器适用于属于单个公司的部署。由多个组织共用的部署，可以改为让每个组织验证自己的域名、接入自己的身份提供方，做法见面向所有者的[单点登录](/operate-govern/single-sign-on)。一个部署只能二选一，不能同时使用两种方式。
+上述部署级连接器适用于单一公司内部部署。如果多个组织共用同一个部署，可以改为让各组织自行验证域名并接入各自的身份提供方（参见面向所有者的[单点登录](/operate-govern/single-sign-on)）。每个部署只能二选一，不能同时启用两种模式。
 
-1. 如果部署已经有连接器，先选择**移除 SSO 登录**（Remove SSO sign-in）。
-2. 在 Setup 的 **Deployment options** 下勾选 **Let organizations set up their own SSO**，然后选择 **Save options**。这需要先配置好控制台登录。保存时 Setup 会同时把 Logto 调整到位：安装访问令牌脚本，用来告诉 AgentConnect 一个会话是通过哪条连接登录的；并把 Logto 账号中心里的邮箱设为只读，因为域名规则读取的就是它。如果之后 **Logto** 卡片显示 **Update required**，选择 **Apply expected settings**。
+1. 如果部署中已有全局连接器，先选择**移除 SSO 登录**（Remove SSO sign-in）。
+2. 在 Setup 的 **Deployment options** 下勾选 **Let organizations set up their own SSO**，然后点击 **Save options**（前提是已配置好控制台登录）。保存时 Setup 会同步更新 Logto 配置：安装用于向 AgentConnect 传递登录连接信息的访问令牌脚本，并将 Logto 账号中心里的邮箱设为只读（域名规则依赖该字段）。如果后续 **Logto** 卡片提示 **Update required**，点击 **Apply expected settings** 即可。
 3. 重启控制平面和 Web。
 
 前提条件：
 
-- **比 1.46.0 更新的 Logto 版本。** 组织 SSO 依赖 Logto 只在连接的域名范围内把登录关联到已有账号，并把身份绑定到建立它的那条连接。Logto 1.46.0 及更早的版本以及 Logto Cloud 做不到这两点，在这些环境里请继续使用部署级的连接器。
-- **控制平面能解析公网 DNS**，因为每个组织的 TXT 记录由它自己查询。
+- **Logto 版本高于 1.46.0**：组织级 SSO 需要 Logto 仅在连接所配置的域名范围内关联已有账号，并将身份绑定到建立它的具体连接。Logto 1.46.0 及更早版本与 Logto Cloud 尚不同时支持这两项能力，这些环境请继续使用部署级连接器。
+- **控制平面可访问公网 DNS**：各组织的域名 TXT 记录由控制平面直接查询。
 
-组织可能把自己锁在外面，例如强制 SSO 期间身份提供方出了故障。拥有 `ADMIN` 角色的用户可以用自己已登录的控制台会话来解除（API 密钥会被拒绝）：`POST /api/v1/admin/orgs/{orgId}/sso/connection/stop-enforcing`、`POST /api/v1/admin/orgs/{orgId}/sso/connection/deactivate`，以及用 `DELETE /api/v1/admin/sso/domains/{id}` 释放组织已不再控制的域名。
+如果某个组织把自己锁在外面（例如强制 SSO 期间身份提供方故障），拥有 `ADMIN` 角色的用户可以使用自己已登录的控制台会话调用以下接口恢复（不接受 API 密钥）：`POST /api/v1/admin/orgs/{orgId}/sso/connection/stop-enforcing`、`POST /api/v1/admin/orgs/{orgId}/sso/connection/deactivate`，以及通过 `DELETE /api/v1/admin/sso/domains/{id}` 释放组织不再控制的域名。
 
 ## Lark 和飞书身份 [#lark-and-feishu-identities]
 
-Lark 和飞书的会话访问权限属于高级自托管配置。它同时需要：
+Lark 和飞书的会话访问权限属于高级自托管配置，需同时具备：
 
-- 一个保留了提供方跨应用 `union_id` 的 Logto 社交身份；以及
-- 在 Setup 中配置的对应区域登录应用。
+- 保留了提供方跨应用 `union_id` 的 Logto 社交身份
+- 在 Setup 中配置好的对应区域登录应用
 
-登录应用和每个已准入的 AgentConnect 机器人应用必须属于同一个提供方工作区。AgentConnect 使用 `union_id` 在这些应用之间识别同一个人，然后使用已安装机器人的凭证检查其当前的群聊成员身份。这次成员身份读取不会使用个人的提供方令牌或登录应用的凭证。
+登录应用和所有准入的 AgentConnect 机器人应用必须属于同一个提供方工作区。AgentConnect 通过 `union_id` 在这些应用之间识别同一用户，再使用已安装机器人的凭证检查当前的群聊成员身份。整个校验过程不会使用用户的个人令牌或登录应用的凭证。
 
-Setup 不会创建 Lark 或飞书的 Logto 连接器。如果你启用了其中任一登录方式，请确认其 Logto 身份记录包含 `union_id`；仅限单个应用范围的 `open_id` 是不够的。机器人权限和安装流程参见 [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)。
+Setup 不会自动创建 Lark 或飞书的 Logto 连接器。如果启用了其中任一登录方式，请确认 Logto 身份记录中包含 `union_id`（仅限单个应用范围的 `open_id` 无法满足要求）。机器人权限和安装流程见 [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)。
 
 ## 关联更多社交账号 [#link-additional-social-accounts]
 
-要让用户能在**个人资料 → 登录方式**中添加或移除登录提供方：
+要允许用户在**个人资料 → 登录方式**中自行绑定或解绑登录提供方：
 
 1. 在 **Logto Console → Sign-in & account → Account center** 中启用 Account API。
 2. 将 **Social identities** 设为 **Edit**。
-3. 保留每个提供方常规的 Logto 回调地址以及 Setup 显示的 AgentConnect 回调地址。
+3. 同时保留每个提供方常规的 Logto 回调地址和 Setup 显示的 AgentConnect 回调地址。
 
-Logto 在更改社交身份之前可能要求输入所有权验证码：
+修改社交身份前，Logto 可能会要求输入所有权验证码：
 
 | 提供方 | 关联时是否需要邮箱验证 |
 | --- | --- |
@@ -297,20 +297,20 @@ Logto 在更改社交身份之前可能要求输入所有权验证码：
 | Google | 通常不需要 |
 | Slack | 需要 |
 
-如果流程中出现**发送验证码**，请配置一个支持 `UserPermissionValidation` 模板的 Logto [邮件连接器](https://docs.logto.io/connectors/email-connectors)。用户还需要一个已验证的主邮箱；仅存在于社交身份内部的邮箱地址是不够的。
+如果流程中出现**发送验证码**，请先配置支持 `UserPermissionValidation` 模板的 Logto [邮件连接器](https://docs.logto.io/connectors/email-connectors)。用户账号还需要有已验证的主邮箱，仅存在于社交身份中的邮箱不够用。
 
-内置的 Logto OSS 部署不包含邮件投递服务。当你启用会发送验证码的流程时，请接入 SMTP、HTTP 或其他受支持的邮件服务提供方。
+内置 Logto OSS 部署不自带邮件发送服务。启用涉及验证码的流程时，需要自行接入 SMTP、HTTP 或其他受支持的邮件服务商。
 
-Logto 在 [通过 Account API 管理账户设置](https://docs.logto.io/end-user-flows/account-settings/by-account-api) 中说明了身份编辑行为。
+关于身份编辑的详细行为，可参考 Logto 文档 [通过 Account API 管理账户设置](https://docs.logto.io/end-user-flows/account-settings/by-account-api)。
 
 ## 验证设置 [#verify-the-setup]
 
-1. 在浏览器的隐私窗口中登录 AgentConnect。
-2. 确认只有拥有 `ADMIN` 角色的用户才能打开 Setup。
+1. 在浏览器隐私窗口中登录 AgentConnect。
+2. 确认只有具备 `ADMIN` 角色的用户才能访问 Setup。
 3. 打开**个人资料 → 登录方式**，关联第二个已配置的提供方。
-4. 确认在原始访问令牌过期后，AgentConnect 仍能继续调用控制平面。
-5. 在 Setup 中运行每个可用的提供方检查，并手动核对所有标记为无法验证的回调地址。
+4. 确认原始访问令牌过期后，AgentConnect 仍能正常调用控制平面。
+5. 在 Setup 中运行各项提供方检查，并手动核对标记为无法自动验证的回调地址。
 
-立即返回 `401` 通常意味着浏览器 API 资源与控制平面的 audience 不匹配。点击提供方按钮后跳到 Logto 错误页，通常意味着登录体验中缺少该连接器。在身份提供方页面之后 SSO 登录失败，通常意味着客户端密钥或某个已登记的 URL 不匹配；**Logto Console → Audit logs** 会记录提供方的响应。
+如果立即返回 `401`，通常是因为浏览器 API 资源与控制平面的 audience 不一致。点击登录按钮后跳转到 Logto 错误页，通常是因为登录体验中缺少对应连接器。SSO 登录在身份提供方页面之后失败，通常是客户端密钥或登记的 URL 不匹配，可以在 **Logto Console → Audit logs** 中查看提供方返回的具体响应。
 
-在 Setup 中完成 Logto 登录的初始引导之前，请让本地无身份验证的栈只绑定在回环地址上。
+在 Setup 中完成 Logto 登录引导前，请确保未开启鉴权的本地服务只监听回环地址（loopback）。

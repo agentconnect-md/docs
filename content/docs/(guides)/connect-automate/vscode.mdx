@@ -4,15 +4,15 @@ icon: CodeXml
 description: "Chat with an agent from VS Code, read the files in its workspace, and review its edits as whole-file diffs."
 ---
 
-An agent is an [Agent Host Protocol](https://github.com/microsoft/agent-host-protocol) (AHP) host, so VS Code can open it as a remote agent host. You chat with the agent in VS Code's chat, review each edit as a diff, and read files from its workspace. The agent keeps running where it runs today; VS Code is another window onto it. To put an agent behind your own chat UI instead, see [Choose a protocol](/connect-automate/agent-chat-api#choose-a-protocol).
+Each AgentConnect agent acts as an [Agent Host Protocol](https://github.com/microsoft/agent-host-protocol) (AHP) host, so you can connect to it from VS Code as a remote agent host. You can chat with the agent inside VS Code, review edits as diffs, and browse files in its workspace. The agent keeps running on its existing daemon; VS Code simply provides another interface to it. If you want to put an agent behind your own chat UI instead, see [Choose a protocol](/connect-automate/agent-chat-api#choose-a-protocol).
 
 ![A chat with an agent in VS Code, with a file from its workspace open beside it](/images/vscode-agent.gif)
 
 <Callout type="warn">
-This is a preview. VS Code has no sign-in for AgentConnect of its own, so you install the AgentConnect extension by hand: it is not on the Marketplace, because it uses a VS Code API that is still proposed.
+This feature is in preview. Because VS Code doesn't have built-in sign-in for AgentConnect and the extension relies on a proposed VS Code API, it isn't on the Marketplace yet and must be installed manually from a VSIX file.
 </Callout>
 
-It takes four steps:
+Setup takes four steps:
 
 1. Add the AHP API to the agent.
 2. Install the AgentConnect extension.
@@ -21,24 +21,24 @@ It takes four steps:
 
 ## Add the API to the agent [#add-the-api]
 
-An agent accepts AHP clients only after its owner adds the API to it. Before you start, check that the agent's daemon runs v2.14.0 or later; [upgrade it](/build-your-team/daemons/upgrade-the-daemon) if not.
+An agent only accepts AHP clients after its owner adds the API. Before starting, verify that the agent's daemon is running v2.14.0 or later ([upgrade it](/build-your-team/daemons/upgrade-the-daemon) if needed).
 
 1. In the console, open the agent and go to its **Integrations** tab.
-2. Click **Add integration** and pick **API** under **Workflow**.
-3. Under **Protocol**, select **AHP v1**.
+2. Click **Add integration** and select **API** under **Workflow**.
+3. Under **Protocol**, choose **AHP v1**.
 4. Click **Add API**.
 
 ![The Add integration dialog with the AHP v1 protocol selected](/images/vscode-add-ahp-api.png)
 
-The protocol can carry a badge:
+The protocol may display a status badge:
 
 | Badge | What it means |
 | --- | --- |
-| None | Every member who can see the agent can connect. |
+| None | Every member who can view the agent can connect. |
 | **Pilot** | You can add the API, but only members approved for the pilot can connect. |
-| **Disabled** | AHP is off on this deployment, and the protocol cannot be selected. On AgentConnect OSS, [turn it on](#oss). |
+| **Disabled** | AHP is turned off on this deployment and can't be selected. On AgentConnect OSS, [enable it first](#oss). |
 
-The Integrations tab now shows an **API** card. Open its **Quickstart** and copy the **WebSocket endpoint**, which is this agent's address for VS Code:
+The **Integrations** tab now shows an **API** card. Open **Quickstart** and copy the **WebSocket endpoint** to use in VS Code:
 
 ![The API card on the Integrations tab, with its Quickstart button](/images/vscode-ahp-api-card.png)
 
@@ -50,16 +50,16 @@ Each agent has its own endpoint, so add the API to every agent you want to open 
 
 ## Install the extension [#install-the-extension]
 
-Every stable AgentConnect release from v2.15.0 carries the extension as a VSIX file.
+Every stable AgentConnect release from v2.15.0 onward includes the extension as a VSIX file.
 
-1. Download [`agentconnect-vscode.vsix`](https://github.com/agentconnect-md/agentconnect/releases/latest/download/agentconnect-vscode.vsix). The link always serves the latest release's file.
-2. Install it. In VS Code, run **Extensions: Install from VSIX...** from the Command Palette and pick the file, or run this from a terminal:
+1. Download [`agentconnect-vscode.vsix`](https://github.com/agentconnect-md/agentconnect/releases/latest/download/agentconnect-vscode.vsix). This link always points to the latest release.
+2. Install the VSIX. In VS Code, run **Extensions: Install from VSIX...** from the Command Palette and select the file, or run this command in a terminal:
 
    ```bash
    code --install-extension agentconnect-vscode.vsix
    ```
 
-3. Allow the extension to use the proposed API. Run **Preferences: Configure Runtime Arguments** from the Command Palette and add this line to the `argv.json` it opens:
+3. Allow the extension to use the proposed API. Run **Preferences: Configure Runtime Arguments** from the Command Palette and add this entry to `argv.json`:
 
    ```json
    { "enable-proposed-api": ["agentconnect.agentconnect-vscode"] }
@@ -67,13 +67,13 @@ Every stable AgentConnect release from v2.15.0 carries the extension as a VSIX f
 
 4. Restart VS Code.
 
-To try it without editing `argv.json`, start VS Code once with the flag instead:
+To try it out without editing `argv.json`, launch VS Code once with this flag:
 
 ```bash
 code --enable-proposed-api=agentconnect.agentconnect-vscode
 ```
 
-The extension does not update itself. To update, download the file again and install it over the old one.
+The extension doesn't auto-update. To update it later, download the latest VSIX and install it over the existing version.
 
 ## Add the agent to VS Code [#add-the-agent]
 
@@ -87,72 +87,72 @@ In a folder you trust, add the endpoint to `.vscode/settings.json`:
 }
 ```
 
-Start a new chat and pick the agent as the session type. It is listed under its own name, followed by the name you gave the entry.
+Start a new chat and pick the agent as the session type. It appears under its own name, followed by the label you gave the entry.
 
-For VS Code's Agents window, run **Add Remote Agent Host...** from the Command Palette instead, or set `chat.remoteAgentHosts` in your user settings. An editor window reads only the workspace setting.
+For VS Code's Agents window, run **Add Remote Agent Host...** from the Command Palette or configure `chat.remoteAgentHosts` in your user settings. Standard editor windows only read the workspace setting.
 
-The address takes no query string, so a key or token cannot go in it.
+The address doesn't accept query strings, so you can't put keys or tokens in the URL.
 
 ## Sign in [#sign-in]
 
-Run **AgentConnect: Sign In to an Agent** from the Command Palette. Your browser opens the AgentConnect console: sign in if asked, and approve VS Code's access to the agent. VS Code then connects, and the agent's name replaces the placeholder in the chat's session types.
+Run **AgentConnect: Sign In to an Agent** from the Command Palette. Your browser opens the AgentConnect console, where you sign in (if prompted) and approve VS Code's access to the agent. VS Code then connects and replaces the placeholder in the chat session picker with the agent's name.
 
-- The sign-in lasts until you run **AgentConnect: Sign Out**, or disconnect VS Code under **Profile** in the console.
-- Each agent is its own endpoint and its own approval.
-- Sign in to one agent of an organization at a time. With two signed in, VS Code sends the newer sign-in to both, and the first agent refuses it.
+- Your sign-in stays active until you run **AgentConnect: Sign Out** or disconnect VS Code under **Profile** in the console.
+- Each agent has its own endpoint and requires a separate approval.
+- Sign in to only one agent per organization at a time. If you sign in to two agents in the same organization, VS Code sends the newer credential to both, and the first agent rejects it.
 
 ## What you see [#what-you-see]
 
 ### Chat [#chat]
 
-Each chat is a session of that agent. It shows the agent's replies, its tool calls and its edits as they happen.
+Each chat opens a session on that agent, showing its replies, tool calls, and edits in real time.
 
-- The agent runs the model it is configured with. VS Code's model picker shows one entry, and choosing does nothing.
-- One image per message reaches the agent. Other attachments are dropped.
+- The agent always uses its configured model. VS Code's model picker shows a single entry, and selecting a different model has no effect.
+- Only one image per message is sent to the agent. Other attachments are ignored.
 
 ### Edits as whole-file diffs [#diffs]
 
-An edit shows in the chat with its added and removed line counts. Click the file to open the diff of the whole file, not only the changed lines.
+Each edit appears in chat with added and removed line counts. Click the file to open a full-file diff instead of just the changed lines.
 
 ![The diff of an agent's edit, showing the whole file](/images/vscode-agent-diff.png)
 
 ### The agent's files [#files]
 
-VS Code reads files from the agent's workspace, read-only. A file you have open reloads when the agent edits it.
+VS Code opens files from the agent's workspace in read-only mode. Open files reload automatically when the agent edits them.
 
-To browse the workspace, open a chat with the agent and run **AgentConnect: Add an Agent's Workspace to the Explorer**. It adds the session's working directory as a folder in the Explorer.
+To browse the workspace, open a chat with the agent and run **AgentConnect: Add an Agent's Workspace to the Explorer**. This adds the session's working directory as a folder in the Explorer.
 
 ![A chat beside a file from the agent's workspace](/images/vscode-agent-chat.png)
 
 ## Limits [#limits]
 
-- Files are read-only, and a file larger than about 44 KiB does not open.
-- A diff shows the whole file while the edited lines are still in the file as the agent left them. After a later edit of the same lines, it shows only the changed lines.
-- An open file reloads after the agent's own edits. A change made by a command the agent ran is not reported to VS Code.
-- Symbolic links are not listed and do not open.
-- The agent's [secret values](/build-your-team/variables-and-secrets) are masked in file content, as they are in tool output.
+- Workspace files are read-only, and files larger than about 44 KiB won't open.
+- Diffs show the entire file as long as the edited lines haven't been changed again. After a later edit touches the same lines, the diff shows only the changed lines.
+- Open files reload automatically after edits made directly by the agent. Changes made by shell commands the agent runs aren't reported to VS Code.
+- Symbolic links aren't listed and can't be opened.
+- The agent's [secret values](/build-your-team/variables-and-secrets) are masked in file contents, just like in tool output.
 
 ## From a script [#from-a-script]
 
-The API card's **Quickstart** has a Node example built on Microsoft's `@microsoft/agent-host-protocol` client. It signs in with a **Full access** [API key](/api#create-a-key) of a member who can see the agent; an **Agent chat** key is refused. Keep the key on a server you trust, and out of URLs and command arguments.
+The API card's **Quickstart** includes a Node example built on Microsoft's `@microsoft/agent-host-protocol` client. It authenticates using a **Full access** [API key](/api#create-a-key) from a member who can view the agent (**Agent chat** keys are rejected). Keep the key on a trusted server and out of URLs or command arguments.
 
 ## On AgentConnect OSS [#oss]
 
-AHP is off until you turn it on. Set these and restart the services:
+AHP is disabled by default. Set these environment variables and restart the services:
 
 | Service | Setting | Value |
 | --- | --- | --- |
 | Control Plane and every relay | `AHP_MODE` | `on` |
 | Control Plane | `PUBLIC_RELAY_URL` | The relay's public URL. |
-| Every relay | `AHP_AUTHORIZATION_SERVER` | The Control Plane's OAuth issuer, which VS Code signs in to. |
-| Control Plane | `AHP_PUBLIC_ACCESS` | `true` to admit every member. Leave it `false` for a pilot and list members in `AHP_TEST_USER_IDS`. |
+| Every relay | `AHP_AUTHORIZATION_SERVER` | The Control Plane's OAuth issuer URL that VS Code signs in to. |
+| Control Plane | `AHP_PUBLIC_ACCESS` | Set to `true` to allow all members. Leave `false` for a pilot and list allowed members in `AHP_TEST_USER_IDS`. |
 
-Daemons serve AHP from v2.14.0 without a setting.
+Daemons v2.14.0 and later support AHP automatically without additional configuration.
 
 ## Troubleshooting [#troubleshooting]
 
-- **Connected, but nothing happens and messages do not send**: VS Code is not signed in. Check that the extension is installed and listed under `enable-proposed-api`, then [sign in](#sign-in).
-- **"The terminal process failed to launch: Unknown method" in the Agents window**: the Agents window asks the agent for a terminal, which is not available. Chat is not affected.
-- **"Unknown method" in the chat**: the agent's daemon is older than v2.14.0. [Upgrade it](/build-your-team/daemons/upgrade-the-daemon).
-- **The connection is refused**: AHP is off for the organization, or the agent has no AHP API. Add the API to the agent (above).
-- **A file does not open**: it is larger than about 44 KiB, or it is a symbolic link.
+- **Connected, but nothing happens and messages don't send**: VS Code isn't signed in. Check that the extension is installed and listed under `enable-proposed-api`, then [sign in](#sign-in).
+- **"The terminal process failed to launch: Unknown method" in the Agents window**: The Agents window requests a terminal from the agent, which isn't supported. Chat works normally.
+- **"Unknown method" in chat**: The agent's daemon is older than v2.14.0. [Upgrade it](/build-your-team/daemons/upgrade-the-daemon).
+- **Connection refused**: AHP is disabled for the organization, or the agent doesn't have the AHP API enabled. Add the API to the agent using the steps above.
+- **A file won't open**: The file is larger than about 44 KiB or is a symbolic link.

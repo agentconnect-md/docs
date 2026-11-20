@@ -6,55 +6,55 @@ description: "Start a private browser conversation with one or several agents, w
 
 import imgPlayground from '@/public/images/playground.png'
 
-Playground is a private browser conversation with agents running on your daemons. Open it from an agent page for a single-agent session, or use the Home composer to bring several agents into the same conversation.
+Playground is a private browser conversation with agents running on your daemons. Open it from an agent page for a single-agent session, or use the Home composer to bring several agents into one conversation.
 
 <Image src={imgPlayground} alt="Home composer with several agents selected for one Playground conversation" width={780} />
 
 ## What you get
 
-Playground creates a real session on the agent's daemon, using the same runtime, workspace, and tools as a channel conversation. Its output streams into the same kind of [session transcript](/operate-govern/sessions).
+Playground runs a real session on the agent's daemon, using the same runtime, workspace, and tools as a channel conversation. Output streams into a standard [session transcript](/operate-govern/sessions).
 
-You can interrupt a turn when needed. When the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) is **Talk, approve and change settings**, you can also change supported runtime settings for the next turn without altering the agent's saved configuration. A tool call that needs approval waits among the pending requests above the composer. The agent's editors can answer it at any level, and from **Talk and approve tool calls** up, so can you as the conversation's owner, even if you can only view the agent.
+You can interrupt a running turn at any time. When the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) setting is **Talk, approve and change settings**, you can also override supported runtime settings for the next turn without modifying the agent's saved configuration. Any tool call that needs approval appears in the pending requests bar above the composer. The agent's editors can respond at any level. At **Talk and approve tool calls** and above, you can also respond as the conversation's owner, even if you only have view access to the agent.
 
-When you ask the agent to read or post in a chat conversation, it does so for you, by the same rule as in chat; see [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations). In a workspace where you linked your chat account under **Your profile → Sign-in methods**, such as your Slack account, it judges you by that account: a public channel needs you to be a full member, and a private channel or group DM needs you to be a member. Anywhere else, including Telegram and Discord, whose accounts can't be linked, you reach only conversations whose sessions you can open under **Sessions**.
+When you ask the agent to read from or post to a chat conversation, it acts on your behalf using the same rules as in chat (see [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations)). In workspaces where you've linked your chat account under **Your profile → Sign-in methods** (such as Slack), access is checked against that linked account: public channels require full membership, and private channels or group DMs require you to be a member. Everywhere else, including Telegram and Discord (where accounts can't be linked), you can only access conversations whose sessions you can open under **Sessions**.
 
 ## Your own conversation with an agent
 
-Where the agent's daemon runs [Auto](/connect-automate/integrations-overview#session-mode), the agent page's **Playground** button, and a message to one agent from the Home composer, open your own conversation with that agent. Only you can open it, and it is the same conversation every time. A coordinator answers each message there: it replies to a quick question itself and opens a task for anything that needs work. Each task continues on its own session page, which the conversation links to, and you can keep writing to the task there. **New session** in the Sessions panel opens an ordinary Playground conversation instead; use it for the setup work below.
+When an agent's daemon uses [Auto](/connect-automate/integrations-overview#session-mode) mode, clicking **Playground** on the agent page or messaging a single agent from the Home composer opens your dedicated conversation with that agent. Only you can access it, and it reopens the same thread each time. A coordinator handles incoming messages: it answers quick questions directly and spawns a task for heavier work. Each task runs on its own session page, linked from the conversation, where you can send follow-up messages. Use **New session** in the Sessions panel when you want a standard Playground conversation instead, such as for the setup workflow below.
 
 ## Configure AgentConnect from a conversation
 
-In a Playground conversation with a single agent, that agent can read your setup and make changes for you with the same tools as the [MCP connector](/connect-automate/mcp-connector). It acts as you, so your role and [visibility](/operate-govern/permissions-overview) apply. Each change appears as an approval card above the composer with its exact arguments, and nothing is applied until you choose **Approve and run**. The agent is then told the result and continues.
+In a single-agent Playground conversation, the agent can inspect your setup and make changes using the same tools as the [MCP connector](/connect-automate/mcp-connector). It runs with your identity, so your role and [visibility](/operate-govern/permissions-overview) apply. Every write action appears as an approval card above the composer showing its exact arguments, and nothing runs until you click **Approve and run**. Once approved, the agent receives the result and continues.
 
-Start with the built-in **AgentConnect** agent for setup work; it comes with skills for the platform and for creating agents. Any agent can also change its own configuration and workspace this way, but it cannot delete itself.
+Use the built-in **AgentConnect** agent for setup tasks, since it includes built-in skills for configuring the platform and creating agents. Any agent can also update its own configuration and workspace this way, though it can't delete itself.
 
-These tools are not available in a conversation with several agents. Adding an agent to a conversation removes them for the rest of that conversation, so start a new single-agent conversation for setup work.
+Setup tools aren't available in multi-agent conversations. Adding another agent removes them for the remainder of that conversation, so open a fresh single-agent conversation for setup work.
 
-The agent never asks for credentials in chat. To create an agent, connect an integration or code host, or add a secret, MCP server, or skill, it opens the matching console dialog, prefilled where it can, for you to finish. Trying a [Decision](/build-your-team/decisions) on a sample message is not available here; use **Try with an example** in the Decision editor.
+The agent won't ask for credentials in chat. When creating an agent, connecting an integration or code host, or adding a secret, MCP server, or skill, it opens the relevant console dialog (prefilled where possible) so you can finish it directly. Testing a [Decision](/build-your-team/decisions) against a sample message isn't available here; use **Try with an example** in the Decision editor instead.
 
 ## Attach files
 
-Use the composer's attach button to add files to a message. An image goes to the agent with the message itself. Any other file uploads to your deployment's object store first and appears as a chip above the composer; the message sends once every upload has finished. The agent receives the file's name and a short-lived download link, and fetches the file into its workspace when it needs it.
+Click the attach button in the composer to include files with a message. Images are sent directly with the message. Other file types upload to your deployment's object store first and appear as chips above the composer; the message sends once all uploads finish. The agent receives the filename and a short-lived download link, fetching the file into its workspace if needed.
 
-- A message can carry up to 4 files, each within your deployment's upload limit; the composer tells you when a file is over it.
-- If your deployment has no object store configured, only images can be attached.
-- A message with files is never folded into a turn that is already running. It waits and runs as its own turn once the current one ends.
+- You can attach up to 4 files per message, each within your deployment's upload size limit. The composer warns you if a file exceeds the limit.
+- If your deployment doesn't have an object store configured, only images can be attached.
+- A message with files won't be merged into an active turn. It queues and runs as its own turn once the current one finishes.
 
 ## Work with several agents
 
-Add agents before the first message from the Home composer, or add them to an existing Playground conversation.
+Add multiple agents in the Home composer before sending your first message, or add them to an existing Playground conversation at any time.
 
-- A message without an `@AgentName` goes to every participant. Each agent may answer or stay silent.
-- An explicit `@AgentName` narrows that turn to the named participant or participants.
-- Files go only to the agents a message addresses. The other participants see that files were attached, by name, but cannot open them.
-- Every agent keeps its own configuration while the browser combines their activity into one conversation.
+- Messages without `@AgentName` go to every participating agent, and each agent can reply or stay quiet.
+- Using `@AgentName` directs that turn only to the named agent or agents.
+- Attached files are shared only with the addressed agents. Other participants see the filenames that were attached, without access to open them.
+- Each agent keeps its own configuration while the browser displays their responses in one conversation.
 
 ## When the session is saved
 
-Opening Playground starts with an empty, temporary view. Your first message saves the private conversation under **Sessions**, where you can reopen it later.
+Opening Playground starts with an empty, unsaved view. Sending your first message saves the private conversation under **Sessions**, where you can return to it later.
 
 ## Tips
 
-- Test **permission modes** here before using an agent in a shared channel — try *Plan* or *Ask for approval* first, watch what it wants to do, then relax. Switching the mode from the composer needs **Talk, approve and change settings**; otherwise change it in the agent's **Edit**. Before the agent joins a public group, set it to **Talk to the agent**, so nobody there can approve its tool calls.
-- The Playground respects the agent's workspace. For a new single-agent conversation backed by GitHub, choose whether its first turn uses an isolated worktree without changing the agent's saved default.
-- If the composer reports an agent as unreachable, check its daemon is online — Playground sessions run on the participating daemons, not in the cloud.
+- Test **permission modes** here before adding an agent to a shared channel. Try *Plan* or *Ask for approval* first, see what actions it requests, and loosen the mode later if needed. Changing the mode from the composer requires **Talk, approve and change settings**; otherwise update it under the agent's **Edit** dialog. Before adding an agent to a public group, switch it to **Talk to the agent** so group members can't approve its tool calls.
+- Playground uses the agent's configured workspace. For a new single-agent conversation backed by GitHub, you can choose whether its first turn uses an isolated worktree without changing the agent's saved default.
+- If the composer says an agent is unreachable, check that its daemon is online. Playground sessions run on the participating daemons, not in the cloud.

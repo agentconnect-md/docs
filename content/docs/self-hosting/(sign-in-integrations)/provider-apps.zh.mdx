@@ -1,20 +1,20 @@
 ---
 title: "提供方应用"
 icon: Handshake
-description: "在 Setup Server 中注册部署的 GitHub、GitLab、Gitea、Linear、Slack、Google Chat 和 Lark / 飞书应用。"
+description: "在 Setup Server 中注册部署级的 GitHub、GitLab、Gitea、Linear、Slack、Google Chat 和 Lark / 飞书应用。"
 ---
 
-Setup Server 管理着向代码托管平台和聊天平台标识你的部署的那些应用。每张卡片都会显示需要注册的精确回调地址，并以只写方式存储凭证。在创建应用之前先设置最终的公开 URL：Setup 会从这些值推导出回调地址。
+Setup Server 管理用于向代码托管平台和聊天平台标识你的部署的各类应用。每张卡片都会列出需要注册的精确回调地址，并以只写方式保存凭证。在创建应用前，请先配置好最终的公开 URL，因为 Setup 会根据这些地址生成回调路径。
 
 ## GitHub App [#github-app]
 
-当 Agent 需要访问私有仓库、需要仓库范围的 Git 凭证，或需要 GitHub Issue 和 Pull Request 触发器时，配置部署级 GitHub App。
+当 Agent 需要访问私有仓库、获取仓库范围的 Git 凭证，或响应 GitHub Issue 和 Pull Request 触发器时，配置部署级 GitHub App。
 
 1. 设置最终的 Web、控制平面和 Relay 公开 URL。
 2. 在 Setup 中打开 **GitHub**，选择**创建 GitHub App**。manifest 流程会自动填入当前的回调地址、事件和权限。
-3. 如果使用已有的 App，保存它的身份信息和密钥，然后选择**检查匹配**。
+3. 如果复用已有的 App，保存其身份信息和密钥，然后点击**检查匹配**。
 4. 重启控制平面和 Relay。
-5. 在 AgentConnect 中打开**集成 → 代码托管平台 → GitHub**，安装该 App 并选择它的仓库。
+5. 在 AgentConnect 中打开**集成 → 代码托管平台 → GitHub**，安装该 App 并选择需要授权的仓库。
 
 生成的 App 会请求以下权限：
 
@@ -24,177 +24,177 @@ Setup Server 管理着向代码托管平台和聊天平台标识你的部署的�
 | 元数据和邮箱地址                                         | 读取     |
 | 内容、Issue、Pull Request、Actions、Checks 和工作流      | 读写     |
 
-AgentConnect 会把每个安装令牌收窄到一个已授权的仓库和该 Agent 的仓库授权范围。安装的所有者仍然决定哪些仓库可用。
+AgentConnect 会将每个安装令牌的权限收窄到单个已授权仓库以及该 Agent 的仓库授权范围。具体开放哪些仓库，仍由安装所有者决定。
 
-GitHub Webhook 需要一个可访问的 HTTPS Relay。在默认的本地 HTTP 栈上，Setup 可以创建用于登录和仓库安装的 App，但在你提供 HTTPS 入口之前，Webhook 投递会保持禁用。
+GitHub Webhook 需要可访问的 HTTPS Relay。在默认的本地 HTTP 栈上，Setup 可以创建用于登录和仓库安装的 App，但在配置好 HTTPS 入口之前，Webhook 投递会保持关闭。
 
-触发器、评审和仓库行为参见 [GitHub](/connect-automate/triggers-automation/github)。
+触发器、评审和仓库行为详情见 [GitHub](/connect-automate/triggers-automation/github)。
 
 ### 更新现有 GitHub App [#update-an-existing-github-app]
 
-组织下拉框复用部署的 GitHub App，不需要另建 OAuth App。如果 Setup 的**检查匹配**提示缺少 Members 权限：
+组织发现功能直接复用部署级 GitHub App，无需另建 OAuth App。如果 Setup 的**检查匹配**提示缺少 Members 权限：
 
-1. 在 GitHub 打开现有 App 的 **App settings → Permissions & events**。
-2. 将 **Organization permissions → Members** 设置为 **Read-only**，保存。
-3. 请各 GitHub 组织所有者在该 App 的现有安装中[批准更新后的权限](https://docs.github.com/en/apps/using-github-apps/approving-updated-permissions-for-a-github-app)。只修改 App 注册信息不会自动更新现有安装。
-4. 重新运行**检查匹配**，然后在创建自定义 App 的对话框中点击**刷新 GitHub 账号列表**。
+1. 在 GitHub 中打开现有 App 的 **App settings → Permissions & events**。
+2. 将 **Organization permissions → Members** 设为 **Read-only** 并保存。
+3. 请各 GitHub 组织所有者在现有 App 安装中[批准更新后的权限](https://docs.github.com/en/apps/using-github-apps/approving-updated-permissions-for-a-github-app)。只修改 App 注册配置不会自动更新已有安装。
+4. 重新运行**检查匹配**，然后在自定义 App 创建对话框中点击**刷新 GitHub 账号列表**。
 
-这里只能列出该 App 可访问的组织。用户仍可手动输入未列出的组织名，GitHub 会在创建时检查权限。暂不批准 Members 权限的安装继续使用原有权限；原有仓库、PR/Issue 和 Webhook 功能不会仅因未批准这项更新而失效。
+列表中只会显示该 App 有权访问的组织。用户仍可手动输入未列出的组织名，GitHub 会在创建时校验权限。暂未批准 Members 权限的安装会沿用原有权限，既有的仓库、PR/Issue 和 Webhook 功能不受影响。
 
 ## GitLab [#gitlab]
 
-当 Agent 需要访问 GitLab 项目时，配置部署的 GitLab OAuth 应用——可以是 GitLab.com，也可以是一个自行管理的实例；一个部署只能面向其中之一，不能同时面向两者。该应用是 AgentConnect 在该实例上的**管理身份**：用于项目发现、Agent 的服务账号以及 Webhook 管理。它不是 Agent 执行操作时使用的身份。
+当 Agent 需要访问 GitLab 项目时，配置部署级 GitLab OAuth 应用。一个部署只能指向 GitLab.com 或一个自行管理的 GitLab 实例，不能同时对接两者。该应用是 AgentConnect 在该实例上的**管理身份**，用于项目发现、管理 Agent 服务账号以及维护 Webhook，与 Agent 操作仓库时使用的身份相互独立。
 
-1. 在 Setup 中打开 **GitLab**。对于自行管理的实例，把它的地址填入**实例基础 URL**（留空表示 GitLab.com；路径前缀和非默认端口都受支持并会被保留）。Setup 会探测你输入的地址：只有无法使用的 URL 才会阻止保存——主机不可达、证书不受信任或响应不是 GitLab API 根路径，这些只会作为警告报告，因为 Setup 和控制平面不一定处于相同的网络位置。
-2. Setup 会显示需要注册的精确**重定向 URI** 和**权限范围**。GitLab 没有用于创建 OAuth 应用的 API，所以这一步要在 GitLab 上完成：在 **User settings → Applications**、某个群组的 **Settings → Applications**，或用于整个实例的 **Admin → Applications** 中，添加一个重定向 URI *完全等于*该值的应用，保持勾选 **Confidential**，并授予这些权限范围。GitLab 只会显示一次 secret。
-3. 把 **Application ID** 和 **Secret** 粘贴到 Setup 中，选择**保存 GitLab 应用**。
-4. 重启控制平面，然后重启控制台和 Relay，因为它们缓存了控制平面提供的内容。
-5. 在控制台中打开**集成 → 代码托管平台 → 连接 GitLab**，并授权一个具备下文所述权限的账号。
+1. 在 Setup 中打开 **GitLab**。如果对接自行管理的实例，在**实例基础 URL** 中填入实例地址（留空表示 GitLab.com；支持路径前缀和非默认端口，且会自动保留）。Setup 会探测你输入的地址。只有无效 URL 会阻止保存；如果主机不可达、证书不受信任或响应不是 GitLab API 根路径，只会给出警告，因为 Setup 与控制平面可能位于不同的网络环境。
+2. Setup 会显示需要注册的精确**重定向 URI** 和**权限范围**。GitLab 没有通过 API 创建 OAuth 应用的接口，因此需要在 GitLab 上手动创建：进入 **User settings → Applications**、群组的 **Settings → Applications** 或实例级的 **Admin → Applications**，添加应用并填入*完全一致*的重定向 URI，保持勾选 **Confidential**，并授予所示权限范围。GitLab 只会显示一次 secret。
+3. 将 **Application ID** 和 **Secret** 粘贴到 Setup 中，点击**保存 GitLab 应用**。
+4. 先重启控制平面，再重启控制台和 Relay，让它们加载最新配置。
+5. 在控制台中打开**集成 → 代码托管平台 → 连接 GitLab**，授权一个具备下文权限要求的账号。
 
-在 GitLab 状态存在之前，你可以随意更改这些设置，包括**清除配置**。一旦存在项目、令牌或连接，实例地址就固定了：这些数据不携带实例来源信息，因此改换目标会把一个实例的凭证发送到另一个实例。
+在产生任何 GitLab 状态前，你可以自由修改这些设置，也可以点击**清除配置**。一旦已经存在项目、令牌或连接，实例地址就会锁定：已存储的凭证和 ID 没有记录所属实例，修改地址会导致将一个实例的凭证发往另一个实例。
 
 ### 自行管理实例的要求 [#self-managed-instance-requirements]
 
 | 要求                        | 原因                                                                                                                                                                                 |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **GitLab 18.11 或更高版本** | 群组服务账号在 18.11 中才覆盖到包括 Community Edition 在内的所有版本层级。低于该版本时，AgentConnect 会拒绝置备，而不是靠猜测。                                                      |
-| **HTTPS，单一地址**         | 克隆 URL、OAuth 重定向和 GitLab 自身的 `web_url` 值只有在只有一个地址时才能一致。内外网地址拆分应当在 DNS 层解决。                                                                   |
-| **受信任的证书**            | 任何层都没有跳过验证的选项。私有 CA 可以通过[安装其证书包](/self-hosting/docker-compose/configuration#private-certificate-authorities)到每个进程和沙箱都能读取的位置来支持。 |
-| **可达的入口**              | GitLab 默认拒绝向本地网络投递 Webhook；如果你的 AgentConnect 入口解析到私有地址，集成看起来已安装，但会一直没有动静。                                                                |
+| **GitLab 18.11 或更高版本** | 群组服务账号从 18.11 起才覆盖包括 Community Edition 在内的所有版本。低于该版本时，AgentConnect 会拒绝配置。                                                                          |
+| **HTTPS，单一地址**         | 克隆 URL、OAuth 重定向和 GitLab 返回的 `web_url` 只有在统一地址下才能一致。内外网地址差异应在 DNS 层处理。                                                                           |
+| **受信任的证书**            | 任何层级都不提供跳过 TLS 验证的选项。如使用私有 CA，需[安装其证书包](/self-hosting/docker-compose/configuration#private-certificate-authorities)到所有进程和沙箱都能读取的位置。 |
+| **可达的入口**              | GitLab 默认拦截发往本地网络的 Webhook。如果 AgentConnect 入口解析为私有地址，集成表面上看似已安装，但实际收不到任何事件。                                                            |
 
-创建每个 Agent 的服务账号所需的权限没有任何 GitLab API 会报告，因此它在第一次设置项目时检查，而不是提前检查。在 GitLab.com 上，需要的是顶级群组的 **Owner**。在自行管理的实例上，以下两种方式任选其一即可：
+GitLab 没有 API 可以提前查询账号是否具备创建服务账号的权限，因此会在首次配置项目时进行校验。在 GitLab.com 上，需要顶级群组的 **Owner**。在自行管理的实例上，满足以下任一条件即可：
 
-- **任意版本层级，包括 Community Edition**——连接一个**实例管理员**。在启用了 **Admin Mode** 的实例上，管理员 API 操作需要一个 AgentConnect 不会请求的令牌范围，因此下面的委托设置是那里唯一可行的路径。
-- **Premium 或 Ultimate**——在 **Admin → Settings → General** 下开启 **Allow top-level group Owners to create service accounts**，然后连接一个顶级群组 Owner。
+- **任意版本，包括 Community Edition**：连接一个**实例管理员**账号。如果实例开启了 **Admin Mode**，管理员 API 调用需要 AgentConnect 不会申请的令牌范围，此时只能采用下面的委托方式。
+- **Premium 或 Ultimate**：在 **Admin → Settings → General** 下开启 **Allow top-level group Owners to create service accounts**，然后连接顶级群组 Owner。
 
-你的 Daemon 上不需要配置任何与该实例相关的内容：Daemon 会从它所服务的 Agent 那里获知实例信息，并据此从该实例克隆。
+Daemon 上无需配置任何 GitLab 实例信息，Daemon 会直接从所服务的 Agent 获取实例地址并完成克隆。
 
 ## Gitea [#gitea]
 
-当 Agent 需要访问 Gitea 仓库时，把部署指向一个 Gitea 实例——可以是 gitea.com，也可以是一个自托管的 Gitea 或 Forgejo 实例；一个部署只能面向其中之一，不能同时面向两者。这里**没有需要注册的应用**。Gitea 的 OAuth 提供方不会带来任何独立身份——使用 OAuth 令牌执行的操作会归属于授权用户，与该用户手动生成的令牌完全一样——因此该集成直接使用机器人用户的个人访问令牌。
+当 Agent 需要访问 Gitea 仓库时，将部署指向一个 Gitea 实例。一个部署只能对接 gitea.com 或一个自托管的 Gitea / Forgejo 实例，不能同时对接两者。这里**不需要注册 OAuth 应用**：Gitea 的 OAuth 令牌会将操作归属到授权用户，与用户手动生成的令牌没有区别，因此该集成直接使用机器人用户的个人访问令牌。
 
-这样部署只需要管理一个值：
+部署级只需要配置一个地址：
 
-1. 在 Setup 中打开 **Gitea**，把实例地址填入**实例基础 URL**。留空表示 gitea.com；路径前缀（`https://gitea.example.test/gitea`）和非默认端口都受支持，并会在各处保留。
-2. Setup 会探测你输入的地址并应用版本下限。只有无法使用的 URL，或低于 **Gitea 1.23**、**Forgejo 15** 的实例才会阻止保存——主机不可达、证书链不受信任或响应不是 Gitea API 根路径，这些只会作为警告报告，因为 Setup 和控制平面不一定处于相同的网络位置。
+1. 在 Setup 中打开 **Gitea**，在**实例基础 URL** 中填入实例地址（留空表示 gitea.com；路径前缀如 `https://gitea.example.test/gitea` 以及非默认端口均受支持并会在各处保留）。
+2. Setup 会探测输入地址并校验最低版本要求。只有无效 URL 或低于 **Gitea 1.23** / **Forgejo 15** 的实例会阻止保存；主机不可达、证书链不受信任或响应不是 Gitea API 根路径只会报出警告，因为 Setup 与控制平面可能位于不同的网络环境。
 3. 重启控制平面。
 
-**机器人用户及其令牌不属于部署状态**。每个组织创建自己的机器人用户，在其 Agent 将要工作的仓库上授予它 Admin 权限，然后在控制台的**集成 → 代码托管平台 → Gitea** 下粘贴该用户的令牌；参见 [Gitea](/connect-automate/triggers-automation/gitea)。运维人员永远不会接触该令牌。
+**机器人用户及其令牌不属于部署状态。**每个组织自行创建机器人用户，在 Agent 需要操作的仓库上为其授予 Admin 权限，再将令牌粘贴到控制台的**集成 → 代码托管平台 → Gitea**（参见 [Gitea](/connect-automate/triggers-automation/gitea)）。运维人员无需接触这些令牌。
 
-在 Gitea 状态存在之前，该地址可以随意更改。一旦存在仓库、令牌或连接，它就固定了：存储的令牌、数字仓库 ID 和 Webhook ID 都不携带实例来源信息，因此改换目标会把一个实例的凭证发送到另一个实例。请先移除所有 Gitea 仓库并断开机器人连接。
+在产生任何 Gitea 状态前，实例地址可以自由修改。一旦存在仓库、令牌或连接，地址就会锁定，因为存储的令牌、数字仓库 ID 和 Webhook ID 都没有记录所属实例。如需更换实例，请先移除所有 Gitea 仓库并断开机器人连接。
 
 ### 自托管实例的要求 [#self-hosted-instance-requirements]
 
 | 要求                     | 原因                                                                                                                                                                   |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Gitea 1.23 或更高版本，或 Forgejo 15 或更高版本** | 从 Gitea 1.23 起，Pull Request 评论的 Webhook 才包含 Pull Request 本身，在 Pull Request 中提及 Agent 以及由评论发起的评审都依赖它；Forgejo 15 是 Forgejo 仍在维护的最早版本线。Forgejo 会先报告自己的版本（`15.0.9+gitea-1.22.0`），版本下限读取的就是这个数字。`GET /api/v1/version` 无需令牌即可响应，因此版本下限会在保存 URL 时检查，并在每次连接时再次检查。 |
-| **HTTPS，单一地址**      | 克隆 URL、提供给 Agent 的仓库地址以及 Gitea 自身的 `html_url` 值只有在只有一个地址时才能一致。内外网地址拆分应当在 DNS 层解决。                                        |
-| **受信任的证书**         | 任何层都没有跳过验证的选项。私有 CA 可以通过[安装其证书包](/self-hosting/docker-compose/configuration#private-certificate-authorities)来支持。                          |
-| **启用 HTTP Git**        | 克隆、拉取和推送全部通过 HTTPS 并使用机器人的令牌进行。SSH 远程仓库和明文 HTTP 不在约定范围内。                                                                        |
-| **可达的 Relay 地址**    | Gitea 默认拒绝向私有地址投递 Webhook，而且拒绝发生在投递时而不是创建时——见下文。                                                                                      |
+| **Gitea 1.23 或更高版本，或 Forgejo 15 或更高版本** | Gitea 1.23 是首个在 Pull Request 评论 Webhook 中包含 Pull Request 本身的版本，在 Pull Request 中提及 Agent 和通过评论发起评审都依赖该字段；Forgejo 15 是 Forgejo 当前仍在维护的最早版本线。Forgejo 会优先返回自身版本号（如 `15.0.9+gitea-1.22.0`），系统按此版本校验。`GET /api/v1/version` 无需令牌即可访问，因此会在保存 URL 以及每次连接时检查版本下限。 |
+| **HTTPS，单一地址**      | 克隆 URL、提供给 Agent 的仓库地址以及 Gitea 返回的 `html_url` 只有在统一地址下才能一致。内外网地址差异应在 DNS 层处理。                                                |
+| **受信任的证书**         | 任何层级都不提供跳过 TLS 验证的选项。如使用私有 CA，需[安装其证书包](/self-hosting/docker-compose/configuration#private-certificate-authorities)。                    |
+| **启用 HTTP Git**        | 克隆、拉取和推送全部通过 HTTPS 配合机器人令牌完成，不支持 SSH 远程地址和明文 HTTP。                                                                                    |
+| **可达的 Relay 地址**    | Gitea 默认拦截发往私有地址的 Webhook，且该拦截发生在投递时而非创建时（见下文）。                                                                                       |
 
-Forgejo（包括 Codeberg）无需本页之外的任何配置：它提供与 Gitea 相同的 API、令牌范围和 Webhook，下面的 `ALLOWED_HOST_LIST` 设置也同样适用。
+Forgejo（包括 Codeberg）无需额外配置即可直接使用：它的 API、令牌范围和 Webhook 与 Gitea 一致，下面的 `ALLOWED_HOST_LIST` 配置也同样适用。
 
-如果实例在仓库已经设置好之后降到了版本下限以下，它仍会继续为这些仓库提供服务——已有会话和凭证照常工作，只有新的设置和令牌替换会被拒绝。
+如果实例在仓库配置完成后被降级到最低版本以下，既有会话和凭证仍会继续工作，仅阻止新的配置和令牌替换。
 
 ### 让 Gitea 能访问 Webhook 端点 [#let-gitea-reach-the-webhook-endpoint]
 
-Gitea 默认拒绝向回环地址和私有地址投递 Webhook，这由 `app.ini` 中 `[webhook]` 下的 `ALLOWED_HOST_LIST` 控制，它继承自 `[security]`。拒绝发生在**投递**时，而不是创建时：Webhook 会顺利安装，然后一直没有动静。
+Gitea 默认通过 `app.ini` 中 `[webhook]` 下的 `ALLOWED_HOST_LIST`（继承自 `[security]`）拦截发往回环地址和私有地址的 Webhook。拦截发生在**投递**阶段，而非创建阶段，因此 Webhook 会正常创建成功，但随后收不到任何事件。
 
-因此 Gitea 投递到的 Relay 地址必须能从实例访问，或者由运维人员把它写进允许列表：
+请确保 Gitea 投递目标对应的 Relay 地址可从实例访问，或者在白名单中显式放行：
 
 ```ini
 [webhook]
 ALLOWED_HOST_LIST = relay.example.test
 ```
 
-该值接受主机名、CIDR 范围和内置分组（`private`、`loopback`、`external`、`*`）；优先指定单个主机，而不是放开整个分组。编辑 `app.ini` 后重启 Gitea。
+该字段支持主机名、CIDR 网段和内置分组（`private`、`loopback`、`external`、`*`），建议只放行单个目标主机，不要直接放开整个分组。修改 `app.ini` 后重启 Gitea。
 
-AgentConnect 在添加仓库的最后一步会发起一次测试投递，并等待它到达。如果始终没有到达，仓库会处于**带警告的就绪**状态，并指明这个设置，这样被拦截的地址在设置时就能看到，而不是等到第一个 Pull Request 被漏掉之后才发现。修正允许列表，然后在仓库行上点击**修复**——或者干脆等待第一次真实投递，它同样会清除该警告。
+添加仓库的最后一步，AgentConnect 会发送一条测试 Webhook 并等待其到达。如果未能收到，该仓库会显示为**带警告的就绪**状态并提示此配置项，避免等到漏掉第一个 Pull Request 才发现地址被拦截。修改白名单后，在仓库行上点击**修复**即可，或者等待第一条真实事件到达，警告也会自动清除。
 
 ## Linear [#linear]
 
-当 Agent 需要处理在 Linear 中委派给它们的 Issue 时，配置部署的 Linear OAuth 应用。一个应用服务于所有组织和所有已连接的工作区；任何组织或 Agent 都不会持有 Linear 凭证。
+当 Agent 需要处理在 Linear 中委派的 Issue 时，配置部署级 Linear OAuth 应用。一个应用服务于所有组织和已连接的工作区，单个组织或 Agent 不会保存 Linear 凭证。
 
-该流程的两个部分都是公开的：控制平面终结 OAuth 回调，Relay 终结 Linear 的 Webhook，因此这两个公开 URL 都必须是 HTTPS，Setup 才会保存该应用。
+整个流程的两端均需公网可达：控制平面处理 OAuth 回调，Relay 接收 Linear Webhook。两个公开 URL 都必须使用 HTTPS，Setup 才会允许保存。
 
-1. 在 Setup 中打开 **Linear**。它会显示需要注册的精确**回调 URL** 和 **Webhook URL**。
-2. Linear 没有用于创建 OAuth 应用的 API，所以请手动创建。在 Linear 中打开 **Settings → API → OAuth applications**，使用你自己的产品名称和图标添加一个应用，并填入该回调 URL。启用 Webhook，勾选 **Agent session events**，并把它们指向 Setup 显示的 Webhook URL。
-3. 如果除创建它的工作区之外还有其他工作区要连接它，请把应用设为**公开**。Linear 不会审核它，是否在 Linear 的集成目录中上架也是可选的。
-4. 把 **Client ID**、**Client secret** 和 **Webhook 签名密钥**粘贴到 Setup 中，选择**保存 Linear 应用**。
+1. 在 Setup 中打开 **Linear**，查看需要注册的精确**回调 URL** 和 **Webhook URL**。
+2. Linear 没有通过 API 创建 OAuth 应用的接口，需手动创建。在 Linear 中打开 **Settings → API → OAuth applications**，使用你自己的产品名称和图标创建应用，并填入该回调 URL。启用 Webhook，勾选 **Agent session events**，将其指向 Setup 显示的 Webhook URL。
+3. 如果除创建该应用的工作区外，还有其他工作区需要连接，请将应用设为**公开**。Linear 不会对其进行审核，是否上架到 Linear 集成目录也是可选的。
+4. 将 **Client ID**、**Client secret** 和 **Webhook 签名密钥**粘贴到 Setup 中，点击**保存 Linear 应用**。
 5. 重启控制平面和 Relay。
 
-在这些凭证存在之前，控制台的 Linear 界面会提示 Linear 尚未设置。凭证存在后，就可以从某个 Agent 的**集成 → 添加集成 → Linear** 连接工作区；参见 [Linear](/connect-automate/triggers-automation/linear)。
+在保存这些凭证之前，控制台的 Linear 页面会提示尚未配置。配置完成后，可以在某个 Agent 的**集成 → 添加集成 → Linear** 中连接工作区，详情见 [Linear](/connect-automate/triggers-automation/linear)。
 
-轮换签名密钥是一项部署级操作：在 Setup 中保存新值，所有已连接的工作区都会被重新打上该密钥。切换期间投递可能会失败几秒钟，Linear 会重试。
+轮换签名密钥属于部署级操作：在 Setup 中保存新密钥后，所有已连接的工作区会自动同步更新。切换期间的几秒钟内 Webhook 投递可能暂时失败，Linear 会自动重试。
 
 ## Slack 部署应用 [#slack-deployment-app]
 
-Setup 可以为内置的 `agentconnect` Agent 和可选的 Slack 登录创建一个部署级 Slack 应用。这并不能取代 [Slack](/connect-automate/chat-platforms/slack) 中推荐的按 Agent 配置的机器人集成。
+Setup 可以为内置的 `agentconnect` Agent 以及可选的 Slack 登录创建一个部署级 Slack 应用。它不会取代 [Slack](/connect-automate/chat-platforms/slack) 中推荐的按 Agent 独立配置的机器人集成。
 
-1. 配置可访问的 HTTPS Logto、Web、控制平面和 Relay 源地址。
-2. 当 Setup 提示时，创建一个临时的 Slack 应用配置令牌。
+1. 为 Logto、Web、控制平面和 Relay 配置可访问的 HTTPS 地址。
+2. 当 Setup 提示时，生成一个临时的 Slack 应用配置令牌。
 3. 在 Setup 中打开 **Slack**，选择**创建 Slack 应用**。
 4. 重启控制平面和 Relay。
 
-Setup 会构建并检查当前的 Slack manifest，包括 OAuth、Events API 和交互回调。在默认的 HTTP localhost 拓扑上无法使用 Slack 登录；本地初始引导请使用 Google。
+Setup 会生成并校验当前的 Slack manifest，包括 OAuth、Events API 和交互回调。默认的 HTTP localhost 环境不支持 Slack 登录，本地初始引导请使用 Google。
 
 ## Google Chat 部署应用 [#google-chat-deployment-app]
 
-**Google Chat** 卡片位于 **Google** 卡片下方，用来为整个部署配置一个 Chat 应用。它通过各组织内置的 **AgentConnect** Agent 服务每个已连接的 Google Workspace；任何 Agent 也仍然可以连接自己的 Chat 应用。
+**Google Chat** 卡片位于 **Google** 卡片下方，用于为整个部署配置一个统一的 Chat 应用。它会通过各组织内置的 **AgentConnect** Agent 服务每个已连接的 Google Workspace，同时单个 Agent 仍可自行连接专属的 Chat 应用。
 
-1. 配置部署的公开回调地址，并通过 HTTPS 提供控制台。Google 只通过 HTTPS 回调投递 Chat 事件，组织自行连接时使用的页面也要求控制台是 HTTPS。
-2. 开启 [Google 登录](/self-hosting/sign-in#google-sign-in)。用户要用自己在 Google Chat 中使用的 Google 账号登录，才能连接他们的 Workspace。
-3. 按照[创建应用](/connect-automate/chat-platforms/googlechat#create-the-app)创建 Chat 应用，填入卡片显示的 **HTTP endpoint URL**。如果要在 Marketplace 上发布，也请添加 `/help` 命令，Marketplace 审核要求应用提供帮助。
-4. 在 Setup 中打开 **Google Chat**，填入**项目 ID**、可选的**项目编号**和**服务账号密钥 JSON**，然后选择**保存 Google Chat 应用**。
+1. 配置部署的公开回调端点，并通过 HTTPS 提供控制台服务。Google 只通过 HTTPS 回调发送 Chat 事件，组织自助连接页面也要求控制台启用 HTTPS。
+2. 开启 [Google 登录](/self-hosting/sign-in#google-sign-in)。用户需要使用自己在 Google Chat 中所用的 Google 账号登录，才能连接其 Workspace。
+3. 按照[创建应用](/connect-automate/chat-platforms/googlechat#create-the-app)创建 Chat 应用，并填入卡片上显示的 **HTTP endpoint URL**。如果计划发布到 Marketplace，请同时添加 `/help` 命令，因为 Marketplace 审核要求应用提供帮助指令。
+4. 在 Setup 中打开 **Google Chat**，填入**项目 ID**、可选的**项目编号**和**服务账号密钥 JSON**，然后点击**保存 Google Chat 应用**。
 5. 重启 AgentConnect。
 
-Setup 会像 Agent 向导一样向 Google 验证项目和密钥，并以只写方式保存密钥。轮换密钥时，在这里保存新密钥并重启，重启之后再吊销旧密钥。
+Setup 会像 Agent 向导一样向 Google 校验项目与密钥，并以只写方式保存密钥。轮换密钥时，先在这里保存新密钥并重启服务，确认重启完成后再吊销旧密钥。
 
-Workspace 在 Google Chat 里自行完成连接。连接之前，应用会对消息回复一条只有发送者能看到的 **Configure** 提示，被添加到空间时则发一张 **Connect** 卡片。两者都会进入控制台：组织的所有者或协作者用自己在 Google Chat 中使用的 Google 账号登录，选择组织，然后点击**连接**。一个 Workspace 同一时间只能连接到一个组织。从 **AgentConnect** Agent 上移除 Google Chat 集成即可断开连接。
+Workspace 的连接由用户在 Google Chat 中自助发起。完成连接前，应用收到消息后会回复仅发送者可见的 **Configure** 提示，被添加到空间后会发送 **Connect** 卡片。点击两者都会跳转到控制台，组织所有者或协作者使用 Google Chat 对应的 Google 账号登录，选定组织并点击**连接**即可。每个 Workspace 同一时间只能绑定一个组织，如需解绑，从 **AgentConnect** Agent 上移除 Google Chat 集成即可。
 
-要启用绑定冲突时的管理员恢复：
+要启用绑定冲突时的管理员恢复功能：
 
 - 在 Google 登录 OAuth 客户端所属项目中启用 **Admin SDK API**。
-- 将控制台的 `/googlechat/recover` 地址加入该客户端的授权重定向 URI。Setup 的 **Google** 区域会列出完整地址。
-- 在 Google Auth Platform 中配置 `openid` 和 `https://www.googleapis.com/auth/admin.directory.user.readonly`，完成 Google 对该权限要求的 OAuth 验证或 Workspace 应用审批。
+- 将控制台的 `/googlechat/recover` 地址加入该客户端的授权重定向 URI（Setup 的 **Google** 卡片中列出了完整地址）。
+- 在 Google Auth Platform 中配置 `openid` 和 `https://www.googleapis.com/auth/admin.directory.user.readonly`，并按 Google 要求完成对应的 OAuth 验证或 Workspace 应用审批。
 
-只有当前 Workspace 超级管理员选择恢复时，才会请求这些权限。AgentConnect 读取该管理员的 Directory 记录和客户 ID，然后让其确认目标组织；不会申请离线访问或全域委派。用户操作和人工处理方式见[恢复 Workspace 连接](/connect-automate/chat-platforms/googlechat#recover-a-workspace-connection)。
+只有在当前 Workspace 超级管理员主动发起恢复时，才会请求上述权限。AgentConnect 会读取该管理员的 Directory 记录和客户 ID，并请其确认目标组织，不会申请离线访问权限或全域委派。具体用户流程和人工兜底方式见[恢复 Workspace 连接](/connect-automate/chat-platforms/googlechat#recover-a-workspace-connection)。
 
-在 Google Workspace Marketplace 上公开发布之前，只有你自己的 Workspace 能使用这个应用。
+在应用公开发布到 Google Workspace Marketplace 之前，只有你自己的 Workspace 可以使用。
 
 ## Microsoft Teams 部署应用 [#microsoft-teams-deployment-app]
 
-**Microsoft** 卡片配置部署的 Microsoft 登录应用。在那里填入应用的主租户后，同一个应用也会成为部署的 Teams 应用：每个 Microsoft 365 组织由管理员登录一次，就能把它连接到自己的一个 Agent；任何 Agent 也仍然可以[注册自己的 Bot](/connect-automate/chat-platforms/msteams#register-your-own-bot)。
+**Microsoft** 卡片用于配置部署级 Microsoft 登录应用。在卡片中填入该应用的主租户后，同一应用会同时作为部署级 Teams 应用，供各个 Microsoft 365 组织由管理员登录一次即可连接到自己的某个 Agent；各个 Agent 仍可按需[注册自己的 Bot](/connect-automate/chat-platforms/msteams#register-your-own-bot)。
 
-1. 配置部署的公开回调地址，并通过 HTTPS 提供控制台。
-2. 在 [Microsoft Entra](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) 中注册一个多租户应用（任何组织目录中的账户）。把卡片上的**重定向 URI** 和**连接页面**都添加为 Web 重定向 URI，并创建一个客户端密码。
-3. 在 [Teams 开发人员门户](https://dev.teams.microsoft.com/tools/bots)中为这个应用注册一个机器人，或者用 Azure Bot，填入卡片显示的**消息端点**。
-4. 在 Setup 中打开 **Microsoft**，填入**客户端 ID**、**客户端密码**和应用的**用于 Teams 的目录(租户) ID**，然后保存。Setup 会先用这个租户验证密码，再保存。
+1. 配置部署的公开回调端点，并通过 HTTPS 提供控制台服务。
+2. 在 [Microsoft Entra](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) 中注册一个多租户应用（任何组织目录中的账户）。将卡片显示的**重定向 URI** 和**连接页面**全部添加为 Web 重定向 URI，并创建客户端密码。
+3. 在 [Teams 开发人员门户](https://dev.teams.microsoft.com/tools/bots)或 Azure Bot 中为该应用注册机器人，填入卡片显示的**消息端点**。
+4. 在 Setup 中打开 **Microsoft**，填入**客户端 ID**、**客户端密码**以及应用的**用于 Teams 的目录(租户) ID**，然后保存。Setup 会在保存前通过该租户校验密码。
 5. 重启 AgentConnect。
 
-Microsoft 登录和 Teams 共用一个应用和一个密码，轮换一次两者同时生效。清空租户 ID 会关闭 Teams，保留登录。
+Microsoft 登录和 Teams 共用同一个应用和密码，轮换一次密码两者会同时生效。清空租户 ID 会关闭 Teams 集成，同时保留 Microsoft 登录。
 
-组织从 Agent 的**添加集成 → Microsoft Teams → 使用 Microsoft 连接**接入：由 Teams 管理员或全局管理员登录，应用随即发布到该 Microsoft 365 组织的应用目录，不需要上架 Teams 商店。在完成发布者验证之前，Microsoft Entra 会把这个应用标为未验证；只允许已验证发布者的组织需要先完成这项验证。
+组织可在 Agent 的**添加集成 → Microsoft Teams → 使用 Microsoft 连接**中完成接入：Teams 管理员或全局管理员登录后，应用会自动发布到该 Microsoft 365 组织的应用目录中，无需上架 Teams 商店。在完成发布者验证前，Microsoft Entra 会将其标记为未验证应用；如果客户组织仅允许已验证发布者，需先完成验证。
 
 ### Agent Bot [#agent-bots]
 
-Teams 应用的机器人在每个 Microsoft 365 组织里只服务一个 Agent。配置 Agent Bot 后，其他每个 Agent 都会有自己的机器人：部署用你主租户里的一个 blueprint，在客户租户里创建 Microsoft Entra agent identity，并在你的订阅里注册对应的 Azure Bot。配置好 Teams 应用后，**Microsoft** 下面会出现 **Agent bots** 分组。以下操作只需做一次：
+Teams 应用自带的机器人在每个 Microsoft 365 组织中只服务一个 Agent。开启 Agent Bot 后，其余每个 Agent 都可以拥有独立机器人：部署会基于你主租户中的 blueprint，在客户租户中创建 Microsoft Entra agent identity，并在你的 Azure 订阅中注册对应的 Azure Bot。配置好 Teams 应用后，**Microsoft** 卡片下会出现 **Agent bots** 分组。以下准备工作只需执行一次：
 
-1. 如果要在 Setup 里创建 blueprint，在应用的主租户里给它授予三个 Microsoft Graph 应用权限并完成管理员同意：`AgentIdentityBlueprint.Create`、`AgentIdentityBlueprint.AddRemoveCreds.All` 和 `AgentIdentityBlueprintPrincipal.Create`。只有 **Create blueprint** 会用到它们，之后可以移除。
-2. 在存放机器人注册的 Azure 资源组上，给应用的服务主体分配 **Contributor** 角色。
-3. 在订阅上注册 `Microsoft.BotService` 资源提供程序。
+1. 如果要在 Setup 中创建 blueprint，先在应用主租户中为其授予以下三个 Microsoft Graph 应用权限并完成管理员同意：`AgentIdentityBlueprint.Create`、`AgentIdentityBlueprint.AddRemoveCreds.All` 和 `AgentIdentityBlueprintPrincipal.Create`。只有 **Create blueprint** 会用到这些权限，创建完成后可以移除。
+2. 在用于存放机器人注册的 Azure 资源组上，为应用的服务主体分配 **Contributor** 角色。
+3. 在 Azure 订阅中注册 `Microsoft.BotService` 资源提供程序。
 
-填入 **Azure subscription ID**、**Resource group**，以及作为 blueprint 所有者和担保人的你自己的 Microsoft Entra 用户，点击 **Create blueprint**；它的密钥直接存入部署的密钥存储，不会显示出来。也可以用在 Microsoft Entra 管理中心手动创建的 blueprint：先把它开放给任意组织目录中的账号并添加客户端密码，再用 **Save blueprint** 填入两者。最后重启 AgentConnect 使设置生效。
+填写 **Azure subscription ID**、**Resource group**，以及作为 blueprint 所有者和担保人的你自己的 Microsoft Entra 用户，点击 **Create blueprint**。生成的密钥会直接写入部署密钥存储，不会在界面显示。也可以在 Microsoft Entra 管理中心手动创建 blueprint：将其开放给任意组织目录中的账号并添加客户端密码，然后通过 **Save blueprint** 填入。最后重启 AgentConnect 使配置生效。
 
-每个客户租户的管理员都能在 Microsoft Entra 管理中心的这个 blueprint 下看到这些 Agent，以及连接每个 Agent 的人（作为担保人），也可以在那里停用它们。
+各客户租户的管理员可以在 Microsoft Entra 管理中心的该 blueprint 下查看这些 Agent（其中会显示发起连接的用户作为担保人），并可随时在那里停用。
 
-同一个应用也用来连接 [Azure DevOps](/connect-automate/triggers-automation/azure-devops) 组织。把卡片上显示的 **Azure DevOps** 连接页面再添加为一个 Web 重定向 URI，之后由管理员在控制台的 Azure DevOps 卡片上连接。Microsoft 的同意页面会显示应用在 Entra 中的显示名称，所以名称里不要只写某一个 Microsoft 产品。
+同一个应用也可用于连接 [Azure DevOps](/connect-automate/triggers-automation/azure-devops) 组织。将卡片显示的 **Azure DevOps** 连接页面添加为一个新的 Web 重定向 URI，管理员随后即可在控制台的 Azure DevOps 卡片中完成连接。Microsoft 授权确认页会展示应用在 Entra 中的显示名称，因此命名时避免只写某一个 Microsoft 产品名。
 
 ## Lark 和飞书租户应用 [#lark-and-feishu-tenant-apps]
 
-**Lark** 和**飞书**卡片配置一个区域登录应用，作为部署的租户锚点。AgentConnect 用它来确保只有属于同一个可信工作区的多个机器人应用才会被接受；登录应用本身不是 AgentConnect 聊天机器人。
+**Lark** 和**飞书**卡片用于配置一个区域登录应用作为部署的租户锚点。AgentConnect 通过它来校验多个机器人应用是否属于同一个可信工作区；登录应用本身不是 AgentConnect 聊天机器人。
 
-选择**创建 Lark 应用** / **创建飞书应用**，或保存已有凭证。对于已有应用，请启用并发布名为**获取企业信息**（`tenant:tenant:readonly`）的提供方权限。保存后重启控制平面。
+点击**创建 Lark 应用** / **创建飞书应用**，或保存已有凭证。如果使用已有应用，请启用并发布名为**获取企业信息**（`tenant:tenant:readonly`）的权限。保存后重启控制平面。
 
-机器人设置和投递模式参见 [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)。
+机器人配置和投递模式见 [Lark / 飞书](/connect-automate/chat-platforms/lark-feishu)。

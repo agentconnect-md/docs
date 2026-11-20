@@ -4,7 +4,7 @@ icon: GoogleChat
 description: "Connect a Google Chat app to AgentConnect. Configure Google Cloud credentials and HTTPS callbacks so agents can reply to direct messages and mentions in spaces."
 ---
 
-A Google Chat integration connects an agent to a Chat app you create in your own Google Cloud project, built as a Google Workspace add-on. Google delivers the app's events over HTTPS callbacks only, with no socket mode, so the deployment needs a public callback endpoint. AgentConnect Cloud has one.
+A Google Chat integration connects an agent to a Chat app built as a Google Workspace add-on in your Google Cloud project. Google only delivers Chat app events over HTTPS callbacks (there's no socket mode), so your deployment needs a public callback endpoint. AgentConnect Cloud provides one automatically.
 
 ## Create the app
 
@@ -12,76 +12,76 @@ The wizard's **Before you start** step lists what you need:
 
 - A Google Workspace account that can configure Chat apps.
 - A Google Cloud project with the **Google Chat API** enabled.
-- The **Cloud Resource Manager API** enabled in that project. AgentConnect reads the project's number through it.
-- A service account in that same project with the **Browser** role, and a JSON key for it. Create the key in the Chat app's own project; a key from another project is refused.
+- The **Cloud Resource Manager API** enabled in that project so AgentConnect can look up the project number.
+- A service account in the same project with the **Browser** role, along with a JSON key for it. Create the key in the Chat app's own project; keys from other projects are rejected.
 
-Then, in the Google Cloud console, open **APIs & Services → Google Chat API → Configuration**:
+Next, in the Google Cloud console, open **APIs & Services → Google Chat API → Configuration**:
 
-1. Build the app as a **Google Workspace add-on**, the default for a new app. Convert an existing Chat app first; the conversion cannot be undone.
+1. Build the app as a **Google Workspace add-on** (the default for new apps). If you're reusing an existing Chat app, convert it first. Note that this conversion can't be undone.
 2. Set the app's name, avatar, and description.
 3. Under **Functionality**, select **Receive 1:1 messages** and **Join spaces and group conversations**.
-4. Under **Connection settings**, choose **HTTP endpoint URL**, use one URL for all triggers, and enter the value the wizard shows: the deployment's public callback origin followed by `/googlechat/events`, such as `https://relay.example.test/googlechat/events`.
-5. Optionally, under **Commands**, add a slash command named `/help`, described "Show how to use this app", with command ID `1`. Any free ID works, since AgentConnect matches the name. People can then use `/help` in Chat to see the app's commands.
-6. Under **Visibility**, choose the people and groups in your Workspace domain who may use the app. A private app needs no Marketplace listing.
+4. Under **Connection settings**, choose **HTTP endpoint URL**, use one URL for all triggers, and enter the URL shown in the wizard (your deployment's public callback origin followed by `/googlechat/events`, such as `https://relay.example.test/googlechat/events`).
+5. Optionally, under **Commands**, add a slash command named `/help` with description "Show how to use this app" and command ID `1`. Any unused ID works, since AgentConnect matches by command name. Users can then run `/help` in Chat to see the app's commands.
+6. Under **Visibility**, choose the people and groups in your Workspace domain who can use the app. Private apps don't need a Marketplace listing.
 7. Click **Save**.
 
 ## Connect it
 
-On your agent, open **Integrations → Add integration → Google Chat**. Paste the service-account key JSON, and the wizard fills in the **Project ID** from it. The **Project number** is optional: AgentConnect looks it up, and checks it if you enter one. Click **Connect**.
+On your agent, open **Integrations → Add integration → Google Chat**. Paste the service-account key JSON, and the wizard fills in the **Project ID** automatically. **Project number** is optional: AgentConnect looks it up for you, and checks it if you enter one manually. Click **Connect**.
 
-AgentConnect validates the key with Google before saving it, and clears the key field after every attempt. A refusal names its fix: the wrong project, a key from another project, the Cloud Resource Manager API disabled, the Browser role missing, or the Chat API not configured.
+AgentConnect validates the key with Google before saving it and clears the key field after every attempt. If validation fails, the error message tells you what to fix: a mismatched project, a key from another project, the Cloud Resource Manager API disabled, the Browser role missing, or the Chat API not configured.
 
 After connecting, the wizard shows three states:
 
-- **Saved** — Google accepted the key.
-- **Connected** — the callback endpoint is live and the agent is online.
-- **Added** — the app is in a space or a direct conversation.
+- **Saved**: Google accepted the key.
+- **Connected**: The callback endpoint is live and the agent is online.
+- **Added**: The app has been added to a space or direct conversation.
 
-Then test it: send the app a direct message, or add it to a space and mention it.
+To test the setup, send the app a direct message or add it to a space and mention it.
 
 ## Use it
 
-- **Direct messages** — message the app directly; every message reaches the agent. Replies stream in and are edited into their final form.
-- **Spaces** — add the app to a space and **@-mention** it. The agent replies in the same thread as the message. Google delivers a space message to the app only when it mentions the app, replies inside a thread included: a thread reply without the mention is never delivered, so the agent cannot answer it. For the same reason, a space's trigger offers **@-mention**, **By decision**, or **Off**, and no **any message** option.
-- **Welcome and help** — the app introduces itself when it is added to a space or a direct message. If the app has the `/help` command, type `/help` and pick it from Chat's command list to see the text commands.
-- **Working on it** — if the agent has shown nothing after two seconds, the app posts "⏳ Working on it…", and the answer replaces it. If the agent decides not to answer, the message is withdrawn, and Google Chat shows that a message was deleted.
-- **Formatting** — the agent's Markdown is rendered in Google Chat's supported subset: bold, italic, strikethrough, inline code, code blocks, lists, and links. Headings render as bold lines, images as links, and tables as monospace blocks. Long replies are split across messages.
-- **Questions** — when the agent needs your input, it posts a card in the conversation: a button per option, or a short form with **Confirm**. Anyone who can see the card can answer it, and it updates to show the answer. **Dismiss** declines the question.
-- **Approvals** — when a tool call needs approval, the agent posts a card in the thread with the runtime's choices. Who may answer it is set by the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
+- **Direct messages**: Message the app directly. Every message reaches the agent, and replies stream in and edit in place until finished.
+- **Spaces**: Add the app to a space and **@-mention** it. The agent replies in the same thread. Google only delivers space messages that mention the app, including replies inside a thread. Thread replies without a mention aren't delivered, so the agent can't answer them. For the same reason, space triggers only offer **@-mention**, **By decision**, or **Off** (there's no **any message** option).
+- **Welcome and help**: The app introduces itself when added to a space or direct message. If you configured the `/help` command, type `/help` and pick it from Chat's command list to see the text commands.
+- **Working on it**: If the agent hasn't shown output after two seconds, the app posts "⏳ Working on it…" and replaces it once the answer is ready. If the agent decides not to reply, that placeholder is withdrawn and Google Chat shows that a message was deleted.
+- **Formatting**: Markdown renders using Google Chat's supported subset: bold, italic, strikethrough, inline code, code blocks, lists, and links. Headings render as bold lines, images as links, and tables as monospace blocks. Long replies are split across multiple messages.
+- **Questions**: When the agent needs input, it posts a card in the conversation with a button per option or a short form with **Confirm**. Anyone who can see the card can answer it, and the card updates to show the result. Click **Dismiss** to decline the question.
+- **Approvals**: When a tool call requires approval, the agent posts a card in the thread with the runtime's options. Who can approve it is set by the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) setting.
 
-Not supported in this version: attachments in either direction, dialogs, group direct messages, slash commands other than `/help`, and reactions.
+Not supported in this version: file attachments (in either direction), dialogs, group direct messages, slash commands other than `/help`, and reactions.
 
 See [In-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) for stopping, cancelling, queuing, and changing supported session settings.
 
 ## Visibility in the console
 
-A **direct message** with the app stays private to the person who sent it. They can open it in the console after signing in with the same Google account, or linking it on their profile; nobody else can, organization Owners included. Conversations in a **space** are visible to the organization, whoever is in the space.
+A **direct message** with the app is private to the person who sent it. They can open it in the console after signing in with the same Google account or linking it on their profile. Nobody else can see it, including organization Owners. Conversations in a **space** are visible to the organization, regardless of who is in the space.
 
 ## Recover a Workspace connection
 
-If you use the deployment's shared Chat app, one Google Workspace customer connects to one AgentConnect organization. If the app says the Workspace is already connected elsewhere, the existing connection must be released first.
+If you use the deployment's shared Chat app, one Google Workspace customer connects to one AgentConnect organization. If the app reports that the Workspace is already connected elsewhere, release the existing connection first.
 
-If you have access to the original AgentConnect organization, ask an editor of its built-in **AgentConnect** agent to delete the Google Chat integration from the agent's **Integrations** tab. This releases the Workspace binding. Send the app a new message in Google Chat and follow its connection link to connect to the intended organization.
+If you have access to the original AgentConnect organization, ask an editor of its built-in **AgentConnect** agent to delete the Google Chat integration from that agent's **Integrations** tab. That releases the Workspace binding. Then send the app a new message in Google Chat and follow its connection link to connect to your target organization.
 
-If you cannot access the original organization, a **current Google Workspace super administrator** can recover the connection:
+If you can't access the original organization, a **current Google Workspace super administrator** can recover the connection:
 
 1. Send `/help` to the shared app in a direct message and open **Manage Workspace connection**.
-2. Sign in with that same Google account, choose the intended AgentConnect organization, and select **Connect**. You must be an Owner or Collaborator of that organization.
-3. When the page says the Workspace is connected elsewhere, select **Verify Workspace administrator** and complete Google's read-only administrator verification.
-4. Check the destination organization and select **Recover connection**. Verification alone does not change the binding; you can cancel before this confirmation.
+2. Sign in with the same Google account, select the target AgentConnect organization, and click **Connect**. You must be an Owner or Collaborator of that organization.
+3. When the page reports that the Workspace is connected elsewhere, select **Verify Workspace administrator** and complete Google's read-only administrator check.
+4. Confirm the destination organization and select **Recover connection**. Verification alone doesn't change the binding, and you can cancel before confirming.
 
-The original connection stops working. Session history and agents stay in the original organization; connection settings are not transferred. Configure the new connection in the destination organization. The original installer does not need to participate, including when they have left the company. First-time connections do not require this extra verification.
+Recovery stops the original connection. Session history and agents remain in the original organization, and connection settings aren't transferred, so configure the new connection in the destination organization. The original installer doesn't need to participate, even if they have left the company. First-time connections don't require this extra verification.
 
-If verification is unavailable, or you have a delegated administrator role rather than super administrator, contact [contact@agentconnect.md](mailto:contact@agentconnect.md). Include the Workspace domain, app name, and intended organization. Self-hosted users should contact their deployment operator, who can [configure administrator recovery](/self-hosting/provider-apps#google-chat-deployment-app).
+If verification isn't available, or you have a delegated administrator role instead of super administrator, email [contact@agentconnect.md](mailto:contact@agentconnect.md) with your Workspace domain, app name, and target organization. Self-hosted users should contact their deployment operator, who can [configure administrator recovery](/self-hosting/provider-apps#google-chat-deployment-app).
 
-Uninstalling or reinstalling the app in Google Workspace does not currently release its AgentConnect binding. Removing it from a space or direct message also leaves the Workspace binding in place. These steps apply to the deployment's shared app; an app you registered yourself follows the normal integration removal flow below.
+Uninstalling or reinstalling the app in Google Workspace doesn't currently release its AgentConnect binding, and removing it from a space or direct message leaves the Workspace binding intact. These steps apply to the deployment's shared app; an app you registered yourself follows the standard integration removal flow below.
 
 ## Notes
 
-- Your own Chat app binds to one agent, and a Google Cloud project holds one Chat app. Deleting the integration frees the app for reuse (**Use an existing bot** next time).
-- Rotate your own app's key under **Integrations → Messaging apps → Google Chat** by pasting a new service-account key. A deployment Chat app's key rotates in the [Setup Server](/self-hosting/provider-apps#google-chat-deployment-app) instead.
-- Spaces the app belongs to appear under the integration. A direct conversation appears after its first message, named after the person.
+- Your own Chat app binds to one agent, and each Google Cloud project can contain one Chat app. Deleting the integration frees the app for reuse (choose **Use an existing bot** next time).
+- Rotate your own app's key under **Integrations → Messaging apps → Google Chat** by pasting a new service-account key. A deployment Chat app's key is rotated in the [Setup Server](/self-hosting/provider-apps#google-chat-deployment-app).
+- Spaces the app belongs to appear under the integration. Direct conversations appear after their first message, labeled with the person's name.
 
 ## Self-hosting
 
-A self-hosted deployment needs its public callback endpoint configured, as for [Linear](/connect-automate/triggers-automation/linear#before-you-connect). An operator can also configure a [deployment Chat app](/self-hosting/provider-apps#google-chat-deployment-app) that serves every organization through its built-in **AgentConnect** agent.
+A self-hosted deployment needs a public callback endpoint configured, just like [Linear](/connect-automate/triggers-automation/linear#before-you-connect). An operator can also configure a [deployment Chat app](/self-hosting/provider-apps#google-chat-deployment-app) that serves every organization through its built-in **AgentConnect** agent.

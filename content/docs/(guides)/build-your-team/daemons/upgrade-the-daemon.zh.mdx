@@ -1,21 +1,21 @@
 ---
 title: "升级 Daemon"
 icon: CircleArrowUp
-description: "从控制台或主机把 Daemon 切换到新版本，保持 CLI 为最新，并回滚失败的升级。"
+description: "从控制台或主机将 Daemon 升级到新版本，保持 CLI 为最新，并在升级失败时回滚。"
 ---
 
 import imgDaemonUpgrade from '@/public/images/daemon-upgrade.png'
 
-一台 Daemon 主机上有两个独立版本化的部分：
+一台 Daemon 主机上包含两个独立管理版本的部分：
 
-| 部分 | 是什么 | 如何更新 |
+| 部分 | 说明 | 更新方式 |
 | --- | --- | --- |
-| **CLI**——`@agentconnect.md/cli`，即 `agentconnect` 命令 | 稳定的入口：服务生命周期、登录、版本管理 | 一个 npm 包，由你在主机上更新 |
-| **Daemon 版本** | 托管 Agent、驱动 Runtime 并持有平台连接的实际载荷 | 由 CLI 下载到 Daemon 根目录，并通过 `current` 指针选定 |
+| **CLI**（`@agentconnect.md/cli`，即 `agentconnect` 命令） | 稳定的命令行入口，负责服务生命周期、登录和版本管理 | npm 包，由你在主机上手动更新 |
+| **Daemon 版本** | 实际运行程序，负责托管 Agent、驱动 Runtime 并维护平台连接 | 由 CLI 下载到 Daemon 根目录，通过 `current` 指针指向当前版本 |
 
-几乎所有升级都是 Daemon 版本的升级。CLI 可以长期保持不变，因为新的 Daemon 命令会被委托给 Daemon 执行，不需要配套的 CLI 版本。
+日常升级几乎都只涉及 Daemon 版本。CLI 本身很少需要更新，因为新的 Daemon 子命令会直接转发给 Daemon 执行，不需要同步升级 CLI。
 
-各个版本并排存放在 Daemon 根目录下，因此切换版本只是移动指针并重启，而不是重新安装：
+已安装的多个版本并排存放在 Daemon 根目录下，切换版本只需修改 `current` 指针并重启进程，无需重新安装：
 
 ```
 ~/.agentconnect/
@@ -26,60 +26,60 @@ import imgDaemonUpgrade from '@/public/images/daemon-upgrade.png'
 
 ## 从控制台升级 [#upgrade-from-the-console]
 
-版本过旧的 Daemon 会在**基础设施**页面和它自己的页面上显示 **更新到 \<version\>** 徽标。点击徽标，选择目标版本，再点**升级**确认。
+当 Daemon 版本落后时，**基础设施**页面和它的详情页都会显示 **更新到 \<version\>** 徽标。点击徽标，选择目标版本，再点**升级**确认。
 
 <Image src={imgDaemonUpgrade} alt="从 Daemon 页面上的更新徽标打开的升级 Daemon 对话框" width={720} />
 
-这需要普通的 Daemon 编辑权限：任何能看到该 Daemon 的所有者或协作者都可以操作。查看者不能。
+该操作只需要普通的 Daemon 编辑权限：能看到该 Daemon 的所有者或协作者都可以操作，查看者不行。
 
-控制平面只发送目标版本——注册表、包和下载都由主机上的 CLI 在本地完成。随后 Daemon 安装目标版本、切换 `current`、排空当前工作并以计划内的重启退出码退出，然后由它的服务管理器启动新版本。Daemon 在重新就绪之前会显示**升级中**。
+控制平面只下发目标版本号，实际的包查询和下载仍由主机上的 CLI 在本地完成。Daemon 下载并安装目标版本后，会更新 `current` 指针、排空当前工作并以计划内重启的退出码退出，随后由服务管理器拉起新版本。就绪前，状态会显示为**升级中**。
 
-只有当 Daemon 重新连接并上报了所请求的版本时，升级才会被记录为成功，因此旧版本重新启动不会被误认为升级已完成。每个 Daemon 同一时间只允许一个生命周期操作。
+只有当 Daemon 重新连上控制平面并上报了目标版本号时，升级才算完成，避免旧版本重启后被误判为升级成功。同一台 Daemon 同一时间只允许执行一个生命周期操作。
 
-有两个限制值得了解：
+有两个限制需要注意：
 
-- **远程升级没有进程级的自动回滚**。一旦旧 Daemon 退出，恢复就是主机侧的工作——见[回滚](#roll-back)。本地的 `upgrade --restart` 则会自行回滚。
-- **控制台只在 Daemon 在线时提供升级**。离线或卡住的 Daemon 必须从主机升级，或者通过 [API 参考](/api)中的升级端点（`POST /v1/orgs/{orgId}/daemons/{id}/upgrade`）排队升级。排队的升级会在 Daemon 下一次完成认证连接时、在完整启动之前被执行，这正是恢复一个始终无法就绪的 Daemon 的方式。早于该机制的旧版 Daemon 需要在线连接或主机侧升级。
+- **远程升级不支持进程级自动回滚**：旧 Daemon 退出后，如果新版本起不来，需要在主机上手动恢复（见[回滚](#roll-back)）。在主机本地执行 `upgrade --restart` 则支持自动回滚。
+- **控制台仅在 Daemon 在线时提供升级**：如果 Daemon 已离线或卡住，需要在主机上本地升级，或者通过 [API 参考](/api)中的升级接口（`POST /v1/orgs/{orgId}/daemons/{id}/upgrade`）下发排队升级。排队升级会在 Daemon 下一次完成认证连接时、进入完整启动流程前执行，适合用来恢复始终无法就绪的 Daemon。较早版本的 Daemon 不支持此机制，仍需保持在线或走主机本地升级。
 
 ## 自动升级 [#upgrade-automatically]
 
-打开了**自动升级**的 Daemon 会跟随控制台提供的版本升级，不需要有人点**升级**。自动升级按 Daemon 单独设置：在**基础设施**页面打开这台 Daemon，在页面顶部版本号后面打开或关闭**自动升级**。更改立即生效。开关旁的图标表示最近一次自动升级的结果，鼠标指向开关可以看到详情。
+开启**自动升级**后，Daemon 会自动跟进控制台提供的最新版本，无需手动点击**升级**。该开关按 Daemon 单独配置：在**基础设施**页面点进某台 Daemon，在顶部版本号旁边打开或关闭**自动升级**即可立即生效。开关旁的图标显示最近一次自动升级的状态，悬停在开关上可查看详情。
 
-它在继续服务的同时下载新版本，只在空闲时才重启切换过去：没有正在运行的 turn 或后台任务，并且最近五分钟内也没有。自动升级不会打断任何 turn。
+Daemon 会在继续服务的同时在后台下载新版本，等完全空闲时再重启切换：当前没有任何运行中的轮次或后台任务，且最近 5 分钟内也没有。自动升级不会打断正在进行的轮次。
 
-- **分批推出**。在 stable 频道上，每台 Daemon 在新版本出现后会等待一个固定的延迟，最长两小时，这样有问题的版本不会同时到达所有 Daemon。
-- **无法启动的版本会被撤回**。Daemon 会回到之前运行的版本，并从此跳过这个版本。
-- **手动选择旧版本会关闭它**。从控制台升级到比最新版本更旧的版本时，会为这台 Daemon 关闭自动升级，这样它不会马上又升回去。
+- **分批灰度发布**：在 `stable` 通道上，新版本发布后每台 Daemon 会等待一个最长两小时的固定延迟，避免异常版本同时波及所有机器。
+- **启动失败自动回退**：如果新版本无法启动，Daemon 会回退到之前的版本，并在之后跳过该异常版本。
+- **手动降级会自动关闭开关**：从控制台手动切换到比最新版本更旧的版本时，系统会自动关闭该 Daemon 的自动升级，防止它马上又升回去。
 
-自动升级要求 Daemon 由 CLI 运行——[以服务方式](/build-your-team/daemons/install-the-daemon#run-it-permanently)或通过 `agentconnect run`；其他 Daemon 上这个开关不可用，鼠标指向开关可以看到原因。打开这个开关所需的权限与**升级**相同。
+自动升级要求 Daemon 由 CLI 启动，无论是[以服务方式运行](/build-your-team/daemons/install-the-daemon#run-it-permanently)还是通过 `agentconnect run` 运行。其他方式运行的 Daemon 无法开启此开关，悬停可查看原因。修改该开关需要与**升级**相同的权限。
 
-如果希望之后新加入的 Daemon 一开始就打开自动升级，所有者可以在**组织设置**中打开**默认 Daemon 自动升级**。已有的 Daemon 保留各自的设置。
+如果希望今后新接入的 Daemon 默认开启自动升级，所有者可以在**组织设置**中打开**默认 Daemon 自动升级**。已有 Daemon 的设置保持不变。
 
 ## 在主机上升级以服务方式安装的 Daemon [#upgrade-a-service-installed-daemon-on-the-host]
 
-对于[以服务方式安装](/build-your-team/daemons/install-the-daemon#run-it-permanently)的 Daemon，一条命令即可完成整个流程：
+对于[以服务方式安装](/build-your-team/daemons/install-the-daemon#run-it-permanently)的 Daemon，一条命令即可完成整个升级流程：
 
 ```bash
 npx -y @agentconnect.md/cli upgrade --restart
 ```
 
-它会解析所选通道上的最新版本，安装它，切换 `current`，重启服务，然后对结果做健康检查，检查失败时回滚。
+这条命令会解析当前通道的最新版本、下载安装、更新 `current`、重启服务并执行健康检查。如果健康检查不通过，会自动回滚。
 
-健康检查有意设计为进程级：它在几秒钟内对服务进行采样，只有当 Daemon 以同一个稳定的 PID 运行时才算通过，这样可以捕获崩溃循环。它并不能证明 Daemon 已连上控制平面——控制台中的 Daemon 状态是更可靠的信号，所以升级一个已连接的 Daemon 之后，也请到控制台确认。
+这里的健康检查是进程级的：它会在几秒内持续采样服务状态，只有 Daemon 保持单一稳定的 PID 运行时才算通过，用来捕获崩溃循环。但它不校验与控制平面的连接状态，因此升级完成后，最好也在控制台里确认一下 Daemon 是否上线。
 
-两种需要了解的变化：
+两种常见情况：
 
-- **不带 `--restart`** 时，只切换 `current`，正在运行的 Daemon 不受影响；新版本在它下次重启时生效。当你想先准备好切换、再自行选择重启时机时，这很有用。
-- **未安装服务**时，`--restart` 会报告没有可重启的对象，并保持新版本为选定状态。前台运行的 `agentconnect run` 会在下次重新启动时应用它。
+- **不加 `--restart`**：只更新 `current` 指针，不重启正在运行的 Daemon，新版本会在下次重启时生效。适合先预部署版本、再挑合适窗口重启的场景。
+- **未安装后台服务**：加上 `--restart` 会提示没有可重启的服务，同时保留新版本为选中状态。前台运行的 `agentconnect run` 会在下次启动时使用新版本。
 
-确认结果：
+检查升级结果：
 
 ```bash
 npx -y @agentconnect.md/cli version list   # channel, installed releases, current, previous
 npx -y @agentconnect.md/cli status         # service state, PID, log path
 ```
 
-如果主机上运行着多个 Daemon 服务，请给每条命令都加上 `--instance <name>`，让它作用于该实例的服务和 Daemon 根目录，而不是默认实例。
+如果一台主机上跑了多个 Daemon 服务实例，给每条命令都加上 `--instance <name>`，以指定目标实例的服务和根目录。
 
 ### 选择版本或通道 [#choose-a-version-or-a-channel]
 
@@ -88,9 +88,9 @@ npx -y @agentconnect.md/cli upgrade --to <version> --restart   # a specific rele
 npx -y @agentconnect.md/cli upgrade --channel rc --restart     # switch to prereleases
 ```
 
-通道会保存在 Daemon 根目录中，并成为后续升级的默认值，因此 `--channel` 是切换轨道，而不是一次性的选择。可用的两个通道是 `stable` 和 `rc`。
+通道配置会保存在 Daemon 根目录中，并作为后续升级的默认值，因此 `--channel` 是持久切换发布通道，而不是单次生效。可用通道为 `stable` 和 `rc`。
 
-若要在不让主机立即切换的情况下金丝雀验证某个版本，可以先安装、稍后再激活：
+如果想先在主机上预下载某个版本做灰度验证，稍后再切换，可以分步操作：
 
 ```bash
 npx -y @agentconnect.md/cli version install <version>   # download only; current is unchanged
@@ -98,19 +98,19 @@ npx -y @agentconnect.md/cli version use <version>       # switch current, withou
 npx -y @agentconnect.md/cli restart                     # apply it
 ```
 
-每个 Daemon 根目录都保存着它安装过的每个版本的独立副本，因此同一台主机上的一个实例可以金丝雀验证某个版本，而其他实例继续留在旧版本上。
+每个 Daemon 根目录独立保存自己安装过的版本副本，因此同一台主机上的单个实例可以先验证新版本，其余实例继续停留在旧版本。
 
 ### 旧版本 [#old-releases]
 
-每次安装和升级之后都会清理版本存储，默认总共保留三个版本。当前活动版本和回滚目标始终受保护。传入 `--keep <n>` 可更改保留数量，`--keep 0` 则保留全部。
+每次安装或升级后，CLI 都会自动清理旧版本，默认总共保留 3 个版本。当前运行版本和回滚目标始终受保护，不会被删掉。可通过 `--keep <n>` 修改保留数量，或传入 `--keep 0` 保留全部版本。
 
-清理是尽力而为的，并且在 Daemon 运行期间会跳过，因为运行中的 Daemon 会持续从启动它的那个包中加载文件。被报告为已保留的版本会由之后的 `version prune` 回收。
+清理过程采用尽力而为策略，Daemon 运行期间会跳过清理，以免影响正在从旧版本目录加载文件的进程。被跳过的版本可以之后通过 `version prune` 手动回收。
 
 ## 回滚 [#roll-back]
 
-本地执行的 `upgrade --restart` 如果健康检查失败，会自动切回上一个版本并重启，同时把这次回滚报告为失败。
+本地执行 `upgrade --restart` 时，如果健康检查失败，CLI 会自动切回上一版本并重启，同时将这次升级标记为失败退出。
 
-其他情况下，请手动回滚：
+其他情况需要手动回滚：
 
 ```bash
 npx -y @agentconnect.md/cli version list          # `previous` is the rollback target
@@ -118,44 +118,44 @@ npx -y @agentconnect.md/cli version use <version>
 npx -y @agentconnect.md/cli restart
 ```
 
-在交互式终端中前台运行的 `agentconnect run` 会自行处理这种情况：当 Daemon 启动失败时，它会提议切回上一个版本，或者重新下载通道上的最新版本以防已安装的包损坏，然后重试。以服务方式运行时永远不会提示——它的服务管理器必须看到真实的退出码。
+在交互式终端中前台运行 `agentconnect run` 时，如果 Daemon 启动失败，CLI 会直接提示你选择切回上一版本，或者重新下载当前通道的最新版本（防止本地包损坏），然后自动重试。以服务方式运行时不会弹出交互提示，因为服务管理器需要拿到真实的退出码。
 
 ## 升级 CLI [#upgrade-the-cli]
 
-`npx` 每次运行时都会解析包，所以当你想确保没有复用缓存中的旧版 CLI 时，请明确指定 `@latest`：
+`npx` 每次执行时会解析包版本，如果想确保不用到本地缓存的旧版 CLI，请加上 `@latest`：
 
 ```bash
 npx -y @agentconnect.md/cli@latest version list
 ```
 
-在运行服务的机器上，请改为全局安装 CLI。这样 CLI 在磁盘上就有了稳定的路径，这对服务定义很重要：
+在运行后台服务的机器上，建议全局安装 CLI，让服务定义指向磁盘上的稳定路径：
 
 ```bash
 npm install -g @agentconnect.md/cli@latest
 agentconnect status
 ```
 
-CLI 需要 **Node.js 24.12 或更新版本**——与 Daemon 的最低要求相同。
+CLI 同样需要 **Node.js 24.12 或更新版本**。
 
 ### CLI 或 Node 位置变动后重新安装服务 [#reinstall-the-service-after-the-cli-or-node-moves]
 
-服务管理着 CLI，而 CLI 管理着 Daemon。服务定义记录的是**安装服务时存在的 Node 可执行文件和 CLI 入口路径**，之后不会重新解析这两者。但它每次启动时都会重新解析 `current`，这就是 Daemon 升级完全不需要更改服务的原因。
+系统服务管理着 CLI，CLI 再管理 Daemon。安装服务时，服务定义会固化**当时的 Node 可执行文件路径和 CLI 入口路径**，之后不会自动重新查找。不过它每次启动都会重新解析 `current`，所以升级 Daemon 本身不需要动服务定义。
 
-因此，凡是会移动这两个路径的操作之后，都要重新安装服务——升级 Node 或更换 Node 版本管理器，或者把 CLI 安装到了不同路径（尤其是从入口位于 npx 缓存中的 `npx` 改为全局安装）：
+只要上述两个路径发生变化（例如升级 Node、更换 Node 版本管理器，或改动 CLI 安装位置，特别是从 `npx` 缓存迁移到全局安装），都需要重新安装服务。
 
-请用你希望服务今后使用的那个 CLI 来运行，因为它记录的正是这个入口路径：
+请直接使用你希望服务今后调用的那个 CLI 来执行，它会将自身的入口路径写入服务定义：
 
 ```bash
 agentconnect install-service   # rewrites the definition in place
 agentconnect restart           # `up` if the service is currently stopped
 ```
 
-对同一实例重复安装是幂等的。`install-service` 只写入服务定义，不会启动任何东西。
+对同一实例重复执行是幂等的。`install-service` 只会更新服务定义文件，不会启动服务。
 
-过期的服务定义通常表现为 Node 升级后服务无法启动，或者 npx 缓存被清理后服务失效。`agentconnect status` 会打印日志路径，可以据此确认。
+服务定义失效的常见表现是：升级 Node 后服务起不来，或者清理 npx 缓存后服务报错。运行 `agentconnect status` 获取日志路径即可确认原因。
 
 ## 须知 [#good-to-know]
 
-- **升级会在宽限期内排空工作**。Daemon 停止接受新的轮次，并给进行中的工作一个有限的完成窗口——普通本地工作默认 25 秒——然后取消剩余的工作并停止其 Runtime。升级不是突然终止，但长时间运行的轮次仍可能被中断，所以请相应地选择时间窗口。Daemon 在重新启动期间会短暂不可达。
-- **也请保持 Runtime 为最新**。主机上的 Agent Runtime 由它们各自的工具升级，而不是由 Daemon 升级。AgentConnect 的一些保护措施依赖于只有较新 Runtime 版本才提供的开关——见 [Runtime 登录会带来什么](/build-your-team/daemons/install-the-daemon#what-a-runtime-sign-in-brings)。更改 Runtime 安装或服务用户的 `PATH` 之后，请重启 Daemon。
-- **Kubernetes 安装的升级方式不同**。安装级的 Daemon 池随其 Helm release 一起升级，而不是用这些命令。见 [Kubernetes 运维](/self-hosting/kubernetes/operations#upgrade)。
+- **升级会在宽限期内排空工作**：Daemon 会先停止接收新轮次，并等待进行中的任务完成（普通本地任务默认等待 25 秒），超时后再取消剩余任务并停止 Runtime。这样能避免粗暴中断，但耗时很长的轮次仍可能被打断，请挑合适的时间窗口升级。重启期间 Daemon 会短暂不可用。
+- **及时更新 Runtime**：主机上的 Agent Runtime 需要用各自的工具升级，Daemon 不会替你升级它们。AgentConnect 的部分安全限制依赖于较新 Runtime 版本才提供的开关，详见 [Runtime 登录会带来什么](/build-your-team/daemons/install-the-daemon#what-a-runtime-sign-in-brings)。更新 Runtime 或修改服务用户的 `PATH` 后，记得重启 Daemon。
+- **Kubernetes 部署的升级方式不同**：集群级的 Daemon 池随 Helm release 一同升级，不使用上述 CLI 命令。详见 [Kubernetes 运维](/self-hosting/kubernetes/operations#upgrade)。

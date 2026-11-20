@@ -1,20 +1,20 @@
 ---
 title: "工作流"
 icon: Zap
-description: "从代码事件、任务跟踪器中的 Issue、外部请求或定时任务启动 Agent 的工作。"
+description: "通过代码事件、任务系统中的 Issue、外部请求或定时任务启动 Agent。"
 ---
 
 import imgGithubIntegration from '@/public/images/github-integration.png'
 
-Agent 不必等待聊天消息才开始工作。你可以从以下来源启动工作：
+Agent 不必等待聊天消息才开始工作。你可以用以下方式触发任务：
 
-- [GitHub](/connect-automate/triggers-automation/github) 的 Issue、Pull Request 和评审事件；
-- [GitLab](/connect-automate/triggers-automation/gitlab) 的 Issue、Merge Request 和评论；
-- [Azure DevOps](/connect-automate/triggers-automation/azure-devops) 的 Pull Request 和评论；
-- [Gitea](/connect-automate/triggers-automation/gitea) 的 Issue、Pull Request、评论和评审；
-- [Linear](/connect-automate/triggers-automation/linear) 中被委派给 Agent 或按名字提及的 Issue；
-- 由其他系统发送的 [Webhook](/connect-automate/triggers-automation/webhooks)；或
-- 在你选定的时间或间隔运行的[定时任务](/connect-automate/triggers-automation/schedules)。
+- [GitHub](/connect-automate/triggers-automation/github) 的 Issue、Pull Request 和评审事件
+- [GitLab](/connect-automate/triggers-automation/gitlab) 的 Issue、Merge Request 和评论
+- [Azure DevOps](/connect-automate/triggers-automation/azure-devops) 的 Pull Request 和评论
+- [Gitea](/connect-automate/triggers-automation/gitea) 的 Issue、Pull Request、评论和评审
+- [Linear](/connect-automate/triggers-automation/linear) 中委派给 Agent 或通过名称提及它的 Issue
+- 其他系统发送的 [Webhook](/connect-automate/triggers-automation/webhooks)
+- 按指定时间或周期运行的[定时任务](/connect-automate/triggers-automation/schedules)
 
 <Image src={imgGithubIntegration} alt="为 Agent 配置事件触发器" width={640} />
 

@@ -6,32 +6,32 @@ description: "Create a Discord application, paste its bot token, and use AgentCo
 
 import imgDiscordIntegration from '@/public/images/discord-integration.png'
 
-The daemon connects to Discord's gateway outbound — no public endpoint required.
+The daemon opens an outbound connection to Discord's gateway, so you don't need a public endpoint.
 
 <Image src={imgDiscordIntegration} alt="Connect a Discord bot" width={640} />
 
 ## Create the bot
 
-1. Open the [Discord Developer Portal](https://discord.com/developers/applications) → **New Application**, name it.
-2. Under **Bot**, copy the **token** (Reset Token if none is shown).
+1. Open the [Discord Developer Portal](https://discord.com/developers/applications), click **New Application**, and give it a name.
+2. Open **Bot** and copy the **token** (click Reset Token if none is shown).
 
 ## Connect it
 
-On your agent, open **Integrations → Add integration → Discord** and paste the token. AgentConnect decodes the public application ID from it and shows **Add to Discord** with the required `bot` and `applications.commands` scopes and permissions, including public-thread creation.
+On your agent, open **Integrations → Add integration → Discord** and paste the token. AgentConnect decodes the public application ID from the token and shows **Add to Discord** with the required `bot` and `applications.commands` scopes and permissions, including public-thread creation.
 
-Click **Add to Discord**, choose the server, approve the invite, then click **Connect**.
+Click **Add to Discord**, choose the server, approve the invite, and then click **Connect**.
 
-When you connect, AgentConnect validates the token and enables the limited **Message Content Intent** on the Discord application automatically. You no longer need to turn on that checkbox before setup. If Discord refuses the automatic update, AgentConnect stops before saving the integration and tells you to enable **Bot → Privileged Gateway Intents → Message Content Intent** manually.
+When you connect, AgentConnect validates the token and automatically turns on the limited **Message Content Intent** on the Discord application, so you don't need to enable it beforehand. If Discord rejects that automatic update, AgentConnect stops before saving the integration and asks you to enable **Bot → Privileged Gateway Intents → Message Content Intent** manually.
 
 ## Use it
 
-Mention the bot in a server channel it can see and it answers; longer conversations continue in threads. You can also send it a direct message. AgentConnect registers its [in-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) as native Discord slash commands.
+Mention the bot in a server channel it can access and it replies. Longer conversations continue in threads. You can also send it a direct message. AgentConnect registers its [in-conversation commands](/connect-automate/integrations-overview#in-conversation-commands) as native Discord slash commands.
 
-When a tool call needs approval, the agent posts an approval card in the channel or thread. Who may answer it is set by the agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat).
+When a tool call needs approval, the agent posts an approval card in the channel or thread. The agent's [**What people can do in chat**](/build-your-team/agents/configure-an-agent#what-people-can-do-in-chat) setting controls who can respond.
 
 ## Notes
 
-- If automatic Message Content setup was rejected, enable the intent manually in the Developer Portal and connect again.
-- If the bot cannot reply or create a thread, use **Integrations → Messaging apps → Discord → Add to Discord** to reinstall it with the current scopes and permissions.
-- One Discord bot binds to one agent; deleting the integration frees the bot for reuse.
-- Asked from Discord, the agent reads and posts in other channels only on this bot, and only in channels everyone in the server can view. AgentConnect cannot tell who a Discord user is, so it cannot hand off into Slack or another platform for them. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
+- If Discord rejected the automatic Message Content setup, enable the intent manually in the Developer Portal and try connecting again.
+- If the bot can't reply or create a thread, use **Integrations → Messaging apps → Discord → Add to Discord** to reinstall it with the current scopes and permissions.
+- Each Discord bot binds to one agent. Deleting the integration frees the bot for reuse.
+- When prompted from Discord, the agent can read and post in other channels only through this bot, and only in channels everyone on the server can view. Because AgentConnect can't identify who a Discord user is, it can't hand off requests to Slack or another platform on their behalf. See [Reading and posting in other conversations](/connect-automate/integrations-overview#reading-and-posting-in-other-conversations).
