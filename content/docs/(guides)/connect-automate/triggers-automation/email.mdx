@@ -1,0 +1,71 @@
+---
+title: "Email"
+icon: Mail
+description: "Give an agent its own email address: people write to it, it answers in the same thread, and it can start a mail of its own."
+---
+
+An email integration gives an agent **its own address**. Write or forward mail to it and the agent works on the message and replies in the same thread. Ask it in any conversation to email someone and it starts a new mail from that address.
+
+## Add an address [#add-an-address]
+
+On your agent, open **Integrations → Add integration → Email** and choose a name. The address is that name on your workspace's mail domain, for example `support-bot@mail.example.test`. A check beside the field tells you whether the name is free.
+
+- Names are 3 to 40 characters of lower-case letters, digits, `.` and `-`.
+- Role names people would trust, such as `admin`, `billing` or `security`, can't be taken.
+- An address is never reused. Removing the integration retires it for good, so mail still on its way can't reach anyone else.
+
+The agent's **Integrations** card shows the address with a copy button, and one line saying who can write to it.
+
+## Choose who can write [#who-can-write]
+
+Click the settings button on the address to open **Email settings**.
+
+**Accept mail from**
+
+- **Members of your organization** (default): mail is accepted only from an address a member signs in with. Every address on a member's linked sign-in methods counts, such as both their work and personal Google accounts. An address from a Microsoft work or school account counts only when its domain is one your organization has verified. Mail from anyone else is refused, and their own mail server tells them so.
+- **Anyone**: mail from any sender is accepted. The agent still recognizes members as members.
+
+Whichever you choose, mail must pass its sender's domain checks, so a forged sender is refused. Automatic mail, such as out-of-office replies and mailing lists, is ignored, which keeps two auto-responders from answering each other.
+
+**Who sees mail from outside the organization**
+
+With **Anyone** selected, choose who can see the conversations that mail from people outside your organization opens:
+
+- **People who can edit this agent** (default): everyone who can edit the agent right now. When editors change, the people who can see these conversations change with them.
+- **Everyone in the organization**.
+- **A specific member** of your choice.
+
+A member's own mail always opens conversations only they can see.
+
+## Conversations and replies [#conversations]
+
+Each mail thread is one session, listed in [Sessions](/operate-govern/sessions). A follow-up in the thread continues the session, and the agent can read the thread's earlier mail.
+
+The agent answers once per turn, as a reply in the same thread. It's sent to the person who wrote and copied to the thread's other members. With **Anyone** selected, it's also copied to outside addresses that have written in the thread themselves. An address someone simply lists in Cc is never copied this way. The agent is told who was left off, so it can mention that in its reply.
+
+Attachments aren't passed to the agent yet. It sees their names.
+
+## Ask the agent to send a mail [#send-mail]
+
+In any conversation with the agent, such as the console, a chat platform or a mail thread, ask it to email someone:
+
+> Email the release notes to ops@example.test and copy dana@example.test.
+
+The agent starts a new mail from its address. When someone replies, the reply continues that mail's thread as its own session, starting from what the agent sent.
+
+- If a member of your organization asked in their own message, the agent can mail any address.
+- Requests that come from a guest in a shared conversation, from a schedule or webhook run, or from a delegated task can mail members of your organization only.
+- A mail goes to at most 50 recipients.
+
+Nobody approves a send: the member who asked is the person who would. Keep in mind that the agent can be talked into mailing what it knows by text it reads, such as a web page, a file or an incoming mail. If that risk isn't acceptable for an agent, don't give it an address.
+
+## Limits [#limits]
+
+| | |
+| --- | --- |
+| New threads | Each sender can start work on an agent 30 times an hour. |
+| Replies | Up to 200 a day for each address. |
+| Mail to people outside your organization | Up to 100 recipients a day for each address, counted across replies and new mail. |
+| Recipients per mail | 50 |
+
+A reply that can't be sent stays in the session, marked as not delivered, with the reason.
