@@ -6,6 +6,8 @@ description: "让 Agent 像团队里的一位同事：每个对话一条连续�
 
 import imgAssistantModePanel from '@/public/images/assistant-mode-panel.png'
 import imgKnowledgeHandbook from '@/public/images/knowledge-handbook.png'
+import imgChannelIntro from '@/public/images/assistant-mode-channel-intro.png'
+import imgProposalCard from '@/public/images/assistant-mode-proposal-card.png'
 
 助理模式让 Agent 像团队里的一位同事那样工作：它在每个对话里保持一条连续的上下文，跟进大家交代给它的事，自己检查进展，有事才开口，动手之前先问。
 
@@ -90,6 +92,8 @@ import imgKnowledgeHandbook from '@/public/images/knowledge-handbook.png'
 
 检查中发现值得做的事时，Agent 会用一张卡片提出：一句话（“我想把 PR #12 rebase 到 main，因为它有冲突”）、理由，以及 **Approve** 和 **Deny** 按钮。在 Slack 上，卡片发在该跟进所属的对话里。能在那里让 Agent 干活的人都可以批准：私信里是对方本人，频道里是任何发消息就能触发 Agent 的人。批准不会额外授予任何权限，和直接开口请求一样：这项工作以任务形式运行一次，使用 Agent 自己的权限，完成后在那个对话里汇报。
 
+<Image src={imgProposalCard} alt="Slack 频道里的一条跟进请求，以及五分钟后 Agent 检查后发出的提议，带 Approve 和 Deny 按钮" width={820} />
+
 在 Playground 对话里，提议会出现在输入框上方的待处理请求中。在其他平台上，以及与其他组织共享的对话里，卡片会发到负责人的私信，或者留在**动态**中。
 
 提议在 24 小时后过期，过期后不会再执行。如果已批准的提议被重启打断，它不会被再次执行，对话里会说明结果不确定，请人去确认。
@@ -105,6 +109,8 @@ import imgKnowledgeHandbook from '@/public/images/knowledge-handbook.png'
 Agent 被加进 Slack 频道或群组私信时，会先了解一次这个地方：读取最近 30 天、最多 500 条消息，记住这里怎么运作：做什么用、大家怎么提需求、哪些事情会反复出现。它不会记下正在进行的事情，也不会记录某个人在这里的角色之外的任何信息。
 
 然后它会做一次自我介绍：它是谁、一句话说说它看到了什么、怎么找它。下面最多列出三件它可以帮忙的事，每件都是一张卡片，能在这里让它干活的人都可以批准。它最多问一个问题，之后不会再主动发言。
+
+<Image src={imgChannelIntro} alt="Slack 频道里，刚被加入的 Agent 做自我介绍：概括它读到的内容，问一个问题，并附上一张带 Approve 和 Deny 的卡片" width={820} />
 
 对于开启助理模式之前就已在的频道，以及 Discord 和 Lark / 飞书上的对话，可以直接对它说“了解一下这个频道”。一对一私信、与其他组织共享的对话，以及不允许机器人读取历史的平台（例如 Telegram）不会进行这一步。**任务**列表里会把这次读取显示为**了解频道**。
 
@@ -133,7 +139,7 @@ Agent 了解到的内容会写进**知识库**页面顶部的**手册**，全组
 - **直接问它。** “你手上有哪些事？”会列出这个对话的跟进、每项最近看到的情况、下次检查时间、等待审批的内容，以及正在运行的任务。
 - **对话的任务标签页。** 在[会话](/operate-govern/sessions)中打开该对话的会话，可以看到它的任务和跟进、最近的检查记录，以及**停止**按钮。
 - **Agent 的动态标签页。** 列出 Agent 在所有对话中的任务和跟进。编辑者还能看到所有等待审批的内容（草稿、提议和任务的权限请求），并可以在这里处理。
-- **Slack 上的 Work canvas。** 在每个有进行中工作的内部 Slack 频道里，Agent 会维护一个名为 **Work** 的只读 canvas，列出该频道进行中的任务和跟进，以及发往这里的定时任务。它不会为此发消息。
+- **每个 Slack 频道里的 canvas。** 在每个有进行中工作的内部 Slack 频道里，Agent 会维护一个以它自己和频道命名的 canvas，例如 **assistant · #web-releases**，列出该频道进行中的任务和跟进，以及发往这里的定时任务，并随工作变化而更新。它不会为此发消息。
 
 每隔几个小时，Agent 会回头看一遍对话中安静下来的任务。如果某个任务问了人却没人回答，它会在任务的话题里提醒那个人；如果某个任务在交代给它的工作做到一半时停下了，它会让任务回去接着做完。被人停止的任务不会被打扰。
 

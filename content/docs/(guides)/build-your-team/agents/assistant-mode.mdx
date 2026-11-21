@@ -6,6 +6,8 @@ description: "Turn an agent into a teammate that keeps one conversation per plac
 
 import imgAssistantModePanel from '@/public/images/assistant-mode-panel.png'
 import imgKnowledgeHandbook from '@/public/images/knowledge-handbook.png'
+import imgChannelIntro from '@/public/images/assistant-mode-channel-intro.png'
+import imgProposalCard from '@/public/images/assistant-mode-proposal-card.png'
 
 Assistant mode makes an agent work like one person on your team. It keeps one continuous conversation in every place it works, follows up on what people ask of it, checks on progress by itself, speaks up only when it has something to say, and asks before it acts.
 
@@ -90,6 +92,8 @@ A few more rules:
 
 When a check finds something worth doing, the agent proposes it on a card: one sentence ("I want to rebase PR #12 onto main because it conflicts"), the reason, and **Approve** or **Deny**. On Slack, the card lands in the conversation the follow-up belongs to. Whoever could ask the agent there can approve it: in a DM, that person; in a channel, anyone whose message would start the agent. Approving grants nothing that asking directly wouldn't: the work runs once, as a task, with the agent's own permissions, and reports back in that conversation.
 
+<Image src={imgProposalCard} alt="A follow-up request in a Slack channel, and the agent's proposal from its check five minutes later, with Approve and Deny" width={820} />
+
 In a Playground conversation, the proposal waits in the pending requests above the composer instead. On other platforms and in conversations shared with another organization, the card goes to the responsible person's DM, or waits in **Activity**.
 
 A proposal expires after 24 hours and never runs afterward. If a restart cuts an approved proposal short, it isn't run again: the conversation is told the outcome is uncertain so someone can check.
@@ -105,6 +109,8 @@ A run that nobody started, such as a scheduled task or a webhook, posts directly
 When the agent is added to a Slack channel or group DM, it gets to know the place once. It reads the last 30 days of history, up to 500 messages, and remembers how the place works: what it's for, how requests are made, and what recurs. It doesn't remember what's in flight or anything about a person beyond their role there.
 
 Then it introduces itself once: who it is, one line on what it saw, and how to reach it. Below that it offers at most three ways to help, each as a card anyone who could ask it there may approve. It asks at most one question, then posts nothing more on its own.
+
+<Image src={imgChannelIntro} alt="A Slack channel where the agent, just added, introduces itself with a summary of what it read, asks one question, and offers a card with Approve and Deny" width={820} />
 
 In a channel the agent was already in when the mode was turned on, or on Discord and Lark / Feishu, ask it to "get to know this channel". It doesn't do this in one-to-one DMs, in conversations shared with another organization, or on platforms that don't let a bot read history, such as Telegram. The **Tasks** list shows the read as **Getting to know**.
 
@@ -133,7 +139,7 @@ Your entry is yours. Ask the agent in your DM what it knows about you, and corre
 - **Ask it.** "What's on your plate?" lists the conversation's follow-ups, what the agent last saw for each, when it checks next, what's waiting for approval, and which tasks are running.
 - **The conversation's Tasks tab.** Open the conversation's session in [Sessions](/operate-govern/sessions) to see its tasks and follow-ups, their recent checks, and **Stop**.
 - **The agent's Activity tab.** Lists the agent's tasks and follow-ups across conversations. Editors also see everything waiting for approval (drafts, proposals, and task permission requests) and can decide it there.
-- **The Work canvas on Slack.** In each internal Slack channel with open work, the agent keeps a read-only canvas named **Work** listing the channel's open tasks and follow-ups and the scheduled tasks that post there. It posts no message about it.
+- **A canvas in each Slack channel.** In each internal Slack channel with open work, the agent keeps a canvas named after itself and the channel, such as **assistant · #web-releases**. It lists the channel's open tasks and follow-ups, and any scheduled tasks that post there, and changes as that work does. The agent posts no message about it.
 
 Every few hours, the agent goes back over the tasks in a conversation that have gone quiet. If a task asked someone a question and nobody answered, it reminds that person in the task's thread. If a task stopped partway through work it was asked to do, it sends the task back to finish it. A task someone stopped is left alone.
 
