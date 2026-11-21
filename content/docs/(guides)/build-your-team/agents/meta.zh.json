@@ -4,6 +4,7 @@
     "multi-agent-work-modes",
     "workspaces-and-repos",
     "configure-an-agent",
+    "assistant-mode",
     "playground"
   ],
   "title": "Agent"
