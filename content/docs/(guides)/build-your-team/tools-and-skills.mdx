@@ -98,6 +98,39 @@ Open an agent and switch to its **Tools & Skills** tab.
 
 Under **Tools**, enable the MCP providers this agent should access. The list combines organization-registered providers with servers reported by the agent's daemon, filtered to match the selected runtime's capabilities.
 
+### Restrict which tools an agent can use
+
+An agent can call every tool of an MCP provider you enable. To narrow that, find the provider under **Tools** and click **Edit permissions**. The status next to each provider reads **Full access** or **Restricted**.
+
+Choose an **Access** level:
+
+- **Full access**: Every tool is allowed, including tools the server adds later.
+- **Read-only**: Read-only tools are allowed. Write/delete tools and unlabeled tools are blocked.
+- **Custom**: Choose a decision for each group, and override single tools.
+
+Tools are grouped by the labels the server publishes for them: **Read-only tools**, **Write/delete tools**, and **Other tools** for tools without a label. These labels are the server's own claims, so review the tools in a group before you rely on it. A tool shows **Interactive** when it renders an interface, and **Destructive** when the server says it can delete or overwrite data.
+
+| Decision         | Effect                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| **Always allow** | The agent uses it without asking.                                                          |
+| **Blocked**      | The agent cannot see or use it. A call to it is refused before it reaches the server.      |
+
+**Needs approval** and **Always ask** are listed but not available yet.
+
+The permissions apply to this agent only: other agents keep their own access to the same provider. They are enforced when the agent makes a call, not only by hiding tools from it.
+
+#### Keep the tool list current
+
+The panel shows when the provider's tool list was last read and offers **Refresh list**. Saved permissions are a fixed list of tool names. A tool the server adds later stays blocked until you review it and save again, and the panel shows a banner when the server's tools have changed since you saved. If no tool list is available, name the tools to allow or block by hand.
+
+#### Requirements and roles
+
+Restrictions need current versions of the daemons serving the agent and of your relays. The panel warns when one is older: an older daemon can't attach a restricted provider, and the agent's calls through an older relay are refused until it's upgraded.
+
+Changing permissions requires permission to edit the agent and to see the provider, and only a signed-in person can change them, not an API key or an agent. The setting restricts the agent, not its editors: anyone who can edit the agent can also return it to **Full access**.
+
+On a self-hosted daemon without a sandbox, agents run as the same operating-system user as the daemon and share its trust, as they already do for its other credentials.
+
 Under **Skills**, you can:
 
 - Enable an approved managed skill to use its current immutable revision.
