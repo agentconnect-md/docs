@@ -100,36 +100,36 @@ Under **Tools**, enable the MCP providers this agent should access. The list com
 
 ### Restrict which tools an agent can use
 
-An agent can call every tool of an MCP provider you enable. To narrow that, find the provider under **Tools** and click **Edit permissions**. The status next to each provider reads **Full access** or **Restricted**.
+By default, an agent can call every tool on an enabled MCP provider. To narrow access, find the provider under **Tools** and click **Edit permissions**. Each provider shows a **Full access** or **Restricted** status.
 
 Choose an **Access** level:
 
 - **Full access**: Every tool is allowed, including tools the server adds later.
 - **Read-only**: Read-only tools are allowed. Write/delete tools and unlabeled tools are blocked.
-- **Custom**: Choose a decision for each group, and override single tools.
+- **Custom**: Choose a decision for each group and override individual tools.
 
-Tools are grouped by the labels the server publishes for them: **Read-only tools**, **Write/delete tools**, and **Other tools** for tools without a label. These labels are the server's own claims, so review the tools in a group before you rely on it. A tool shows **Interactive** when it renders an interface, and **Destructive** when the server says it can delete or overwrite data.
+Tools are grouped by the labels the server publishes for them: **Read-only tools**, **Write/delete tools**, and **Other tools** for unlabeled tools. These labels are the server's own claims, so review the tools in a group before you rely on it. A tool shows **Interactive** when it renders an interface, and **Destructive** when the server says it can delete or overwrite data.
 
-| Decision         | Effect                                                                                     |
-| ---------------- | ------------------------------------------------------------------------------------------ |
-| **Always allow** | The agent uses it without asking.                                                          |
-| **Blocked**      | The agent cannot see or use it. A call to it is refused before it reaches the server.      |
+| Decision         | Effect                                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| **Always allow** | The agent uses the tool without asking.                                                 |
+| **Blocked**      | The agent can't see or use the tool. Calls to it are refused before they reach the server. |
 
 **Needs approval** and **Always ask** are listed but not available yet.
 
-The permissions apply to this agent only: other agents keep their own access to the same provider. They are enforced when the agent makes a call, not only by hiding tools from it.
+Permissions apply only to this agent; other agents keep their own access to the same provider. Restrictions are enforced when the agent calls a tool, not just by hiding it.
 
 #### Keep the tool list current
 
-The panel shows when the provider's tool list was last read and offers **Refresh list**. Saved permissions are a fixed list of tool names. A tool the server adds later stays blocked until you review it and save again, and the panel shows a banner when the server's tools have changed since you saved. If no tool list is available, name the tools to allow or block by hand.
+The panel shows when the provider's tool list was last read and offers **Refresh list**. Saved permissions are a fixed list of tool names. Any tool the server adds later stays blocked until you review it and save again, and the panel shows a banner when the server's tools have changed since you last saved. If no tool list is available, enter tool names manually.
 
 #### Requirements and roles
 
-Restrictions need current versions of the daemons serving the agent and of your relays. The panel warns when one is older: an older daemon can't attach a restricted provider, and the agent's calls through an older relay are refused until it's upgraded.
+Restrictions require up-to-date daemons for the agent and up-to-date relays. The panel warns when either is outdated: an older daemon can't attach a restricted provider, and calls routed through an older relay are refused until it's upgraded.
 
-Changing permissions requires permission to edit the agent and to see the provider, and only a signed-in person can change them, not an API key or an agent. The setting restricts the agent, not its editors: anyone who can edit the agent can also return it to **Full access**.
+To change permissions, you must be able to edit the agent and view the provider. Only a signed-in user can make changes, not an API key or an agent. This setting restricts the agent, not its editors: anyone who can edit the agent can also return it to **Full access**.
 
-On a self-hosted daemon without a sandbox, agents run as the same operating-system user as the daemon and share its trust, as they already do for its other credentials.
+On a self-hosted daemon without a sandbox, agents run as the same OS user as the daemon and share its trust boundary, just as they do for other credentials.
 
 Under **Skills**, you can:
 
