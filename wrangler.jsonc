@@ -12,8 +12,10 @@
   },
   "workers_dev": false,
   "preview_urls": false,
+  // Keep the Worker's own logs and errors; skip the automatic per-request record, which is nearly all of the log volume.
   "observability": {
-    "enabled": true
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": false }
   },
   // OpenNext calls back into its own Worker; the binding must name the Worker it belongs to.
   "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "agentconnect-docs" }],
